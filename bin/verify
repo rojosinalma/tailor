@@ -57,7 +57,7 @@ const vocab = readJson(join(CORE, "components.json"));
   if (badGroup.length) fail(`unknown group on: ${badGroup.map((c) => c.id).join(", ")}`);
   // class discipline: every class used in markup/demo is t-* (or sc-/t-demo- showcase chrome) and declared somewhere
   const declared = new Set(vocab.components.flatMap((c) => [c.root, ...Object.keys(c.parts ?? {})]));
-  const utilities = new Set(["t-icon", "t-muted", "t-small", "t-mono", "t-tone-text", "t-truncate", "t-visually-hidden", "t-plain-list", "t-demo-shell"]);
+  const utilities = new Set(["t-icon", "t-muted", "t-small", "t-mono", "t-tone-text", "t-truncate", "t-nowrap", "t-hide", "t-visually-hidden", "t-plain-list", "t-demo-shell"]);
   const undeclared = new Set();
   for (const c of vocab.components) for (const html of [c.markup, c.demo ?? ""]) for (const m of html.matchAll(/class=['"]([^'"]+)['"]/g)) for (const cls of m[1].split(/\s+/)) {
     if (!cls || cls.startsWith("sc-")) continue;

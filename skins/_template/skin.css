@@ -27,7 +27,7 @@
 .t-btn[data-variant="warning"] { }
 .t-btn[data-variant="ghost"] { }
 .t-btn[data-variant="link"] { }
-.t-btn[data-size="sm"] { } .t-btn[data-size="lg"] { }
+.t-btn[data-size="xs"] { } .t-btn[data-size="sm"] { } .t-btn[data-size="lg"] { }
 .t-btn:disabled { } .t-btn[aria-pressed="true"] { } .t-btn[aria-busy="true"] { }
 
 /* button-group, segmented, menu, tabs, breadcrumb, pagination, list */

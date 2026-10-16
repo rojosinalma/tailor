@@ -2,7 +2,7 @@
   "$schema": "manifest.schema.json",
   "name": "tailor",
   "version": "0.4.0",
-  "generated": "2026-10-16T13:47:42.400Z",
+  "generated": "2026-10-16T13:52:41.433Z",
   "contract": {
     "prefix": "t-",
     "token_prefix": "--t-",
@@ -271,7 +271,7 @@
         "name": "Grid",
         "tier": 1,
         "group": "shell",
-        "description": "Responsive card grid: auto-fill columns of a minimum width, or a fixed column count.",
+        "description": "Responsive card grid: auto-fill columns of a minimum width, or a fixed column count. data-cols=12 is the form grid: children span columns with data-span (an unspanned child takes the whole row); every span collapses below 768px.",
         "root": "t-grid",
         "attributes": {
           "data-cols": [
@@ -280,7 +280,8 @@
             "2",
             "3",
             "4",
-            "6"
+            "6",
+            "12"
           ],
           "data-min": [
             "xs",
@@ -294,10 +295,30 @@
             "3",
             "4",
             "5"
+          ],
+          "data-span (on a child)": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12"
+          ],
+          "data-align": [
+            "start",
+            "center",
+            "end"
           ]
         },
         "behaviour": "none",
-        "markup": "<div class='t-grid' data-cols='auto' data-min='sm'>\n  <div class='t-card'>…</div>\n  <div class='t-card'>…</div>\n</div>"
+        "markup": "<div class='t-grid' data-cols='auto' data-min='sm'>\n  <div class='t-card'>…</div>\n  <div class='t-card'>…</div>\n</div>\n<div class='t-grid' data-cols='12' data-align='end'>\n  <div class='t-field' data-span='6'>…</div>\n  <div class='t-field' data-span='4'>…</div>\n  <button class='t-btn' data-variant='primary' data-span='2'>Save</button>\n</div>",
+        "notes": "Spans work in any .t-grid (a card spanning two auto-fill cells); they are reset below 768px so a span never overflows the single column."
       },
       {
         "id": "stack",
@@ -355,7 +376,7 @@
         "name": "Button",
         "tier": 1,
         "group": "actions",
-        "description": "The action control. One primary per view; secondary is the default look; danger/warning for their outcomes; ghost and link for quiet actions.",
+        "description": "The action control. One primary per view; secondary is the default look; danger/warning for their outcomes; ghost and link for quiet actions. xs is the compact toolbar/icon size.",
         "root": "t-btn",
         "parts": {
           "t-icon": "leading/trailing icon (any inline element)",
@@ -374,6 +395,7 @@
             "*"
           ],
           "data-size": [
+            "xs",
             "sm",
             "md",
             "lg"
@@ -596,7 +618,7 @@
         "name": "Field",
         "tier": 1,
         "group": "forms",
-        "description": "Label + control + hint/feedback. Controls: .t-input (text/number/password/file/range), .t-select, .t-textarea; .t-input-group fuses addons and buttons to a control.",
+        "description": "Label + control + hint/feedback. Controls: .t-input (text/number/password/file/range), .t-select, .t-textarea; .t-input-group fuses addons and buttons to a control. Controls are block-width; data-width=auto makes one shrink to its content (filter toolbars).",
         "root": "t-field",
         "parts": {
           "t-label": "<label> (small caps in the Dracula look)",
@@ -616,6 +638,9 @@
           "data-tone (on .t-feedback)": [
             "success",
             "danger"
+          ],
+          "data-width (on .t-input/.t-select/.t-textarea)": [
+            "auto"
           ]
         },
         "states": [
@@ -627,7 +652,7 @@
         ],
         "behaviour": "none",
         "a11y": "Every control has a <label for> (or aria-label). Invalid controls set aria-invalid=true and aria-describedby → the .t-feedback id. Validation glyphs are not drawn; the message carries the meaning.",
-        "markup": "<div class='t-field'>\n  <label class='t-label' for='host'>Hostname</label>\n  <input class='t-input' id='host' placeholder='example.internal'>\n  <p class='t-hint'>The LAN name, without scheme.</p>\n</div>\n<div class='t-field'>\n  <label class='t-label' for='port'>Port</label>\n  <input class='t-input' id='port' value='99999' aria-invalid='true' aria-describedby='port-fb'>\n  <p class='t-feedback' id='port-fb' data-tone='danger'>Must be between 1 and 65535.</p>\n</div>\n<div class='t-field'>\n  <label class='t-label' for='tok'>Token</label>\n  <div class='t-input-group'><span class='t-input-addon'>🔑</span><input class='t-input' id='tok' type='password' value='secret'><button class='t-btn' type='button' data-tip='Show'>👁</button></div>\n</div>",
+        "markup": "<div class='t-field'>\n  <label class='t-label' for='host'>Hostname</label>\n  <input class='t-input' id='host' placeholder='example.internal'>\n  <p class='t-hint'>The LAN name, without scheme.</p>\n</div>\n<div class='t-field'>\n  <label class='t-label' for='port'>Port</label>\n  <input class='t-input' id='port' value='99999' aria-invalid='true' aria-describedby='port-fb'>\n  <p class='t-feedback' id='port-fb' data-tone='danger'>Must be between 1 and 65535.</p>\n</div>\n<div class='t-field'>\n  <label class='t-label' for='tok'>Token</label>\n  <div class='t-input-group'><span class='t-input-addon'>🔑</span><input class='t-input' id='tok' type='password' value='secret'><button class='t-btn' type='button' data-tip='Show'>👁</button></div>\n</div>\n<div class='t-toolbar'><select class='t-select' data-width='auto' aria-label='Range'><option>24 h</option></select><input class='t-input' data-width='auto' placeholder='Filter…' aria-label='Filter'></div>",
         "source": "dracula.css .form-*, cards-forms.css validation"
       },
       {
@@ -876,7 +901,7 @@
         "name": "Table",
         "tier": 1,
         "group": "data",
-        "description": "Dense data table: shrink-to-fit icon/action columns, group header rows, sortable headers (aria-sort), hover rows. data-variant=log is the scrolling log table with a sticky head and outcome-tinted rows.",
+        "description": "Dense data table: shrink-to-fit icon/action/short columns (t-col-icon, t-col-actions, t-col-shrink), group header rows, sortable headers (aria-sort), hover rows. data-variant=log is the scrolling log table with a sticky head and outcome-tinted rows.",
         "root": "t-table",
         "parts": {
           "t-table-wrap": "scroll + border wrapper (max-height for log tables)",
@@ -884,7 +909,8 @@
           "t-col-actions": "actions <th>/<td> (1% width, nowrap)",
           "t-col-num": "right-aligned numeric column",
           "t-table-group": "group header <tr> (one <td colspan>)",
-          "t-sort-icon": "sort arrow inside a sortable <th>"
+          "t-sort-icon": "sort arrow inside a sortable <th>",
+          "t-col-shrink": "shrink-to-fit <th>/<td> (1% width, nowrap) for any short column (state, size, date)"
         },
         "attributes": {
           "data-variant": [
@@ -918,11 +944,12 @@
         "name": "Card",
         "tier": 1,
         "group": "data",
-        "description": "Raised surface with header (title + end slot), body, footer/actions. Variants: clickable (whole card is the target), stat (label + value + chart box), collapsible (<details>), thumb (preview + meta row). aria-selected=true = selected ring. Facts: a <dl class='t-facts'> label/value grid.",
+        "description": "Raised surface with header (title + t-card-tools end slot), body, footer/actions. Variants: clickable (whole card is the target), stat (label + value + chart box), collapsible (<details>), thumb (preview + meta row). aria-selected=true = selected ring. Facts: a <dl class='t-facts'> label/value grid.",
         "root": "t-card",
         "parts": {
           "t-card-header": "header row (title truncates, end slot right)",
           "t-card-title": "h2/h3",
+          "t-card-tools": "end slot: a cluster of actions/hints right of the title (margin-left auto; a single last child is pushed right without it)",
           "t-card-body": "content",
           "t-card-footer": "footer row",
           "t-card-actions": "wrapping action buttons row",
@@ -952,8 +979,9 @@
         ],
         "behaviour": "none",
         "a11y": "Clickable cards: role=link or button + tabindex=0 + Enter/Space handled by the project; inner buttons stopPropagation. Collapsible: <details class='t-card' data-variant='collapsible'><summary class='t-card-header'>.",
-        "markup": "<div class='t-card'>\n  <div class='t-card-header'><h3 class='t-card-title'><span class='t-icon'>▣</span>render</h3><span class='t-dot' data-status='running'></span></div>\n  <div class='t-card-body'>…</div>\n  <div class='t-card-footer t-card-actions'><button class='t-btn' data-size='sm'>Reboot</button></div>\n</div>\n<details class='t-card' data-variant='collapsible' open>\n  <summary class='t-card-header'><h3 class='t-card-title'>Self-hosted <span class='t-counter'>3</span></h3></summary>\n  <div class='t-card-body'>…</div>\n</details>",
-        "source": "dracula.css .card, cards-forms.css"
+        "markup": "<div class='t-card'>\n  <div class='t-card-header'><h3 class='t-card-title'><span class='t-icon'>▣</span>render</h3><div class='t-card-tools'><span class='t-muted t-small'>2 min ago</span><button class='t-btn' data-size='xs' data-variant='ghost'>Refresh</button><span class='t-dot' data-status='running'></span></div></div>\n  <div class='t-card-body'>…</div>\n  <div class='t-card-footer t-card-actions'><button class='t-btn' data-size='sm'>Reboot</button></div>\n</div>\n<details class='t-card' data-variant='collapsible' open>\n  <summary class='t-card-header'><h3 class='t-card-title'>Self-hosted <span class='t-counter'>3</span></h3></summary>\n  <div class='t-card-body'>…</div>\n</details>",
+        "source": "dracula.css .card, cards-forms.css",
+        "notes": "Header end slot: one trailing element after the title is pushed right by itself; a cluster goes in .t-card-tools."
       },
       {
         "id": "empty-state",
@@ -1202,7 +1230,7 @@
         "name": "Dialog",
         "tier": 1,
         "group": "feedback",
-        "description": "Native <dialog> for edits: pre-filled, vertically centred, Esc closes, backdrop click closes. Sizes sm/md/lg.",
+        "description": "Native <dialog> for edits: pre-filled, vertically centred, Esc closes, backdrop click closes. Sizes sm (320) / md (500) / lg (800) / xl (1140, media and wide tables).",
         "root": "t-dialog",
         "parts": {
           "t-dialog-header": "title row + close",
@@ -1215,7 +1243,8 @@
           "data-size": [
             "sm",
             "md",
-            "lg"
+            "lg",
+            "xl"
           ],
           "data-tone": [
             "danger"

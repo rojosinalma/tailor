@@ -34,7 +34,7 @@ skin's own colour defaults (if any) lose to the palette tokens. `core/tailor.js`
 | State | native pseudo-class or aria attribute (§4), `data-state` only for states aria has no word for | `:disabled`, `aria-selected`, `data-state="saving"` |
 | Token | `--t-<name>` | `--t-accent`, `--t-space-3` |
 | JS hook | `data-tailor-*` or the component's documented `data-*` | `data-dialog-open`, `data-tip` |
-| Utility class | `t-<utility>` from the fixed list in base.css | `t-muted`, `t-small`, `t-mono`, `t-truncate`, `t-visually-hidden` |
+| Utility class | `t-<utility>` from the fixed list in base.css | `t-muted`, `t-small`, `t-mono`, `t-truncate`, `t-nowrap`, `t-hide[data-hide]`, `t-visually-hidden` |
 
 Rules:
 
@@ -69,6 +69,12 @@ Rules:
   the slot, but a hand-drawn glyph is for things no adopted set has; `tailor icons search <term>`
   finds names. The showcase uses Unicode glyphs in its chrome (no dependency) and shows the sets
   through its own sprite. Details: `docs/icons.md`.
+- The utility list is fixed: `t-muted` `t-small` `t-mono` `t-tone-text` `t-truncate` `t-nowrap` `t-hide`
+  `t-visually-hidden` `t-plain-list` `t-icon`. `t-hide` is the responsive hide: gone below the breakpoint in
+  `data-hide="xs|sm|md"` (<576 / <768 / <992; `sm` when omitted); `[hidden]` is the unconditional one.
+  Layout attributes that sit on **children** are documented on the parent in components.json
+  (`t-grid > [data-span="1…12"]`); attributes that change a control's box are on the control
+  (`t-input[data-width="auto"]`). Nothing else in a project's markup carries a `data-*` tailor reads.
 - Prefix `t-` is reserved. Projects name their own things without it.
 
 ## 3. Semantic HTML first

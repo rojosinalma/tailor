@@ -2,6 +2,23 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
+## [Unreleased]
+
+### Added
+- Vocabulary gaps reported by the first fifteen consumers, now in core so their `app.css` workarounds can go:
+  `t-btn[data-size="xs"]` (compact toolbar/icon buttons; token `--t-control-h-xs`, sized in every skin),
+  `t-dialog[data-size="xl"]` (1140px, media and wide tables), `t-grid[data-cols="12"]` form grid with
+  `data-span="1…12"` on any `.t-grid` child (unspanned children of the 12-grid fill the row; spans collapse below
+  768px) and `t-grid[data-align]`, utilities `t-nowrap` and `t-hide[data-hide="xs|sm|md"]` (responsive hide,
+  `sm` default), table `t-col-shrink` (1%-width column next to `t-col-icon`/`t-col-actions`), card header end
+  slot `t-card-tools` (a cluster of actions/hints right of the title), `t-input/t-select/t-textarea[data-width="auto"]`
+  (content-width controls for filter toolbars). `core/conventions.md §2` lists the fixed utility set and where
+  child/control attributes are documented.
+
+### Fixed
+- `layout.css`: `.t-shell[data-sidebar="none"]` kept the 4-row stacked template below 992px, leaving an empty
+  `1fr` row above the footer; it now keeps its 3 rows (`nav 1fr foot`) at every width.
+
 ## [0.4.0] — 2026-10-16
 
 ### Added
