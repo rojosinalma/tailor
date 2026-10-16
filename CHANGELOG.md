@@ -2,7 +2,7 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
-## [Unreleased]
+## [0.4.0] — 2026-10-16
 
 ### Added
 - `<div data-tailor-pickers>`: `Tailor.theme.init` renders the skin/palette/mode selects into it (skin and palette
