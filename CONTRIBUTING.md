@@ -2,19 +2,22 @@
 
 ## Run it locally
 
-Bun ≥ 1.1 for the tooling; nothing else to install at the repo root.
+Bun ≥ 1.1 for the tooling; nothing to install at the repo root. The Primer themes need the pinned
+`@primer/primitives`, which `bun install` in `react/` provides (without it `bin/build` keeps the committed
+themes and says so).
 
 ```sh
 git clone https://github.com/rojosinalma/tailor && cd tailor
-bin/build                      # palettes/*.css, manifest.json, showcase/index.html
+(cd react && bun install --frozen-lockfile)
+bin/build                      # palettes/*.css, react/adapters/primer/themes/*, manifest.json, showcase/index.html
 bunx serve .                   # open /showcase/
 ```
 
 ## Run the checks
 
 ```sh
-bin/verify                     # schemas, skin coverage, CSS parse, palette contrast, showcase render
-cd react && bun install --frozen-lockfile && bun run typecheck && bun run check-parity
+bin/verify                     # schemas, skin coverage, CSS parse, palette contrast, Primer themes current, showcase render
+cd react && bun run typecheck && bun run check-parity
 ```
 
 `bin/verify` is the gate for every change — green locally before a commit, green in CI
@@ -55,7 +58,12 @@ rather than to the README.
    in `$comment`, as the existing palettes do.
 4. `bin/build` → `manifest.json` lists it with a compatibility row per skin; check `?palette=<id>`
    with each skin in the showcase.
-5. Add the palette to the table in `docs/palette-licenses.md` and a CHANGELOG line. `bin/verify`.
+5. Optional but expected: a `primer` section (start from `dracula.json`'s: `map` for the GitHub surface,
+   accent and state colours, `tokens` for the link and the primary button, `hue_ranges` to steer a hue family).
+   `bin/gen-primer-theme <id>` prints the most frequent source colours and where they landed — tune until the
+   Primer showcase of your choice reads right; `bin/build` writes `react/adapters/primer/themes/dark_<id>.css`
+   and `index.ts`. Commit the palette and the generated theme together.
+6. Add the palette to the table in `docs/palette-licenses.md` and a CHANGELOG line. `bin/verify`.
 
 ## Promote a component (tier 2 → tier 1) or add one
 

@@ -73,6 +73,17 @@ and a `[data-palette="<id>"][data-mode="light"]` block when the palette has `lig
 each header cites the upstream source and licence (`license` field: SPDX id or `values-only (<reason>)`
 — see `docs/palette-licenses.md`). 21 palettes at 0.1.0.
 
+A palette may carry an optional `primer` section (hand-tuned colour map, token overrides, hue bands).
+`bin/gen-primer-theme` (`tailor gen --target primer <id>`, `bin/lib/primer.js`) then derives a **Primer
+Primitives theme** from it: the stock `dark.css` of the `@primer/primitives` pinned in `react/package.json`
+is rewritten token by token (override → exact map → nearest palette hue with OKLCH lightness preserved,
+`var()`/`color-mix()` untouched) into `react/adapters/primer/themes/<mode>_<id>.css`, plus a generated
+`themes/index.ts` that imports them all and exports the theme list for `ThemeProvider`. Primer is the kit
+behind the React adapter, so these files are a tailor artefact like `palettes/<id>.css`: `bin/build`
+regenerates them (skipped with a note when `react/` has no `node_modules`), `bin/verify` fails on a stale
+or stray file, `manifest.json` lists each palette's `primer_theme`. Other frameworks' themes are not
+tailor's: `tailor gen <system> <palette>` without `--target` stays a passthrough to an external generator.
+
 ### 2.4 Switcher
 
 `<html data-skin data-palette data-mode>` + `<link id="t-skin" data-base>` + `<link id="t-palette"
@@ -138,6 +149,7 @@ that colour only through `--t-*` tokens.
 - `react/`: `Ui.*` components with markup parity (`react/bin/check-parity`, 43/43), Primer kit
   adapter (29 mapped, rest fall back to the CSS path).
 - `bin/tailor` CLI: `apply|sync|list|gen`, multi-skin vendoring, consumer registry, managed headers.
+- Primer themes per palette (`tailor gen --target primer`, `react/adapters/primer/themes/`), 21 generated.
 
 ## 6. Open
 

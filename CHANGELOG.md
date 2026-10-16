@@ -7,13 +7,22 @@ All notable changes to tailor. Semver; the `version` in `package.json` is the so
 ### Changed
 - Palette sources are canonical in the repo: `palettes/src/<id>.json` + `palette.schema.json`;
   `bin/gen-palette`/`bin/build` read them (`TAILOR_PALETTES` overrides the directory).
-- `tailor gen` is an optional passthrough to an external generator located via `WEB_UI_DESIGN_ASSETS`.
+- `tailor gen <system> <palette>` (no `--target`) is an optional passthrough to an external generator located
+  via `WEB_UI_DESIGN_ASSETS`.
 - `consumers.json` is local state (gitignored); `consumers.example.json` is the template.
 - Docs: README trimmed to description, requirements, setup and licence; topic docs under `docs/`
   (`architecture.md`, `usage.md`, `cli.md` — replaces `bin/CLI.md` —, `configuration.md`,
   `palette-licenses.md`); `docs/SDD.md`, CONTRIBUTING and `docs/RELEASE-0.1.0.md` revised.
 
 ### Added
+- `tailor gen --target primer <palette> | --all` (`bin/gen-primer-theme`, `bin/lib/primer.js`): every palette with
+  a `primer` section (hand-tuned colour map, token overrides, hue bands — now part of `palettes/src/<id>.json`,
+  schema updated) becomes a Primer Primitives theme, `react/adapters/primer/themes/<mode>_<id>.css`, derived
+  from the stock `@primer/primitives` dark theme pinned in `react/package.json`; 21 generated. `themes/index.ts`
+  (generated) imports them all and exports `PRIMER_THEMES`, `PRIMER_THEME_LABELS`, `primerThemeProps`,
+  `applyPrimerTheme`; exported as `tailor-react/primer/themes`. `bin/build` regenerates them, `bin/verify`
+  checks presence, selector names and currency, `manifest.json` palettes carry `primer_theme`.
+  `TAILOR_PRIMER_PRIMITIVES` overrides the primitives directory.
 - CI: `.github/workflows/run-tests.yml` — `bin/build` + `bin/verify`, React typecheck.
 
 ### Removed

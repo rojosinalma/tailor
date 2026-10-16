@@ -28,9 +28,9 @@ instead of guessing it.
 core/        tokens.css · base.css · layout.css · tailor.js · components.json (+ schema) · conventions.md
 skins/       SKIN-CONTRACT.md · manifest.schema.json · _template/ · <id>/ (skin.css + manifest.json + README.md)
 palettes/    src/<id>.json + palette.schema.json (canonical) · <id>.css (generated, do not edit)
-react/       tailor-react: Ui.* components + adapters/primer/ + bin/check-parity
+react/       tailor-react: Ui.* components + adapters/primer/ (+ themes/<mode>_<id>.css, generated) + bin/check-parity
 showcase/    index.html (generated) · showcase.css · showcase.js
-bin/         build · verify · gen-palette · tailor (CLI) · lib/
+bin/         build · verify · gen-palette · gen-primer-theme · tailor (CLI) · lib/
 docs/        SDD.md · architecture.md · usage.md · cli.md · configuration.md · palette-licenses.md
 manifest.json  generated index (vocabulary × skins × palettes × compatibility)
 ```

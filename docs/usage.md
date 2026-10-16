@@ -39,4 +39,4 @@ Tailor.theme.init({
 ## React
 
 `react/` ("tailor-react") renders the same vocabulary as `Ui.*` components, with a kit adapter
-seam (first kit: Primer). See `react/README.md`.
+seam (first kit: Primer; every palette is also a generated Primer theme). See `react/README.md`.

@@ -8,6 +8,7 @@ manager, managed-header files, a consumer registry.
 tailor apply <project-dir> --skin bootstrap[,webtui,...|all] --palettes dracula,gruvbox [--mode dark] [--react] [-n]
 tailor sync [<project-dir>|--all]      # re-vendor managed files (header-guarded, idempotent)
 tailor list                            # skins · palettes · consumers
+tailor gen --target primer <palette>   # Primer Primitives theme for one palette (--all: every palette)
 tailor gen <system> <palette>          # optional: passthrough to an external theme generator
 ```
 
@@ -60,16 +61,41 @@ Skins (component coverage + mode constraint from each `skins/<id>/manifest.json`
 manifests are shown, not fatal), the canonical palettes (mode(s) + name), and the recorded
 consumers.
 
+### `tailor gen --target primer <palette> | --all`
+
+Emits the palette as a **Primer Primitives colour theme**: `react/adapters/primer/themes/<mode>_<id>.css`
+(`dark_dracula.css`), derived from the stock `dark.css` of the `@primer/primitives` version pinned in
+`react/package.json` (run `bun install` in `react/` once; `TAILOR_PRIMER_PRIMITIVES` points at another
+directory of Primer functional theme CSS). Every token of the stock theme is kept and recoloured through the
+palette's `primer` section (`palettes/src/<id>.json`), in this order:
+
+1. `primer.tokens` — whole-value override for a named token (`--fgColor-link`, the primary button family).
+2. `primer.map` — exact source hex → target hex (alpha on 8-digit hex and `rgba()` is kept, RGB remapped).
+3. nearest — anything else: low-chroma colours land on the palette's `neutrals` ramp by lightness; chromatic
+   colours take the nearest `roles` hue (or a forced `primer.hue_ranges` band, e.g. GitHub blue → the accent)
+   at the source's lightness; very dark chromatic tints (label backgrounds) are mixed over `canvas`.
+4. `var(...)`, `color-mix(...)`, fully transparent colours and non-colour values pass through. Dark colours
+   inside `*shadow*` tokens become `primer.shadow_color`, so shadows stay deep.
+
+The theme is named `<mode>_<id>` because Primer React derives the colour mode from the name (`dark_*` is
+dark, anything else light). `--all` regenerates every palette that has a `primer` section plus
+`themes/index.ts` (the module a React consumer imports — see `react/README.md`); `bin/build` does the same,
+and `bin/verify` fails when a committed theme no longer matches its palette. The command prints a summary
+per palette (tokens, overrides, exact and nearest hits, pass-throughs); `bin/gen-primer-theme <id>` adds the
+most frequent source colours and where they landed — the list to read when tuning a mapping. A palette
+without a `primer` section has no Primer theme; add the section (start from `dracula.json`'s) to get one.
+
 ### `tailor gen <system> <palette>` (optional)
 
-Passthrough to an external theme generator found via `WEB_UI_DESIGN_ASSETS`, for emitting full per-framework themes from the same palette JSON. When
-the variable is unset or the generator is absent, `gen` exits non-zero with a message and nothing
-else in tailor is affected. Output goes to stdout exactly as the generator prints it.
+Without `--target`, `gen` is a passthrough to an external theme generator found via `WEB_UI_DESIGN_ASSETS`,
+for emitting other frameworks' themes from the same palette JSON. When the variable is unset or the
+generator is absent, `gen` exits non-zero with a message and nothing else in tailor is affected. Output
+goes to stdout exactly as the generator prints it.
 
 ## Configuration
 
-See [configuration.md](configuration.md) for `TAILOR_PALETTES`, `WEB_UI_DESIGN_ASSETS` and
-`consumers.json`.
+See [configuration.md](configuration.md) for `TAILOR_PALETTES`, `TAILOR_PRIMER_PRIMITIVES`,
+`WEB_UI_DESIGN_ASSETS` and `consumers.json`.
 
 ## Flags & behaviour
 
@@ -94,5 +120,6 @@ tailor apply ~/code/myapp --skin bootstrap --palettes dracula,gruvbox
 tailor apply ~/code/myapp --skin all --palettes dracula,nord,gruvbox       # runtime skin switcher in the consumer
 tailor apply ~/code/myapp --skin pico --palettes dracula --mode auto -n
 tailor sync --all
+tailor gen --target primer dracula
 tailor gen daisyui nord
 ```

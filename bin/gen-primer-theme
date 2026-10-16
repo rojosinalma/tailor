@@ -1,0 +1,70 @@
+#!/usr/bin/env bun
+// gen-primer-theme — canonical palette (palettes/src/<id>.json, with a `primer` section) → a Primer Primitives
+// colour theme: react/adapters/primer/themes/<mode>_<id>.css, derived from the stock @primer/primitives
+// `dark` theme (react/node_modules, or TAILOR_PRIMER_PRIMITIVES). Mapping in bin/lib/primer.js.
+//
+//   bin/gen-primer-theme <palette.json | palette-id> [--out <file>] [--base dark] [--quiet] [--top 20]
+//   bin/gen-primer-theme --all                 every palette that has a `primer` section (+ themes/index.ts)
+//   bin/gen-primer-theme --list                palettes with a Primer mapping
+//
+// The summary (tokens, exact hits, nearest hits, pass-throughs, most frequent source colours and where they
+// landed) is the list to read when tuning a palette's `primer.map` / `primer.tokens`.
+
+import { writeFileSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
+import { loadPalette } from "./lib/common.js";
+import { generatePrimerTheme, listPrimerPalettes, primerThemesIndexTs, primerThemeName, PRIMER_THEMES_OUT, PRIMER_BASE } from "./lib/primer.js";
+
+const argv = process.argv.slice(2);
+const flag = (name) => { const i = argv.indexOf(name); return i === -1 ? null : (argv.splice(i, 2)[1] ?? true); };
+const bool = (name) => { const i = argv.indexOf(name); return i === -1 ? false : (argv.splice(i, 1), true); };
+const out = flag("--out");
+const base = flag("--base") ?? PRIMER_BASE;
+const top = Number(flag("--top") ?? 20);
+const quiet = bool("--quiet");
+const die = (msg) => { console.error(`gen-primer-theme: ${msg}`); process.exit(1); };
+
+export function writePrimerTheme(ref, dest, opts = {}) {
+  const palette = loadPalette(ref);
+  if (!palette.primer) throw new Error(`palette ${palette.id} has no \`primer\` section — add one (see docs/cli.md → gen --target primer)`);
+  const result = generatePrimerTheme(palette, { base, ...opts });
+  const file = dest && dest !== true ? dest : join(PRIMER_THEMES_OUT, `${result.name}.css`);
+  mkdirSync(join(file, ".."), { recursive: true });
+  writeFileSync(file, result.css);
+  return { palette, file, ...result };
+}
+
+export function writePrimerIndex(ids = listPrimerPalettes()) {
+  const palettes = ids.map((id) => loadPalette(id));
+  mkdirSync(PRIMER_THEMES_OUT, { recursive: true });
+  const file = join(PRIMER_THEMES_OUT, "index.ts");
+  writeFileSync(file, primerThemesIndexTs(palettes));
+  return file;
+}
+
+function summary(r) {
+  const s = r.stats;
+  console.log(`${base} -> ${r.name}: ${r.file}`);
+  console.log(`tokens ${s.tokens} | overridden ${s.overridden} | colours exact ${s.exact} | nearest ${s.nearest} | pass-through ${s.passthrough} | distinct source colours ${r.sourceCount.size}`);
+  const rows = [...r.sourceCount.entries()].sort((a, b) => b[1] - a[1]).slice(0, top);
+  console.log(`\ntop ${rows.length} source colours:`);
+  for (const [hex, n] of rows) { const { hex: to, method } = r.mapRgbHex(hex); console.log(`  ${String(n).padStart(4)}  ${hex} -> ${to}  (${method})`); }
+}
+
+if (import.meta.main) {
+  try {
+    if (bool("--list")) { console.log(listPrimerPalettes().join(" ") || "(none)"); process.exit(0); }
+    if (bool("--all")) {
+      if (out) die("--all writes to react/adapters/primer/themes/; --out is only for a single palette");
+      const ids = listPrimerPalettes();
+      if (!ids.length) die("no palette has a `primer` section");
+      for (const id of ids) { const r = writePrimerTheme(id, null, { quiet: true }); console.log(`wrote ${r.file}`); }
+      console.log(`wrote ${writePrimerIndex(ids)}`);
+      process.exit(0);
+    }
+    const [ref] = argv;
+    if (!ref || ref.startsWith("-")) die("usage: gen-primer-theme <palette.json|palette-id> [--out <file>] [--base dark] [--quiet] | --all | --list");
+    const r = writePrimerTheme(ref, out);
+    quiet ? console.log(`wrote ${r.file}`) : summary(r);
+  } catch (e) { die(e.message); }
+}

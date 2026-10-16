@@ -6,6 +6,9 @@
 //             behaviour "js:Tailor.x" exists in tailor.js
 //   palettes  every palettes/<id>.css parses and its [data-palette] block defines the full token set;
 //             contrast spot-check per block: text/canvas ≥ 4.5, muted/canvas ≥ 4.5, on-accent/accent-solid ≥ 3
+//   primer    every palette with a `primer` section has react/adapters/primer/themes/<mode>_<id>.css, each file
+//             parses, every theme selector carries that name and no stock one; with @primer/primitives
+//             installed the files (+ index.ts) are regenerated in memory and must match byte for byte
 //   skins     (skipped with a note when skins/ has no skin) every manifest valid, coverage ⊇ tier-1,
 //             skin.css parses, no palette token set / no colour literal, listed assets exist
 //   showcase  bin/build's showcase renders, every tier-1 id has a section, no duplicate ids
@@ -17,6 +20,8 @@ import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, CORE, SKINS, PALETTES_OUT, readJson, validate, cssBraceCheck, contrast, listSkins } from "./lib/common.js";
 import { renderShowcase } from "./lib/showcase.js";
+import { PRIMER_THEMES_OUT, primerThemesDir, primerMissingMessage, listPrimerPalettes, listPrimerThemeFiles, generatePrimerTheme, primerThemeName, primerThemesIndexTs } from "./lib/primer.js";
+import { loadPalette } from "./lib/common.js";
 
 const quiet = process.argv.includes("--quiet");
 let fails = 0, warns = 0;
@@ -104,6 +109,34 @@ for (const f of paletteFiles) {
   const bs = blocks(css);
   if (!bs.length) { fail(`palettes/${f}: no [data-palette] block`); continue; }
   for (const b of bs) checkBlock(`palettes/${f} ${b.selector}`, b.vars);
+}
+
+/* ── primer themes ─────────────────────────────────────────────────────────── */
+{
+  const ids = listPrimerPalettes();
+  const files = listPrimerThemeFiles();
+  const expected = ids.map((id) => `${primerThemeName(loadPalette(id))}.css`);
+  const stray = files.filter((f) => !expected.includes(f));
+  if (stray.length) fail(`primer themes: ${stray.join(", ")} have no palette with a primer section — delete or add the mapping`);
+  const dir = primerThemesDir();
+  if (!dir) warn(`primer themes: currency not checked — ${primerMissingMessage()}`);
+  let stale = 0;
+  for (const id of ids) {
+    const p = loadPalette(id), name = primerThemeName(p), file = join(PRIMER_THEMES_OUT, `${name}.css`);
+    if (!existsSync(file)) { fail(`primer themes: ${name}.css missing — run bin/build (or tailor gen --target primer ${id})`); continue; }
+    const css = read(file);
+    const e = cssParse(`${name}.css`, css); if (e) { fail(`primer themes: ${name}.css: ${e}`); continue; }
+    const selectors = [...css.matchAll(/data-(?:dark|light)-theme="([^"]+)"/g)].map((m) => m[1]);
+    const wrong = [...new Set(selectors.filter((s) => s !== name))];
+    if (!selectors.length) fail(`primer themes: ${name}.css has no [data-*-theme] selector`);
+    else if (wrong.length) fail(`primer themes: ${name}.css names ${wrong.join(", ")} in its selectors, expected only ${name}`);
+    if (dir && generatePrimerTheme(p).css !== css) { stale++; fail(`primer themes: ${name}.css is stale — run bin/build`); }
+    else if (!wrong.length && selectors.length) ok(`primer themes: ${name}.css — ${selectors.length} theme selectors, ${dir ? "current" : "present"}`);
+  }
+  const indexFile = join(PRIMER_THEMES_OUT, "index.ts");
+  if (ids.length && !existsSync(indexFile)) fail("primer themes: index.ts missing — run bin/build");
+  else if (ids.length && read(indexFile) !== primerThemesIndexTs(ids.map(loadPalette))) fail("primer themes: index.ts is stale — run bin/build");
+  else if (ids.length) ok(`primer themes: index.ts lists ${ids.length} themes`);
 }
 
 /* ── skins ─────────────────────────────────────────────────────────────────── */

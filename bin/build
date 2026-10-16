@@ -1,15 +1,19 @@
 #!/usr/bin/env bun
-// build — regenerate palettes/*.css (every canonical palette found), manifest.json (vocabulary + skins +
-// palettes + compatibility matrix — the file agents, the CLI and the React adapter read) and
-// showcase/index.html. Idempotent; run after any change to core/components.json, a skin or a palette.
+// build — regenerate palettes/*.css (every canonical palette found), the Primer themes
+// (react/adapters/primer/themes/*, from the pinned @primer/primitives in react/ — skipped with a note when it is
+// not installed), manifest.json (vocabulary + skins + palettes + compatibility matrix — the file agents, the CLI
+// and the React adapter read) and showcase/index.html. Idempotent; run after any change to core/components.json,
+// a skin or a palette.
 //
 //   bin/build                 everything
-//   bin/build --no-palettes   skip palette regeneration (keep the committed palettes/*.css)
+//   bin/build --no-palettes   skip palette + Primer theme regeneration (keep the committed files)
 
 import { writeFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, SKINS, PALETTES_OUT, SHOWCASE, VERSION, readJson, listSkins, listSourcePalettes, loadPalette, paletteCss, paletteModes } from "./lib/common.js";
 import { renderShowcase } from "./lib/showcase.js";
+import { primerThemesDir, primerMissingMessage, listPrimerPalettes } from "./lib/primer.js";
+import { writePrimerTheme, writePrimerIndex } from "./gen-primer-theme";
 
 const argv = process.argv.slice(2);
 const log = (m) => console.log(m);
@@ -34,6 +38,17 @@ if (!argv.includes("--no-palettes") && sourceIds.length) {
   log(`palettes: source dir unavailable, kept ${palettes.length} committed files`);
 }
 const modes = Object.fromEntries(palettes.map((p) => [p.id, paletteModes(p)]));
+
+// 1b. Primer themes (palettes with a `primer` section → react/adapters/primer/themes/<mode>_<id>.css + index.ts)
+if (!argv.includes("--no-palettes") && sourceIds.length) {
+  const ids = listPrimerPalettes();
+  if (!primerThemesDir()) log(`primer themes: skipped — ${primerMissingMessage()}`);
+  else if (ids.length) {
+    for (const id of ids) writePrimerTheme(id);
+    writePrimerIndex(ids);
+    log(`primer themes: wrote ${ids.length} → react/adapters/primer/themes/*.css + index.ts`);
+  }
+}
 
 // 2. skins
 const skins = listSkins().map((id) => ({ ...readJson(join(SKINS, id, "manifest.json")), path: `skins/${id}/` }));
@@ -67,7 +82,7 @@ const manifest = {
     components: vocab.components.map(({ demo, ...c }) => c),
   },
   skins: skins.map(({ $schema, ...s }) => s),
-  palettes: palettes.map((p) => ({ id: p.id, name: p.name, mode: p.mode, modes: modes[p.id], license: p.license, docs: p.docs, file: `palettes/${p.id}.css` })),
+  palettes: palettes.map((p) => ({ id: p.id, name: p.name, mode: p.mode, modes: modes[p.id], license: p.license, docs: p.docs, file: `palettes/${p.id}.css`, ...(p.primer ? { primer_theme: `react/adapters/primer/themes/${p.mode}_${p.id}.css` } : {}) })),
   compatibility: compat,
 };
 writeFileSync(join(ROOT, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
