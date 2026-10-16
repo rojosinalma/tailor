@@ -4,6 +4,12 @@ All notable changes to tailor. Semver; the `version` in `package.json` is the so
 
 ## [Unreleased]
 
+## [0.5.1] — 2026-10-16
+
+### Fixed
+- `base.css`: `.t-empty-icon` set `width/height: auto`, which gave a sprite `<svg class="t-icon t-empty-icon">` its 300×150
+  intrinsic box; `.t-empty-icon.t-icon` is now `1em` (= the 2.5rem empty-state glyph size) for glyph spans and SVG alike.
+
 ## [0.5.0] — 2026-10-16
 
 ### Added
