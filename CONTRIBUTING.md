@@ -3,20 +3,22 @@
 ## Run it locally
 
 Bun ≥ 1.1 for the tooling; nothing to install at the repo root. The Primer themes need the pinned
-`@primer/primitives`, which `bun install` in `react/` provides (without it `bin/build` keeps the committed
-themes and says so).
+`@primer/primitives`, which `bun install` in `react/` provides; the icon-set entries and sprites need the pinned
+`@iconify-json/*` packages, which `bun install` in `icons/` provides (without either, `bin/build` keeps the
+committed files and says so).
 
 ```sh
 git clone https://github.com/rojosinalma/tailor && cd tailor
 (cd react && bun install --frozen-lockfile)
-bin/build                      # palettes/*.css, react/adapters/primer/themes/*, manifest.json, showcase/index.html
+(cd icons && bun install --frozen-lockfile)
+bin/build                      # palettes/*.css, react/adapters/primer/themes/*, manifest.json, showcase/index.html + icons.svg
 bunx serve .                   # open /showcase/
 ```
 
 ## Run the checks
 
 ```sh
-bin/verify                     # schemas, skin coverage, CSS parse, palette contrast, Primer themes current, showcase render
+bin/verify                     # schemas, skin coverage, CSS parse, palette contrast, Primer themes + icon sets current, showcase render
 cd react && bun run typecheck && bun run check-parity
 ```
 
@@ -26,7 +28,7 @@ cd react && bun run typecheck && bun run check-parity
 ## Where the docs live
 
 `README.md` stays short; everything else is a topic file under `docs/` (`architecture.md`,
-`usage.md`, `cli.md`, `configuration.md`, `palette-licenses.md`, `SDD.md`). Skin notes go in
+`usage.md`, `cli.md`, `configuration.md`, `icons.md`, `palette-licenses.md`, `SDD.md`). Skin notes go in
 `skins/<id>/README.md`, the vocabulary contract in `core/conventions.md`. Add to the matching file
 rather than to the README.
 
@@ -65,6 +67,14 @@ rather than to the README.
    and `index.ts`. Commit the palette and the generated theme together.
 6. Add the palette to the table in `docs/palette-licenses.md` and a CHANGELOG line. `bin/verify`.
 
+## Add an icon set
+
+1. Pin `@iconify-json/<id>` in `icons/package.json`; `bun install` in `icons/` (commit `bun.lock`).
+2. One line in `icons/sets.json`: id, name, SPDX licence (must equal the package's `info.json`), upstream URL.
+   Only sets whose licence permits redistributing the icon data; no upstream file is ever copied into the repo.
+3. `bin/build` → `manifest.json → icon_sets` + `showcase/icons.svg`; check the showcase's Icons section.
+4. Add the row to `docs/icons.md` and a CHANGELOG line. `bin/verify`.
+
 ## Promote a component (tier 2 → tier 1) or add one
 
 1. Edit `core/components.json`: set `tier: 1` (or add the entry: id, root `t-*`, parts, attributes,
@@ -90,5 +100,5 @@ and `bin/verify` must still pass.
 Plain imperative messages ("Add kanagawa palette"), one change per commit, no attribution trailers.
 A PR says what changed and why, links the issue for contract changes, and comes with `bin/verify`
 green and a CHANGELOG line under `[Unreleased]`. Generated files (`palettes/*.css`, `manifest.json`,
-`showcase/index.html`) are committed; run `bin/build` before committing so they are not stale
+`showcase/index.html`, `showcase/icons.svg`) are committed; run `bin/build` before committing so they are not stale
 (verify warns). `consumers.json` is local state and is gitignored.

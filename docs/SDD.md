@@ -101,7 +101,10 @@ Regenerates `palettes/*.css` (all source palettes; `--no-palettes` offline), com
 **compatibility** (skin × palette → list of modes: a palette fits a skin when it offers a mode the
 skin accepts (`both|dark|light`), satisfies `needs`, and is not in `exclude`), writes
 `manifest.json` (`contract`, `core.load_order`, `vocabulary{tier1,tier2,components}`, `skins`,
-`palettes{id,name,mode,modes,license,file}`, `compatibility`) and `showcase/index.html`.
+`palettes{id,name,mode,modes,license,file}`, `icon_sets{id,prefix,name,version,license,count,samples}`,
+`compatibility`), `showcase/index.html` and `showcase/icons.svg` (a sample sprite of every adopted set).
+Icon data comes from the `@iconify-json/*` packages pinned in `icons/package.json`, adopted by one line in
+`icons/sets.json`; without them installed the committed `icon_sets` and sprite are kept with a note.
 
 ### 2.6 Verify (`bin/verify`)
 
@@ -109,6 +112,7 @@ skin accepts (`both|dark|light`), satisfies `needs`, and is not in `exclude`), w
 |---|---|---|
 | core | components.json vs schema; unique ids; known groups; every class in markup/demo is a declared `t-*` root/part or base utility; tones exist; every `js:Tailor.x` is defined; CSS parses (brace check, lightningcss when installed); tailor.js parses | any violation |
 | palettes | tokens.css `:root` + every `[data-palette]` block defines the full 24-token set; contrast text/canvas ≥ 4.5, muted/canvas ≥ 4.5, text/surface ≥ 4.5, on-accent/accent-solid ≥ 3 | missing token or contrast below floor |
+| icons | `icons/sets.json` valid and every set pinned; with the packages installed: licence equals the data's SPDX id, `manifest.json → icon_sets` and `showcase/icons.svg` recomputed and identical | mismatch or stale (FAIL); packages missing → WARN |
 | skins | manifest vs schema; `coverage ⊇ tier-1` (lists gaps); ids known; skin.css parses; no palette token *set*; no colour literal; listed assets and `@import`s exist; modifier-like selectors → WARN | any FAIL; skipped with a note when `skins/` has no skin |
 | showcase | renders; a section per tier-1 id; unique ids; committed `index.html`/`manifest.json` not stale (WARN) | render error, missing section, duplicate id |
 
@@ -134,6 +138,9 @@ classes only, so a skin is judged on the real vocabulary. All links are relative
 6. Vendored-file header `/* managed by tailor v<version> — … — do not edit, run `tailor sync` */`;
    `tailor apply --skin <id[,id…]|all>` vendors multiple skins (first = default) and the head-snippet
    config lists them, which is what makes a consumer's runtime skin switcher work.
+7. Icon delivery: `tailor apply --icons <set:name,…>` → `public/tailor/icons.svg`, one
+   `<symbol id="<set>-<name>">` per icon, used as `<svg class="t-icon"><use href="/tailor/icons.svg#<set>-<name>"/></svg>`
+   (`core/conventions.md §2`, `docs/icons.md`).
 
 ## 4. Scope
 
@@ -155,5 +162,5 @@ that colour only through `--t-*` tokens.
 
 - CI: `.github/workflows/run-tests.yml` runs `bin/build` + `bin/verify` and the React typecheck on
   every push and pull request.
-- More kit adapters in `react/` (only Primer so far); more skins and palettes per
+- More kit adapters in `react/` (only Primer so far); more skins, palettes and icon sets per
   `CONTRIBUTING.md`.

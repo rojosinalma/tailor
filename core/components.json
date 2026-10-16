@@ -1398,6 +1398,27 @@
       "root": "t-accordion",
       "behaviour": "none",
       "markup": "<div class='t-accordion'><details name='faq'><summary>Question</summary><p>Answer</p></details><details name='faq'><summary>Question 2</summary><p>Answer</p></details></div>"
+    },
+    {
+      "id": "icon",
+      "name": "Icon",
+      "tier": 2,
+      "group": "data",
+      "description": "Inline icon slot. An <svg> that <use>s a symbol from the project's tailor sprite (public/tailor/icons.svg, subsetted from the adopted icon sets), or any inline SVG/glyph. 1em square, currentColor; data-size scales it.",
+      "root": "t-icon",
+      "attributes": {
+        "data-size": [
+          "xs",
+          "sm",
+          "lg",
+          "xl"
+        ]
+      },
+      "behaviour": "none",
+      "a11y": "Decorative icons carry aria-hidden=true. An icon that carries meaning on its own (icon-only button, state glyph) is role=img with a <title> (or the control has aria-label).",
+      "markup": "<svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-house'/></svg>",
+      "notes": "Symbols are <set>-<name> (bi-house, lucide-settings, simple-icons-github); the adopted sets are manifest.json → icon_sets. Never an icon font. See core/conventions.md §2 and docs/icons.md.",
+      "source": "Iconify JSON data of the adopted sets (icons/sets.json)"
     }
   ]
 }

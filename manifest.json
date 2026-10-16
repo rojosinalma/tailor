@@ -2,7 +2,7 @@
   "$schema": "manifest.schema.json",
   "name": "tailor",
   "version": "0.2.0",
-  "generated": "2026-10-16T12:31:50.830Z",
+  "generated": "2026-10-16T13:20:14.142Z",
   "contract": {
     "prefix": "t-",
     "token_prefix": "--t-",
@@ -111,7 +111,8 @@
       "history-bars",
       "mini-bars",
       "swatch-picker",
-      "accordion"
+      "accordion",
+      "icon"
     ],
     "components": [
       {
@@ -1439,6 +1440,27 @@
         "root": "t-accordion",
         "behaviour": "none",
         "markup": "<div class='t-accordion'><details name='faq'><summary>Question</summary><p>Answer</p></details><details name='faq'><summary>Question 2</summary><p>Answer</p></details></div>"
+      },
+      {
+        "id": "icon",
+        "name": "Icon",
+        "tier": 2,
+        "group": "data",
+        "description": "Inline icon slot. An <svg> that <use>s a symbol from the project's tailor sprite (public/tailor/icons.svg, subsetted from the adopted icon sets), or any inline SVG/glyph. 1em square, currentColor; data-size scales it.",
+        "root": "t-icon",
+        "attributes": {
+          "data-size": [
+            "xs",
+            "sm",
+            "lg",
+            "xl"
+          ]
+        },
+        "behaviour": "none",
+        "a11y": "Decorative icons carry aria-hidden=true. An icon that carries meaning on its own (icon-only button, state glyph) is role=img with a <title> (or the control has aria-label).",
+        "markup": "<svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-house'/></svg>",
+        "notes": "Symbols are <set>-<name> (bi-house, lucide-settings, simple-icons-github); the adopted sets are manifest.json → icon_sets. Never an icon font. See core/conventions.md §2 and docs/icons.md.",
+        "source": "Iconify JSON data of the adopted sets (icons/sets.json)"
       }
     ]
   },
@@ -2361,6 +2383,74 @@
       "docs": "https://github.com/jnurmine/Zenburn",
       "file": "palettes/zenburn.css",
       "primer_theme": "react/adapters/primer/themes/dark_zenburn.css"
+    }
+  ],
+  "icon_sets": [
+    {
+      "id": "bi",
+      "prefix": "bi",
+      "name": "Bootstrap Icons",
+      "version": "1.13.1",
+      "package_version": "1.2.7",
+      "license": "MIT",
+      "license_url": "https://github.com/twbs/icons/blob/main/LICENSE.md",
+      "upstream": "https://github.com/twbs/icons",
+      "count": 2078,
+      "package": "@iconify-json/bi",
+      "samples": [
+        "bi:graph-up",
+        "bi:card-image",
+        "bi:code-slash",
+        "bi:egg-fill",
+        "bi:brilliance",
+        "bi:toggle-on",
+        "bi:house",
+        "bi:gear"
+      ]
+    },
+    {
+      "id": "lucide",
+      "prefix": "lucide",
+      "name": "Lucide",
+      "version": "1.2.145",
+      "package_version": "1.2.145",
+      "license": "ISC",
+      "license_url": "https://github.com/lucide-icons/lucide/blob/main/LICENSE",
+      "upstream": "https://github.com/lucide-icons/lucide",
+      "count": 1891,
+      "package": "@iconify-json/lucide",
+      "samples": [
+        "lucide:circle-check",
+        "lucide:award",
+        "lucide:house",
+        "lucide:check",
+        "lucide:mountain",
+        "lucide:chevron-up",
+        "lucide:settings",
+        "lucide:search"
+      ]
+    },
+    {
+      "id": "simple-icons",
+      "prefix": "simple-icons",
+      "name": "Simple Icons",
+      "version": "16.35.0",
+      "package_version": "1.2.100",
+      "license": "CC0-1.0",
+      "license_url": "https://github.com/simple-icons/simple-icons/blob/develop/LICENSE.md",
+      "upstream": "https://github.com/simple-icons/simple-icons",
+      "count": 3466,
+      "package": "@iconify-json/simple-icons",
+      "samples": [
+        "simple-icons:wise",
+        "simple-icons:framer",
+        "simple-icons:vuetify",
+        "simple-icons:unsplash",
+        "simple-icons:stackblitz",
+        "simple-icons:mitsubishi",
+        "simple-icons:github",
+        "simple-icons:x"
+      ]
     }
   ],
   "compatibility": {

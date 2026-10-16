@@ -20,3 +20,8 @@
 .t-demo-shell .t-page-header { margin-bottom: var(--t-space-2); }
 .t-demo-shell .t-page-title { font-size: var(--t-text-lg); }
 body.sc-only .sc-group { display: none; }
+.sc-iconset { margin-bottom: var(--t-space-3); }
+.sc-iconset p { margin: 0 0 var(--t-space-2); }
+.sc-icons { display: flex; flex-wrap: wrap; gap: var(--t-space-3); }
+.sc-icon { display: inline-flex; flex-direction: column; align-items: center; gap: var(--t-space-1); width: 5.5rem; color: var(--t-text); }
+.sc-icon code { font-size: var(--t-text-xs); color: var(--t-muted); max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

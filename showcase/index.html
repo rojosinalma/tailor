@@ -27,7 +27,7 @@
   <header class="t-navbar t-shell-nav">
     <a class="t-navbar-brand" href="./"><span class="t-icon">✂</span>tailor</a>
     <span class="t-badge" data-tone="accent">v0.2.0</span>
-    <span class="t-badge" data-tone="info">43 tier-1 · 8 tier-2</span>
+    <span class="t-badge" data-tone="info">43 tier-1 · 9 tier-2</span>
     <span class="sc-only-bar t-small t-muted" hidden>Showing one section · <a href="./">all sections</a></span>
     <div class="t-navbar-end" style="margin-left:auto">
       <label class="t-visually-hidden" for="pick-skin">Skin</label>
@@ -90,6 +90,8 @@
         <li><a class="t-sidebar-item" href="#confirm"><span class="t-sidebar-item-name">Confirm dialog</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
         <li><a class="t-sidebar-item" href="#progress"><span class="t-sidebar-item-name">Progress</span></a></li>
         <li><a class="t-sidebar-item" href="#spinner"><span class="t-sidebar-item-name">Spinner</span></a></li>
+        <li class="t-sidebar-group">Icons</li>
+        <li><a class="t-sidebar-item" href="#icons"><span class="t-sidebar-item-name">Icon sets</span><span class="t-badge" data-size="xs" data-tone="neutral">3</span></a></li>
       </ul>
     </nav>
   </aside>
@@ -714,6 +716,26 @@
           <div class="sc-demo"><div class='t-cluster' data-gap='3' data-align='center'><span class='t-spinner' data-size='sm' role='status' aria-label='Loading'></span><span class='t-spinner' role='status' aria-label='Loading'></span><span class='t-spinner' data-size='lg' data-tone='accent' role='status' aria-label='Loading'></span><span class='t-muted t-small'><span class='t-spinner' data-size='sm' role='status'></span> Loading services…</span></div></div>
           <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;span class=&quot;t-spinner&quot; role=&quot;status&quot; aria-label=&quot;Loading&quot;&gt;&lt;/span&gt;
 &lt;span class=&quot;t-muted&quot;&gt;&lt;span class=&quot;t-spinner&quot; data-size=&quot;sm&quot; role=&quot;status&quot;&gt;&lt;/span&gt; Loading services…&lt;/span&gt;</code></pre></details>
+        </div>
+      </section>
+      <h2 class="sc-group" id="group-icons">Icons</h2>
+      <section class="t-card sc-component" id="icons" data-group="icons">
+        <div class="t-card-header"><h3 class="t-card-title">Icon sets <code class="sc-id">t-icon</code></h3><a class="sc-only" href="?only=icons" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">The adopted sets, a sample of each through the sprite built from them (<code>showcase/icons.svg</code>). Icons inherit <code>currentColor</code>; <code>data-size</code> scales the slot.</p>
+          <div class="sc-demo">
+            <div class="sc-iconset"><p class="t-small"><b>Bootstrap Icons</b> <span class="t-muted">1.13.1 · 2078 icons · MIT · <code>bi:*</code></span></p>
+              <div class="sc-icons"><span class="sc-icon" title="bi:graph-up"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#bi-graph-up"/></svg><code>graph-up</code></span><span class="sc-icon" title="bi:card-image"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#bi-card-image"/></svg><code>card-image</code></span><span class="sc-icon" title="bi:code-slash"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#bi-code-slash"/></svg><code>code-slash</code></span><span class="sc-icon" title="bi:egg-fill"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#bi-egg-fill"/></svg><code>egg-fill</code></span><span class="sc-icon" title="bi:brilliance"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#bi-brilliance"/></svg><code>brilliance</code></span><span class="sc-icon" title="bi:toggle-on"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#bi-toggle-on"/></svg><code>toggle-on</code></span><span class="sc-icon" title="bi:house"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#bi-house"/></svg><code>house</code></span><span class="sc-icon" title="bi:gear"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#bi-gear"/></svg><code>gear</code></span></div>
+            </div>
+            <div class="sc-iconset"><p class="t-small"><b>Lucide</b> <span class="t-muted">1.2.145 · 1891 icons · ISC · <code>lucide:*</code></span></p>
+              <div class="sc-icons"><span class="sc-icon" title="lucide:circle-check"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#lucide-circle-check"/></svg><code>circle-check</code></span><span class="sc-icon" title="lucide:award"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#lucide-award"/></svg><code>award</code></span><span class="sc-icon" title="lucide:house"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#lucide-house"/></svg><code>house</code></span><span class="sc-icon" title="lucide:check"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#lucide-check"/></svg><code>check</code></span><span class="sc-icon" title="lucide:mountain"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#lucide-mountain"/></svg><code>mountain</code></span><span class="sc-icon" title="lucide:chevron-up"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#lucide-chevron-up"/></svg><code>chevron-up</code></span><span class="sc-icon" title="lucide:settings"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#lucide-settings"/></svg><code>settings</code></span><span class="sc-icon" title="lucide:search"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#lucide-search"/></svg><code>search</code></span></div>
+            </div>
+            <div class="sc-iconset"><p class="t-small"><b>Simple Icons</b> <span class="t-muted">16.35.0 · 3466 icons · CC0-1.0 · <code>simple-icons:*</code></span></p>
+              <div class="sc-icons"><span class="sc-icon" title="simple-icons:wise"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#simple-icons-wise"/></svg><code>wise</code></span><span class="sc-icon" title="simple-icons:framer"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#simple-icons-framer"/></svg><code>framer</code></span><span class="sc-icon" title="simple-icons:vuetify"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#simple-icons-vuetify"/></svg><code>vuetify</code></span><span class="sc-icon" title="simple-icons:unsplash"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#simple-icons-unsplash"/></svg><code>unsplash</code></span><span class="sc-icon" title="simple-icons:stackblitz"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#simple-icons-stackblitz"/></svg><code>stackblitz</code></span><span class="sc-icon" title="simple-icons:mitsubishi"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#simple-icons-mitsubishi"/></svg><code>mitsubishi</code></span><span class="sc-icon" title="simple-icons:github"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#simple-icons-github"/></svg><code>github</code></span><span class="sc-icon" title="simple-icons:x"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#simple-icons-x"/></svg><code>x</code></span></div>
+            </div>
+          </div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;svg class=&quot;t-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;/tailor/icons.svg#bi-house&quot;/&gt;&lt;/svg&gt;
+&lt;svg class=&quot;t-icon&quot; role=&quot;img&quot;&gt;&lt;title&gt;GitHub&lt;/title&gt;&lt;use href=&quot;/tailor/icons.svg#simple-icons-github&quot;/&gt;&lt;/svg&gt;</code></pre><p class="t-muted t-small">The sprite is subsetted per project: <code>tailor apply &lt;dir&gt; --icons bi:house,lucide:settings</code> writes <code>public/tailor/icons.svg</code>. See core/conventions.md §2 and docs/icons.md.</p></details>
         </div>
       </section>
     </div>

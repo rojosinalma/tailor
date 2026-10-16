@@ -2,8 +2,16 @@
   "consumers": [
     {
       "path": "/path/to/your/project",
-      "skins": ["bootstrap"],
-      "palettes": ["dracula"],
+      "skins": [
+        "bootstrap"
+      ],
+      "palettes": [
+        "dracula"
+      ],
+      "icons": [
+        "bi:house",
+        "lucide:settings"
+      ],
       "mode": "dark",
       "react": false,
       "version": "0.1.0",

@@ -16,9 +16,13 @@ jobs:
         with:
           bun-version: "1.4"
       # The repo root has no dependencies (no bun.lock); bin/* run on Bun alone. react/ holds the pinned
-      # @primer/primitives the Primer themes are derived from, so it is installed before build + verify.
+      # @primer/primitives the Primer themes are derived from and icons/ the pinned @iconify-json packages the
+      # icon-set entries and sprites come from, so both are installed before build + verify.
       - name: Install react/ dependencies
         working-directory: react
+        run: bun install --frozen-lockfile
+      - name: Install icons/ dependencies
+        working-directory: icons
         run: bun install --frozen-lockfile
       - name: Build
         run: bin/build

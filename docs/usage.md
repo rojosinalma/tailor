@@ -2,8 +2,9 @@
 
 1. Copy `core/*` → `public/tailor/`, one or more `skins/<id>/skin.css` → `public/tailor/skins/<id>/`,
    the palettes you offer → `public/tailor/palettes/` — or let the CLI do it:
-   `bin/tailor apply <project-dir> --skin bootstrap,webtui --palettes dracula,gruvbox`
-   (see [cli.md](cli.md)).
+   `bin/tailor apply <project-dir> --skin bootstrap,webtui --palettes dracula,gruvbox --icons bi:house,lucide:settings`
+   (see [cli.md](cli.md)). `--icons` names the icons you use; the CLI writes them as one sprite,
+   `public/tailor/icons.svg` (see [icons.md](icons.md)).
 2. In your layout, in this order:
 
 ```html
@@ -30,7 +31,8 @@ Tailor.theme.init({
    `tailor apply` writes this block for you as `public/tailor/tailor-head.html`.
 
 3. Write markup from `core/components.json` (every component has a canonical `markup` snippet) and
-   read `core/conventions.md` once. Skin and palette are application settings; localStorage is
+   read `core/conventions.md` once. Icons: `<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"/></svg>`
+   (`tailor icons search <term>` finds names). Skin and palette are application settings; localStorage is
    only the pre-paint cache.
 4. Your own look: `skins/SKIN-CONTRACT.md` — a skin is one CSS file + a manifest, and `bin/verify`
    tells you when it covers the whole vocabulary. Your own colours: one JSON in `palettes/src/`

@@ -2,9 +2,10 @@
 // tailor — the design system CLI. Vendors versioned tailor assets into consuming projects
 // (idempotent, no package manager, managed-header files).
 //
-//   tailor apply <project-dir> [--skin <id[,id...]|all>] [--palettes <id,...>] [--mode dark|light|auto] [--react] [-n]
+//   tailor apply <project-dir> [--skin <id[,id...]|all>] [--palettes <id,...>] [--icons <set:name,...>] [--mode dark|light|auto] [--react] [-n]
 //   tailor sync  [<project-dir> | --all] [-n]
 //   tailor list
+//   tailor icons search <term> | tailor icons list
 //   tailor gen --target primer <palette> | --all
 //   tailor gen <system> <palette>
 //
@@ -12,6 +13,7 @@
 //   tokens.css base.css layout.css tailor.js        core (flat)
 //   skins/<id>/skin.css                             the chosen skin
 //   palettes/<id>.css                               generated from the canonical palettes (palettes/src/)
+//   icons.svg                                       sprite of the consumer's icons (--icons), subsetted from the adopted sets
 //   tailor-head.html                                <head> snippet: links in contract load order + pre-paint
 // Consumers are recorded in <tailor repo>/consumers.json (git-ignored local state, created on the first
 // `apply`; shape in consumers.example.json); `sync` re-vendors current versions into them, touching only
@@ -31,13 +33,14 @@ import {
   ROOT, CORE, SKINS, PALETTES_SRC, VERSION, readJson,
   loadPalette, listSourcePalettes, listSkins, paletteCss, paletteModes,
 } from "./lib/common.js";
+import { listIconSets, iconsInstalled, iconsMissingMessage, loadIconSet, resolveIcon, renderSprite, searchIcons } from "./lib/icons.js";
 
 const CONSUMERS_FILE = join(ROOT, "consumers.json");
 const WEB_UI_DESIGN_ASSETS = process.env.WEB_UI_DESIGN_ASSETS || "";
 const CORE_FILES = ["tokens.css", "base.css", "layout.css", "tailor.js"];
 const MARKER = "managed by tailor";
 const header = (what, comment = "css") =>
-  comment === "html"
+  comment === "html" || comment === "svg"
     ? `<!-- managed by tailor v${VERSION} \u2014 ${what} \u2014 do not edit, run \`tailor sync\` -->\n`
     : `/* managed by tailor v${VERSION} \u2014 ${what} \u2014 do not edit, run \`tailor sync\` */\n`;
 
@@ -83,6 +86,13 @@ function resolvePalettes(ids) {
   for (const id of ids) if (!known.includes(id)) die(`unknown palette "${id}" \u2014 valid palettes: ${known.join(" ")}`);
   return ids;
 }
+function resolveIcons(spec) {
+  const refs = [...new Set(spec.split(",").map((s) => s.trim()).filter(Boolean))];
+  if (!refs.length) die("--icons needs at least one <set>:<name> (e.g. bi:house,lucide:settings)");
+  if (!iconsInstalled()) die(iconsMissingMessage());
+  for (const r of refs) { try { resolveIcon(r); } catch (e) { die(e.message); } }
+  return refs;
+}
 
 function headSnippet(project, cfg) {
   const base = "/tailor/";
@@ -108,9 +118,10 @@ document.write('<link id="t-palette" rel="stylesheet" data-base="'+C.base+'palet
 `;
 }
 
-// Build { relPath: content } for a consumer spec. Throws on a missing skin/palette.
+// Build { relPath: content } for a consumer spec. Throws on a missing skin/palette/icon.
 // `skins` is an array (first = default); legacy consumer rows may still carry `skin` (string).
-function fileSet({ project, skins, skin, palettes, mode, react }) {
+// `icons` is the consumer's list of <set>:<name> refs → one subsetted sprite, icons.svg (absent when empty).
+function fileSet({ project, skins, skin, palettes, icons = [], mode, react }) {
   const list = skins ?? [skin];
   const files = {};
   for (const f of CORE_FILES) {
@@ -125,6 +136,7 @@ function fileSet({ project, skins, skin, palettes, mode, react }) {
     modes[id] = paletteModes(p);
     files[join("palettes", `${id}.css`)] = header(`palette ${id}`) + paletteCss(p);
   }
+  if (icons.length) files["icons.svg"] = renderSprite(icons, { header: header(`icons (${icons.length})`, "svg") });
   const cfg = { skins: [...list, "none"], palettes, modes, defaults: { skin: list[0], palette: palettes[0], mode } };
   files["tailor-head.html"] = headSnippet(project, cfg);
   return files;
@@ -164,22 +176,27 @@ function cmdApply() {
   const mode = takeFlag("--mode") ?? "dark";
   if (!["dark", "light", "auto"].includes(mode)) die(`--mode must be dark|light|auto, got "${mode}"`);
   const react = takeBool("--react");
+  const iconSpec = takeFlag("--icons");
   rejectUnknownFlags();
   const dir = argv.shift();
-  if (!dir) die("usage: tailor apply <project-dir> [--skin <id[,id...]|all>] [--palettes <id,...>] [--mode dark|light|auto] [--react] [-n]", 2);
+  if (!dir) die("usage: tailor apply <project-dir> [--skin <id[,id...]|all>] [--palettes <id,...>] [--icons <set:name,...>] [--mode dark|light|auto] [--react] [-n]", 2);
   const projectDir = resolve(dir);
   if (!existsSync(projectDir) || !statSync(projectDir).isDirectory()) die(`not a directory: ${projectDir}`);
   const project = basename(projectDir);
+  // --icons replaces the consumer's icon list; without it a re-apply keeps the recorded one
+  const recorded = loadConsumers().consumers.find((c) => c.path === projectDir);
+  const icons = iconSpec !== null ? resolveIcons(iconSpec) : recorded?.icons ?? [];
 
-  const spec = { project, skins, palettes, mode, react };
+  const spec = { project, skins, palettes, icons, mode, react };
   const destRoot = join(projectDir, "public", "tailor");
   const refused = report(writeFiles(destRoot, fileSet(spec)));
   if (react) console.log(`react mode: tailor.js not vendored \u2014 use the adapter workspace at ${tilde(join(ROOT, "react"))}`);
+  if (icons.length) console.log(`icons: ${icons.length} symbol${icons.length === 1 ? "" : "s"} in ${tilde(join(destRoot, "icons.svg"))} \u2014 <svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#${icons[0].replace(":", "-")}"/></svg>`);
   console.log(`${DRY ? "would paste" : "paste"} ${tilde(join(destRoot, "tailor-head.html"))} into your layout's <head>.`);
 
   if (!DRY) {
     const reg = loadConsumers();
-    const entry = { path: projectDir, skins, palettes, mode, react, version: VERSION, applied: new Date().toISOString().slice(0, 10) };
+    const entry = { path: projectDir, skins, palettes, icons, mode, react, version: VERSION, applied: new Date().toISOString().slice(0, 10) };
     const i = reg.consumers.findIndex((c) => c.path === projectDir);
     if (i === -1) reg.consumers.push(entry); else reg.consumers[i] = entry;
     saveConsumers(reg);
@@ -204,12 +221,12 @@ function cmdSync() {
 
   let anyRefused = false;
   for (const c of targets) {
-    console.log(`\n${tilde(c.path)} (skins ${(c.skins ?? [c.skin]).join(",")}, palettes ${c.palettes.join(",")}, applied v${c.version})`);
+    console.log(`\n${tilde(c.path)} (skins ${(c.skins ?? [c.skin]).join(",")}, palettes ${c.palettes.join(",")}, icons ${(c.icons ?? []).length}, applied v${c.version})`);
     if (!existsSync(c.path)) { console.log("  missing      project directory gone \u2014 remove it from consumers.json if retired"); continue; }
     const destRoot = join(c.path, "public", "tailor");
     let files;
     try {
-      files = fileSet({ project: basename(c.path), skins: c.skins ?? [c.skin], palettes: c.palettes, mode: c.mode ?? "dark", react: c.react });
+      files = fileSet({ project: basename(c.path), skins: c.skins ?? [c.skin], palettes: c.palettes, icons: c.icons ?? [], mode: c.mode ?? "dark", react: c.react });
     } catch (e) { console.log(`  skipped      ${e.message}`); continue; }
     const results = writeFiles(destRoot, files).map(([s, f]) => [s === "written" ? "missing" : s, f]);
     if (report(results)) anyRefused = true;
@@ -242,11 +259,37 @@ function cmdList() {
     try { const p = loadPalette(id); console.log(`  ${id.padEnd(14)} ${paletteModes(p).join("+").padEnd(10)} ${p.name}`); }
     catch (e) { console.log(`  ${id.padEnd(14)} (invalid: ${e.message.split("\n")[0]})`); }
   }
+  console.log("\nicon sets (icons/sets.json, data via Iconify):");
+  const sets = listIconSets();
+  if (!sets.length) console.log("  (none adopted)");
+  for (const s of sets) {
+    try { const set = loadIconSet(s.id); console.log(`  ${s.id.padEnd(14)} ${String(set.count).padStart(5)} icons  ${set.license.padEnd(8)} ${set.name} ${set.version}`); }
+    catch (_) { console.log(`  ${s.id.padEnd(14)}     ? icons  ${s.license.padEnd(8)} ${s.name} (not installed \u2014 bun install in icons/)`); }
+  }
   console.log("\nconsumers:");
   const reg = loadConsumers();
   if (!reg.consumers.length) console.log("  (none)");
   for (const c of reg.consumers)
-    console.log(`  ${tilde(c.path).padEnd(44)} skins:${(c.skins ?? [c.skin]).join(",")} palettes:${c.palettes.join(",")} v${c.version} (${c.applied})${c.react ? " react" : ""}`);
+    console.log(`  ${tilde(c.path).padEnd(44)} skins:${(c.skins ?? [c.skin]).join(",")} palettes:${c.palettes.join(",")}${c.icons?.length ? ` icons:${c.icons.length}` : ""} v${c.version} (${c.applied})${c.react ? " react" : ""}`);
+}
+
+function cmdIcons() {
+  const limit = Number(takeFlag("--limit") ?? 50);
+  rejectUnknownFlags();
+  const sub = argv.shift();
+  if (sub === "list") {
+    for (const s of listIconSets()) {
+      try { const set = loadIconSet(s.id); console.log(`${s.id.padEnd(14)} ${String(set.count).padStart(5)} icons  ${set.license.padEnd(8)} ${set.name} ${set.version}  ${set.upstream}`); }
+      catch (_) { console.log(`${s.id.padEnd(14)}     ? icons  ${s.license.padEnd(8)} ${s.name} (not installed)`); }
+    }
+    return;
+  }
+  if (sub !== "search" || !argv[0]) die("usage: tailor icons search <term> [--limit N]  |  tailor icons list", 2);
+  if (!iconsInstalled()) die(iconsMissingMessage());
+  const { total, hits } = searchIcons(argv.join(" "), { limit });
+  if (!total) { console.log(`no icon named like "${argv.join(" ")}" in ${listIconSets().map((s) => s.id).join(", ")}`); process.exit(1); }
+  for (const h of hits) console.log(h.ref);
+  if (total > hits.length) console.log(`\u2026 ${total - hits.length} more (--limit ${total})`);
 }
 
 async function cmdGenPrimer() {
@@ -284,14 +327,17 @@ async function cmdGen() {
 const HELP = `tailor v${VERSION} \u2014 vendor the tailor design system into a project (no package manager)
 
 usage:
-  tailor apply <project-dir> [--skin <id[,id...]|all>] [--palettes <id,...>] [--mode dark|light|auto] [--react] [-n]
-      Vendor core + skin + palettes + head snippet into <project-dir>/public/tailor/ and record
-      the consumer. --react skips tailor.js (use the react/ adapter workspace instead).
+  tailor apply <project-dir> [--skin <id[,id...]|all>] [--palettes <id,...>] [--icons <set:name,...>] [--mode dark|light|auto] [--react] [-n]
+      Vendor core + skin + palettes + icon sprite + head snippet into <project-dir>/public/tailor/ and
+      record the consumer. --icons lists the icons the project uses (icons.svg is subsetted to them;
+      omitted on a re-apply = keep the recorded list). --react skips tailor.js (use the react/ adapter).
   tailor sync [<project-dir> | --all] [-n]
       Re-vendor current versions into recorded consumers. Only files carrying the
       "${MARKER}" header are overwritten; anything else is refused.
   tailor list
-      Skins (coverage/mode from manifests), canonical palettes, recorded consumers.
+      Skins (coverage/mode from manifests), canonical palettes, adopted icon sets, recorded consumers.
+  tailor icons search <term> [--limit N]   |   tailor icons list
+      Find an icon by name across the adopted sets (prints <set>:<name> refs for --icons); list the sets.
   tailor gen <system> <palette>
       Optional passthrough to an external theme generator (bootstrap, luz, daisyui, shadcn, webtui,
       primer, …): set WEB_UI_DESIGN_ASSETS to its root; it runs <root>/bin/gen-theme <system> <palette>.
@@ -301,6 +347,8 @@ usage:
 examples:
   tailor apply ~/code/myapp --skin bootstrap --palettes dracula,gruvbox
   tailor apply ~/code/myapp --skin pico --palettes dracula --mode auto -n
+  tailor apply ~/code/myapp --icons bi:house,lucide:settings,simple-icons:github
+  tailor icons search gear
   tailor sync --all
   tailor gen --target primer dracula
   tailor gen daisyui nord
@@ -311,7 +359,8 @@ switch (cmd) {
   case "apply": cmdApply(); break;
   case "sync": cmdSync(); break;
   case "list": cmdList(); break;
+  case "icons": cmdIcons(); break;
   case "gen": await cmdGen(); break;
   case undefined: case "-h": case "--help": case "help": console.log(HELP); process.exit(cmd ? 0 : 2); break;
-  default: die(`unknown command "${cmd}" (apply|sync|list|gen, see tailor --help)`, 2);
+  default: die(`unknown command "${cmd}" (apply|sync|list|icons|gen, see tailor --help)`, 2);
 }

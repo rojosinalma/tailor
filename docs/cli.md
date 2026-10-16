@@ -5,9 +5,10 @@ tooling) distributes tailor's assets to consuming projects: idempotent vendoring
 manager, managed-header files, a consumer registry.
 
 ```
-tailor apply <project-dir> --skin bootstrap[,webtui,...|all] --palettes dracula,gruvbox [--mode dark] [--react] [-n]
+tailor apply <project-dir> --skin bootstrap[,webtui,...|all] --palettes dracula,gruvbox [--icons bi:house,...] [--mode dark] [--react] [-n]
 tailor sync [<project-dir>|--all]      # re-vendor managed files (header-guarded, idempotent)
-tailor list                            # skins · palettes · consumers
+tailor list                            # skins · palettes · icon sets · consumers
+tailor icons search <term>             # find <set>:<name> refs across the adopted icon sets (icons list: the sets)
 tailor gen --target primer <palette>   # Primer Primitives theme for one palette (--all: every palette)
 tailor gen <system> <palette>          # optional: passthrough to an external theme generator
 ```
@@ -22,7 +23,7 @@ ln -s "$PWD/bin/tailor" ~/.local/bin/tailor
 
 ## Commands
 
-### `tailor apply <project-dir> [--skin <id,...>] [--palettes <id,...>] [--mode dark|light|auto] [--react] [-n]`
+### `tailor apply <project-dir> [--skin <id,...>] [--palettes <id,...>] [--icons <set:name,...>] [--mode dark|light|auto] [--react] [-n]`
 
 Vendors into `<project-dir>/public/tailor/`:
 
@@ -31,6 +32,7 @@ Vendors into `<project-dir>/public/tailor/`:
 | `tokens.css` `base.css` `layout.css` `tailor.js` | core (contract load order) |
 | `skins/<id>/skin.css` | each chosen skin (default `bootstrap`; `all` = every skin, first = default) |
 | `palettes/<id>.css` | each chosen palette (default `dracula`), generated from `palettes/src/<id>.json` |
+| `icons.svg` | sprite of the icons named in `--icons`, one `<symbol id="<set>-<name>">` each, from the adopted sets (`icons/`); absent when none |
 | `tailor-head.html` | ready-made `<head>` snippet — see below |
 
 The snippet carries the three core `<link>`s in contract order, the pre-paint IIFE (configured with
@@ -40,11 +42,14 @@ and the chosen defaults; `?skin= ?palette= ?mode=` win for first paint), a defer
 layout's `<head>`; app CSS loads after it. Asset URLs assume `public/` is served at `/`
 (so `/tailor/...`).
 
+`--icons` takes `<set>:<name>` references (`tailor icons search` finds them); every one must exist in an
+adopted set or apply exits non-zero. It needs the icon data installed (`bun install` in `icons/`). On a
+re-apply, omitting `--icons` keeps the consumer's recorded list; passing it replaces the list.
 `--react` skips `tailor.js` and points at the `react/` adapter workspace instead.
 The first palette in `--palettes` becomes the default. `--mode` sets the default mode choice
 (`auto` resolves via `prefers-color-scheme`).
 
-Every apply upserts the consumer into `consumers.json` (path, skins, palettes, mode, react,
+Every apply upserts the consumer into `consumers.json` (path, skins, palettes, icons, mode, react,
 version, date).
 
 ### `tailor sync [<project-dir> | --all] [-n]`
@@ -58,8 +63,14 @@ and sync exits 1. A consumer whose skin or palette no longer exists is skipped w
 ### `tailor list`
 
 Skins (component coverage + mode constraint from each `skins/<id>/manifest.json`; unreadable
-manifests are shown, not fatal), the canonical palettes (mode(s) + name), and the recorded
-consumers.
+manifests are shown, not fatal), the canonical palettes (mode(s) + name), the adopted icon sets
+(count, licence, version), and the recorded consumers.
+
+### `tailor icons search <term> [--limit N]` · `tailor icons list`
+
+`search` prints `<set>:<name>` for every icon (or alias) whose name contains the term, across the
+adopted sets — exact and prefix matches first, 50 by default — in the form `--icons` takes; exits 1 on no
+hit. `list` prints the adopted sets with count, licence, version and upstream. See [icons.md](icons.md).
 
 ### `tailor gen --target primer <palette> | --all`
 
@@ -104,8 +115,10 @@ See [configuration.md](configuration.md) for `TAILOR_PALETTES`, `TAILOR_PRIMER_P
 - Managed header, first line of every vendored file (HTML comment in the snippet):
 
   ```
-  /* managed by tailor v<version> — <core|skin <id>|palette <id>|head snippet> — do not edit, run `tailor sync` */
+  /* managed by tailor v<version> — <core|skin <id>|palette <id>|icons (<n>)|head snippet> — do not edit, run `tailor sync` */
   ```
+
+  (an HTML/XML comment in the head snippet and the icon sprite).
 
   The version comes from `package.json`. `sync` identifies its files by the
   `managed by tailor` marker alone and refuses to touch files without it.
@@ -119,6 +132,8 @@ See [configuration.md](configuration.md) for `TAILOR_PALETTES`, `TAILOR_PRIMER_P
 tailor apply ~/code/myapp --skin bootstrap --palettes dracula,gruvbox
 tailor apply ~/code/myapp --skin all --palettes dracula,nord,gruvbox       # runtime skin switcher in the consumer
 tailor apply ~/code/myapp --skin pico --palettes dracula --mode auto -n
+tailor apply ~/code/myapp --icons bi:house,bi:gear,lucide:settings,simple-icons:github
+tailor icons search gear
 tailor sync --all
 tailor gen --target primer dracula
 tailor gen daisyui nord

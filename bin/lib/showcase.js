@@ -7,7 +7,7 @@ import { join } from "node:path";
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const prettyMarkup = (m) => m.replace(/'/g, '"');
 
-export function renderShowcase({ skins, palettes, modes }) {
+export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
   const vocab = readJson(join(CORE, "components.json"));
   const groups = Object.entries(vocab.groups);
   const tier1 = vocab.components.filter((c) => c.tier === 1);
@@ -29,6 +29,25 @@ export function renderShowcase({ skins, palettes, modes }) {
           <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>${esc(prettyMarkup(c.markup))}</code></pre>${c.notes ? `<p class="t-muted t-small">${esc(c.notes)}</p>` : ""}</details>
         </div>
       </section>`).join("")}`).join("");
+
+  const iconsNav = iconSets.length ? `
+        <li class="t-sidebar-group">Icons</li>
+        <li><a class="t-sidebar-item" href="#icons"><span class="t-sidebar-item-name">Icon sets</span><span class="t-badge" data-size="xs" data-tone="neutral">${iconSets.length}</span></a></li>` : "";
+  const iconsSection = iconSets.length ? `
+      <h2 class="sc-group" id="group-icons">Icons</h2>
+      <section class="t-card sc-component" id="icons" data-group="icons">
+        <div class="t-card-header"><h3 class="t-card-title">Icon sets <code class="sc-id">t-icon</code></h3><a class="sc-only" href="?only=icons" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">The adopted sets, a sample of each through the sprite built from them (<code>showcase/icons.svg</code>). Icons inherit <code>currentColor</code>; <code>data-size</code> scales the slot.</p>
+          <div class="sc-demo">${iconSets.map((s) => `
+            <div class="sc-iconset"><p class="t-small"><b>${esc(s.name)}</b> <span class="t-muted">${esc(s.version)} · ${s.count} icons · ${esc(s.license)} · <code>${esc(s.prefix)}:*</code></span></p>
+              <div class="sc-icons">${(s.samples ?? []).map((ref) => { const id = ref.replace(":", "-"); return `<span class="sc-icon" title="${esc(ref)}"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#${id}"/></svg><code>${esc(ref.split(":")[1])}</code></span>`; }).join("")}</div>
+            </div>`).join("")}
+          </div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>${esc(`<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"/></svg>
+<svg class="t-icon" role="img"><title>GitHub</title><use href="/tailor/icons.svg#simple-icons-github"/></svg>`)}</code></pre><p class="t-muted t-small">The sprite is subsetted per project: <code>tailor apply &lt;dir&gt; --icons bi:house,lucide:settings</code> writes <code>public/tailor/icons.svg</code>. See core/conventions.md §2 and docs/icons.md.</p></details>
+        </div>
+      </section>` : "";
 
   const paletteOpts = palettes.map((p) => `<option value="${p.id}">${esc(p.name)}${p.license.startsWith("values-only") ? " ·" : ""}</option>`).join("");
   const skinOpts = ['<option value="none">none (core only)</option>', ...skins.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`)].join("");
@@ -75,7 +94,7 @@ export function renderShowcase({ skins, palettes, modes }) {
   </header>
   <aside class="t-shell-side">
     <nav class="t-sidebar" aria-label="Sections" id="sections-nav">
-      <ul>${sideNav}
+      <ul>${sideNav}${iconsNav}
       </ul>
     </nav>
   </aside>
@@ -86,7 +105,7 @@ export function renderShowcase({ skins, palettes, modes }) {
       <div class="t-page-actions"><span class="t-small t-muted" id="sc-state"></span></div>
     </header>
     <div class="t-alert" data-tone="info" role="status" id="sc-core-note"><span class="t-icon t-alert-icon">ⓘ</span><div class="t-alert-body"><b>Core only.</b> No skin is applied: what you see is <code>core/base.css</code> — the functional baseline every skin builds on. Pick a skin above once one exists.</div></div>
-    <div id="sections">${sections}
+    <div id="sections">${sections}${iconsSection}
     </div>
   </main>
   <footer class="t-footer t-shell-foot">

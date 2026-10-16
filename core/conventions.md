@@ -50,9 +50,25 @@ Rules:
   styles `color: var(--t-tone)` and never enumerates tones. A component's **default** tone (what it
   shows with no `data-tone`) is declared at zero specificity — `:where(.t-badge) { --t-tone: … }` — so
   the `[data-tone]` rule in tokens.css always wins. Skins must use `:where()` for their defaults too.
-- Icons are **not** tailor's business: any inline element with class `t-icon` (an `<svg>`, an
-  `<i class="bi …">`, a glyph) is an icon slot. Skins size and align `.t-icon`; they never assume an
-  icon font. The showcase uses Unicode glyphs so it has no font dependency.
+- **Icons come from tailor's adopted icon sets.** tailor ships icon *sets* (it never draws icons):
+  the adopted ones are `icons/sets.json` → `manifest.json → icon_sets` (Bootstrap Icons, Lucide,
+  Simple Icons to start; data via Iconify JSON). A project declares the icons it uses
+  (`tailor apply <dir> --icons bi:house,lucide:settings`) and gets one subsetted sprite,
+  `public/tailor/icons.svg`, with a `<symbol id="<set>-<name>">` per icon. Markup:
+
+  ```html
+  <svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"/></svg>
+  <svg class="t-icon" role="img"><title>GitHub</title><use href="/tailor/icons.svg#simple-icons-github"/></svg>
+  ```
+
+  `.t-icon` is the slot: 1em square, `currentColor` (every shipped glyph uses it, so tones and
+  text colour apply), `data-size="xs|sm|lg|xl"` scales it. Skins size and align `.t-icon` and
+  never assume an icon font — **icon fonts are not used**. Decorative icons carry
+  `aria-hidden="true"`; an icon that carries meaning on its own is `role="img"` with a `<title>`
+  (or the control around it has `aria-label`). Any inline `<svg>` or Unicode glyph may still sit in
+  the slot, but a hand-drawn glyph is for things no adopted set has; `tailor icons search <term>`
+  finds names. The showcase uses Unicode glyphs in its chrome (no dependency) and shows the sets
+  through its own sprite. Details: `docs/icons.md`.
 - Prefix `t-` is reserved. Projects name their own things without it.
 
 ## 3. Semantic HTML first
@@ -162,8 +178,8 @@ it; they should not need to undo it.
 
 ## 8. Project rules (consumers)
 
-- Vendor `core/`, one or more `skins/<id>/`, the `palettes/*.css` you offer, and `tailor.js` via the
-  `tailor` CLI (header `/* managed by tailor <version> — do not edit */`). Never edit vendored files.
+- Vendor `core/`, one or more `skins/<id>/`, the `palettes/*.css` you offer, your icon sprite
+  (`--icons`) and `tailor.js` via the `tailor` CLI (header `/* managed by tailor <version> — do not edit */`). Never edit vendored files.
 - `app.css` holds the project's own components, named without the `t-` prefix, coloured with `--t-*`
   tokens only.
 - The pre-paint snippet from `docs/SDD.md § Switcher` goes in `<head>` right after the three core `<link>`s (it writes the skin and palette links there, so they cascade over `tokens.css`).

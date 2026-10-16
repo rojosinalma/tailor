@@ -1,0 +1,10 @@
+{
+  "name": "tailor-icons",
+  "description": "Adopted icon sets, as Iconify JSON data. Build input only: bin/build and the CLI read icons.json from each package; nothing here is shipped as-is.",
+  "private": true,
+  "dependencies": {
+    "@iconify-json/bi": "1.2.7",
+    "@iconify-json/lucide": "1.2.145",
+    "@iconify-json/simple-icons": "1.2.100"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "$comment": "Adopted icon sets. One entry per set; the package is @iconify-json/<id> and must be pinned in package.json. name/license/version/count in manifest.json come from the installed data; license here is checked against it by bin/verify.",
+  "sets": [
+    { "id": "bi", "name": "Bootstrap Icons", "license": "MIT", "upstream": "https://github.com/twbs/icons" },
+    { "id": "lucide", "name": "Lucide", "license": "ISC", "upstream": "https://github.com/lucide-icons/lucide" },
+    { "id": "simple-icons", "name": "Simple Icons", "license": "CC0-1.0", "upstream": "https://github.com/simple-icons/simple-icons" }
+  ]
+}

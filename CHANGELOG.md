@@ -2,6 +2,26 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
+## [Unreleased]
+
+### Added
+- Icon sets, via Iconify JSON data: `icons/` pins `@iconify-json/bi` (Bootstrap Icons, MIT), `@iconify-json/lucide`
+  (Lucide, ISC) and `@iconify-json/simple-icons` (Simple Icons, CC0-1.0); `icons/sets.json` is the adopted list
+  (one line per set). `bin/build` writes `manifest.json → icon_sets[]` (id, prefix, name, version, licence, count,
+  samples) and a sample sprite `showcase/icons.svg`; the showcase gains an **Icons** section. `bin/verify` checks
+  the list, the pins, the licences against the installed data and the currency of both artefacts (warns when the
+  packages are not installed). CI installs `icons/`.
+- CLI: `tailor apply --icons <set:name,...>` renders a subsetted sprite `public/tailor/icons.svg`
+  (`<symbol id="<set>-<name>">`, managed header naming every set and licence), recorded per consumer and kept
+  current by `tailor sync`; `tailor icons search <term>` / `tailor icons list`; `tailor list` shows the sets.
+- Vocabulary: `icon` (tier-2, root `t-icon`, `data-size`); `core/base.css` gives `.t-icon` `currentColor` and
+  `data-size="xs|sm|lg|xl"`.
+- `docs/icons.md`.
+
+### Changed
+- `core/conventions.md §2`: icons are tailor's business — the adopted sets, the sprite, `aria-hidden` /
+  `role="img"` rules, no icon fonts (supersedes "`.t-icon` is a slot, icons are not tailor's business").
+
 ## [0.2.0] — 2026-10-16
 
 ### Changed
