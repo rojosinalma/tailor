@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "palette.schema.json",
+  "title": "Palette (system-neutral)",
+  "description": "One colour palette, independent of any design system. assets/bin/gen-theme maps it onto Bootstrap (dracula.css variables), luz, daisyUI, shadcn and WebTUI; Primer keeps its richer primer/themes/<id>.palette.json. Every value is a 6-digit lowercase #rrggbb. Dark palettes: inset is darker than canvas, surface/selection lighter; neutrals run darkest → lightest.",
+  "type": "object",
+  "required": ["id", "name", "docs", "license", "mode", "canvas", "inset", "surface", "selection", "border", "text", "muted", "disabled", "accent", "on_accent", "link", "success", "warning", "danger", "info", "extra", "neutrals", "roles"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "$comment": { "type": "string", "description": "Source of the values (URL + file) and the licence situation; mandatory in practice." },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "description": "Registry id (designs.json) and the theme name every emitter uses." },
+    "name": { "type": "string" },
+    "docs": { "type": "string", "format": "uri", "description": "Upstream page for the palette." },
+    "license": { "type": "string", "description": "Upstream licence. 'values-only' when the upstream has no usable licence (GPL, no LICENSE file): only the colour values are reused, never code or assets." },
+    "mode": { "enum": ["dark", "light"], "description": "Which way the ramps run; color-scheme of the generated themes." },
+
+    "canvas": { "$ref": "#/$defs/hex", "description": "Page background." },
+    "inset": { "$ref": "#/$defs/hex", "description": "Sunken surface: navbar, sidebar, code blocks, table heads (darker than canvas in dark mode)." },
+    "surface": { "$ref": "#/$defs/hex", "description": "Raised surface: cards, popovers, menus." },
+    "selection": { "$ref": "#/$defs/hex", "description": "Hover / selected / current-line fill; also the muted background (shadcn --muted, daisyUI base-300)." },
+    "border": { "$ref": "#/$defs/hex", "description": "Default border and divider colour." },
+
+    "text": { "$ref": "#/$defs/hex", "description": "Body text, ≥ 7:1 on canvas where the upstream allows." },
+    "muted": { "$ref": "#/$defs/hex", "description": "Secondary text; must stay ≥ 4.5:1 on canvas (lifted from upstream where needed, like Dracula's #a5b0d6)." },
+    "disabled": { "$ref": "#/$defs/hex", "description": "Disabled text, placeholders, comment-grade decoration (Dracula's comment #6272a4). Not for readable text." },
+
+    "accent": { "$ref": "#/$defs/hex", "description": "Brand / primary hue: primary buttons, focus ring, active nav." },
+    "accent_solid": { "$ref": "#/$defs/hex", "description": "Optional darker fill for solid primary buttons when `accent` cannot carry `on_accent` at 4.5:1 (Solarized, Flexoki, Selenized). Defaults to `accent`." },
+    "on_accent": { "$ref": "#/$defs/hex", "description": "Text on an accent (or accent_solid) fill." },
+    "link": { "$ref": "#/$defs/hex", "description": "Hyperlink colour; often equals accent." },
+    "success": { "$ref": "#/$defs/hex", "description": "Healthy / ok (canonical: green)." },
+    "warning": { "$ref": "#/$defs/hex", "description": "Degraded / caution (canonical: orange, never yellow)." },
+    "danger": { "$ref": "#/$defs/hex", "description": "Failed / destructive (canonical: red). The text-safe variant when upstream's red is < 4.5:1 on canvas." },
+    "info": { "$ref": "#/$defs/hex", "description": "Informational (canonical: cyan/blue); usually the link colour." },
+
+    "extra": {
+      "type": "object",
+      "description": "The palette's named chromatic colours. The seven Dracula hue names are required so WebTUI variants, luz named colours and shadcn charts always resolve; a palette lacking a hue names its closest substitute and says so in $comment.",
+      "required": ["red", "orange", "yellow", "green", "cyan", "purple", "pink"],
+      "properties": {
+        "red": { "$ref": "#/$defs/hex" },
+        "orange": { "$ref": "#/$defs/hex" },
+        "yellow": { "$ref": "#/$defs/hex" },
+        "green": { "$ref": "#/$defs/hex" },
+        "cyan": { "$ref": "#/$defs/hex" },
+        "purple": { "$ref": "#/$defs/hex" },
+        "pink": { "$ref": "#/$defs/hex" },
+        "blue": { "$ref": "#/$defs/hex" },
+        "teal": { "$ref": "#/$defs/hex" },
+        "magenta": { "$ref": "#/$defs/hex" }
+      },
+      "additionalProperties": { "$ref": "#/$defs/hex" }
+    },
+    "neutrals": {
+      "type": "array", "minItems": 5, "items": { "$ref": "#/$defs/hex" },
+      "description": "Grey ramp darkest → lightest (same list as the Primer palette file). Emitters pick extra steps from it (e.g. WebTUI background3 = first step lighter than selection)."
+    },
+    "roles": {
+      "type": "array", "minItems": 4, "items": { "$ref": "#/$defs/hex" },
+      "description": "Chromatic hues in the palette's own order (same list as the Primer palette file); used for chart / series colours."
+    },
+
+    "light": {
+      "type": "object",
+      "description": "Optional light counterpart (Dracula → Alucard). Same surface/text/semantic/extra fields; emitters that support a runtime light mode (bootstrap) emit a second block from it. Palettes without it keep the foundation's light theme.",
+      "required": ["canvas", "inset", "surface", "selection", "border", "text", "muted", "disabled", "accent", "on_accent", "link", "success", "warning", "danger", "info", "extra"],
+      "additionalProperties": false,
+      "properties": {
+        "canvas": { "$ref": "#/$defs/hex" }, "inset": { "$ref": "#/$defs/hex" }, "surface": { "$ref": "#/$defs/hex" },
+        "selection": { "$ref": "#/$defs/hex" }, "border": { "$ref": "#/$defs/hex" },
+        "text": { "$ref": "#/$defs/hex" }, "muted": { "$ref": "#/$defs/hex" }, "disabled": { "$ref": "#/$defs/hex" },
+        "accent": { "$ref": "#/$defs/hex" }, "accent_solid": { "$ref": "#/$defs/hex" }, "on_accent": { "$ref": "#/$defs/hex" }, "link": { "$ref": "#/$defs/hex" },
+        "success": { "$ref": "#/$defs/hex" }, "warning": { "$ref": "#/$defs/hex" }, "danger": { "$ref": "#/$defs/hex" }, "info": { "$ref": "#/$defs/hex" },
+        "extra": { "type": "object", "required": ["red", "orange", "yellow", "green", "cyan", "purple", "pink"], "additionalProperties": { "$ref": "#/$defs/hex" } },
+        "neutrals": { "type": "array", "items": { "$ref": "#/$defs/hex" } }
+      }
+    }
+  },
+  "$defs": {
+    "hex": { "type": "string", "pattern": "^#[0-9a-f]{6}$" }
+  }
+}

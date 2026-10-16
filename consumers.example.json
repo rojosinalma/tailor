@@ -1,0 +1,13 @@
+{
+  "consumers": [
+    {
+      "path": "/path/to/your/project",
+      "skins": ["bootstrap"],
+      "palettes": ["dracula"],
+      "mode": "dark",
+      "react": false,
+      "version": "0.1.0",
+      "applied": "2026-01-01"
+    }
+  ]
+}

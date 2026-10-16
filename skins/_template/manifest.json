@@ -1,0 +1,15 @@
+{
+  "$schema": "../manifest.schema.json",
+  "id": "template",
+  "name": "Template skin",
+  "system": "none",
+  "version": "0.1.0",
+  "description": "Copy this folder to skins/<id>/, rename, fill coverage with every tier-1 id, style skin.css.",
+  "coverage": [],
+  "tier2": [],
+  "palette_constraints": { "mode": "both" },
+  "vendor": { "package": "none", "version": "0", "license": "MIT" },
+  "files": { "css": "skin.css" },
+  "tokens_overridden": [],
+  "notes": "Folders starting with _ are ignored by bin/build and bin/verify."
+}

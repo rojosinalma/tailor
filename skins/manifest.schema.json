@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "manifest.schema.json",
+  "title": "tailor skin manifest (skins/<id>/manifest.json)",
+  "type": "object",
+  "required": ["id", "name", "system", "version", "coverage", "tier2", "palette_constraints", "vendor", "files"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$", "description": "Folder name and data-skin value." },
+    "name": { "type": "string", "minLength": 1 },
+    "system": { "type": "string", "minLength": 1, "description": "The design system rendered: bootstrap, pico, simple, webtui, daisyui, luz, tufte, govuk, none (bespoke)." },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$", "description": "Skin version (semver), independent of tailor's." },
+    "description": { "type": "string" },
+    "coverage": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }, "uniqueItems": true, "description": "Tier-1 component ids the skin styles. bin/verify FAILS unless this ⊇ every tier-1 id in core/components.json." },
+    "tier2": { "type": "array", "items": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" }, "uniqueItems": true, "description": "Tier-2 component ids the skin styles (optional extras)." },
+    "palette_constraints": {
+      "type": "object",
+      "required": ["mode"],
+      "additionalProperties": false,
+      "properties": {
+        "mode": { "enum": ["dark", "light", "both"], "description": "Which resolved modes the skin renders correctly. A palette is compatible when it offers at least one mode the skin accepts." },
+        "needs": { "type": "array", "items": { "enum": ["accent_solid", "light", "blue", "teal", "magenta"] }, "description": "Palette fields the skin cannot do without (e.g. a light block)." },
+        "exclude": { "type": "array", "items": { "type": "string" }, "description": "Palette ids known to look wrong with this skin (documented why in notes)." }
+      }
+    },
+    "vendor": {
+      "type": "object",
+      "required": ["package", "version", "license"],
+      "additionalProperties": false,
+      "properties": {
+        "package": { "type": "string", "description": "Upstream package or 'none' for a bespoke skin." },
+        "version": { "type": "string" },
+        "license": { "type": "string", "description": "Upstream licence (must be MIT-compatible to vendor)." },
+        "url": { "type": "string" },
+        "vendored": { "type": "boolean", "description": "true when upstream CSS is copied into the skin folder (then skin.css @imports it)." }
+      }
+    },
+    "files": {
+      "type": "object",
+      "required": ["css"],
+      "additionalProperties": false,
+      "properties": {
+        "css": { "const": "skin.css" },
+        "assets": { "type": "array", "items": { "type": "string" }, "description": "Other files in the folder a consumer must copy (fonts, vendored CSS)." },
+        "build": { "type": "string", "description": "Script in the skin folder that (re)produces skin.css, if any." }
+      }
+    },
+    "tokens_overridden": { "type": "array", "items": { "type": "string", "pattern": "^--t-(radius|space|font|text|shadow|control|leading|border-w|duration|tint)" }, "description": "Scale tokens the skin resets in its :root block. Palette tokens are forbidden here (verify rejects them)." },
+    "notes": { "type": "string" }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "../manifest.schema.json",
+  "id": "pico",
+  "name": "Pico CSS",
+  "system": "pico",
+  "version": "0.1.0",
+  "description": "Pico CSS 2.1.1's look (soft, rounded, generous spacing, solid primary, shadowed cards) translated onto the t-* vocabulary. Pico's --pico-* variables are bridged to --t-* tokens so every palette flows through.",
+  "coverage": [
+    "app-shell", "navbar", "sidebar", "footer", "page", "section", "toolbar", "grid", "stack", "split",
+    "button", "button-group", "segmented", "menu",
+    "tabs", "breadcrumb", "pagination", "list",
+    "field", "check", "duration-input", "settings-row",
+    "badge", "counter", "chip", "state-label", "status-dot", "avatar", "table", "card", "empty-state", "timeline", "relative-time", "tooltip", "help-popover", "code-block", "truncate",
+    "alert", "toast", "dialog", "confirm", "progress", "spinner"
+  ],
+  "tier2": ["drawer", "accordion"],
+  "palette_constraints": { "mode": "both" },
+  "vendor": { "package": "@picocss/pico", "version": "2.1.1", "license": "MIT", "url": "https://picocss.com", "vendored": false },
+  "files": { "css": "skin.css" },
+  "tokens_overridden": ["--t-radius-sm", "--t-radius-md", "--t-radius-lg", "--t-radius-xl", "--t-control-h", "--t-control-h-sm", "--t-control-h-lg", "--t-duration", "--t-shadow-md"],
+  "notes": "Not vendored: pico.classless.min.css styles bare elements (dialog as a full-screen overlay, details/summary chevrons, nav li padding, button width 100 % in forms) and cannot be aliased onto read-only tailor markup (contract rule 5). skin.css re-declares Pico's metrics and visual rules against t-* selectors and keeps a --pico-* → --t-* bridge in :root so projects mixing Pico variables stay on-palette."
+}

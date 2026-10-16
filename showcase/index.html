@@ -1,0 +1,729 @@
+<!doctype html>
+<html lang="en" data-palette="dracula" data-mode="dark" data-skin="none">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>tailor showcase</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../core/tokens.css">
+  <link rel="stylesheet" href="../core/base.css">
+  <link rel="stylesheet" href="../core/layout.css">
+  <script>
+    /* Pre-paint (after the core links so skin + palette cascade over tokens.css): ?skin= ?palette= ?mode= → localStorage → defaults; sets data-* on <html> and the two <link>s before first paint. */
+    (function(){var C={"project":"tailor-showcase","skins":["none","bootstrap","daisyui","govuk","luz","pico","simple","tufte","webtui"],"palettes":["ayu","catppuccin","dracula","everforest","flexoki","gruvbox","kanagawa","modusvivendi","nightfox","nightowl","nord","onedark","oxocarbon","poimandres","rosepine","selenized","solarized","synthwave84","tokyonight","vitesse","zenburn"],"modes":{"ayu":["dark"],"catppuccin":["dark"],"dracula":["dark","light"],"everforest":["dark"],"flexoki":["dark"],"gruvbox":["dark"],"kanagawa":["dark"],"modusvivendi":["dark"],"nightfox":["dark"],"nightowl":["dark"],"nord":["dark"],"onedark":["dark"],"oxocarbon":["dark"],"poimandres":["dark"],"rosepine":["dark"],"selenized":["dark"],"solarized":["dark"],"synthwave84":["dark"],"tokyonight":["dark"],"vitesse":["dark"],"zenburn":["dark"]},"defaults":{"skin":"bootstrap","palette":"dracula","mode":"dark"}};var P=C.project,q=new URLSearchParams(location.search);
+    function g(k){var v=q.get(k);try{return v||localStorage.getItem(P+'.'+k)||C.defaults[k]}catch(e){return v||C.defaults[k]}}
+    var h=document.documentElement,s=g('skin'),p=g('palette'),m=g('mode');
+    if(C.skins.indexOf(s)<0)s=C.defaults.skin;if(C.palettes.indexOf(p)<0)p=C.defaults.palette;
+    if(m==='auto')m=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
+    var modes=C.modes[p]||['dark'];if(modes.indexOf(m)<0)m=modes[0];
+    h.dataset.skin=s;h.dataset.palette=p;h.dataset.mode=m;window.TAILOR_SHOWCASE=C;
+    document.write('<link id="t-skin" rel="stylesheet" data-base="../skins/" href="'+(s==='none'?'':'../skins/'+s+'/skin.css')+'"'+(s==='none'?' disabled':'')+'>');
+    document.write('<link id="t-palette" rel="stylesheet" data-base="../palettes/" href="../palettes/'+p+'.css">');})();
+  </script>
+  <link rel="stylesheet" href="showcase.css">
+</head>
+<body>
+<div class="t-shell">
+  <header class="t-navbar t-shell-nav">
+    <a class="t-navbar-brand" href="./"><span class="t-icon">✂</span>tailor</a>
+    <span class="t-badge" data-tone="accent">v0.1.0</span>
+    <span class="t-badge" data-tone="info">43 tier-1 · 8 tier-2</span>
+    <span class="sc-only-bar t-small t-muted" hidden>Showing one section · <a href="./">all sections</a></span>
+    <div class="t-navbar-end" style="margin-left:auto">
+      <label class="t-visually-hidden" for="pick-skin">Skin</label>
+      <select class="t-select" data-size="sm" id="pick-skin" data-tailor-picker="skin"><option value="none">none (core only)</option><option value="bootstrap">Bootstrap 5 (Dracula look)</option><option value="daisyui">daisyUI 5</option><option value="govuk">GOV.UK Frontend (translated)</option><option value="luz">luz (d00m-gui)</option><option value="pico">Pico CSS</option><option value="simple">Simple.css (translated)</option><option value="tufte">Tufte CSS (translated)</option><option value="webtui">WebTUI (terminal look)</option></select>
+      <label class="t-visually-hidden" for="pick-palette">Palette</label>
+      <select class="t-select" data-size="sm" id="pick-palette" data-tailor-picker="palette"><option value="ayu">Ayu Dark</option><option value="catppuccin">Catppuccin Mocha</option><option value="dracula">Dracula</option><option value="everforest">Everforest Dark (medium)</option><option value="flexoki">Flexoki Dark</option><option value="gruvbox">Gruvbox Dark (medium) ·</option><option value="kanagawa">Kanagawa Wave</option><option value="modusvivendi">Modus Vivendi ·</option><option value="nightfox">Nightfox</option><option value="nightowl">Night Owl</option><option value="nord">Nord</option><option value="onedark">One Dark</option><option value="oxocarbon">Oxocarbon Dark</option><option value="poimandres">Poimandres</option><option value="rosepine">Rosé Pine</option><option value="selenized">Selenized Dark</option><option value="solarized">Solarized Dark</option><option value="synthwave84">SynthWave &#39;84</option><option value="tokyonight">Tokyo Night</option><option value="vitesse">Vitesse Dark</option><option value="zenburn">Zenburn ·</option></select>
+      <label class="t-visually-hidden" for="pick-mode">Mode</label>
+      <select class="t-select" data-size="sm" id="pick-mode" data-tailor-picker="mode"><option value="dark">Dark</option><option value="light">Light</option><option value="auto">Auto</option></select>
+    </div>
+  </header>
+  <aside class="t-shell-side">
+    <nav class="t-sidebar" aria-label="Sections" id="sections-nav">
+      <ul>
+        <li class="t-sidebar-group">App shell &amp; layout</li>
+        <li><a class="t-sidebar-item" href="#app-shell"><span class="t-sidebar-item-name">App shell</span></a></li>
+        <li><a class="t-sidebar-item" href="#navbar"><span class="t-sidebar-item-name">Navbar</span></a></li>
+        <li><a class="t-sidebar-item" href="#sidebar"><span class="t-sidebar-item-name">Sidebar</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#footer"><span class="t-sidebar-item-name">Footer</span></a></li>
+        <li><a class="t-sidebar-item" href="#page"><span class="t-sidebar-item-name">Page</span></a></li>
+        <li><a class="t-sidebar-item" href="#section"><span class="t-sidebar-item-name">Section</span></a></li>
+        <li><a class="t-sidebar-item" href="#toolbar"><span class="t-sidebar-item-name">Toolbar</span></a></li>
+        <li><a class="t-sidebar-item" href="#grid"><span class="t-sidebar-item-name">Grid</span></a></li>
+        <li><a class="t-sidebar-item" href="#stack"><span class="t-sidebar-item-name">Stack &amp; cluster</span></a></li>
+        <li><a class="t-sidebar-item" href="#split"><span class="t-sidebar-item-name">Split</span></a></li>
+        <li class="t-sidebar-group">Actions</li>
+        <li><a class="t-sidebar-item" href="#button"><span class="t-sidebar-item-name">Button</span></a></li>
+        <li><a class="t-sidebar-item" href="#button-group"><span class="t-sidebar-item-name">Button group &amp; quick filter</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#segmented"><span class="t-sidebar-item-name">Segmented control</span></a></li>
+        <li><a class="t-sidebar-item" href="#menu"><span class="t-sidebar-item-name">Menu (dropdown)</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li class="t-sidebar-group">Navigation</li>
+        <li><a class="t-sidebar-item" href="#tabs"><span class="t-sidebar-item-name">Tabs</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#breadcrumb"><span class="t-sidebar-item-name">Breadcrumb</span></a></li>
+        <li><a class="t-sidebar-item" href="#pagination"><span class="t-sidebar-item-name">Pagination</span></a></li>
+        <li><a class="t-sidebar-item" href="#list"><span class="t-sidebar-item-name">Selectable list</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li class="t-sidebar-group">Forms</li>
+        <li><a class="t-sidebar-item" href="#field"><span class="t-sidebar-item-name">Field</span></a></li>
+        <li><a class="t-sidebar-item" href="#check"><span class="t-sidebar-item-name">Checkbox, radio, switch</span></a></li>
+        <li><a class="t-sidebar-item" href="#duration-input"><span class="t-sidebar-item-name">Duration input</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#settings-row"><span class="t-sidebar-item-name">Settings row</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li class="t-sidebar-group">Data display</li>
+        <li><a class="t-sidebar-item" href="#badge"><span class="t-sidebar-item-name">Badge</span></a></li>
+        <li><a class="t-sidebar-item" href="#counter"><span class="t-sidebar-item-name">Counter</span></a></li>
+        <li><a class="t-sidebar-item" href="#chip"><span class="t-sidebar-item-name">Chip</span></a></li>
+        <li><a class="t-sidebar-item" href="#state-label"><span class="t-sidebar-item-name">State label</span></a></li>
+        <li><a class="t-sidebar-item" href="#status-dot"><span class="t-sidebar-item-name">Status dot</span></a></li>
+        <li><a class="t-sidebar-item" href="#avatar"><span class="t-sidebar-item-name">Avatar</span></a></li>
+        <li><a class="t-sidebar-item" href="#table"><span class="t-sidebar-item-name">Table</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#card"><span class="t-sidebar-item-name">Card</span></a></li>
+        <li><a class="t-sidebar-item" href="#empty-state"><span class="t-sidebar-item-name">Empty state</span></a></li>
+        <li><a class="t-sidebar-item" href="#timeline"><span class="t-sidebar-item-name">Timeline</span></a></li>
+        <li><a class="t-sidebar-item" href="#relative-time"><span class="t-sidebar-item-name">Relative time</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#tooltip"><span class="t-sidebar-item-name">Tooltip</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#help-popover"><span class="t-sidebar-item-name">Help popover</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#code-block"><span class="t-sidebar-item-name">Code block</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#truncate"><span class="t-sidebar-item-name">Truncate</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li class="t-sidebar-group">Feedback</li>
+        <li><a class="t-sidebar-item" href="#alert"><span class="t-sidebar-item-name">Alert</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#toast"><span class="t-sidebar-item-name">Toast</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#dialog"><span class="t-sidebar-item-name">Dialog</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#confirm"><span class="t-sidebar-item-name">Confirm dialog</span><span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span></a></li>
+        <li><a class="t-sidebar-item" href="#progress"><span class="t-sidebar-item-name">Progress</span></a></li>
+        <li><a class="t-sidebar-item" href="#spinner"><span class="t-sidebar-item-name">Spinner</span></a></li>
+      </ul>
+    </nav>
+  </aside>
+  <main class="t-shell-main t-page">
+    <header class="t-page-header">
+      <h1 class="t-page-title">tailor showcase</h1>
+      <span class="t-page-lead">every tier-1 component once, in tailor markup · skin and palette swap underneath</span>
+      <div class="t-page-actions"><span class="t-small t-muted" id="sc-state"></span></div>
+    </header>
+    <div class="t-alert" data-tone="info" role="status" id="sc-core-note"><span class="t-icon t-alert-icon">ⓘ</span><div class="t-alert-body"><b>Core only.</b> No skin is applied: what you see is <code>core/base.css</code> — the functional baseline every skin builds on. Pick a skin above once one exists.</div></div>
+    <div id="sections">
+      <h2 class="sc-group" id="group-shell">App shell &amp; layout</h2>
+      
+      <section class="t-card sc-component" id="app-shell" data-group="shell">
+        <div class="t-card-header"><h3 class="t-card-title">App shell <code class="sc-id">t-shell</code></h3><a class="sc-only" href="?only=app-shell" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">The page frame: sticky navbar, optional sticky scrolling sidebar, main column, fixed footer. Stacks below 992px.</p>
+          <div class="sc-demo"><div class='t-shell t-demo-shell' data-demo='mock'>
+  <header class='t-navbar t-shell-nav'><a class='t-navbar-brand' href='#'>console</a><ul class='t-navbar-nav'><li><a class='t-navbar-link' href='#' aria-current='page'>Services</a></li><li><a class='t-navbar-link' href='#'>Hosts</a></li></ul></header>
+  <aside class='t-shell-side'><nav class='t-sidebar' aria-label='Mock'><ul><li class='t-sidebar-group'>Fleet</li><li><a class='t-sidebar-item' href='#' aria-current='page'><span class='t-sidebar-item-name'>Overview</span></a></li><li><a class='t-sidebar-item' href='#'><span class='t-sidebar-item-name'>Devices</span><span class='t-counter'>12</span></a></li></ul></nav></aside>
+  <main class='t-shell-main t-page'><header class='t-page-header'><h1 class='t-page-title'>Services</h1></header><p class='t-muted'>Main column scrolls; sidebar and navbar stay.</p></main>
+  <footer class='t-footer t-shell-foot'><span class='t-footer-version'>v0.9.2</span></footer>
+</div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-shell&quot;&gt;
+  &lt;header class=&quot;t-navbar t-shell-nav&quot;&gt;…&lt;/header&gt;
+  &lt;aside class=&quot;t-shell-side&quot;&gt;&lt;nav class=&quot;t-sidebar&quot; aria-label=&quot;Sections&quot;&gt;…&lt;/nav&gt;&lt;/aside&gt;
+  &lt;main class=&quot;t-shell-main t-page&quot;&gt;…&lt;/main&gt;
+  &lt;footer class=&quot;t-footer t-shell-foot&quot;&gt;…&lt;/footer&gt;
+&lt;/div&gt;</code></pre><p class="t-muted t-small">layout.css owns the geometry (--t-nav-h, --t-footer-h, --t-sidebar-w, --t-gutter). Skins colour the slots via .t-navbar/.t-sidebar/.t-footer, never reposition them.</p></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="navbar" data-group="shell">
+        <div class="t-card-header"><h3 class="t-card-title">Navbar <code class="sc-id">t-navbar</code></h3><a class="sc-only" href="?only=navbar" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Top bar: brand left, links right, separators, end slot (picker, theme toggle).</p>
+          <div class="sc-demo"><header class='t-navbar'>
+  <a class='t-navbar-brand' href='/'><span class='t-icon'>◆</span>console</a>
+  <ul class='t-navbar-nav'>
+    <li><a class='t-navbar-link' href='/services' aria-current='page'>Services</a></li>
+    <li><a class='t-navbar-link' href='/hosts'>Hosts</a></li>
+  </ul>
+  <span class='t-navbar-sep'></span>
+  <div class='t-navbar-end'>…picker…</div>
+</header></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;header class=&quot;t-navbar&quot;&gt;
+  &lt;a class=&quot;t-navbar-brand&quot; href=&quot;/&quot;&gt;&lt;span class=&quot;t-icon&quot;&gt;◆&lt;/span&gt;console&lt;/a&gt;
+  &lt;ul class=&quot;t-navbar-nav&quot;&gt;
+    &lt;li&gt;&lt;a class=&quot;t-navbar-link&quot; href=&quot;/services&quot; aria-current=&quot;page&quot;&gt;Services&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a class=&quot;t-navbar-link&quot; href=&quot;/hosts&quot;&gt;Hosts&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+  &lt;span class=&quot;t-navbar-sep&quot;&gt;&lt;/span&gt;
+  &lt;div class=&quot;t-navbar-end&quot;&gt;…picker…&lt;/div&gt;
+&lt;/header&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="sidebar" data-group="shell">
+        <div class="t-card-header"><h3 class="t-card-title">Sidebar <code class="sc-id">t-sidebar</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.scrollspy (optional)</span><a class="sc-only" href="?only=sidebar" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Vertical nav: group headers, items with icon + name + trailing counter/dot, nested groups via &lt;details&gt;, dividers. Also the settings-tabs pattern.</p>
+          <div class="sc-demo"><nav class='t-sidebar' aria-label='Sections'>
+  <ul>
+    <li class='t-sidebar-group'>Overview</li>
+    <li><a class='t-sidebar-item' href='#dash' aria-current='page'><span class='t-icon'>▣</span><span class='t-sidebar-item-name'>Dashboard</span></a></li>
+    <li><a class='t-sidebar-item' href='#alerts'><span class='t-icon'>▲</span><span class='t-sidebar-item-name'>Alerts</span><span class='t-counter' data-tone='danger'>3</span></a></li>
+    <li><details open><summary class='t-sidebar-item'><span class='t-icon'>▤</span><span class='t-sidebar-item-name'>Devices</span><span class='t-counter'>12</span><span class='t-sidebar-chevron'></span></summary>
+      <ul class='t-sidebar-nested'><li><a class='t-sidebar-item' href='#d1'><span class='t-dot' data-status='running'></span><span class='t-sidebar-item-name'>epaper-display</span></a></li></ul></details></li>
+    <li class='t-sidebar-divider'></li>
+    <li><a class='t-sidebar-item' href='#settings'><span class='t-icon'>⚙</span><span class='t-sidebar-item-name'>Settings</span></a></li>
+  </ul>
+</nav></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;nav class=&quot;t-sidebar&quot; aria-label=&quot;Sections&quot;&gt;
+  &lt;ul&gt;
+    &lt;li class=&quot;t-sidebar-group&quot;&gt;Overview&lt;/li&gt;
+    &lt;li&gt;&lt;a class=&quot;t-sidebar-item&quot; href=&quot;#dash&quot; aria-current=&quot;page&quot;&gt;&lt;span class=&quot;t-icon&quot;&gt;▣&lt;/span&gt;&lt;span class=&quot;t-sidebar-item-name&quot;&gt;Dashboard&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a class=&quot;t-sidebar-item&quot; href=&quot;#alerts&quot;&gt;&lt;span class=&quot;t-icon&quot;&gt;▲&lt;/span&gt;&lt;span class=&quot;t-sidebar-item-name&quot;&gt;Alerts&lt;/span&gt;&lt;span class=&quot;t-counter&quot; data-tone=&quot;danger&quot;&gt;3&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;details open&gt;&lt;summary class=&quot;t-sidebar-item&quot;&gt;&lt;span class=&quot;t-icon&quot;&gt;▤&lt;/span&gt;&lt;span class=&quot;t-sidebar-item-name&quot;&gt;Devices&lt;/span&gt;&lt;span class=&quot;t-counter&quot;&gt;12&lt;/span&gt;&lt;span class=&quot;t-sidebar-chevron&quot;&gt;&lt;/span&gt;&lt;/summary&gt;
+      &lt;ul class=&quot;t-sidebar-nested&quot;&gt;&lt;li&gt;&lt;a class=&quot;t-sidebar-item&quot; href=&quot;#d1&quot;&gt;&lt;span class=&quot;t-dot&quot; data-status=&quot;running&quot;&gt;&lt;/span&gt;&lt;span class=&quot;t-sidebar-item-name&quot;&gt;epaper-display&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;&lt;/ul&gt;&lt;/details&gt;&lt;/li&gt;
+    &lt;li class=&quot;t-sidebar-divider&quot;&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a class=&quot;t-sidebar-item&quot; href=&quot;#settings&quot;&gt;&lt;span class=&quot;t-icon&quot;&gt;⚙&lt;/span&gt;&lt;span class=&quot;t-sidebar-item-name&quot;&gt;Settings&lt;/span&gt;&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="footer" data-group="shell">
+        <div class="t-card-header"><h3 class="t-card-title">Footer <code class="sc-id">t-footer</code></h3><a class="sc-only" href="?only=footer" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">32px fixed footer: repo icon centred, version + theme/palette toggle right.</p>
+          <div class="sc-demo"><footer class='t-footer' style='position:static'>
+  <a class='t-footer-repo' href='#' title='repo'><span class='t-icon'>⌥</span></a>
+  <div class='t-footer-end'><span class='t-footer-version'>tailor 0.1.0</span><button class='t-btn' data-variant='ghost' data-size='sm' data-tailor-mode-toggle aria-label='Toggle light/dark'>☼</button></div>
+</footer></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;footer class=&quot;t-footer&quot;&gt;
+  &lt;a class=&quot;t-footer-repo&quot; href=&quot;https://github.com/…&quot; title=&quot;repo&quot;&gt;&lt;span class=&quot;t-icon&quot;&gt;⌥&lt;/span&gt;&lt;/a&gt;
+  &lt;div class=&quot;t-footer-end&quot;&gt;&lt;span class=&quot;t-footer-version&quot;&gt;v0.9.2&lt;/span&gt;&lt;button class=&quot;t-btn&quot; data-variant=&quot;ghost&quot; data-size=&quot;sm&quot; data-tailor-mode-toggle aria-label=&quot;Toggle light/dark&quot;&gt;☼&lt;/button&gt;&lt;/div&gt;
+&lt;/footer&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="page" data-group="shell">
+        <div class="t-card-header"><h3 class="t-card-title">Page <code class="sc-id">t-page</code></h3><a class="sc-only" href="?only=page" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Main column content wrapper with the page header row: back link, title, lead, actions.</p>
+          <div class="sc-demo"><div class='t-page' style='padding:0'>
+  <header class='t-page-header'>
+    <a class='t-page-back' href='#page' aria-label='Back'>←</a>
+    <h1 class='t-page-title'>render</h1>
+    <span class='t-page-lead'>console service · web-1</span>
+    <div class='t-page-actions'><button class='t-btn' data-variant='secondary'>Logs</button><button class='t-btn' data-variant='primary'>Deploy</button></div>
+  </header>
+</div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;main class=&quot;t-page&quot;&gt;
+  &lt;header class=&quot;t-page-header&quot;&gt;
+    &lt;a class=&quot;t-page-back&quot; href=&quot;/services&quot; aria-label=&quot;Back to services&quot;&gt;←&lt;/a&gt;
+    &lt;h1 class=&quot;t-page-title&quot;&gt;render&lt;/h1&gt;
+    &lt;span class=&quot;t-page-lead&quot;&gt;console service · web-1&lt;/span&gt;
+    &lt;div class=&quot;t-page-actions&quot;&gt;&lt;button class=&quot;t-btn&quot; data-variant=&quot;primary&quot;&gt;Deploy&lt;/button&gt;&lt;/div&gt;
+  &lt;/header&gt;
+  …
+&lt;/main&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="section" data-group="shell">
+        <div class="t-card-header"><h3 class="t-card-title">Section <code class="sc-id">t-section</code></h3><a class="sc-only" href="?only=section" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">A titled block inside a page or card: small-caps label with a rule, then content.</p>
+          <div class="sc-demo"><section class='t-section'><h2 class='t-section-title'>Connection</h2><div class='t-section-body t-muted'>Section body text sits under the rule.</div></section></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;section class=&quot;t-section&quot;&gt;
+  &lt;h2 class=&quot;t-section-title&quot;&gt;Connection&lt;/h2&gt;
+  &lt;div class=&quot;t-section-body&quot;&gt;…&lt;/div&gt;
+&lt;/section&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="toolbar" data-group="shell">
+        <div class="t-card-header"><h3 class="t-card-title">Toolbar <code class="sc-id">t-toolbar</code></h3><a class="sc-only" href="?only=toolbar" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">A horizontal row of controls with consistent gaps; a spacer pushes the rest to the end. Also the form-actions row.</p>
+          <div class="sc-demo"><div class='t-toolbar' role='toolbar' aria-label='Table actions'>
+  <button class='t-btn' data-variant='primary'>Save</button>
+  <button class='t-btn'>Cancel</button>
+  <span class='t-toolbar-spacer'></span>
+  <button class='t-btn' data-variant='ghost' data-tone='danger'>Delete</button>
+</div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-toolbar&quot; role=&quot;toolbar&quot; aria-label=&quot;Table actions&quot;&gt;
+  &lt;button class=&quot;t-btn&quot; data-variant=&quot;primary&quot;&gt;Save&lt;/button&gt;
+  &lt;button class=&quot;t-btn&quot;&gt;Cancel&lt;/button&gt;
+  &lt;span class=&quot;t-toolbar-spacer&quot;&gt;&lt;/span&gt;
+  &lt;button class=&quot;t-btn&quot; data-variant=&quot;ghost&quot; data-tone=&quot;danger&quot;&gt;Delete&lt;/button&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="grid" data-group="shell">
+        <div class="t-card-header"><h3 class="t-card-title">Grid <code class="sc-id">t-grid</code></h3><a class="sc-only" href="?only=grid" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Responsive card grid: auto-fill columns of a minimum width, or a fixed column count.</p>
+          <div class="sc-demo"><div class='t-grid' data-cols='auto' data-min='xs'><div class='t-card'><div class='t-card-body'>one</div></div><div class='t-card'><div class='t-card-body'>two</div></div><div class='t-card'><div class='t-card-body'>three</div></div><div class='t-card'><div class='t-card-body'>four</div></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-grid&quot; data-cols=&quot;auto&quot; data-min=&quot;sm&quot;&gt;
+  &lt;div class=&quot;t-card&quot;&gt;…&lt;/div&gt;
+  &lt;div class=&quot;t-card&quot;&gt;…&lt;/div&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="stack" data-group="shell">
+        <div class="t-card-header"><h3 class="t-card-title">Stack &amp; cluster <code class="sc-id">t-stack</code></h3><a class="sc-only" href="?only=stack" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Vertical stack (column, gap) and horizontal cluster (row, wraps, gap) — the two spacing primitives.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='2'><div class='t-cluster' data-gap='2' data-align='center'><span class='t-badge' data-tone='accent'>cluster</span><span class='t-badge' data-tone='success'>wraps</span><span class='t-badge' data-tone='info'>gap 2</span></div><div class='t-cluster' data-gap='2'><span class='t-badge'>stack</span><span class='t-badge'>row two</span></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-stack&quot; data-gap=&quot;3&quot;&gt;
+  &lt;div class=&quot;t-cluster&quot; data-gap=&quot;2&quot; data-align=&quot;center&quot;&gt;…&lt;/div&gt;
+  …
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="split" data-group="shell">
+        <div class="t-card-header"><h3 class="t-card-title">Split <code class="sc-id">t-split</code></h3><a class="sc-only" href="?only=split" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Two-pane layout: a fixed-width side (list, tabs) and a flexible pane; fills the viewport between navbar and footer.</p>
+          <div class="sc-demo"><div class='t-split' style='height:160px'><div class='t-split-side'><nav class='t-sidebar' aria-label='Split demo'><ul><li><a class='t-sidebar-item' href='#split' aria-current='page'><span class='t-sidebar-item-name'>console</span></a></li><li><a class='t-sidebar-item' href='#split'><span class='t-sidebar-item-name'>cloche</span></a></li></ul></nav></div><div class='t-split-pane'><pre class='t-code-pre' style='height:100%;margin:0'>Pick an item on the left.</pre></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-split&quot; data-fill=&quot;viewport&quot;&gt;
+  &lt;div class=&quot;t-split-side&quot;&gt;&lt;nav class=&quot;t-sidebar&quot;&gt;…&lt;/nav&gt;&lt;/div&gt;
+  &lt;div class=&quot;t-split-pane&quot;&gt;…&lt;/div&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <h2 class="sc-group" id="group-actions">Actions</h2>
+      
+      <section class="t-card sc-component" id="button" data-group="actions">
+        <div class="t-card-header"><h3 class="t-card-title">Button <code class="sc-id">t-btn</code></h3><a class="sc-only" href="?only=button" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">The action control. One primary per view; secondary is the default look; danger/warning for their outcomes; ghost and link for quiet actions.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='2'>
+<div class='t-cluster' data-gap='2'><button class='t-btn' data-variant='primary'><span class='t-icon'>＋</span>Primary</button><button class='t-btn' data-variant='secondary'>Secondary</button><button class='t-btn' data-variant='danger'>Danger</button><button class='t-btn' data-variant='warning'>Warning</button><button class='t-btn' data-variant='ghost'>Ghost</button><button class='t-btn' data-variant='ghost' data-tone='danger'>Ghost danger</button><button class='t-btn' data-variant='link'>Link</button></div>
+<div class='t-cluster' data-gap='2' data-align='center'><button class='t-btn' data-variant='primary' data-size='sm'>Small</button><button class='t-btn' data-variant='primary'>Medium</button><button class='t-btn' data-variant='primary' data-size='lg'>Large</button><button class='t-btn'><span class='t-icon'>⇩</span>Leading</button><button class='t-btn'>Counter <span class='t-counter'>12</span></button></div>
+<div class='t-cluster' data-gap='2'><button class='t-btn' data-variant='primary' disabled>Disabled</button><button class='t-btn' disabled>Disabled</button><button class='t-btn' data-variant='primary' aria-busy='true' disabled>Saving…</button><button class='t-btn' aria-pressed='true'>Pinned</button><button class='t-btn' aria-pressed='false' data-demo='toggle'>Toggle me</button></div>
+<div class='t-cluster' data-gap='2'><button class='t-btn' data-icon='only' data-tip='Edit'><span class='t-icon'>✎</span></button><button class='t-btn' data-icon='only' data-tip='Copy'><span class='t-icon'>⧉</span></button><button class='t-btn' data-icon='only' data-variant='danger' data-tip='Delete'><span class='t-icon'>🗑</span></button><button class='t-btn' data-icon='only' data-variant='ghost' data-tip='More'><span class='t-icon'>⋮</span></button><button class='t-btn' data-icon='only' data-variant='primary' data-size='sm' data-tip='Add'><span class='t-icon'>＋</span></button><button class='t-btn' data-icon='only' data-size='lg' data-tip='Settings'><span class='t-icon'>⚙</span></button></div>
+</div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;button class=&quot;t-btn&quot; data-variant=&quot;primary&quot;&gt;Save&lt;/button&gt;
+&lt;button class=&quot;t-btn&quot;&gt;Cancel&lt;/button&gt;
+&lt;button class=&quot;t-btn&quot; data-variant=&quot;ghost&quot; data-tone=&quot;danger&quot;&gt;Delete&lt;/button&gt;
+&lt;button class=&quot;t-btn&quot; data-icon=&quot;only&quot; aria-label=&quot;Edit&quot;&gt;&lt;span class=&quot;t-icon&quot;&gt;✎&lt;/span&gt;&lt;/button&gt;</code></pre><p class="t-muted t-small">Loading = disabled + aria-busy, never a second click. No per-tone solid buttons beyond primary/danger/warning: colour is the outcome, not decoration.</p></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="button-group" data-group="actions">
+        <div class="t-card-header"><h3 class="t-card-title">Button group &amp; quick filter <code class="sc-id">t-btn-group</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.filters (optional)</span><a class="sc-only" href="?only=button-group" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Buttons fused into one row. data-role=filter is the single-select quick filter: the active button carries aria-pressed=true and keeps its look on hover.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='3'><div class='t-btn-group' role='group' aria-label='Range'>  <button class='t-btn' data-size='sm'>Hour</button>  <button class='t-btn' data-size='sm'>Day</button>  <button class='t-btn' data-size='sm'>Week</button></div><div class='t-btn-group' role='group' data-role='filter' aria-label='State'>  <button class='t-btn' data-size='sm' aria-pressed='true'>All</button>  <button class='t-btn' data-size='sm' aria-pressed='false'>Running</button>  <button class='t-btn' data-size='sm' aria-pressed='false'>Updates <span class='t-counter' data-tone='warning'>15</span></button></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-btn-group&quot; role=&quot;group&quot; aria-label=&quot;Range&quot;&gt;
+  &lt;button class=&quot;t-btn&quot; data-size=&quot;sm&quot;&gt;Hour&lt;/button&gt;
+  &lt;button class=&quot;t-btn&quot; data-size=&quot;sm&quot;&gt;Day&lt;/button&gt;
+  &lt;button class=&quot;t-btn&quot; data-size=&quot;sm&quot;&gt;Week&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class=&quot;t-btn-group&quot; role=&quot;group&quot; data-role=&quot;filter&quot; aria-label=&quot;State&quot;&gt;
+  &lt;button class=&quot;t-btn&quot; data-size=&quot;sm&quot; aria-pressed=&quot;true&quot;&gt;All&lt;/button&gt;
+  &lt;button class=&quot;t-btn&quot; data-size=&quot;sm&quot; aria-pressed=&quot;false&quot;&gt;Running&lt;/button&gt;
+  &lt;button class=&quot;t-btn&quot; data-size=&quot;sm&quot; aria-pressed=&quot;false&quot;&gt;Updates &lt;span class=&quot;t-counter&quot; data-tone=&quot;warning&quot;&gt;15&lt;/span&gt;&lt;/button&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="segmented" data-group="actions">
+        <div class="t-card-header"><h3 class="t-card-title">Segmented control <code class="sc-id">t-segmented</code></h3><a class="sc-only" href="?only=segmented" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Mutually exclusive view/density switch built from radio inputs; the checked one lifts to the surface with an accent mark.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='3' data-align='center'><div class='t-segmented' role='group' aria-label='View'><label class='t-segmented-item'><input class='t-segmented-input' type='radio' name='seg-view' checked><span>Cards</span></label><label class='t-segmented-item'><input class='t-segmented-input' type='radio' name='seg-view'><span>Table</span></label><label class='t-segmented-item'><input class='t-segmented-input' type='radio' name='seg-view' disabled><span>List</span></label></div><div class='t-segmented' role='group' aria-label='Density' data-size='sm'><label class='t-segmented-item' data-tip='Comfortable'><input class='t-segmented-input' type='radio' name='seg-dens' checked><span>☰</span></label><label class='t-segmented-item' data-tip='Compact'><input class='t-segmented-input' type='radio' name='seg-dens'><span>≡</span></label></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-segmented&quot; role=&quot;group&quot; aria-label=&quot;View&quot;&gt;
+  &lt;label class=&quot;t-segmented-item&quot;&gt;&lt;input class=&quot;t-segmented-input&quot; type=&quot;radio&quot; name=&quot;view&quot; checked&gt;&lt;span&gt;Cards&lt;/span&gt;&lt;/label&gt;
+  &lt;label class=&quot;t-segmented-item&quot;&gt;&lt;input class=&quot;t-segmented-input&quot; type=&quot;radio&quot; name=&quot;view&quot;&gt;&lt;span&gt;Table&lt;/span&gt;&lt;/label&gt;
+  &lt;label class=&quot;t-segmented-item&quot;&gt;&lt;input class=&quot;t-segmented-input&quot; type=&quot;radio&quot; name=&quot;view&quot; disabled&gt;&lt;span&gt;List&lt;/span&gt;&lt;/label&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="menu" data-group="actions">
+        <div class="t-card-header"><h3 class="t-card-title">Menu (dropdown) <code class="sc-id">t-menu</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.menus</span><a class="sc-only" href="?only=menu" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Dropdown action menu on &lt;details&gt;: headers, check items, dividers, a danger item. Works without JS; Tailor.menus closes it on outside click / Esc.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='3'><details class='t-menu'><summary class='t-btn'>Filter ▾</summary><ul class='t-menu-list' role='menu'><li class='t-menu-header'>Show</li><li><button class='t-menu-item' role='menuitemcheckbox' aria-checked='true' data-demo='check'>Running</button></li><li><button class='t-menu-item' role='menuitemcheckbox' aria-checked='false' data-demo='check'>Stopped</button></li><li><button class='t-menu-item' role='menuitemcheckbox' aria-checked='false' data-demo='check'>Updates available<span class='t-menu-desc'>images behind the registry</span></button></li><li class='t-menu-divider'></li><li><button class='t-menu-item' role='menuitem' data-tone='danger'>Delete…</button></li></ul></details><details class='t-menu' data-align='end'><summary class='t-btn' data-variant='primary'>Start ▾</summary><ul class='t-menu-list' role='menu'><li><button class='t-menu-item' role='menuitem'>Start with rebuild<span class='t-menu-kbd'>⌘R</span></button></li><li><button class='t-menu-item' role='menuitem'>Start and follow logs</button></li></ul></details></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;details class=&quot;t-menu&quot; data-align=&quot;start&quot;&gt;
+  &lt;summary class=&quot;t-btn&quot;&gt;Filter ▾&lt;/summary&gt;
+  &lt;ul class=&quot;t-menu-list&quot; role=&quot;menu&quot;&gt;
+    &lt;li class=&quot;t-menu-header&quot;&gt;Show&lt;/li&gt;
+    &lt;li&gt;&lt;button class=&quot;t-menu-item&quot; role=&quot;menuitemcheckbox&quot; aria-checked=&quot;true&quot;&gt;Running&lt;/button&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;button class=&quot;t-menu-item&quot; role=&quot;menuitemcheckbox&quot; aria-checked=&quot;false&quot;&gt;Stopped&lt;/button&gt;&lt;/li&gt;
+    &lt;li class=&quot;t-menu-divider&quot;&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;button class=&quot;t-menu-item&quot; role=&quot;menuitem&quot; data-tone=&quot;danger&quot;&gt;Delete…&lt;/button&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/details&gt;</code></pre></details>
+        </div>
+      </section>
+      <h2 class="sc-group" id="group-navigation">Navigation</h2>
+      
+      <section class="t-card sc-component" id="tabs" data-group="navigation">
+        <div class="t-card-header"><h3 class="t-card-title">Tabs <code class="sc-id">t-tabs</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.tabs</span><a class="sc-only" href="?only=tabs" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Underline tabs (default) or boxed tabs with counters; panels toggled by Tailor.tabs.</p>
+          <div class="sc-demo"><div class='t-grid' data-cols='2' data-min='sm'><div class='t-tabs' data-variant='underline'><div class='t-tabs-list' role='tablist'><button class='t-tab' role='tab' aria-selected='true' aria-controls='dp-u1' id='dt-u1'>Open <span class='t-counter'>24</span></button><button class='t-tab' role='tab' aria-selected='false' aria-controls='dp-u2' id='dt-u2' tabindex='-1'>Closed <span class='t-counter'>180</span></button><button class='t-tab' role='tab' aria-selected='false' aria-controls='dp-u3' id='dt-u3' tabindex='-1'>Pull requests <span class='t-counter'>6</span></button></div><div class='t-tab-panel t-muted' role='tabpanel' id='dp-u1' aria-labelledby='dt-u1'>24 open issues, newest first.</div><div class='t-tab-panel t-muted' role='tabpanel' id='dp-u2' aria-labelledby='dt-u2' hidden>Closed in the last 30 days.</div><div class='t-tab-panel t-muted' role='tabpanel' id='dp-u3' aria-labelledby='dt-u3' hidden>Awaiting review.</div></div><div class='t-tabs' data-variant='boxed'><div class='t-tabs-list' role='tablist'><button class='t-tab' role='tab' aria-selected='true' aria-controls='dp-b1' id='dt-b1'>Compose</button><button class='t-tab' role='tab' aria-selected='false' aria-controls='dp-b2' id='dt-b2' tabindex='-1'>Environment</button><button class='t-tab' role='tab' aria-selected='false' disabled tabindex='-1'>Logs</button></div><div class='t-tab-panel' role='tabpanel' id='dp-b1' aria-labelledby='dt-b1'><code>compose.yaml</code> as the console wrote it.</div><div class='t-tab-panel' role='tabpanel' id='dp-b2' aria-labelledby='dt-b2' hidden>Non-secret structural variables only.</div></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-tabs&quot; data-variant=&quot;underline&quot;&gt;
+  &lt;div class=&quot;t-tabs-list&quot; role=&quot;tablist&quot;&gt;
+    &lt;button class=&quot;t-tab&quot; role=&quot;tab&quot; aria-selected=&quot;true&quot; aria-controls=&quot;p-open&quot; id=&quot;t-open&quot;&gt;Open &lt;span class=&quot;t-counter&quot;&gt;24&lt;/span&gt;&lt;/button&gt;
+    &lt;button class=&quot;t-tab&quot; role=&quot;tab&quot; aria-selected=&quot;false&quot; aria-controls=&quot;p-closed&quot; id=&quot;t-closed&quot; tabindex=&quot;-1&quot;&gt;Closed &lt;span class=&quot;t-counter&quot;&gt;180&lt;/span&gt;&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;t-tab-panel&quot; role=&quot;tabpanel&quot; id=&quot;p-open&quot; aria-labelledby=&quot;t-open&quot;&gt;…&lt;/div&gt;
+  &lt;div class=&quot;t-tab-panel&quot; role=&quot;tabpanel&quot; id=&quot;p-closed&quot; aria-labelledby=&quot;t-closed&quot; hidden&gt;…&lt;/div&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="breadcrumb" data-group="navigation">
+        <div class="t-card-header"><h3 class="t-card-title">Breadcrumb <code class="sc-id">t-breadcrumb</code></h3><a class="sc-only" href="?only=breadcrumb" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Path to the current page; the last item is the page itself.</p>
+          <div class="sc-demo"><nav class='t-breadcrumb' aria-label='Breadcrumb'>
+  <ol>
+    <li><a href='/'>Home</a></li>
+    <li><a href='/services'>Services</a></li>
+    <li aria-current='page'>render</li>
+  </ol>
+</nav></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;nav class=&quot;t-breadcrumb&quot; aria-label=&quot;Breadcrumb&quot;&gt;
+  &lt;ol&gt;
+    &lt;li&gt;&lt;a href=&quot;/&quot;&gt;Home&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;/services&quot;&gt;Services&lt;/a&gt;&lt;/li&gt;
+    &lt;li aria-current=&quot;page&quot;&gt;render&lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/nav&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="pagination" data-group="navigation">
+        <div class="t-card-header"><h3 class="t-card-title">Pagination <code class="sc-id">t-pagination</code></h3><a class="sc-only" href="?only=pagination" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Page links or newer/older pair.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='4' data-align='center'><nav class='t-pagination' aria-label='Pages' data-size='sm'><ul><li><a class='t-page-link' aria-disabled='true'>«</a></li><li><a class='t-page-link' href='#pagination' aria-current='page'>1</a></li><li><a class='t-page-link' href='#pagination'>2</a></li><li><a class='t-page-link' href='#pagination'>3</a></li><li><a class='t-page-link' aria-disabled='true'>…</a></li><li><a class='t-page-link' href='#pagination'>12</a></li><li><a class='t-page-link' href='#pagination'>»</a></li></ul></nav><nav class='t-pagination' aria-label='Newer/older'><ul><li><a class='t-page-link' href='#pagination'>‹ Newer</a></li><li><a class='t-page-link' href='#pagination'>Older ›</a></li></ul></nav></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;nav class=&quot;t-pagination&quot; aria-label=&quot;Pagination&quot; data-size=&quot;sm&quot;&gt;
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a class=&quot;t-page-link&quot; aria-disabled=&quot;true&quot;&gt;«&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a class=&quot;t-page-link&quot; href=&quot;?p=1&quot; aria-current=&quot;page&quot;&gt;1&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a class=&quot;t-page-link&quot; href=&quot;?p=2&quot;&gt;2&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a class=&quot;t-page-link&quot; aria-disabled=&quot;true&quot;&gt;…&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a class=&quot;t-page-link&quot; href=&quot;?p=12&quot;&gt;12&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a class=&quot;t-page-link&quot; href=&quot;?p=2&quot;&gt;»&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/nav&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="list" data-group="navigation">
+        <div class="t-card-header"><h3 class="t-card-title">Selectable list <code class="sc-id">t-list</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.listbox</span><a class="sc-only" href="?only=list" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">A listbox of rows (leading icon, name, description, trailing text/badge) with single or multi selection, group headers and dividers. Keyboard: ↑↓ move, Space/Enter toggle.</p>
+          <div class="sc-demo"><div class='t-grid' data-cols='2' data-min='sm'><div class='t-list' role='listbox' aria-label='Host'><div class='t-list-group'>Hosts</div><button class='t-list-item' role='option' aria-selected='true'><span class='t-icon t-list-lead'>▤</span><span class='t-list-body'><span class='t-list-name'>web-1</span><span class='t-list-desc'>192.168.1.20 · 24 services</span></span><span class='t-list-trail'>primary</span></button><button class='t-list-item' role='option' aria-selected='false'><span class='t-icon t-list-lead'>▤</span><span class='t-list-body'><span class='t-list-name'>nas</span><span class='t-list-desc'>192.168.1.50 · NAS</span></span><span class='t-badge t-list-trail' data-tone='success'>online</span></button><button class='t-list-item' role='option' aria-selected='false'><span class='t-icon t-list-lead'>▤</span><span class='t-list-body'><span class='t-list-name'>node-3-with-a-very-long-hostname-that-truncates</span></span><span class='t-badge t-list-trail' data-tone='neutral'>offline</span></button><div class='t-list-divider'></div><button class='t-list-item' role='option' aria-selected='false' disabled><span class='t-icon t-list-lead'>＋</span><span class='t-list-body'><span class='t-list-name'>Add a host</span><span class='t-list-desc'>needs the admin role</span></span></button></div><div class='t-list' role='listbox' aria-multiselectable='true' aria-label='Checks'><button class='t-list-item' role='option' aria-selected='true'><span class='t-list-lead'></span><span class='t-list-body'><span class='t-list-name'>HTTP 200</span></span></button><button class='t-list-item' role='option' aria-selected='true'><span class='t-list-lead'></span><span class='t-list-body'><span class='t-list-name'>Body <code>ok == true</code></span></span></button><button class='t-list-item' role='option' aria-selected='false'><span class='t-list-lead'></span><span class='t-list-body'><span class='t-list-name'>Certificate &gt; 7 days</span><span class='t-list-desc'>warns a week before expiry</span></span></button></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-list&quot; role=&quot;listbox&quot; aria-label=&quot;Host&quot;&gt;
+  &lt;div class=&quot;t-list-group&quot;&gt;Hosts&lt;/div&gt;
+  &lt;button class=&quot;t-list-item&quot; role=&quot;option&quot; aria-selected=&quot;true&quot;&gt;&lt;span class=&quot;t-icon t-list-lead&quot;&gt;▤&lt;/span&gt;&lt;span class=&quot;t-list-body&quot;&gt;&lt;span class=&quot;t-list-name&quot;&gt;web-1&lt;/span&gt;&lt;span class=&quot;t-list-desc&quot;&gt;192.168.1.20 · 24 services&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;t-list-trail&quot;&gt;primary&lt;/span&gt;&lt;/button&gt;
+  &lt;button class=&quot;t-list-item&quot; role=&quot;option&quot; aria-selected=&quot;false&quot;&gt;&lt;span class=&quot;t-icon t-list-lead&quot;&gt;▤&lt;/span&gt;&lt;span class=&quot;t-list-body&quot;&gt;&lt;span class=&quot;t-list-name&quot;&gt;nas&lt;/span&gt;&lt;/span&gt;&lt;span class=&quot;t-badge t-list-trail&quot; data-tone=&quot;success&quot;&gt;online&lt;/span&gt;&lt;/button&gt;
+  &lt;div class=&quot;t-list-divider&quot;&gt;&lt;/div&gt;
+  &lt;button class=&quot;t-list-item&quot; role=&quot;option&quot; aria-selected=&quot;false&quot; disabled&gt;&lt;span class=&quot;t-icon t-list-lead&quot;&gt;＋&lt;/span&gt;&lt;span class=&quot;t-list-body&quot;&gt;&lt;span class=&quot;t-list-name&quot;&gt;Add a host&lt;/span&gt;&lt;span class=&quot;t-list-desc&quot;&gt;needs the admin role&lt;/span&gt;&lt;/span&gt;&lt;/button&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <h2 class="sc-group" id="group-forms">Forms</h2>
+      
+      <section class="t-card sc-component" id="field" data-group="forms">
+        <div class="t-card-header"><h3 class="t-card-title">Field <code class="sc-id">t-field</code></h3><a class="sc-only" href="?only=field" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Label + control + hint/feedback. Controls: .t-input (text/number/password/file/range), .t-select, .t-textarea; .t-input-group fuses addons and buttons to a control.</p>
+          <div class="sc-demo"><div class='t-grid' data-cols='2' data-min='sm'><div class='t-stack' data-gap='3'><div class='t-field'><label class='t-label' for='f-host'>Hostname</label><input class='t-input' id='f-host' placeholder='example.internal'><p class='t-hint'>Caption: the LAN name, without scheme.</p></div><div class='t-field'><label class='t-label' for='f-tok'>Token</label><div class='t-input-group'><span class='t-input-addon'>🔑</span><input class='t-input' id='f-tok' type='password' value='secret-token'><button class='t-btn' type='button' data-tip='Show' data-demo='reveal'>👁</button></div><p class='t-hint'>Leading addon + trailing action.</p></div><div class='t-field'><label class='t-label' for='f-ok'>Subdomain</label><input class='t-input' id='f-ok' value='render' aria-describedby='f-ok-fb'><p class='t-feedback' id='f-ok-fb' data-tone='success'>✓ Available.</p></div><div class='t-field'><label class='t-label' for='f-bad'>Port</label><input class='t-input' id='f-bad' value='99999' aria-invalid='true' aria-describedby='f-bad-fb'><p class='t-feedback' id='f-bad-fb' data-tone='danger'>✕ Must be between 1 and 65535.</p></div></div><div class='t-stack' data-gap='3'><div class='t-cluster' data-gap='2'><div class='t-field'><label class='t-label' for='f-vis'>Visibility</label><select class='t-select' id='f-vis'><option>public</option><option>local</option></select></div><div class='t-field'><label class='t-label' for='f-port'>Port</label><div class='t-input-group'><span class='t-input-addon'>:</span><input class='t-input' id='f-port' value='9292' size='6'></div></div></div><div class='t-cluster' data-gap='2'><div class='t-field'><label class='t-label' for='f-ro'>Read-only</label><input class='t-input' id='f-ro' readonly value='ses_f159fc741ffe'></div><div class='t-field'><label class='t-label' for='f-dis'>Disabled</label><input class='t-input' id='f-dis' disabled value='not editable'></div></div><div class='t-field'><label class='t-label' for='f-notes'>Notes</label><textarea class='t-textarea' id='f-notes' rows='2'>Grows with its content.</textarea></div><div class='t-field'><label class='t-label' for='f-range'>Brightness <output class='t-muted' for='f-range' id='f-range-out'>60 %</output></label><input class='t-input' type='range' id='f-range' value='60' data-demo='range'></div><div class='t-field' data-size='sm'><label class='t-label' for='f-sm'>Small field</label><input class='t-input' id='f-sm' value='data-size=sm'></div></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-field&quot;&gt;
+  &lt;label class=&quot;t-label&quot; for=&quot;host&quot;&gt;Hostname&lt;/label&gt;
+  &lt;input class=&quot;t-input&quot; id=&quot;host&quot; placeholder=&quot;example.internal&quot;&gt;
+  &lt;p class=&quot;t-hint&quot;&gt;The LAN name, without scheme.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;t-field&quot;&gt;
+  &lt;label class=&quot;t-label&quot; for=&quot;port&quot;&gt;Port&lt;/label&gt;
+  &lt;input class=&quot;t-input&quot; id=&quot;port&quot; value=&quot;99999&quot; aria-invalid=&quot;true&quot; aria-describedby=&quot;port-fb&quot;&gt;
+  &lt;p class=&quot;t-feedback&quot; id=&quot;port-fb&quot; data-tone=&quot;danger&quot;&gt;Must be between 1 and 65535.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&quot;t-field&quot;&gt;
+  &lt;label class=&quot;t-label&quot; for=&quot;tok&quot;&gt;Token&lt;/label&gt;
+  &lt;div class=&quot;t-input-group&quot;&gt;&lt;span class=&quot;t-input-addon&quot;&gt;🔑&lt;/span&gt;&lt;input class=&quot;t-input&quot; id=&quot;tok&quot; type=&quot;password&quot; value=&quot;secret&quot;&gt;&lt;button class=&quot;t-btn&quot; type=&quot;button&quot; data-tip=&quot;Show&quot;&gt;👁&lt;/button&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="check" data-group="forms">
+        <div class="t-card-header"><h3 class="t-card-title">Checkbox, radio, switch <code class="sc-id">t-check</code></h3><a class="sc-only" href="?only=check" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">A checkbox or radio with its label (and optional description); data-variant=switch renders a toggle. Groups go in a fieldset with a legend.</p>
+          <div class="sc-demo"><div class='t-grid' data-cols='3' data-min='xs'><fieldset class='t-check-group'><legend class='t-label'>Notify on</legend><label class='t-check'><input class='t-check-input' type='checkbox' checked><span class='t-check-label'>Failure<span class='t-check-desc'>Any job that exits non-zero.</span></span></label><label class='t-check'><input class='t-check-input' type='checkbox'><span class='t-check-label'>Recovery</span></label><label class='t-check'><input class='t-check-input' type='checkbox' aria-invalid='true'><span class='t-check-label'>Needs at least one</span></label><label class='t-check'><input class='t-check-input' type='checkbox' disabled><span class='t-check-label'>Disabled</span></label></fieldset><fieldset class='t-check-group'><legend class='t-label'>Exposure</legend><label class='t-check'><input class='t-check-input' type='radio' name='exp' checked><span class='t-check-label'>Public<span class='t-check-desc'>Tunnel + Access policy.</span></span></label><label class='t-check'><input class='t-check-input' type='radio' name='exp'><span class='t-check-label'>LAN only</span></label></fieldset><fieldset class='t-check-group'><legend class='t-label'>Switches</legend><label class='t-check' data-variant='switch'><input class='t-check-input' type='checkbox' role='switch' checked><span class='t-check-label'>Protected</span></label><label class='t-check' data-variant='switch'><input class='t-check-input' type='checkbox' role='switch'><span class='t-check-label'>Auto-update</span></label><label class='t-check' data-variant='switch'><input class='t-check-input' type='checkbox' role='switch' disabled checked><span class='t-check-label'>Locked</span></label></fieldset></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;fieldset class=&quot;t-check-group&quot;&gt;
+  &lt;legend class=&quot;t-label&quot;&gt;Notify on&lt;/legend&gt;
+  &lt;label class=&quot;t-check&quot;&gt;&lt;input class=&quot;t-check-input&quot; type=&quot;checkbox&quot; checked&gt;&lt;span class=&quot;t-check-label&quot;&gt;Failure&lt;span class=&quot;t-check-desc&quot;&gt;Any job that exits non-zero.&lt;/span&gt;&lt;/span&gt;&lt;/label&gt;
+  &lt;label class=&quot;t-check&quot;&gt;&lt;input class=&quot;t-check-input&quot; type=&quot;checkbox&quot;&gt;&lt;span class=&quot;t-check-label&quot;&gt;Recovery&lt;/span&gt;&lt;/label&gt;
+&lt;/fieldset&gt;
+&lt;label class=&quot;t-check&quot; data-variant=&quot;switch&quot;&gt;&lt;input class=&quot;t-check-input&quot; type=&quot;checkbox&quot; role=&quot;switch&quot; checked&gt;&lt;span class=&quot;t-check-label&quot;&gt;Protected&lt;/span&gt;&lt;/label&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="duration-input" data-group="forms">
+        <div class="t-card-header"><h3 class="t-card-title">Duration input <code class="sc-id">t-duration</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.duration</span><a class="sc-only" href="?only=duration-input" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Number + unit select (s / min / h); the stored value is always seconds in data-value. Never a bare seconds field.</p>
+          <div class="sc-demo"><div class='t-input-group t-duration' data-setting='offline_after_s' data-value='900'>
+  <input class='t-input' type='number' min='0' step='1' id='offline' aria-label='Offline after'>
+  <select class='t-select' aria-label='unit'><option value='1'>s</option><option value='60'>min</option><option value='3600'>h</option></select>
+</div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-input-group t-duration&quot; data-setting=&quot;offline_after_s&quot; data-value=&quot;900&quot;&gt;
+  &lt;input class=&quot;t-input&quot; type=&quot;number&quot; min=&quot;0&quot; step=&quot;1&quot; id=&quot;offline&quot; aria-label=&quot;Offline after&quot;&gt;
+  &lt;select class=&quot;t-select&quot; aria-label=&quot;unit&quot;&gt;&lt;option value=&quot;1&quot;&gt;s&lt;/option&gt;&lt;option value=&quot;60&quot;&gt;min&lt;/option&gt;&lt;option value=&quot;3600&quot;&gt;h&lt;/option&gt;&lt;/select&gt;
+&lt;/div&gt;</code></pre><p class="t-muted t-small">Tailor.duration.set(group, seconds) picks the largest unit dividing evenly; Tailor.duration.get(group) → seconds.</p></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="settings-row" data-group="forms">
+        <div class="t-card-header"><h3 class="t-card-title">Settings row <code class="sc-id">t-setting</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.settingsAutoSave</span><a class="sc-only" href="?only=settings-row" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Human-readable label (never the key) + help popover + a control that auto-saves on change; the state cell shows spinner → check / cross. No per-row Save button.</p>
+          <div class="sc-demo"><div class='t-settings' data-demo='settings'><div class='t-setting'><div class='t-setting-label'><label for='s-name'>Device name</label><span class='t-help' data-tone='info'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='About device name'>i</button><div class='t-help-box' hidden><p>Shown in every list, toast and alert. Defaults to the hostname.</p></div></span></div><div class='t-setting-control'><input class='t-input' data-size='sm' id='s-name' data-setting='name' value='epaper-display'></div><span class='t-setting-state' aria-live='polite'></span></div><div class='t-setting'><div class='t-setting-label'><label for='s-regime'>Power regime</label><span class='t-help' data-tone='info'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='About power regime'>i</button><div class='t-help-box' hidden><p><b>Always on</b> keeps the panel awake on mains.</p><p><b>Hold on battery</b> shows the dashboard, then holds the wallpaper.</p></div></span></div><div class='t-setting-control'><select class='t-select' data-size='sm' id='s-regime' data-setting='regime'><option value='always_on'>Always on</option><option value='battery_hold' selected>Hold on battery</option></select></div><span class='t-setting-state' aria-live='polite'></span></div><div class='t-setting'><div class='t-setting-label'><label for='s-offline'>Offline after</label></div><div class='t-setting-control'><div class='t-input-group t-duration' data-size='sm' data-setting='offline_after_s' data-value='900'><input class='t-input' type='number' min='0' step='1' id='s-offline'><select class='t-select' aria-label='unit'><option value='1'>s</option><option value='60'>min</option><option value='3600'>h</option></select></div></div><span class='t-setting-state' aria-live='polite'></span></div><div class='t-setting'><div class='t-setting-label'><label for='s-overlay'>Battery overlay</label></div><div class='t-setting-control'><label class='t-check' data-variant='switch'><input class='t-check-input' type='checkbox' role='switch' id='s-overlay' data-setting='battery_overlay_enabled' checked><span class='t-check-label'></span></label></div><span class='t-setting-state' aria-live='polite'></span></div><div class='t-setting'><div class='t-setting-label'><label for='s-fail'>Fails on purpose</label><span class='t-help' data-tone='danger'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='Important'>!</button><div class='t-help-box' hidden><p>Demo of the error path: the save is rejected, the toast says why, the control reverts.</p></div></span></div><div class='t-setting-control'><input class='t-input' data-size='sm' id='s-fail' data-setting='fail_demo' value='change me'></div><span class='t-setting-state' aria-live='polite'></span></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-settings&quot;&gt;
+  &lt;div class=&quot;t-setting&quot;&gt;
+    &lt;div class=&quot;t-setting-label&quot;&gt;&lt;label for=&quot;s-name&quot;&gt;Device name&lt;/label&gt;
+      &lt;span class=&quot;t-help&quot; data-tone=&quot;info&quot;&gt;&lt;button class=&quot;t-help-btn&quot; type=&quot;button&quot; aria-expanded=&quot;false&quot; aria-label=&quot;About device name&quot;&gt;i&lt;/button&gt;&lt;div class=&quot;t-help-box&quot; hidden&gt;&lt;p&gt;Shown in every list and toast. Defaults to the hostname.&lt;/p&gt;&lt;/div&gt;&lt;/span&gt;&lt;/div&gt;
+    &lt;div class=&quot;t-setting-control&quot;&gt;&lt;input class=&quot;t-input&quot; data-size=&quot;sm&quot; id=&quot;s-name&quot; data-setting=&quot;name&quot; value=&quot;epaper-display&quot;&gt;&lt;/div&gt;
+    &lt;span class=&quot;t-setting-state&quot; aria-live=&quot;polite&quot;&gt;&lt;/span&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre><p class="t-muted t-small">Tailor.settingsAutoSave(root, save) — save(key, value) → Promise&lt;{ok, message}&gt;; on error the control reverts to its last saved value and a danger toast names the reason.</p></details>
+        </div>
+      </section>
+      <h2 class="sc-group" id="group-data">Data display</h2>
+      
+      <section class="t-card sc-component" id="badge" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Badge <code class="sc-id">t-badge</code></h3><a class="sc-only" href="?only=badge" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Small quiet label. Tinted by default (hue at a weak alpha behind hue text); solid is reserved for things needing attention now; outline for primary/neutral emphasis.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='2'><div class='t-cluster' data-gap='1'><span class='t-badge'>default</span><span class='t-badge' data-tone='text' data-variant='outline'>primary</span><span class='t-badge' data-tone='accent'>accent</span><span class='t-badge' data-tone='success'>success</span><span class='t-badge' data-tone='warning'>attention</span><span class='t-badge' data-tone='pink'>severe</span><span class='t-badge' data-tone='danger'>danger</span><span class='t-badge' data-tone='purple'>✓ done</span><span class='t-badge' data-tone='yellow'>auth</span><span class='t-badge' data-tone='info'>open</span><span class='t-badge' data-tone='warning' data-variant='solid'>▲ Update</span></div><div class='t-cluster' data-gap='1' data-align='center'><span class='t-badge' data-tone='info' data-size='xs'>xs</span><span class='t-badge' data-tone='info' data-size='sm'>sm</span><span class='t-badge' data-tone='info'>default</span><span class='t-badge' data-tone='info' data-size='lg'>lg</span><button class='t-badge' data-tone='accent' data-demo='badge-toggle'>badge as button</button></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;span class=&quot;t-badge&quot; data-tone=&quot;success&quot;&gt;running&lt;/span&gt;
+&lt;span class=&quot;t-badge&quot; data-tone=&quot;neutral&quot;&gt;stopped&lt;/span&gt;
+&lt;span class=&quot;t-badge&quot; data-tone=&quot;warning&quot; data-variant=&quot;solid&quot;&gt;Update&lt;/span&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="counter" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Counter <code class="sc-id">t-counter</code></h3><a class="sc-only" href="?only=counter" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Round count next to a tab, nav item or title; plain or tinted.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='3' data-align='center'><span>Issues <span class='t-counter'>24</span></span><span>Failing <span class='t-counter' data-tone='danger'>3</span></span><span>Updates <span class='t-counter' data-tone='warning'>15</span></span><span>New <span class='t-counter' data-tone='success'>+2</span></span><span class='t-counter' data-tone='accent'>1 204</span></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>Issues &lt;span class=&quot;t-counter&quot;&gt;24&lt;/span&gt;  Failing &lt;span class=&quot;t-counter&quot; data-tone=&quot;danger&quot;&gt;3&lt;/span&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="chip" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Chip <code class="sc-id">t-chip</code></h3><a class="sc-only" href="?only=chip" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Label chip (host, owner, filter token): tinted, slightly larger than a badge, optional remove button.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='2'><span class='t-chip' data-tone='success'><span class='t-icon'>▤</span>web-1</span><span class='t-chip' data-tone='warning'><span class='t-icon'>▤</span>nas</span><span class='t-chip' data-tone='info'>host:web-1 <button class='t-chip-remove' aria-label='Remove host:web-1' data-demo='remove'>×</button></span><span class='t-chip' data-tone='accent'>kind:custom <button class='t-chip-remove' aria-label='Remove kind:custom' data-demo='remove'>×</button></span></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;span class=&quot;t-chip&quot; data-tone=&quot;success&quot;&gt;&lt;span class=&quot;t-icon&quot;&gt;▤&lt;/span&gt;web-1&lt;/span&gt;
+&lt;span class=&quot;t-chip&quot; data-tone=&quot;info&quot;&gt;host:web-1 &lt;button class=&quot;t-chip-remove&quot; aria-label=&quot;Remove host:web-1&quot;&gt;×&lt;/button&gt;&lt;/span&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="state-label" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">State label <code class="sc-id">t-state</code></h3><a class="sc-only" href="?only=state-label" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Icon + word pill for a lifecycle state (issue, PR, job, device). The icon is mandatory so colour-blind users read the state.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='2'><div class='t-cluster' data-gap='2'><span class='t-state' data-state='open'><span class='t-icon' aria-hidden='true'>◉</span>Open</span><span class='t-state' data-state='closed'><span class='t-icon' aria-hidden='true'>⊘</span>Closed</span><span class='t-state' data-state='done'><span class='t-icon' aria-hidden='true'>✓</span>Completed</span><span class='t-state' data-state='done'><span class='t-icon' aria-hidden='true'>⑃</span>Merged</span><span class='t-state' data-state='draft'><span class='t-icon' aria-hidden='true'>✎</span>Draft</span></div><div class='t-cluster' data-gap='2'><span class='t-state' data-state='info'><span class='t-icon' aria-hidden='true'>◎</span>In review</span><span class='t-state' data-state='warning'><span class='t-icon' aria-hidden='true'>▲</span>Degraded</span><span class='t-state' data-state='done' data-variant='solid'><span class='t-icon' aria-hidden='true'>🚀</span>Deployed</span><span class='t-state' data-state='open' data-size='sm'><span class='t-icon' aria-hidden='true'>◉</span>Open</span><span class='t-state' data-state='draft' data-size='sm'><span class='t-icon' aria-hidden='true'>⧗</span>Queued</span></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;span class=&quot;t-state&quot; data-state=&quot;open&quot;&gt;&lt;span class=&quot;t-icon&quot; aria-hidden=&quot;true&quot;&gt;◉&lt;/span&gt;Open&lt;/span&gt;
+&lt;span class=&quot;t-state&quot; data-state=&quot;done&quot; data-variant=&quot;solid&quot;&gt;&lt;span class=&quot;t-icon&quot; aria-hidden=&quot;true&quot;&gt;✓&lt;/span&gt;Deployed&lt;/span&gt;</code></pre><p class="t-muted t-small">State → tone: open=success, closed=danger, done=accent, draft=neutral, warning=warning, info=info. tokens.css does not map data-state; skins (and base.css) do.</p></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="status-dot" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Status dot <code class="sc-id">t-dot</code></h3><a class="sc-only" href="?only=status-dot" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Health as colour: running green, degraded orange, stopped red, muted/unknown neutral.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='3' data-align='center'><span><span class='t-dot' data-status='running'></span> healthy</span><span><span class='t-dot' data-status='degraded'></span> degraded</span><span><span class='t-dot' data-status='stopped'></span> stopped</span><span><span class='t-dot' data-status='muted'></span> muted</span></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;span class=&quot;t-dot&quot; data-status=&quot;running&quot; title=&quot;running&quot;&gt;&lt;/span&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="avatar" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Avatar <code class="sc-id">t-avatar</code></h3><a class="sc-only" href="?only=avatar" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Circle (or square for machines/orgs) with initials or an image, tinted; sizes; status dot; overlapping stack; avatar + name + description row.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='2'><div class='t-cluster' data-gap='2' data-align='center'><span class='t-avatar' data-size='xs' data-tone='purple'>a</span><span class='t-avatar' data-size='sm' data-tone='green'>rs</span><span class='t-avatar' data-tone='cyan'>AL</span><span class='t-avatar' data-size='lg' data-tone='orange'>AL</span><span class='t-avatar' data-size='xl' data-tone='pink'>AL</span><span class='t-avatar' data-size='lg' data-shape='square' data-tone='purple'>▤</span></div><div class='t-cluster' data-gap='3' data-align='center'><span class='t-avatar-wrap'><span class='t-avatar' data-tone='purple'>AL</span><span class='t-avatar-status' data-status='online'></span></span><span class='t-avatar-wrap'><span class='t-avatar' data-tone='cyan'>TM</span><span class='t-avatar-status' data-status='busy'></span></span><span class='t-avatar-wrap'><span class='t-avatar' data-tone='neutral'>OF</span><span class='t-avatar-status' data-status='offline'></span></span><span class='t-avatar-stack'><span class='t-avatar' data-tone='purple'>AL</span><span class='t-avatar' data-tone='green'>TM</span><span class='t-avatar' data-tone='cyan'>AK</span><span class='t-avatar' data-more>+3</span></span><span class='t-avatar-row'><span class='t-avatar' data-tone='green'>AL</span><span><span class='t-avatar-name'>alice</span><span class='t-avatar-desc'>owner · last seen <time class='t-time' data-relative datetime='' data-ago='5400'></time></span></span></span></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;span class=&quot;t-avatar&quot; data-tone=&quot;purple&quot;&gt;AL&lt;/span&gt;
+&lt;img class=&quot;t-avatar&quot; data-size=&quot;lg&quot; src=&quot;…&quot; alt=&quot;&quot;&gt;
+&lt;span class=&quot;t-avatar-wrap&quot;&gt;&lt;span class=&quot;t-avatar&quot; data-tone=&quot;cyan&quot;&gt;TM&lt;/span&gt;&lt;span class=&quot;t-avatar-status&quot; data-status=&quot;online&quot;&gt;&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;t-avatar-stack&quot;&gt;&lt;span class=&quot;t-avatar&quot; data-tone=&quot;purple&quot;&gt;AL&lt;/span&gt;&lt;span class=&quot;t-avatar&quot; data-tone=&quot;green&quot;&gt;TM&lt;/span&gt;&lt;span class=&quot;t-avatar&quot; data-more&gt;+3&lt;/span&gt;&lt;/span&gt;
+&lt;span class=&quot;t-avatar-row&quot;&gt;&lt;span class=&quot;t-avatar&quot; data-tone=&quot;green&quot;&gt;AL&lt;/span&gt;&lt;span&gt;&lt;span class=&quot;t-avatar-name&quot;&gt;alice&lt;/span&gt;&lt;span class=&quot;t-avatar-desc&quot;&gt;owner&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="table" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Table <code class="sc-id">t-table</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.sortable (optional)</span><a class="sc-only" href="?only=table" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Dense data table: shrink-to-fit icon/action columns, group header rows, sortable headers (aria-sort), hover rows. data-variant=log is the scrolling log table with a sticky head and outcome-tinted rows.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='3'><div class='t-table-wrap'><table class='t-table' data-variant='data' data-demo='sortable'><thead><tr><th class='t-col-icon'></th><th aria-sort='ascending' data-sort='name'><button type='button'>Name <span class='t-sort-icon'></span></button></th><th data-sort='image'><button type='button'>Image <span class='t-sort-icon'></span></button></th><th class='t-col-num' data-sort='cpu'><button type='button'>CPU <span class='t-sort-icon'></span></button></th><th>State</th><th>Owner</th><th class='t-col-actions'>Actions</th></tr></thead><tbody><tr class='t-table-group'><td colspan='7'>Custom</td></tr><tr data-name='console' data-image='build' data-cpu='12'><td class='t-col-icon'><span class='t-dot' data-status='running'></span></td><td>console</td><td class='t-muted'>build</td><td class='t-col-num t-mono'>12 %</td><td><span class='t-badge' data-tone='success'>running</span></td><td><span class='t-avatar-row'><span class='t-avatar' data-size='xs' data-tone='purple'>a</span>alice</span></td><td class='t-col-actions'><button class='t-btn' data-size='sm' data-icon='only' data-tip='Restart'>↻</button> <button class='t-btn' data-size='sm' data-icon='only' data-variant='danger' data-tip='Stop'>■</button></td></tr><tr data-name='myokymia' data-image='build' data-cpu='0'><td class='t-col-icon'><span class='t-dot' data-status='stopped'></span></td><td>myokymia</td><td class='t-muted'>build</td><td class='t-col-num t-mono'>0 %</td><td><span class='t-badge' data-tone='neutral'>stopped</span></td><td><span class='t-avatar-row'><span class='t-avatar' data-size='xs' data-tone='purple'>a</span>alice</span></td><td class='t-col-actions'><button class='t-btn' data-size='sm' data-icon='only' data-tip='Start'>▶</button></td></tr><tr class='t-table-group'><td colspan='7'>Self-hosted</td></tr><tr data-name='beszel' data-image='henrygd/beszel' data-cpu='4'><td class='t-col-icon'><span class='t-dot' data-status='degraded'></span></td><td>beszel</td><td class='t-muted'>henrygd/beszel:latest</td><td class='t-col-num t-mono'>4 %</td><td><span class='t-badge' data-tone='warning' data-variant='solid'>Update</span></td><td><span class='t-avatar-row'><span class='t-avatar' data-size='xs' data-tone='cyan'>n</span>nas</span></td><td class='t-col-actions'><button class='t-btn' data-size='sm' data-icon='only' data-variant='warning' data-tip='Pull update'>⇩</button></td></tr></tbody></table></div><div class='t-table-wrap' style='max-height:9rem'><table class='t-table' data-variant='log'><thead><tr><th>When</th><th>Via</th><th>Op</th><th>Result</th><th>Code</th><th>Detail</th></tr></thead><tbody><tr data-tone='success'><td class='t-mono'>15:02:41</td><td><span class='t-badge' data-tone='green' data-size='xs'>mqtt</span></td><td class='t-mono'>status</td><td data-tone='success' class='t-tone-text'>ok</td><td class='t-mono'>200</td><td class='t-muted'></td></tr><tr data-tone='danger'><td class='t-mono'>15:01:12</td><td><span class='t-badge' data-tone='purple' data-size='xs'>http</span></td><td class='t-mono'>install</td><td data-tone='danger' class='t-tone-text'>rejected</td><td class='t-mono'>401</td><td class='t-muted'>unauthorized</td></tr><tr data-tone='warning'><td class='t-mono'>14:02:09</td><td><span class='t-badge' data-tone='cyan' data-size='xs'>stream</span></td><td class='t-mono'>install display 0.3.0</td><td data-tone='warning' class='t-tone-text'>accepted</td><td class='t-mono'>202</td><td class='t-muted'>flashed ota_1 · rebooting</td></tr><tr data-tone='warning'><td class='t-mono'>13:58:40</td><td><span class='t-badge' data-tone='orange' data-size='xs'>queue</span></td><td class='t-mono'>reboot</td><td data-tone='warning' class='t-tone-text'>queued</td><td class='t-mono'>–</td><td class='t-muted'>waiting for the device</td></tr><tr data-tone='success'><td class='t-mono'>13:40:02</td><td><span class='t-badge' data-tone='green' data-size='xs'>mqtt</span></td><td class='t-mono'>status</td><td data-tone='success' class='t-tone-text'>ok</td><td class='t-mono'>200</td><td class='t-muted'></td></tr></tbody></table></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-table-wrap&quot;&gt;
+  &lt;table class=&quot;t-table&quot; data-variant=&quot;data&quot;&gt;
+    &lt;thead&gt;&lt;tr&gt;&lt;th class=&quot;t-col-icon&quot;&gt;&lt;/th&gt;&lt;th aria-sort=&quot;ascending&quot; data-sort=&quot;name&quot;&gt;&lt;button&gt;Name &lt;span class=&quot;t-sort-icon&quot;&gt;&lt;/span&gt;&lt;/button&gt;&lt;/th&gt;&lt;th class=&quot;t-col-num&quot; data-sort=&quot;cpu&quot;&gt;&lt;button&gt;CPU &lt;span class=&quot;t-sort-icon&quot;&gt;&lt;/span&gt;&lt;/button&gt;&lt;/th&gt;&lt;th&gt;State&lt;/th&gt;&lt;th class=&quot;t-col-actions&quot;&gt;Actions&lt;/th&gt;&lt;/tr&gt;&lt;/thead&gt;
+    &lt;tbody&gt;
+      &lt;tr class=&quot;t-table-group&quot;&gt;&lt;td colspan=&quot;5&quot;&gt;Custom&lt;/td&gt;&lt;/tr&gt;
+      &lt;tr&gt;&lt;td class=&quot;t-col-icon&quot;&gt;&lt;span class=&quot;t-dot&quot; data-status=&quot;running&quot;&gt;&lt;/span&gt;&lt;/td&gt;&lt;td&gt;console&lt;/td&gt;&lt;td class=&quot;t-col-num&quot;&gt;12 %&lt;/td&gt;&lt;td&gt;&lt;span class=&quot;t-badge&quot; data-tone=&quot;success&quot;&gt;running&lt;/span&gt;&lt;/td&gt;&lt;td class=&quot;t-col-actions&quot;&gt;&lt;button class=&quot;t-btn&quot; data-size=&quot;sm&quot; data-icon=&quot;only&quot; data-tip=&quot;Restart&quot;&gt;↻&lt;/button&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;/tbody&gt;
+  &lt;/table&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="card" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Card <code class="sc-id">t-card</code></h3><a class="sc-only" href="?only=card" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Raised surface with header (title + end slot), body, footer/actions. Variants: clickable (whole card is the target), stat (label + value + chart box), collapsible (&lt;details&gt;), thumb (preview + meta row). aria-selected=true = selected ring. Facts: a &lt;dl class=&#39;t-facts&#39;&gt; label/value grid.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='3'><div class='t-grid' data-cols='3' data-min='xs'><div class='t-card' data-variant='clickable' role='button' tabindex='0' data-demo='card-click'><div class='t-card-header'><h3 class='t-card-title'><span class='t-icon'>▣</span>render</h3><span class='t-dot' data-status='running'></span></div><div class='t-card-body'><div class='t-cluster' data-gap='1'><span class='t-badge' data-tone='accent'>custom</span><span class='t-chip' data-tone='success'>web-1</span></div><p class='t-muted t-small'>Whole card is the target, buttons stop propagation.</p><button class='t-btn' data-size='sm' data-variant='danger' data-demo='stop'>■ Stop</button></div></div><div class='t-card' data-variant='clickable' aria-selected='true' role='button' tabindex='0'><div class='t-card-header'><h3 class='t-card-title'><span class='t-icon'>▣</span>console-with-a-very-long-name</h3><span class='t-badge' data-tone='warning' data-variant='solid'>Update</span></div><div class='t-card-body'><div class='t-cluster' data-gap='1'><span class='t-badge' data-tone='info'>self-hosted</span><span class='t-chip' data-tone='warning'>nas</span></div><p class='t-muted t-small'>aria-selected: sticky accent ring, title truncates.</p></div></div><div class='t-card'><div class='t-card-header'><h3 class='t-card-title'><span class='t-icon'>▦</span>sensor-c3</h3><span class='t-dot' data-status='degraded'></span></div><div class='t-card-body'><dl class='t-facts'><dt>IP</dt><dd>192.168.1.42</dd><dt>Firmware</dt><dd>v0.6.2 · base 1.4</dd><dt>Playlist</dt><dd>printer-status-with-a-long-name</dd><dt>RSSI</dt><dd data-tone='warning' class='t-tone-text'>-71 dBm</dd></dl><div class='t-card-actions'><button class='t-btn' data-size='sm'>↻ Reboot</button><button class='t-btn' data-size='sm' data-variant='primary'>Identify</button></div></div></div></div><div class='t-grid' data-cols='4' data-min='xs'><div class='t-card' data-variant='thumb clickable' role='button' tabindex='0'><div class='t-card-thumb'><svg viewBox='0 0 160 120' aria-hidden='true'><rect x='20' y='30' width='120' height='70' rx='6' fill='var(--t-selection)'/><circle cx='60' cy='60' r='14' fill='var(--t-accent)'/><path d='M40 95 L80 60 L110 85 L140 65 L140 100 L40 100Z' fill='var(--t-success)'/></svg></div><div class='t-card-meta'><span class='t-icon t-muted'>▨</span><span class='t-truncate'>render-front-view-final.png</span><span class='t-badge' data-size='xs'>1.2 MB</span></div></div><div class='t-card' data-variant='thumb clickable' role='button' tabindex='0'><div class='t-card-thumb' data-ratio='square'><svg viewBox='0 0 100 100' aria-hidden='true'><circle cx='50' cy='50' r='48' fill='var(--t-canvas)' stroke='var(--t-border)'/><circle cx='50' cy='50' r='36' fill='none' stroke='var(--t-success)' stroke-width='6' stroke-dasharray='160 66' transform='rotate(-90 50 50)'/></svg></div><div class='t-card-meta'><span class='t-truncate'>printing-240</span><span class='t-badge' data-tone='info' data-size='xs'>240</span></div></div><div class='t-card' data-variant='stat'><div class='t-card-body'><div class='t-cluster' data-align='baseline'><span class='t-stat-label'>Requests / min</span><span class='t-toolbar-spacer'></span><span class='t-stat-value'>1 204</span></div><div class='t-stat-box'><svg viewBox='0 0 100 30' preserveAspectRatio='none' aria-hidden='true'><polyline fill='none' stroke='var(--t-success)' stroke-width='1.5' points='0,25 10,20 20,22 30,12 40,15 50,8 60,12 70,6 80,10 90,4 100,7'/></svg></div></div></div><div class='t-card' data-variant='stat'><div class='t-card-body'><div class='t-cluster' data-align='baseline'><span class='t-stat-label'>Renders / min</span><span class='t-toolbar-spacer'></span><span class='t-stat-value'><span class='t-stat-sub'>no data</span></span></div><div class='t-stat-box' data-empty>Collecting…</div></div></div></div><div class='t-grid' data-cols='2' data-min='sm'><details class='t-card' data-variant='collapsible' open><summary class='t-card-header'><h3 class='t-card-title'>Self-hosted <span class='t-counter'>3</span></h3><span class='t-sidebar-chevron'></span></summary><div class='t-card-body'><ul class='t-plain-list'><li><span class='t-dot' data-status='running'></span> beszel <span class='t-muted t-small'>henrygd/beszel</span></li><li><span class='t-dot' data-status='running'></span> gatus <span class='t-muted t-small'>twinproduction/gatus</span></li><li><span class='t-dot' data-status='stopped'></span> registry <span class='t-muted t-small'>registry:2</span></li></ul></div></details><div class='t-card'><div class='t-card-body'><div class='t-empty'><span class='t-icon t-empty-icon'>▭</span><h3 class='t-empty-title'>No services yet</h3><p>Register the first one and it shows up here with its health.</p><div class='t-empty-actions'><button class='t-btn' data-variant='primary' data-size='sm'>＋ New service</button><button class='t-btn' data-variant='ghost' data-size='sm'>Import compose</button></div></div></div></div></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-card&quot;&gt;
+  &lt;div class=&quot;t-card-header&quot;&gt;&lt;h3 class=&quot;t-card-title&quot;&gt;&lt;span class=&quot;t-icon&quot;&gt;▣&lt;/span&gt;render&lt;/h3&gt;&lt;span class=&quot;t-dot&quot; data-status=&quot;running&quot;&gt;&lt;/span&gt;&lt;/div&gt;
+  &lt;div class=&quot;t-card-body&quot;&gt;…&lt;/div&gt;
+  &lt;div class=&quot;t-card-footer t-card-actions&quot;&gt;&lt;button class=&quot;t-btn&quot; data-size=&quot;sm&quot;&gt;Reboot&lt;/button&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;details class=&quot;t-card&quot; data-variant=&quot;collapsible&quot; open&gt;
+  &lt;summary class=&quot;t-card-header&quot;&gt;&lt;h3 class=&quot;t-card-title&quot;&gt;Self-hosted &lt;span class=&quot;t-counter&quot;&gt;3&lt;/span&gt;&lt;/h3&gt;&lt;/summary&gt;
+  &lt;div class=&quot;t-card-body&quot;&gt;…&lt;/div&gt;
+&lt;/details&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="empty-state" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Empty state <code class="sc-id">t-empty</code></h3><a class="sc-only" href="?only=empty-state" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Centred icon + heading + one line naming the next action, with primary/secondary actions. Never just &#39;nothing here&#39;.</p>
+          <div class="sc-demo"><div class='t-grid' data-cols='2' data-min='sm'><div class='t-empty'><span class='t-icon t-empty-icon'>▭</span><h3 class='t-empty-title'>No services yet</h3><p>Register the first one and it shows up here with its health.</p><div class='t-empty-actions'><button class='t-btn' data-variant='primary' data-size='sm'>＋ New service</button><button class='t-btn' data-variant='ghost' data-size='sm'>Import compose</button></div></div><div class='t-empty' data-size='sm'><span class='t-icon t-empty-icon'>⌕</span><p>No token matches — clear the filter.</p></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-empty&quot;&gt;
+  &lt;span class=&quot;t-icon t-empty-icon&quot;&gt;▭&lt;/span&gt;
+  &lt;h3 class=&quot;t-empty-title&quot;&gt;No services yet&lt;/h3&gt;
+  &lt;p&gt;Register the first one and it shows up here with its health.&lt;/p&gt;
+  &lt;div class=&quot;t-empty-actions&quot;&gt;&lt;button class=&quot;t-btn&quot; data-variant=&quot;primary&quot;&gt;New service&lt;/button&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="timeline" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Timeline <code class="sc-id">t-timeline</code></h3><a class="sc-only" href="?only=timeline" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Vertical rail with one round tinted badge per event, body (who did what + relative time + optional detail card), condensed runs and breaks between groups.</p>
+          <div class="sc-demo"><ol class='t-timeline'><li class='t-timeline-item'><span class='t-timeline-badge' data-tone='success'>＋</span><div class='t-timeline-body'><b>alice</b> created the service <time class='t-time' data-relative datetime='' data-ago='259200'></time></div></li><li class='t-timeline-item' data-density='condensed'><span class='t-timeline-badge' data-tone='accent'>⑂</span><div class='t-timeline-body'><code>a1b2c3d</code> fix: tunnel ingress order <time class='t-time' data-relative datetime='' data-ago='200000'></time></div></li><li class='t-timeline-item' data-density='condensed'><span class='t-timeline-badge' data-tone='accent'>⑂</span><div class='t-timeline-body'><code>d4e5f6a</code> feat: health monitor <time class='t-time' data-relative datetime='' data-ago='190000'></time></div></li><li class='t-timeline-item'><span class='t-timeline-badge' data-tone='info'>✎</span><div class='t-timeline-body'><b>agent</b> commented <time class='t-time' data-relative datetime='' data-ago='86400'></time><div class='t-timeline-card'>Health check green from inside the container; the host loopback probe proves nothing.</div></div></li><li class='t-timeline-break'></li><li class='t-timeline-item'><span class='t-timeline-badge' data-tone='danger'>✕</span><div class='t-timeline-body'><b>gatus</b> reported <span class='t-state' data-state='closed' data-size='sm'><span class='t-icon' aria-hidden='true'>⊘</span>down</span> for 4 min <time class='t-time' data-relative datetime='' data-ago='5400'></time></div></li><li class='t-timeline-item'><span class='t-timeline-badge' data-tone='accent' data-variant='solid'>🚀</span><div class='t-timeline-body'><b>console</b> deployed <b>v0.9.2</b> <time class='t-time' data-relative datetime='' data-ago='120'></time></div></li></ol></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;ol class=&quot;t-timeline&quot;&gt;
+  &lt;li class=&quot;t-timeline-item&quot;&gt;&lt;span class=&quot;t-timeline-badge&quot; data-tone=&quot;success&quot;&gt;＋&lt;/span&gt;&lt;div class=&quot;t-timeline-body&quot;&gt;&lt;b&gt;alice&lt;/b&gt; created the service &lt;time class=&quot;t-time&quot; data-relative datetime=&quot;2026-10-11T10:00:00Z&quot;&gt;&lt;/time&gt;&lt;/div&gt;&lt;/li&gt;
+  &lt;li class=&quot;t-timeline-item&quot; data-density=&quot;condensed&quot;&gt;&lt;span class=&quot;t-timeline-badge&quot; data-tone=&quot;accent&quot;&gt;⑂&lt;/span&gt;&lt;div class=&quot;t-timeline-body&quot;&gt;&lt;code&gt;a1b2c3d&lt;/code&gt; fix: tunnel order&lt;/div&gt;&lt;/li&gt;
+  &lt;li class=&quot;t-timeline-break&quot;&gt;&lt;/li&gt;
+  &lt;li class=&quot;t-timeline-item&quot;&gt;&lt;span class=&quot;t-timeline-badge&quot; data-tone=&quot;accent&quot; data-variant=&quot;solid&quot;&gt;🚀&lt;/span&gt;&lt;div class=&quot;t-timeline-body&quot;&gt;&lt;b&gt;console&lt;/b&gt; deployed &lt;b&gt;v0.9.2&lt;/b&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="relative-time" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Relative time <code class="sc-id">t-time</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.times</span><a class="sc-only" href="?only=relative-time" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">&lt;time&gt; with the ISO value in datetime, upgraded client-side to &#39;just now&#39; · &#39;3 min ago&#39; · &#39;yesterday&#39; · short date; the full date is always in title.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='3'><time class='t-time' data-relative datetime='' data-ago='10'></time><time class='t-time' data-relative datetime='' data-ago='180'></time><time class='t-time' data-relative datetime='' data-ago='7200'></time><time class='t-time' data-relative datetime='' data-ago='86400'></time><time class='t-time' data-relative datetime='' data-ago='345600'></time><time class='t-time' data-relative datetime='' data-ago='2592000'></time><time class='t-time' data-relative datetime='' data-ago='-3600'></time></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;time class=&quot;t-time&quot; data-relative datetime=&quot;2026-10-13T14:02:09Z&quot;&gt;13 Oct 2026, 16:02&lt;/time&gt;</code></pre><p class="t-muted t-small">Rules: &lt; 45 s just now; minutes to 59; hours to 23; yesterday/tomorrow; days to 6; then short date, year only when it differs.</p></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="tooltip" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Tooltip <code class="sc-id">t-tooltip</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.tooltips</span><a class="sc-only" href="?only=tooltip" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">data-tip on any element shows a small label on hover/focus; data-tip-at picks the side. Tooltips only repeat or label — explanations go in the help popover.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='2' data-align='center'><button class='t-btn' data-size='sm' data-tip='Tooltips repeat or label, nothing more'>Hover me</button><span class='t-badge' data-tone='info' data-tip='Open 3 days' data-tip-at='bottom'>tip below</span><a href='#tooltip' data-tip='Opens the service' data-tip-at='right'>link with tip</a></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;button class=&quot;t-btn&quot; data-icon=&quot;only&quot; data-tip=&quot;Edit&quot; data-tip-at=&quot;bottom&quot;&gt;&lt;span class=&quot;t-icon&quot;&gt;✎&lt;/span&gt;&lt;/button&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="help-popover" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Help popover <code class="sc-id">t-help</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.help</span><a class="sc-only" href="?only=help-popover" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">A small circled icon next to a label; click toggles and pins a popover, hovering 1 s peeks. Three meanings by tone: accent &#39;?&#39; help (how to set/use), info &#39;i&#39; context, danger &#39;!&#39; important.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='2'><div><b>Heartbeat</b> <span class='t-muted'>60 s</span> <span class='t-help' data-tone='accent'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='Help: heartbeat'>?</button><div class='t-help-box' hidden><p><b>Help</b> (accent ?): configuration values and how to set, configure or use the thing.</p><p>Set in <code>Settings → Devices</code>; the board reads it at its next check-in.</p></div></span></div><div><b>Last will</b> <span class='t-muted'>offline</span> <span class='t-help' data-tone='info'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='Info: last will'>i</button><div class='t-help-box' hidden><p><b>Info</b> (i): pure explanation and added context, nothing to act on.</p></div></span></div><div><b>Factory slot</b> <span class='t-muted'>recovery 1.4.0</span> <span class='t-help' data-tone='danger'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='Important: factory slot'>!</button><div class='t-help-box' hidden><p><b>Important</b> (!): the field is critical or dangerous, read before touching.</p><p>Overwriting the factory slot removes the only way back after a bad OTA.</p></div></span></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;span class=&quot;t-help&quot; data-tone=&quot;info&quot;&gt;
+  &lt;button class=&quot;t-help-btn&quot; type=&quot;button&quot; aria-expanded=&quot;false&quot; aria-label=&quot;About heartbeat&quot;&gt;i&lt;/button&gt;
+  &lt;div class=&quot;t-help-box&quot; hidden&gt;&lt;p&gt;The broker publishes this on the device&quot;s behalf when its connection drops.&lt;/p&gt;&lt;/div&gt;
+&lt;/span&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="code-block" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Code block <code class="sc-id">t-code</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.copy</span><a class="sc-only" href="?only=code-block" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Monospace block on the inset surface with a copy button, optional tabs that swap the content, shell tokens; data-variant=json for payloads.</p>
+          <div class="sc-demo"><div class='t-grid' data-cols='2' data-min='sm'><div class='t-code' data-demo='codetabs'><div class='t-code-tabs' role='tablist'><button type='button' role='tab' aria-selected='true' data-text="'Authorization: Basic YWRtaW46czNjcmV0'">Admin login</button><button type='button' role='tab' aria-selected='false' data-text="'Authorization: Bearer hgr_2884858d607c_9Kd3pQx7Lm2Vn8Rt'">Device token</button></div><pre class='t-code-pre' data-variant='shell'><button class='t-code-copy' type='button' aria-label='Copy'>⧉</button><span class='t-tok-prompt'>$</span> <span class='t-tok-cmd'>curl</span> <span class='t-tok-flag'>-H</span> <span class='t-tok-str' data-demo='code-auth'>'Authorization: Basic YWRtaW46czNjcmV0'</span> \
+    <span class='t-tok-flag'>-d</span> <span class='t-tok-str'>'{"op":"status"}'</span> \
+    <span class='t-tok-url'>http://192.168.1.114/api</span></pre></div><pre class='t-code-pre' data-variant='json'><button class='t-code-copy' type='button' aria-label='Copy'>⧉</button>{
+  <span class='t-tok-key'>"id"</span>: <span class='t-tok-str'>"7c1e"</span>,
+  <span class='t-tok-key'>"code"</span>: <span class='t-tok-num'>202</span>,
+  <span class='t-tok-key'>"ok"</span>: <span class='t-tok-bool'>true</span>,
+  <span class='t-tok-key'>"detail"</span>: <span class='t-tok-str'>"flashed ota_1 · rebooting"</span>
+}</pre></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-code&quot;&gt;
+  &lt;div class=&quot;t-code-tabs&quot; role=&quot;tablist&quot;&gt;&lt;button role=&quot;tab&quot; aria-selected=&quot;true&quot;&gt;Admin login&lt;/button&gt;&lt;button role=&quot;tab&quot; aria-selected=&quot;false&quot;&gt;Device token&lt;/button&gt;&lt;/div&gt;
+  &lt;pre class=&quot;t-code-pre&quot; data-variant=&quot;shell&quot;&gt;&lt;button class=&quot;t-code-copy&quot; type=&quot;button&quot; aria-label=&quot;Copy&quot;&gt;⧉&lt;/button&gt;&lt;span class=&quot;t-tok-prompt&quot;&gt;$&lt;/span&gt; &lt;span class=&quot;t-tok-cmd&quot;&gt;curl&lt;/span&gt; &lt;span class=&quot;t-tok-flag&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;t-tok-str&quot;&gt;&quot;Authorization: Basic …&quot;&lt;/span&gt; &lt;span class=&quot;t-tok-url&quot;&gt;http://192.168.1.114/api&lt;/span&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;pre class=&quot;t-code-pre&quot; data-variant=&quot;json&quot;&gt;{ &lt;span class=&quot;t-tok-key&quot;&gt;&quot;ok&quot;&lt;/span&gt;: &lt;span class=&quot;t-tok-bool&quot;&gt;true&lt;/span&gt;, &lt;span class=&quot;t-tok-key&quot;&gt;&quot;code&quot;&lt;/span&gt;: &lt;span class=&quot;t-tok-num&quot;&gt;202&lt;/span&gt; }&lt;/pre&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="truncate" data-group="data">
+        <div class="t-card-header"><h3 class="t-card-title">Truncate <code class="sc-id">t-truncate</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.truncate</span><a class="sc-only" href="?only=truncate" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Single-line ellipsis with the full text in title; data-expand makes it expand on click.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='1' style='max-width:320px'><span class='t-truncate' title='console-with-a-very-long-service-name-that-does-not-fit'>console-with-a-very-long-service-name-that-does-not-fit</span><span class='t-truncate' data-expand title='click to expand' aria-expanded='false' tabindex='0' role='button'>ghcr.io/example/app:2026.10.13-fork-amd64-with-a-tag-this-long-expands-on-click</span></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;span class=&quot;t-truncate&quot; title=&quot;console-with-a-very-long-service-name&quot;&gt;console-with-a-very-long-service-name&lt;/span&gt;
+&lt;span class=&quot;t-truncate&quot; data-expand title=&quot;click to expand&quot; aria-expanded=&quot;false&quot;&gt;ghcr.io/example/app:2026.10.13-fork-amd64-with-a-tag-this-long&lt;/span&gt;</code></pre></details>
+        </div>
+      </section>
+      <h2 class="sc-group" id="group-feedback">Feedback</h2>
+      
+      <section class="t-card sc-component" id="alert" data-group="feedback">
+        <div class="t-card-header"><h3 class="t-card-title">Alert <code class="sc-id">t-alert</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.dismiss</span><a class="sc-only" href="?only=alert" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Inline banner with a tone, optional title, dismiss and actions. Every error names a reason and the resulting state.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='2'><div class='t-alert' data-tone='info' role='status'><span class='t-icon t-alert-icon'>ⓘ</span><div class='t-alert-body'><b>Sync scheduled.</b> The next DNS sync runs in 30 minutes.</div><button class='t-alert-close' aria-label='Dismiss' data-dismiss>×</button></div><div class='t-alert' data-tone='success' role='status'><span class='t-icon t-alert-icon'>✓</span><div class='t-alert-body'><b>12 services synced.</b> Health checks and DNS match the registry.</div></div><div class='t-alert' data-tone='warning' role='alert'><span class='t-icon t-alert-icon'>▲</span><div class='t-alert-body'><b>Health check answered slowly</b> (2.4 s). Probes keep running.</div><div class='t-alert-actions'><button class='t-btn' data-size='sm' data-variant='warning'>Open health checks</button></div></div><div class='t-alert' data-tone='danger' role='alert'><span class='t-icon t-alert-icon'>✕</span><div class='t-alert-body'><b>DNS provider rejected the record.</b> Quota exceeded for this zone — the DNS entry was not created, the container is up.<div class='t-alert-actions'><button class='t-btn' data-size='sm' data-variant='danger'>Retry</button><button class='t-btn' data-size='sm' data-variant='ghost'>View log</button></div></div></div><div class='t-alert' data-tone='neutral' data-size='sm'><span class='t-icon t-alert-icon'>☼</span><div class='t-alert-body'>Neutral flash: compact, one line.</div></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-alert&quot; data-tone=&quot;warning&quot; role=&quot;alert&quot;&gt;
+  &lt;span class=&quot;t-icon t-alert-icon&quot;&gt;▲&lt;/span&gt;
+  &lt;div class=&quot;t-alert-body&quot;&gt;&lt;b&gt;Health check answered slowly&lt;/b&gt; (2.4 s). Probes keep running.&lt;/div&gt;
+  &lt;div class=&quot;t-alert-actions&quot;&gt;&lt;button class=&quot;t-btn&quot; data-size=&quot;sm&quot;&gt;Open health checks&lt;/button&gt;&lt;/div&gt;
+  &lt;button class=&quot;t-alert-close&quot; aria-label=&quot;Dismiss&quot; data-dismiss&gt;×&lt;/button&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="toast" data-group="feedback">
+        <div class="t-card-header"><h3 class="t-card-title">Toast <code class="sc-id">t-toast</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.toast</span><a class="sc-only" href="?only=toast" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Transient outcome message in a fixed top-right stack: drops in, floats out after ~2.5 s. Colour is the outcome. Every fetch() action ends in one.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='2'><div class='t-cluster' data-gap='2'><button class='t-btn' data-size='sm' data-tone='success' data-demo='toast' data-toast-tone='success'>Success</button><button class='t-btn' data-size='sm' data-variant='warning' data-demo='toast' data-toast-tone='warning'>Warning</button><button class='t-btn' data-size='sm' data-variant='danger' data-demo='toast' data-toast-tone='danger'>Error</button><button class='t-btn' data-size='sm' data-demo='toast' data-toast-tone='info'>Info</button></div><div class='t-cluster' data-gap='2'><div class='t-toast' data-tone='success' role='status' style='animation:none'><span class='t-icon t-toast-icon'>✓</span><span class='t-toast-body'>Saved and synced to health checks</span></div><div class='t-toast' data-tone='danger' role='status' style='animation:none'><span class='t-icon t-toast-icon'>✕</span><span class='t-toast-body'>DNS provider rejected the record: quota exceeded</span></div></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-toasts&quot; id=&quot;t-toasts&quot; aria-live=&quot;polite&quot; aria-atomic=&quot;false&quot;&gt;&lt;/div&gt;
+&lt;!-- Tailor.toast(&quot;success&quot;, &quot;Saved and synced to health checks&quot;) appends: --&gt;
+&lt;div class=&quot;t-toast&quot; data-tone=&quot;success&quot; role=&quot;status&quot;&gt;&lt;span class=&quot;t-icon t-toast-icon&quot;&gt;✓&lt;/span&gt;&lt;span class=&quot;t-toast-body&quot;&gt;Saved and synced to health checks&lt;/span&gt;&lt;/div&gt;</code></pre><p class="t-muted t-small">Tailor.toast(tone, message, {timeout = 2500}) → the element. Tone &#39;error&#39; is accepted as an alias of &#39;danger&#39;.</p></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="dialog" data-group="feedback">
+        <div class="t-card-header"><h3 class="t-card-title">Dialog <code class="sc-id">t-dialog</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.dialogs</span><a class="sc-only" href="?only=dialog" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Native &lt;dialog&gt; for edits: pre-filled, vertically centred, Esc closes, backdrop click closes. Sizes sm/md/lg.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='2'><button class='t-btn' data-size='sm' data-dialog-open='demo-dlg'>Edit dialog</button><button class='t-btn' data-size='sm' data-dialog-open='demo-dlg-lg'>Large</button><button class='t-btn' data-size='sm' data-dialog-open='demo-dlg-sm'>Small</button></div><dialog class='t-dialog' id='demo-dlg' aria-labelledby='demo-dlg-t'><div class='t-dialog-header'><h2 class='t-dialog-title' id='demo-dlg-t'>Edit service</h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div><div class='t-dialog-body'><div class='t-field'><label class='t-label' for='d-sub'>Subdomain</label><input class='t-input' id='d-sub' value='render'><p class='t-hint'>Pre-filled from the card's data-* attributes.</p></div></div><div class='t-dialog-footer'><button class='t-btn' data-dialog-close>Cancel</button><button class='t-btn' data-variant='primary' data-dialog-close='save' data-demo='dialog-save'>Save</button></div></dialog><dialog class='t-dialog' id='demo-dlg-lg' data-size='lg' aria-labelledby='demo-dlg-lg-t'><div class='t-dialog-header'><h2 class='t-dialog-title' id='demo-dlg-lg-t'>Compose file</h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div><div class='t-dialog-body'><pre class='t-code-pre' data-variant='json'>services:
+  render:
+    image: example/render:2025.08
+    ports: ["8080:80"]
+    restart: unless-stopped</pre></div><div class='t-dialog-footer'><span class='t-muted t-small' style='margin-right:auto'>Large + scrollable body</span><button class='t-btn' data-dialog-close>Close</button></div></dialog><dialog class='t-dialog' id='demo-dlg-sm' data-size='sm' aria-labelledby='demo-dlg-sm-t'><div class='t-dialog-header'><h2 class='t-dialog-title' id='demo-dlg-sm-t'>Rename</h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div><div class='t-dialog-body'><input class='t-input' value='render' aria-label='Name'></div><div class='t-dialog-footer'><button class='t-btn' data-dialog-close>Cancel</button><button class='t-btn' data-variant='primary' data-dialog-close='save'>Save</button></div></dialog></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;button class=&quot;t-btn&quot; data-dialog-open=&quot;edit-dlg&quot;&gt;Edit&lt;/button&gt;
+&lt;dialog class=&quot;t-dialog&quot; id=&quot;edit-dlg&quot; aria-labelledby=&quot;edit-dlg-title&quot;&gt;
+  &lt;div class=&quot;t-dialog-header&quot;&gt;&lt;h2 class=&quot;t-dialog-title&quot; id=&quot;edit-dlg-title&quot;&gt;Edit service&lt;/h2&gt;&lt;button class=&quot;t-dialog-close&quot; aria-label=&quot;Close&quot; data-dialog-close&gt;×&lt;/button&gt;&lt;/div&gt;
+  &lt;div class=&quot;t-dialog-body&quot;&gt;&lt;div class=&quot;t-field&quot;&gt;&lt;label class=&quot;t-label&quot; for=&quot;d-sub&quot;&gt;Subdomain&lt;/label&gt;&lt;input class=&quot;t-input&quot; id=&quot;d-sub&quot; value=&quot;render&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;t-dialog-footer&quot;&gt;&lt;button class=&quot;t-btn&quot; data-dialog-close&gt;Cancel&lt;/button&gt;&lt;button class=&quot;t-btn&quot; data-variant=&quot;primary&quot; data-dialog-close=&quot;save&quot;&gt;Save&lt;/button&gt;&lt;/div&gt;
+&lt;/dialog&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="confirm" data-group="feedback">
+        <div class="t-card-header"><h3 class="t-card-title">Confirm dialog <code class="sc-id">t-dialog</code></h3><span class="t-badge" data-tone="accent" data-size="xs">js:Tailor.confirm</span><a class="sc-only" href="?only=confirm" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">THE way to destroy: one #t-confirm dialog per page, driven by Tailor.confirm(title, bodyHtml, {label, danger}) → Promise&lt;boolean&gt;. Never window.confirm/alert/prompt.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='2'><button class='t-btn' data-size='sm' data-variant='danger' data-demo='confirm-danger'>🗑 Delete…</button><button class='t-btn' data-size='sm' data-demo='confirm-neutral'>↻ Reboot… (neutral)</button></div><dialog class='t-dialog' id='t-confirm' data-variant='confirm' data-tone='danger' aria-labelledby='t-confirm-title'><div class='t-dialog-header'><h2 class='t-dialog-title' id='t-confirm-title'><span class='t-icon'>▲</span><span>Are you sure?</span></h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div><div class='t-dialog-body' id='t-confirm-body'></div><div class='t-dialog-footer'><button class='t-btn' data-dialog-close>Cancel</button><button class='t-btn' data-variant='danger' id='t-confirm-ok'>Confirm</button></div></dialog></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;dialog class=&quot;t-dialog&quot; id=&quot;t-confirm&quot; data-variant=&quot;confirm&quot; data-tone=&quot;danger&quot; aria-labelledby=&quot;t-confirm-title&quot;&gt;
+  &lt;div class=&quot;t-dialog-header&quot;&gt;&lt;h2 class=&quot;t-dialog-title&quot; id=&quot;t-confirm-title&quot;&gt;&lt;span class=&quot;t-icon&quot;&gt;▲&lt;/span&gt;&lt;span&gt;Are you sure?&lt;/span&gt;&lt;/h2&gt;&lt;button class=&quot;t-dialog-close&quot; aria-label=&quot;Close&quot; data-dialog-close&gt;×&lt;/button&gt;&lt;/div&gt;
+  &lt;div class=&quot;t-dialog-body&quot; id=&quot;t-confirm-body&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;t-dialog-footer&quot;&gt;&lt;button class=&quot;t-btn&quot; data-dialog-close&gt;Cancel&lt;/button&gt;&lt;button class=&quot;t-btn&quot; data-variant=&quot;danger&quot; id=&quot;t-confirm-ok&quot;&gt;Confirm&lt;/button&gt;&lt;/div&gt;
+&lt;/dialog&gt;</code></pre><p class="t-muted t-small">bodyHtml is HTML: escape anything from the user or the API. Resolves true on OK, false on Cancel / × / Esc / backdrop.</p></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="progress" data-group="feedback">
+        <div class="t-card-header"><h3 class="t-card-title">Progress <code class="sc-id">t-progress</code></h3><a class="sc-only" href="?only=progress" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Determinate bar; the value is the --t-value custom property on the bar. data-variant=stacked holds several bars. Labelled bars show the percentage inside.</p>
+          <div class="sc-demo"><div class='t-stack' data-gap='2' style='max-width:420px'><div class='t-progress' data-size='sm' role='progressbar' aria-valuenow='62' aria-valuemin='0' aria-valuemax='100'><div class='t-progress-bar' style='--t-value: 62%'></div></div><div class='t-progress' data-size='lg' role='progressbar' aria-valuenow='38' aria-valuemin='0' aria-valuemax='100'><div class='t-progress-bar' data-tone='warning' style='--t-value: 38%'>38 %</div></div><div class='t-progress' data-variant='stacked' data-size='sm' aria-label='Fleet state'><div class='t-progress-bar' data-tone='success' style='--t-value: 55%' data-tip='running 55 %'></div><div class='t-progress-bar' data-tone='warning' style='--t-value: 20%' data-tip='degraded 20 %'></div><div class='t-progress-bar' data-tone='danger' style='--t-value: 15%' data-tip='stopped 15 %'></div></div></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;div class=&quot;t-progress&quot; role=&quot;progressbar&quot; aria-valuenow=&quot;62&quot; aria-valuemin=&quot;0&quot; aria-valuemax=&quot;100&quot;&gt;&lt;div class=&quot;t-progress-bar&quot; style=&quot;--t-value: 62%&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;t-progress&quot; data-variant=&quot;stacked&quot; data-size=&quot;sm&quot;&gt;
+  &lt;div class=&quot;t-progress-bar&quot; data-tone=&quot;success&quot; style=&quot;--t-value: 55%&quot; data-tip=&quot;running 55 %&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;t-progress-bar&quot; data-tone=&quot;warning&quot; style=&quot;--t-value: 20%&quot;&gt;&lt;/div&gt;
+  &lt;div class=&quot;t-progress-bar&quot; data-tone=&quot;danger&quot; style=&quot;--t-value: 15%&quot;&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre></details>
+        </div>
+      </section>
+      <section class="t-card sc-component" id="spinner" data-group="feedback">
+        <div class="t-card-header"><h3 class="t-card-title">Spinner <code class="sc-id">t-spinner</code></h3><a class="sc-only" href="?only=spinner" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-body">
+          <p class="t-muted t-small sc-desc">Indeterminate loading indicator, inline or standalone, in sizes.</p>
+          <div class="sc-demo"><div class='t-cluster' data-gap='3' data-align='center'><span class='t-spinner' data-size='sm' role='status' aria-label='Loading'></span><span class='t-spinner' role='status' aria-label='Loading'></span><span class='t-spinner' data-size='lg' data-tone='accent' role='status' aria-label='Loading'></span><span class='t-muted t-small'><span class='t-spinner' data-size='sm' role='status'></span> Loading services…</span></div></div>
+          <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;span class=&quot;t-spinner&quot; role=&quot;status&quot; aria-label=&quot;Loading&quot;&gt;&lt;/span&gt;
+&lt;span class=&quot;t-muted&quot;&gt;&lt;span class=&quot;t-spinner&quot; data-size=&quot;sm&quot; role=&quot;status&quot;&gt;&lt;/span&gt; Loading services…&lt;/span&gt;</code></pre></details>
+        </div>
+      </section>
+    </div>
+  </main>
+  <footer class="t-footer t-shell-foot">
+    <div class="t-footer-end"><span class="t-footer-version">tailor 0.1.0 · 8 skins · 21 palettes</span><button class="t-btn" data-variant="ghost" data-size="sm" data-tailor-mode-toggle aria-label="Toggle light/dark">☼</button></div>
+  </footer>
+</div>
+<div class="t-toasts" id="t-toasts" aria-live="polite" aria-atomic="false"></div>
+<script src="../core/tailor.js" data-tailor="manual"></script>
+<script src="showcase.js"></script>
+</body>
+</html>

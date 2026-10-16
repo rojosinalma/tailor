@@ -1,0 +1,79 @@
+#!/usr/bin/env bun
+// build — regenerate palettes/*.css (every canonical palette found), manifest.json (vocabulary + skins +
+// palettes + compatibility matrix — the file agents, the CLI and the React adapter read) and
+// showcase/index.html. Idempotent; run after any change to core/components.json, a skin or a palette.
+//
+//   bin/build                 everything
+//   bin/build --no-palettes   skip palette regeneration (keep the committed palettes/*.css)
+
+import { writeFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
+import { join } from "node:path";
+import { ROOT, SKINS, PALETTES_OUT, SHOWCASE, VERSION, readJson, listSkins, listSourcePalettes, loadPalette, paletteCss, paletteModes } from "./lib/common.js";
+import { renderShowcase } from "./lib/showcase.js";
+
+const argv = process.argv.slice(2);
+const log = (m) => console.log(m);
+
+// 1. palettes
+mkdirSync(PALETTES_OUT, { recursive: true });
+const palettes = [];
+const sourceIds = listSourcePalettes();
+if (!argv.includes("--no-palettes") && sourceIds.length) {
+  for (const id of sourceIds) {
+    const p = loadPalette(id);
+    writeFileSync(join(PALETTES_OUT, `${p.id}.css`), paletteCss(p));
+    palettes.push(p);
+  }
+  log(`palettes: wrote ${palettes.length} → palettes/*.css`);
+} else {
+  // Offline: keep whatever CSS is committed, read metadata back from the file headers.
+  for (const f of readdirSync(PALETTES_OUT).filter((f) => f.endsWith(".css")).sort()) {
+    const id = f.slice(0, -4), text = Bun.file(join(PALETTES_OUT, f)).toString();
+    palettes.push({ id, name: id, mode: /color-scheme: light;[^]*?\n\}/.test(text) && !/\[data-mode="light"\]/.test(text) ? "light" : "dark", light: /\[data-mode="light"\]/.test(text) ? {} : undefined, license: "see file header", docs: "" });
+  }
+  log(`palettes: source dir unavailable, kept ${palettes.length} committed files`);
+}
+const modes = Object.fromEntries(palettes.map((p) => [p.id, paletteModes(p)]));
+
+// 2. skins
+const skins = listSkins().map((id) => ({ ...readJson(join(SKINS, id, "manifest.json")), path: `skins/${id}/` }));
+log(`skins: ${skins.length ? skins.map((s) => s.id).join(" ") : "(none yet)"}`);
+
+// 3. compatibility: skin × palette → ok when the palette offers a mode the skin accepts and is not excluded
+const compat = {};
+for (const s of skins) {
+  compat[s.id] = {};
+  for (const p of palettes) {
+    const want = s.palette_constraints.mode;
+    const okMode = want === "both" ? true : modes[p.id].includes(want);
+    const needs = (s.palette_constraints.needs ?? []).every((n) => (n === "light" ? !!p.light : n === "accent_solid" ? !!p.accent_solid : !!p.extra?.[n]));
+    const excluded = (s.palette_constraints.exclude ?? []).includes(p.id);
+    compat[s.id][p.id] = okMode && needs && !excluded ? modes[p.id].filter((m) => want === "both" || m === want) : [];
+  }
+}
+
+// 4. manifest.json
+const vocab = readJson(join(ROOT, "core", "components.json"));
+const manifest = {
+  $schema: "manifest.schema.json",
+  name: "tailor",
+  version: VERSION,
+  generated: new Date().toISOString(),
+  contract: { prefix: vocab.prefix, token_prefix: vocab.token_prefix, tones: vocab.tones, sizes: vocab.sizes, groups: vocab.groups, conventions: "core/conventions.md", skin_contract: "skins/SKIN-CONTRACT.md" },
+  core: { files: ["core/tokens.css", "core/base.css", "core/layout.css", "core/tailor.js"], load_order: ["core/tokens.css", "core/base.css", "core/layout.css", "skins/<id>/skin.css", "palettes/<id>.css", "<project>/app.css", "core/tailor.js"] },
+  vocabulary: {
+    tier1: vocab.components.filter((c) => c.tier === 1).map((c) => c.id),
+    tier2: vocab.components.filter((c) => c.tier === 2).map((c) => c.id),
+    components: vocab.components.map(({ demo, ...c }) => c),
+  },
+  skins: skins.map(({ $schema, ...s }) => s),
+  palettes: palettes.map((p) => ({ id: p.id, name: p.name, mode: p.mode, modes: modes[p.id], license: p.license, docs: p.docs, file: `palettes/${p.id}.css` })),
+  compatibility: compat,
+};
+writeFileSync(join(ROOT, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
+log(`manifest.json: ${manifest.vocabulary.tier1.length} tier-1, ${manifest.vocabulary.tier2.length} tier-2, ${skins.length} skins, ${palettes.length} palettes`);
+
+// 5. showcase
+mkdirSync(SHOWCASE, { recursive: true });
+writeFileSync(join(SHOWCASE, "index.html"), renderShowcase({ skins, palettes, modes }));
+log("showcase/index.html written");

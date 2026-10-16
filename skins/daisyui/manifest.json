@@ -1,0 +1,22 @@
+{
+  "$schema": "../manifest.schema.json",
+  "id": "daisyui",
+  "name": "daisyUI 5",
+  "system": "daisyui",
+  "version": "0.1.0",
+  "description": "daisyUI 5.7.50's look (pill buttons with a press-down translate, soft rounded-box cards and modals, chunky squircle-thumb toggles, tabs-box segmented controls, soft-tint badges and alerts, the SVG-mask loading ring) translated onto the t-* vocabulary, every colour read from --t-* tokens.",
+  "coverage": [
+    "app-shell", "navbar", "sidebar", "footer", "page", "section", "toolbar", "grid", "stack", "split",
+    "button", "button-group", "segmented", "menu",
+    "tabs", "breadcrumb", "pagination", "list",
+    "field", "check", "duration-input", "settings-row",
+    "badge", "counter", "chip", "state-label", "status-dot", "avatar", "table", "card", "empty-state", "timeline", "relative-time", "tooltip", "help-popover", "code-block", "truncate",
+    "alert", "toast", "dialog", "confirm", "progress", "spinner"
+  ],
+  "tier2": ["drawer", "stepper", "accordion"],
+  "palette_constraints": { "mode": "both" },
+  "vendor": { "package": "daisyui", "version": "5.7.50", "license": "MIT", "url": "https://daisyui.com", "vendored": false },
+  "files": { "css": "skin.css" },
+  "tokens_overridden": ["--t-radius-sm", "--t-radius-md", "--t-radius-lg", "--t-radius-xl", "--t-control-h", "--t-control-h-sm", "--t-control-h-lg", "--t-duration", "--t-shadow-sm", "--t-shadow-md", "--t-shadow-lg"],
+  "notes": "Not vendored: daisyUI 5 is a Tailwind 4 CSS plugin whose component classes (btn, badge, modal-box…) cannot be demanded from read-only tailor markup (contract rule 5), and its colours are OKLCH --color-* theme tokens. The relevant declarations from its built CSS were re-expressed against t-* selectors; base-100→canvas, base-200→inset/selection, base-300→border, base-content→text, primary→accent, neutral→overlay-bg. Muted text uses daisy's trick of color-mix'ing base-content at 45–60 % instead of a second palette colour."
+}

@@ -1,0 +1,52 @@
+#!/usr/bin/env bun
+// gen-palette — canonical palette (palettes/src/<id>.json) → palettes/<id>.css
+// with the tailor `--t-*` tokens in a [data-palette="<id>"] block (+ [data-mode="light"] block when the
+// palette has a light counterpart). Bun, no dependencies.
+//
+//   bin/gen-palette <palette.json | palette-id> [--out <file>]   default out: palettes/<id>.css
+//   bin/gen-palette --all                                        every palette in the source dir
+//   bin/gen-palette --list                                       palettes found in the source dir
+//
+// Source dir: $TAILOR_PALETTES or <repo>/palettes/src.
+
+import { writeFileSync, mkdirSync } from "node:fs";
+import { join } from "node:path";
+import { loadPalette, listSourcePalettes, paletteCss, PALETTES_OUT, PALETTES_SRC } from "./lib/common.js";
+
+const argv = process.argv.slice(2);
+const flag = (name) => { const i = argv.indexOf(name); return i === -1 ? null : (argv.splice(i, 2)[1] ?? true); };
+const out = flag("--out");
+
+export function writePalette(ref, dest) {
+  const p = loadPalette(ref);
+  mkdirSync(PALETTES_OUT, { recursive: true });
+  const file = dest && dest !== true ? dest : join(PALETTES_OUT, `${p.id}.css`);
+  writeFileSync(file, paletteCss(p));
+  return { palette: p, file };
+}
+
+if (import.meta.main) {
+  if (argv.includes("--list")) {
+    console.log(`source: ${PALETTES_SRC}`);
+    console.log(listSourcePalettes().join(" ") || "(none)");
+    process.exit(0);
+  }
+  if (argv.includes("--all")) {
+    const ids = listSourcePalettes();
+    if (!ids.length) { console.error(`no palettes in ${PALETTES_SRC}`); process.exit(1); }
+    for (const id of ids) { const { file } = writePalette(id); console.log(`wrote ${file}`); }
+    process.exit(0);
+  }
+  const [ref] = argv;
+  if (!ref) {
+    console.error("usage: gen-palette <palette.json|id> [--out <file>] | --all | --list");
+    process.exit(2);
+  }
+  try {
+    const { palette, file } = writePalette(ref, out);
+    console.log(`wrote ${file} (${palette.name}, ${palette.mode}${palette.light ? " + light" : ""})`);
+  } catch (e) {
+    console.error(`FAIL ${e.message}`);
+    process.exit(1);
+  }
+}

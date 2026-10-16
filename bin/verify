@@ -1,0 +1,165 @@
+#!/usr/bin/env bun
+// verify — tailor's health check. Exit 0 = everything the contracts demand holds.
+//
+//   core      components.json valid (schema, unique ids, tier-1 groups, every demo/markup uses only t-* classes and
+//             declared attributes), tokens.css + base.css + layout.css parse, tailor.js parses, every
+//             behaviour "js:Tailor.x" exists in tailor.js
+//   palettes  every palettes/<id>.css parses and its [data-palette] block defines the full token set;
+//             contrast spot-check per block: text/canvas ≥ 4.5, muted/canvas ≥ 4.5, on-accent/accent-solid ≥ 3
+//   skins     (skipped with a note when skins/ has no skin) every manifest valid, coverage ⊇ tier-1,
+//             skin.css parses, no palette token set / no colour literal, listed assets exist
+//   showcase  bin/build's showcase renders, every tier-1 id has a section, no duplicate ids
+//
+//   bin/verify            full run (rebuilds manifest + showcase in a temp check, does not write)
+//   bin/verify --quiet    only failures
+
+import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
+import { join } from "node:path";
+import { ROOT, CORE, SKINS, PALETTES_OUT, readJson, validate, cssBraceCheck, contrast, listSkins } from "./lib/common.js";
+import { renderShowcase } from "./lib/showcase.js";
+
+const quiet = process.argv.includes("--quiet");
+let fails = 0, warns = 0;
+const ok = (m) => { if (!quiet) console.log(`ok    ${m}`); };
+const note = (m) => { if (!quiet) console.log(`note  ${m}`); };
+const warn = (m) => { warns++; console.log(`WARN  ${m}`); };
+const fail = (m) => { fails++; console.log(`FAIL  ${m}`); };
+const read = (f) => readFileSync(f, "utf8");
+
+// lightningcss if present (optional dependency, never required)
+let lcss = null;
+try { lcss = await import("lightningcss"); } catch (_) {}
+function cssParse(file, text) {
+  const brace = cssBraceCheck(text);
+  if (brace) return brace;
+  if (lcss) { try { lcss.transform({ filename: file, code: Buffer.from(text), errorRecovery: false }); } catch (e) { return e.message; } }
+  return null;
+}
+
+/* ── core ──────────────────────────────────────────────────────────────────── */
+const schema = readJson(join(CORE, "components.schema.json"));
+const vocab = readJson(join(CORE, "components.json"));
+{
+  const errs = validate(vocab, schema);
+  errs.length ? fail(`core/components.json: ${errs.length} schema errors\n      ${errs.slice(0, 10).join("\n      ")}`) : ok("core/components.json matches components.schema.json");
+  const ids = vocab.components.map((c) => c.id), dup = ids.filter((id, i) => ids.indexOf(id) !== i);
+  dup.length ? fail(`duplicate component ids: ${dup.join(", ")}`) : ok(`${ids.length} components (${vocab.components.filter((c) => c.tier === 1).length} tier-1, ${vocab.components.filter((c) => c.tier === 2).length} tier-2), ids unique`);
+  const badGroup = vocab.components.filter((c) => !vocab.groups[c.group]);
+  if (badGroup.length) fail(`unknown group on: ${badGroup.map((c) => c.id).join(", ")}`);
+  // class discipline: every class used in markup/demo is t-* (or sc-/t-demo- showcase chrome) and declared somewhere
+  const declared = new Set(vocab.components.flatMap((c) => [c.root, ...Object.keys(c.parts ?? {})]));
+  const utilities = new Set(["t-icon", "t-muted", "t-small", "t-mono", "t-tone-text", "t-truncate", "t-visually-hidden", "t-plain-list", "t-demo-shell"]);
+  const undeclared = new Set();
+  for (const c of vocab.components) for (const html of [c.markup, c.demo ?? ""]) for (const m of html.matchAll(/class=['"]([^'"]+)['"]/g)) for (const cls of m[1].split(/\s+/)) {
+    if (!cls || cls.startsWith("sc-")) continue;
+    if (!cls.startsWith("t-")) { fail(`${c.id}: non-tailor class "${cls}" in markup`); continue; }
+    if (!declared.has(cls) && !utilities.has(cls)) undeclared.add(`${cls} (${c.id})`);
+  }
+  undeclared.size ? fail(`classes used but not declared as root/part of any component: ${[...undeclared].join(", ")}`) : ok("every class in markup/demo is a declared t-* root/part or a base utility");
+  // tones used exist
+  const tones = new Set(vocab.tones);
+  for (const c of vocab.components) for (const m of (c.markup + (c.demo ?? "")).matchAll(/data-tone=['"]([^'"]+)['"]/g)) if (!tones.has(m[1])) fail(`${c.id}: unknown tone "${m[1]}"`);
+  // behaviours exist in tailor.js
+  const js = read(join(CORE, "tailor.js"));
+  for (const c of vocab.components) { const m = c.behaviour.match(/^js:Tailor\.([a-zA-Z]+)/); if (m && !new RegExp(`T\\.${m[1]}\\s*=`).test(js)) fail(`${c.id}: behaviour Tailor.${m[1]} not defined in core/tailor.js`); }
+  ok("every js:Tailor.* behaviour is defined in core/tailor.js");
+  for (const f of ["tokens.css", "base.css", "layout.css"]) { const e = cssParse(f, read(join(CORE, f))); e ? fail(`core/${f}: ${e}`) : ok(`core/${f} parses${lcss ? " (lightningcss)" : ""}`); }
+  const p = Bun.spawnSync(["node", "--check", join(CORE, "tailor.js")]);
+  p.exitCode === 0 ? ok("core/tailor.js parses") : fail(`core/tailor.js: ${p.stderr.toString().trim()}`);
+  // tokens.css defines the full set; palette files must define the same palette subset
+}
+
+/* ── palettes ──────────────────────────────────────────────────────────────── */
+const PALETTE_TOKENS = ["--t-canvas", "--t-inset", "--t-surface", "--t-selection", "--t-border", "--t-overlay-bg", "--t-text", "--t-muted", "--t-disabled", "--t-accent", "--t-accent-solid", "--t-on-accent", "--t-link", "--t-success", "--t-warning", "--t-danger", "--t-info", "--t-hue-red", "--t-hue-orange", "--t-hue-yellow", "--t-hue-green", "--t-hue-cyan", "--t-hue-purple", "--t-hue-pink"];
+const paletteFiles = existsSync(PALETTES_OUT) ? readdirSync(PALETTES_OUT).filter((f) => f.endsWith(".css")).sort() : [];
+if (!paletteFiles.length) fail("palettes/: no generated palette CSS (run bin/build or bin/gen-palette dracula)");
+function blocks(css) {
+  const out = [];
+  for (const m of css.matchAll(/(\[[^{]+\])\s*\{([^}]*)\}/g)) {
+    const vars = Object.fromEntries([...m[2].matchAll(/(--t-[a-z0-9-]+)\s*:\s*([^;]+);/g)].map((x) => [x[1], x[2].trim()]));
+    out.push({ selector: m[1].trim(), vars });
+  }
+  return out;
+}
+function checkBlock(label, vars) {
+  const missing = PALETTE_TOKENS.filter((t) => !vars[t]);
+  if (missing.length) return fail(`${label}: missing tokens ${missing.join(" ")}`);
+  const c1 = contrast(vars["--t-text"], vars["--t-canvas"]), c2 = contrast(vars["--t-muted"], vars["--t-canvas"]), c3 = contrast(vars["--t-on-accent"], vars["--t-accent-solid"]), c4 = contrast(vars["--t-text"], vars["--t-surface"]);
+  const bad = [];
+  if (c1 < 4.5) bad.push(`text/canvas ${c1.toFixed(2)}`);
+  if (c2 < 4.5) bad.push(`muted/canvas ${c2.toFixed(2)}`);
+  if (c4 < 4.5) bad.push(`text/surface ${c4.toFixed(2)}`);
+  if (c3 < 3) bad.push(`on-accent/accent-solid ${c3.toFixed(2)} (< 3, large-text floor)`);
+  bad.length ? fail(`${label}: contrast ${bad.join(", ")}`) : ok(`${label}: tokens complete, contrast text ${c1.toFixed(1)} muted ${c2.toFixed(1)} on-accent ${c3.toFixed(1)}`);
+}
+// the default :root block in tokens.css is a palette too
+{
+  const root = read(join(CORE, "tokens.css")).match(/:root\s*\{([^}]*)\}/);
+  const vars = Object.fromEntries([...root[1].matchAll(/(--t-[a-z0-9-]+)\s*:\s*([^;]+);/g)].map((x) => [x[1], x[2].trim()]));
+  checkBlock("core/tokens.css :root (Dracula default)", vars);
+}
+for (const f of paletteFiles) {
+  const css = read(join(PALETTES_OUT, f));
+  const e = cssParse(f, css); if (e) { fail(`palettes/${f}: ${e}`); continue; }
+  const bs = blocks(css);
+  if (!bs.length) { fail(`palettes/${f}: no [data-palette] block`); continue; }
+  for (const b of bs) checkBlock(`palettes/${f} ${b.selector}`, b.vars);
+}
+
+/* ── skins ─────────────────────────────────────────────────────────────────── */
+const skinSchema = readJson(join(SKINS, "manifest.schema.json"));
+const tier1 = vocab.components.filter((c) => c.tier === 1).map((c) => c.id);
+const tier2 = vocab.components.filter((c) => c.tier === 2).map((c) => c.id);
+const skins = listSkins();
+const SET_PALETTE_TOKEN = new RegExp(`(^|[\\s;{])(${PALETTE_TOKENS.join("|")})\\s*:`, "m");
+const COLOUR_LITERAL = /(?<![\w-])(#[0-9a-f]{3,8}\b|rgba?\(|hsla?\(|\b(white|black|red|blue|green|gray|grey|orange|yellow|purple|pink)\b(?=\s*[;!]))/i;
+if (!skins.length) note("skins/: no skin yet — skin checks skipped (coverage, parse, token discipline). Add skins/<id>/manifest.json + skin.css to enable.");
+for (const id of skins) {
+  const dir = join(SKINS, id), mf = readJson(join(dir, "manifest.json"));
+  const errs = validate(mf, skinSchema);
+  if (errs.length) { fail(`skins/${id}/manifest.json: ${errs.join("; ")}`); continue; }
+  if (mf.id !== id) fail(`skins/${id}: manifest id "${mf.id}" ≠ folder`);
+  const gaps = tier1.filter((c) => !mf.coverage.includes(c));
+  gaps.length ? fail(`skins/${id}: tier-1 coverage gaps: ${gaps.join(", ")}`) : ok(`skins/${id}: covers all ${tier1.length} tier-1 components`);
+  const unknown = [...mf.coverage, ...mf.tier2].filter((c) => !tier1.includes(c) && !tier2.includes(c));
+  if (unknown.length) fail(`skins/${id}: unknown component ids in coverage/tier2: ${unknown.join(", ")}`);
+  const t2bad = mf.tier2.filter((c) => !tier2.includes(c)); if (t2bad.length) fail(`skins/${id}: tier2 lists non-tier-2 ids: ${t2bad.join(", ")}`);
+  const cssFile = join(dir, "skin.css");
+  if (!existsSync(cssFile)) { fail(`skins/${id}/skin.css missing`); continue; }
+  const css = read(cssFile);
+  const e = cssParse(`skins/${id}/skin.css`, css); e ? fail(`skins/${id}/skin.css: ${e}`) : ok(`skins/${id}/skin.css parses`);
+  // strip comments + url() before token/colour discipline checks
+  const stripped = css.replace(/\/\*[^]*?\*\//g, "").replace(/url\([^)]*\)/g, "url()");
+  const setTok = stripped.match(SET_PALETTE_TOKEN); setTok ? fail(`skins/${id}/skin.css sets palette token ${setTok[2]} (palettes only)`) : ok(`skins/${id}/skin.css sets no palette token`);
+  const lit = stripped.match(COLOUR_LITERAL); lit ? fail(`skins/${id}/skin.css has a colour literal: ${lit[0]} — use var(--t-*)`) : ok(`skins/${id}/skin.css has no colour literal`);
+  for (const a of mf.files.assets ?? []) if (!existsSync(join(dir, a))) fail(`skins/${id}: asset ${a} listed but missing`);
+  // vendored CSS imported by skin.css must exist too
+  for (const m of css.matchAll(/@import\s+(?:url\()?["']([^"']+)["']/g)) if (!/^https?:/.test(m[1]) && !existsSync(join(dir, m[1]))) fail(`skins/${id}: @import ${m[1]} not found`);
+  // selectors that look like modifier classes (contract §2) — warning, review decides
+  const mods = [...stripped.matchAll(/\.t-[a-z0-9]+(?:-[a-z0-9]+)*--[a-z]+|\.(is|has)-[a-z]+|\.active\b/g)].map((m) => m[0]);
+  if (mods.length) warn(`skins/${id}: modifier-like selectors (should be data-*/aria): ${[...new Set(mods)].slice(0, 5).join(", ")}`);
+}
+
+/* ── showcase ──────────────────────────────────────────────────────────────── */
+{
+  // palette metadata: from manifest.json when built (names, licences), else from the CSS files
+  const built = existsSync(join(ROOT, "manifest.json")) ? readJson(join(ROOT, "manifest.json")).palettes : null;
+  const palettes = paletteFiles.map((f) => { const id = f.slice(0, -4), m = built?.find((p) => p.id === id); return { id, name: m?.name ?? id, license: m?.license ?? "", light: /\]\[data-mode="light"\]\s*\{/.test(read(join(PALETTES_OUT, f))) }; });
+  const modes = Object.fromEntries(palettes.map((p) => [p.id, p.light ? ["dark", "light"] : ["dark"]]));
+  let html;
+  try { html = renderShowcase({ skins: skins.map((id) => readJson(join(SKINS, id, "manifest.json"))), palettes, modes }); ok("showcase renders"); } catch (e) { fail(`showcase render: ${e.message}`); }
+  if (html) {
+    for (const id of tier1) if (!html.includes(`<section class="t-card sc-component" id="${id}"`)) fail(`showcase: no section for tier-1 "${id}"`);
+    const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]), dup = [...new Set(ids.filter((x, i) => ids.indexOf(x) !== i))];
+    dup.length ? fail(`showcase: duplicate ids ${dup.join(", ")}`) : ok(`showcase: ${tier1.length} sections, ${ids.length} ids unique`);
+    const committed = join(ROOT, "showcase", "index.html");
+    if (!existsSync(committed)) warn("showcase/index.html not built yet — run bin/build");
+    else if (read(committed) !== html) warn("showcase/index.html is stale — run bin/build");
+  }
+  const mfFile = join(ROOT, "manifest.json");
+  if (!existsSync(mfFile)) warn("manifest.json not built yet — run bin/build");
+  else { const m = readJson(mfFile); if (JSON.stringify(m.vocabulary.tier1) !== JSON.stringify(tier1)) warn("manifest.json vocabulary is stale — run bin/build"); if (JSON.stringify(m.skins.map((s) => s.id)) !== JSON.stringify(skins)) warn("manifest.json skins list is stale — run bin/build"); }
+}
+
+console.log(fails ? `\n${fails} failure(s), ${warns} warning(s)` : `\nall checks passed (${warns} warning(s))${skins.length ? "" : " — core-only mode"}`);
+process.exit(fails ? 1 : 0);

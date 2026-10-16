@@ -1,0 +1,144 @@
+#!/usr/bin/env bun
+// check-parity — renders every tier-1 parity fixture (parity/fixtures.tsx)
+// with react-dom/server and diffs the static markup structurally against the
+// canonical snippet in core/components.json.
+//
+// Comparison rules:
+//   - element structure and tag names must match (comments ignored)
+//   - class lists compare as sets, all other attributes as unordered maps
+//   - style attributes compare with whitespace/semicolons normalised
+//   - text nodes compare with whitespace collapsed
+//   - the rendered side may carry the form-state attributes `value`, `checked`
+//     and `selected` where the canonical snippet omits them (React controlled /
+//     default values make them explicit; tailor.js sets them at runtime)
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { parse, type HTMLElement as ParsedElement, type Node as ParsedNode } from "node-html-parser";
+import { fixtures } from "../parity/fixtures.tsx";
+
+const root = join(import.meta.dir, "..", "..");
+const spec = JSON.parse(readFileSync(join(root, "core", "components.json"), "utf8")) as {
+  components: Array<{ id: string; tier: number; markup: string }>;
+};
+
+const FORM_STATE_ATTRS = new Set(["value", "checked", "selected"]);
+
+type Norm =
+  | { kind: "text"; text: string }
+  | { kind: "el"; tag: string; classes: string[]; attrs: Record<string, string>; children: Norm[] };
+
+function normaliseStyle(v: string): string {
+  return v.replace(/\s+/g, "").replace(/;$/, "");
+}
+
+function decodeEntities(s: string): string {
+  return s
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d)))
+    .replace(/&quot;/g, '"').replace(/&apos;/g, "'")
+    .replace(/&lt;/g, "<").replace(/&gt;/g, ">").replace(/&amp;/g, "&");
+}
+
+function normalise(node: ParsedNode): Norm | null {
+  if (node.nodeType === 8) return null; // comment
+  if (node.nodeType === 3) {
+    const text = decodeEntities(node.rawText).replace(/\s+/g, " ").trim();
+    return text ? { kind: "text", text } : null;
+  }
+  const el = node as ParsedElement;
+  const attrs: Record<string, string> = {};
+  let classes: string[] = [];
+  for (const [rawKey, rawValue] of Object.entries(el.attributes)) {
+    const k = rawKey.toLowerCase();
+    const v = decodeEntities(rawValue);
+    if (k === "class") classes = v.split(/\s+/).filter(Boolean).sort();
+    else if (k === "style") attrs[k] = normaliseStyle(v);
+    else attrs[k] = v;
+  }
+  const children = el.childNodes.map(normalise).filter((n): n is Norm => n !== null);
+  return { kind: "el", tag: el.rawTagName?.toLowerCase() ?? "", classes, attrs, children };
+}
+
+function parseFragment(html: string): Norm[] {
+  const doc = parse(html, { comment: true, blockTextElements: {} });
+  return doc.childNodes.map(normalise).filter((n): n is Norm => n !== null);
+}
+
+function diff(canon: Norm[], got: Norm[], path: string, errors: string[]): void {
+  if (canon.length !== got.length) {
+    errors.push(`${path}: child count ${got.length} ≠ canonical ${canon.length}` +
+      ` (canonical: [${canon.map(describe).join(", ")}], rendered: [${got.map(describe).join(", ")}])`);
+    return;
+  }
+  canon.forEach((c, i) => {
+    const g = got[i]!;
+    const p = `${path}/${describe(c)}`;
+    if (c.kind !== g.kind) { errors.push(`${p}: ${g.kind} node where canonical has ${c.kind}`); return; }
+    if (c.kind === "text" && g.kind === "text") {
+      if (c.text !== g.text) errors.push(`${p}: text "${g.text}" ≠ canonical "${c.text}"`);
+      return;
+    }
+    if (c.kind === "el" && g.kind === "el") {
+      if (c.tag !== g.tag) { errors.push(`${p}: <${g.tag}> where canonical has <${c.tag}>`); return; }
+      if (c.classes.join(" ") !== g.classes.join(" ")) {
+        errors.push(`${p}: class "${g.classes.join(" ")}" ≠ canonical "${c.classes.join(" ")}"`);
+      }
+      const keys = new Set([...Object.keys(c.attrs), ...Object.keys(g.attrs)]);
+      for (const k of keys) {
+        const cv = c.attrs[k];
+        const gv = g.attrs[k];
+        if (cv === gv) continue;
+        if (cv === undefined && FORM_STATE_ATTRS.has(k)) continue; // rendered-side form state
+        if (cv === undefined) errors.push(`${p}: extra attribute ${k}="${gv}"`);
+        else if (gv === undefined) errors.push(`${p}: missing attribute ${k}="${cv}"`);
+        else errors.push(`${p}: ${k}="${gv}" ≠ canonical ${k}="${cv}"`);
+      }
+      diff(c.children, g.children, p, errors);
+    }
+  });
+}
+
+function describe(n: Norm): string {
+  if (n.kind === "text") return `"${n.text.slice(0, 20)}"`;
+  return `<${n.tag}${n.classes.length ? "." + n.classes.join(".") : ""}>`;
+}
+
+const tier1 = spec.components.filter((c) => c.tier === 1);
+let failed = 0;
+let passed = 0;
+const missing: string[] = [];
+
+for (const comp of tier1) {
+  const fixture = fixtures[comp.id];
+  if (fixture === undefined) { missing.push(comp.id); continue; }
+  const html = renderToStaticMarkup(createElement("x-root", null, fixture));
+  // React 19 may emit resource preload tags (e.g. <link rel="preload"> for an
+  // <img src>) before the root; keep only the fixture's own markup.
+  const inner = html.slice(html.indexOf("<x-root>") + "<x-root>".length, html.lastIndexOf("</x-root>"));
+  const canon = parseFragment(comp.markup);
+  const got = parseFragment(inner);
+  const errors: string[] = [];
+  diff(canon, got, comp.id, errors);
+  if (errors.length) {
+    failed++;
+    console.error(`✗ ${comp.id}`);
+    for (const e of errors.slice(0, 8)) console.error(`    ${e}`);
+    if (errors.length > 8) console.error(`    … ${errors.length - 8} more`);
+  } else {
+    passed++;
+    console.log(`✓ ${comp.id}`);
+  }
+}
+
+if (missing.length) {
+  failed += missing.length;
+  console.error(`✗ no fixture for: ${missing.join(", ")}`);
+}
+
+const extra = Object.keys(fixtures).filter((id) => !tier1.some((c) => c.id === id));
+if (extra.length) console.warn(`! fixtures without a tier-1 entry: ${extra.join(", ")}`);
+
+console.log(`\n${passed}/${tier1.length} tier-1 components match the canonical markup`);
+process.exit(failed ? 1 : 0);

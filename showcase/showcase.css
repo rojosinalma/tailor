@@ -1,0 +1,22 @@
+/* tailor showcase chrome — only the page around the demos; demos themselves use tailor classes only. */
+.sc-group { font-size: var(--t-text-xs); font-weight: 700; text-transform: uppercase; letter-spacing: 0.12em; color: var(--t-muted); margin: var(--t-space-6) 0 var(--t-space-3); }
+.sc-group:first-child { margin-top: 0; }
+#sc-core-note { margin-bottom: var(--t-space-4); }
+.sc-component { margin-bottom: var(--t-space-4); }
+.sc-component .t-card-title { font-size: var(--t-text-base); }
+.sc-id { font-size: var(--t-text-xs); color: var(--t-muted); font-weight: 400; margin-left: 0.4em; }
+.sc-only { margin-left: auto; color: var(--t-muted); text-decoration: none; font-size: 0.9rem; }
+.sc-only:hover { color: var(--t-text); }
+.sc-desc { margin-bottom: var(--t-space-3); }
+.sc-demo { min-width: 0; }
+.sc-markup { margin-top: var(--t-space-3); }
+.sc-markup summary { color: var(--t-muted); cursor: pointer; }
+.sc-markup pre { margin-top: var(--t-space-2); white-space: pre-wrap; word-break: break-word; }
+.sc-markup p { margin: var(--t-space-2) 0 0; }
+.t-demo-shell { min-height: 0; height: 220px; border: var(--t-border-w) solid var(--t-border); border-radius: var(--t-radius-lg); overflow: hidden; --t-nav-h: 40px; --t-footer-h: 26px; --t-sidebar-w: 160px; }
+.t-demo-shell .t-shell-nav, .t-demo-shell .t-shell-foot { position: static; }
+.t-demo-shell .t-shell-side { position: static; max-height: none; }
+.t-demo-shell .t-page { padding: var(--t-space-3); }
+.t-demo-shell .t-page-header { margin-bottom: var(--t-space-2); }
+.t-demo-shell .t-page-title { font-size: var(--t-text-lg); }
+body.sc-only .sc-group { display: none; }

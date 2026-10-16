@@ -1,0 +1,72 @@
+# tailor-react Primer adapter
+
+Renders the `Ui.*` API through **@primer/react 38.40.1** (+ @primer/primitives 11.10.0)
+instead of the tailor CSS vocabulary. Pinned versions live in `react/package.json`;
+theme wiring (ThemeProvider, BaseStyles, primitives CSS) follows Primer React's
+own getting-started guide.
+
+```tsx
+import { Ui } from "tailor-react/primer";   // same API, Primer rendering
+```
+
+Wrap the app in Primer's `<ThemeProvider><BaseStyles>` **and** this adapter's
+`<Ui.Provider>` (Banner-stack toasts). tailor skins/palettes are not loaded on
+this path — Primer's themes own the look.
+
+## Mapping
+
+| Ui.* | Primer | Notes |
+|---|---|---|
+| Button | Button / Tooltip | `ghost`/`link` → `invisible`; `warning` tone → `danger`; `busy` → `loading`; `tip` wraps in Tooltip |
+| ButtonGroup | ButtonGroup | filter mode keeps aria-pressed on Buttons |
+| Segmented | SegmentedControl | string labels only |
+| Menu | ActionMenu + ActionList | `Menu.Kbd` falls back to CSS path |
+| Tabs | UnderlinePanels (experimental) | tailor ids (`t-*`/`p-*`) not reproduced |
+| Breadcrumb | Breadcrumbs | |
+| List | ActionList | `value`-based selection is consumer-driven (`selected` prop) |
+| Field | FormControl (+ Caption, Validation) | child control must be the adapter's Input/Select/Textarea |
+| Input / Select / Textarea | TextInput / Select / Textarea | |
+| Check | Checkbox / Radio / ToggleSwitch in FormControl | |
+| CheckGroup | CheckboxGroup | |
+| Badge | Label | tone → variant (approximate for hue tones) |
+| Counter | CounterLabel | tones collapse to primary/secondary |
+| Chip | Token | children flattened to text |
+| StateLabel | StateLabel | `warning` → issueClosedNotPlanned, `info` → pullOpened (approximations) |
+| Avatar | Avatar / AvatarStack | **image avatars only** — text-initial avatars fall back to the CSS path |
+| Timeline | Timeline | |
+| RelativeTime | RelativeTime | |
+| EmptyState | Blankslate (experimental) | action is rendered as Blankslate.PrimaryAction (link) |
+| Tooltip | Tooltip | |
+| Truncate | Truncate | |
+| Alert | Banner | tone → variant (`danger` → `critical`) |
+| Toast / useToasts | fixed Banner stack | Primer has no toast primitive |
+| Dialog | Dialog (v2) | mounted only while `open` |
+| Confirm | ConfirmationDialog | |
+| Progress | ProgressBar (+ .Item) | |
+| Spinner | Spinner | |
+| AppShell | PageLayout | `sidebar="collapsed"` not mapped |
+| Navbar | Header | `Navbar.Sep` renders nothing |
+| Sidebar | NavList | Collapsible → NavList.SubNav |
+
+## Un-mappables (CSS-path fallback)
+
+These render the tailor markup even under this adapter — pair them with the tailor
+core CSS, or restyle per project: **Page, Section, Toolbar, Grid, Stack, Cluster,
+Split, Footer, Icon, Label, InputGroup, InputAddon, DurationInput, Settings,
+SettingsRow, Dot, Table (and parts), Card (and parts), Facts, Stat\*, Help, Code,
+Pagination, ToastRegion/Toast (presentational), Tooltip-layer-free Help popover.**
+
+Reasons: Primer has no equivalent (Dot, DurationInput, SettingsRow, Code, Help),
+or the equivalent has an incompatible API (DataTable is data-model-driven while
+Ui.Table is markup-level; Primer Pagination takes pageCount/currentPage, Ui.
+Pagination is compositional), or it is a layout primitive tailor owns (Grid,
+Stack, Split, Toolbar).
+
+## Adding another kit adapter
+
+1. `react/adapters/<kit>/index.tsx`: import `{ Ui as Css }` from `../../src`,
+   spread it, override what maps, keep prop types `React.ComponentProps<typeof Css.X>`.
+2. Document the mapping + fallbacks in `react/adapters/<kit>/README.md`.
+3. Pin exact kit versions in `react/package.json` devDependencies (and the
+   consuming project's dependencies).
+4. `bunx tsc --noEmit` must stay clean; markup parity applies only to the CSS path.

@@ -1,0 +1,1403 @@
+{
+  "$schema": "components.schema.json",
+  "version": "0.1.0",
+  "prefix": "t-",
+  "token_prefix": "--t-",
+  "tones": [
+    "neutral",
+    "accent",
+    "success",
+    "warning",
+    "danger",
+    "info",
+    "text",
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "cyan",
+    "purple",
+    "pink"
+  ],
+  "sizes": [
+    "xs",
+    "sm",
+    "md",
+    "lg",
+    "xl"
+  ],
+  "groups": {
+    "shell": "App shell & layout",
+    "actions": "Actions",
+    "navigation": "Navigation",
+    "forms": "Forms",
+    "data": "Data display",
+    "feedback": "Feedback"
+  },
+  "components": [
+    {
+      "id": "app-shell",
+      "name": "App shell",
+      "tier": 1,
+      "group": "shell",
+      "description": "The page frame: sticky navbar, optional sticky scrolling sidebar, main column, fixed footer. Stacks below 992px.",
+      "root": "t-shell",
+      "parts": {
+        "t-shell-nav": "navbar slot (a .t-navbar)",
+        "t-shell-side": "sidebar slot (holds a .t-sidebar)",
+        "t-shell-main": "main content column",
+        "t-shell-foot": "footer slot (a .t-footer)"
+      },
+      "attributes": {
+        "data-sidebar": [
+          "none",
+          "collapsed"
+        ]
+      },
+      "behaviour": "none",
+      "a11y": "<header>, <aside>, <main>, <footer> landmarks; exactly one <main>.",
+      "markup": "<div class='t-shell'>\n  <header class='t-navbar t-shell-nav'>…</header>\n  <aside class='t-shell-side'><nav class='t-sidebar' aria-label='Sections'>…</nav></aside>\n  <main class='t-shell-main t-page'>…</main>\n  <footer class='t-footer t-shell-foot'>…</footer>\n</div>",
+      "demo": "<div class='t-shell t-demo-shell' data-demo='mock'>\n  <header class='t-navbar t-shell-nav'><a class='t-navbar-brand' href='#'>console</a><ul class='t-navbar-nav'><li><a class='t-navbar-link' href='#' aria-current='page'>Services</a></li><li><a class='t-navbar-link' href='#'>Hosts</a></li></ul></header>\n  <aside class='t-shell-side'><nav class='t-sidebar' aria-label='Mock'><ul><li class='t-sidebar-group'>Fleet</li><li><a class='t-sidebar-item' href='#' aria-current='page'><span class='t-sidebar-item-name'>Overview</span></a></li><li><a class='t-sidebar-item' href='#'><span class='t-sidebar-item-name'>Devices</span><span class='t-counter'>12</span></a></li></ul></nav></aside>\n  <main class='t-shell-main t-page'><header class='t-page-header'><h1 class='t-page-title'>Services</h1></header><p class='t-muted'>Main column scrolls; sidebar and navbar stay.</p></main>\n  <footer class='t-footer t-shell-foot'><span class='t-footer-version'>v0.9.2</span></footer>\n</div>",
+      "notes": "layout.css owns the geometry (--t-nav-h, --t-footer-h, --t-sidebar-w, --t-gutter). Skins colour the slots via .t-navbar/.t-sidebar/.t-footer, never reposition them.",
+      "source": "reference/index.html shell-mock, dracula.css .main-content"
+    },
+    {
+      "id": "navbar",
+      "name": "Navbar",
+      "tier": 1,
+      "group": "shell",
+      "description": "Top bar: brand left, links right, separators, end slot (picker, theme toggle).",
+      "root": "t-navbar",
+      "parts": {
+        "t-navbar-brand": "icon + app name link",
+        "t-navbar-nav": "<ul> of links",
+        "t-navbar-link": "a link; aria-current=page marks the active one",
+        "t-navbar-sep": "thin vertical rule",
+        "t-navbar-end": "right-aligned slot"
+      },
+      "states": [
+        "aria-current=page",
+        ":hover"
+      ],
+      "behaviour": "none",
+      "a11y": "<header> or <nav aria-label>; active page via aria-current=page, never a class.",
+      "markup": "<header class='t-navbar'>\n  <a class='t-navbar-brand' href='/'><span class='t-icon'>◆</span>console</a>\n  <ul class='t-navbar-nav'>\n    <li><a class='t-navbar-link' href='/services' aria-current='page'>Services</a></li>\n    <li><a class='t-navbar-link' href='/hosts'>Hosts</a></li>\n  </ul>\n  <span class='t-navbar-sep'></span>\n  <div class='t-navbar-end'>…picker…</div>\n</header>",
+      "source": "navigation.css, dracula.css .navbar"
+    },
+    {
+      "id": "sidebar",
+      "name": "Sidebar",
+      "tier": 1,
+      "group": "shell",
+      "description": "Vertical nav: group headers, items with icon + name + trailing counter/dot, nested groups via <details>, dividers. Also the settings-tabs pattern.",
+      "root": "t-sidebar",
+      "parts": {
+        "t-sidebar-group": "small-caps group header <li>",
+        "t-sidebar-item": "link/button/summary row; aria-current=page = active",
+        "t-sidebar-item-name": "truncating label",
+        "t-sidebar-nested": "nested <ul> inside <details>",
+        "t-sidebar-chevron": "turns when the <details> is open",
+        "t-sidebar-divider": "rule <li>"
+      },
+      "states": [
+        "aria-current=page",
+        ":hover",
+        ":disabled / aria-disabled=true",
+        "details[open]"
+      ],
+      "behaviour": "js:Tailor.scrollspy (optional)",
+      "a11y": "<nav aria-label> > <ul>; nested groups are <details><summary class='t-sidebar-item'> so they work without JS.",
+      "markup": "<nav class='t-sidebar' aria-label='Sections'>\n  <ul>\n    <li class='t-sidebar-group'>Overview</li>\n    <li><a class='t-sidebar-item' href='#dash' aria-current='page'><span class='t-icon'>▣</span><span class='t-sidebar-item-name'>Dashboard</span></a></li>\n    <li><a class='t-sidebar-item' href='#alerts'><span class='t-icon'>▲</span><span class='t-sidebar-item-name'>Alerts</span><span class='t-counter' data-tone='danger'>3</span></a></li>\n    <li><details open><summary class='t-sidebar-item'><span class='t-icon'>▤</span><span class='t-sidebar-item-name'>Devices</span><span class='t-counter'>12</span><span class='t-sidebar-chevron'></span></summary>\n      <ul class='t-sidebar-nested'><li><a class='t-sidebar-item' href='#d1'><span class='t-dot' data-status='running'></span><span class='t-sidebar-item-name'>epaper-display</span></a></li></ul></details></li>\n    <li class='t-sidebar-divider'></li>\n    <li><a class='t-sidebar-item' href='#settings'><span class='t-icon'>⚙</span><span class='t-sidebar-item-name'>Settings</span></a></li>\n  </ul>\n</nav>",
+      "source": "sidebar.css"
+    },
+    {
+      "id": "footer",
+      "name": "Footer",
+      "tier": 1,
+      "group": "shell",
+      "description": "32px fixed footer: repo icon centred, version + theme/palette toggle right.",
+      "root": "t-footer",
+      "parts": {
+        "t-footer-repo": "centred repo link",
+        "t-footer-end": "right-aligned group",
+        "t-footer-version": "monospace version string"
+      },
+      "behaviour": "none",
+      "markup": "<footer class='t-footer'>\n  <a class='t-footer-repo' href='https://github.com/…' title='repo'><span class='t-icon'>⌥</span></a>\n  <div class='t-footer-end'><span class='t-footer-version'>v0.9.2</span><button class='t-btn' data-variant='ghost' data-size='sm' data-tailor-mode-toggle aria-label='Toggle light/dark'>☼</button></div>\n</footer>",
+      "demo": "<footer class='t-footer' style='position:static'>\n  <a class='t-footer-repo' href='#' title='repo'><span class='t-icon'>⌥</span></a>\n  <div class='t-footer-end'><span class='t-footer-version'>tailor 0.1.0</span><button class='t-btn' data-variant='ghost' data-size='sm' data-tailor-mode-toggle aria-label='Toggle light/dark'>☼</button></div>\n</footer>",
+      "source": "footer.css"
+    },
+    {
+      "id": "page",
+      "name": "Page",
+      "tier": 1,
+      "group": "shell",
+      "description": "Main column content wrapper with the page header row: back link, title, lead, actions.",
+      "root": "t-page",
+      "parts": {
+        "t-page-header": "header row (flex, wraps)",
+        "t-page-back": "back link/button (mandatory on orphan sub-pages)",
+        "t-page-title": "h1",
+        "t-page-lead": "muted one-liner next to / under the title",
+        "t-page-actions": "right-aligned action group"
+      },
+      "behaviour": "none",
+      "a11y": "Exactly one h1 per page, in .t-page-title.",
+      "markup": "<main class='t-page'>\n  <header class='t-page-header'>\n    <a class='t-page-back' href='/services' aria-label='Back to services'>←</a>\n    <h1 class='t-page-title'>render</h1>\n    <span class='t-page-lead'>console service · web-1</span>\n    <div class='t-page-actions'><button class='t-btn' data-variant='primary'>Deploy</button></div>\n  </header>\n  …\n</main>",
+      "demo": "<div class='t-page' style='padding:0'>\n  <header class='t-page-header'>\n    <a class='t-page-back' href='#page' aria-label='Back'>←</a>\n    <h1 class='t-page-title'>render</h1>\n    <span class='t-page-lead'>console service · web-1</span>\n    <div class='t-page-actions'><button class='t-btn' data-variant='secondary'>Logs</button><button class='t-btn' data-variant='primary'>Deploy</button></div>\n  </header>\n</div>",
+      "source": "SKILL.md Layout, Spacing"
+    },
+    {
+      "id": "section",
+      "name": "Section",
+      "tier": 1,
+      "group": "shell",
+      "description": "A titled block inside a page or card: small-caps label with a rule, then content.",
+      "root": "t-section",
+      "parts": {
+        "t-section-title": "small-caps heading with bottom rule",
+        "t-section-body": "content"
+      },
+      "behaviour": "none",
+      "markup": "<section class='t-section'>\n  <h2 class='t-section-title'>Connection</h2>\n  <div class='t-section-body'>…</div>\n</section>",
+      "demo": "<section class='t-section'><h2 class='t-section-title'>Connection</h2><div class='t-section-body t-muted'>Section body text sits under the rule.</div></section>",
+      "source": "cards-forms.css .section-label"
+    },
+    {
+      "id": "toolbar",
+      "name": "Toolbar",
+      "tier": 1,
+      "group": "shell",
+      "description": "A horizontal row of controls with consistent gaps; a spacer pushes the rest to the end. Also the form-actions row.",
+      "root": "t-toolbar",
+      "parts": {
+        "t-toolbar-spacer": "flex spacer"
+      },
+      "attributes": {
+        "data-align": [
+          "start",
+          "center",
+          "end"
+        ],
+        "data-gap": [
+          "1",
+          "2",
+          "3",
+          "4"
+        ]
+      },
+      "behaviour": "none",
+      "a11y": "role=toolbar + aria-label when it is a real toolbar; plain <div> for a form-actions row.",
+      "markup": "<div class='t-toolbar' role='toolbar' aria-label='Table actions'>\n  <button class='t-btn' data-variant='primary'>Save</button>\n  <button class='t-btn'>Cancel</button>\n  <span class='t-toolbar-spacer'></span>\n  <button class='t-btn' data-variant='ghost' data-tone='danger'>Delete</button>\n</div>"
+    },
+    {
+      "id": "grid",
+      "name": "Grid",
+      "tier": 1,
+      "group": "shell",
+      "description": "Responsive card grid: auto-fill columns of a minimum width, or a fixed column count.",
+      "root": "t-grid",
+      "attributes": {
+        "data-cols": [
+          "auto",
+          "1",
+          "2",
+          "3",
+          "4",
+          "6"
+        ],
+        "data-min": [
+          "xs",
+          "sm",
+          "md",
+          "lg"
+        ],
+        "data-gap": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "behaviour": "none",
+      "markup": "<div class='t-grid' data-cols='auto' data-min='sm'>\n  <div class='t-card'>…</div>\n  <div class='t-card'>…</div>\n</div>",
+      "demo": "<div class='t-grid' data-cols='auto' data-min='xs'><div class='t-card'><div class='t-card-body'>one</div></div><div class='t-card'><div class='t-card-body'>two</div></div><div class='t-card'><div class='t-card-body'>three</div></div><div class='t-card'><div class='t-card-body'>four</div></div></div>"
+    },
+    {
+      "id": "stack",
+      "name": "Stack & cluster",
+      "tier": 1,
+      "group": "shell",
+      "description": "Vertical stack (column, gap) and horizontal cluster (row, wraps, gap) — the two spacing primitives.",
+      "root": "t-stack",
+      "parts": {
+        "t-cluster": "horizontal wrapping row"
+      },
+      "attributes": {
+        "data-gap": [
+          "0",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "data-align": [
+          "start",
+          "center",
+          "end",
+          "stretch",
+          "baseline"
+        ]
+      },
+      "behaviour": "none",
+      "markup": "<div class='t-stack' data-gap='3'>\n  <div class='t-cluster' data-gap='2' data-align='center'>…</div>\n  …\n</div>",
+      "demo": "<div class='t-stack' data-gap='2'><div class='t-cluster' data-gap='2' data-align='center'><span class='t-badge' data-tone='accent'>cluster</span><span class='t-badge' data-tone='success'>wraps</span><span class='t-badge' data-tone='info'>gap 2</span></div><div class='t-cluster' data-gap='2'><span class='t-badge'>stack</span><span class='t-badge'>row two</span></div></div>"
+    },
+    {
+      "id": "split",
+      "name": "Split",
+      "tier": 1,
+      "group": "shell",
+      "description": "Two-pane layout: a fixed-width side (list, tabs) and a flexible pane; fills the viewport between navbar and footer.",
+      "root": "t-split",
+      "parts": {
+        "t-split-side": "fixed-width side (holds a .t-sidebar or .t-list)",
+        "t-split-pane": "flexible content pane, scrolls on its own"
+      },
+      "attributes": {
+        "data-fill": [
+          "viewport"
+        ]
+      },
+      "behaviour": "none",
+      "markup": "<div class='t-split' data-fill='viewport'>\n  <div class='t-split-side'><nav class='t-sidebar'>…</nav></div>\n  <div class='t-split-pane'>…</div>\n</div>",
+      "demo": "<div class='t-split' style='height:160px'><div class='t-split-side'><nav class='t-sidebar' aria-label='Split demo'><ul><li><a class='t-sidebar-item' href='#split' aria-current='page'><span class='t-sidebar-item-name'>console</span></a></li><li><a class='t-sidebar-item' href='#split'><span class='t-sidebar-item-name'>cloche</span></a></li></ul></nav></div><div class='t-split-pane'><pre class='t-code-pre' style='height:100%;margin:0'>Pick an item on the left.</pre></div></div>",
+      "source": "sidebar.css .split-layout"
+    },
+    {
+      "id": "button",
+      "name": "Button",
+      "tier": 1,
+      "group": "actions",
+      "description": "The action control. One primary per view; secondary is the default look; danger/warning for their outcomes; ghost and link for quiet actions.",
+      "root": "t-btn",
+      "parts": {
+        "t-icon": "leading/trailing icon (any inline element)",
+        "t-btn-spinner": "optional explicit spinner slot while aria-busy"
+      },
+      "attributes": {
+        "data-variant": [
+          "primary",
+          "secondary",
+          "danger",
+          "warning",
+          "ghost",
+          "link"
+        ],
+        "data-tone": [
+          "*"
+        ],
+        "data-size": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "data-icon": [
+          "only"
+        ]
+      },
+      "states": [
+        ":hover",
+        ":focus-visible",
+        ":active",
+        ":disabled",
+        "aria-pressed=true",
+        "aria-busy=true"
+      ],
+      "behaviour": "none",
+      "a11y": "data-icon=only needs aria-label or data-tip. aria-busy=true = loading: the skin shows a spinner and the control is non-interactive (also set disabled). Toggle buttons carry aria-pressed.",
+      "markup": "<button class='t-btn' data-variant='primary'>Save</button>\n<button class='t-btn'>Cancel</button>\n<button class='t-btn' data-variant='ghost' data-tone='danger'>Delete</button>\n<button class='t-btn' data-icon='only' aria-label='Edit'><span class='t-icon'>✎</span></button>",
+      "demo": "<div class='t-stack' data-gap='2'>\n<div class='t-cluster' data-gap='2'><button class='t-btn' data-variant='primary'><span class='t-icon'>＋</span>Primary</button><button class='t-btn' data-variant='secondary'>Secondary</button><button class='t-btn' data-variant='danger'>Danger</button><button class='t-btn' data-variant='warning'>Warning</button><button class='t-btn' data-variant='ghost'>Ghost</button><button class='t-btn' data-variant='ghost' data-tone='danger'>Ghost danger</button><button class='t-btn' data-variant='link'>Link</button></div>\n<div class='t-cluster' data-gap='2' data-align='center'><button class='t-btn' data-variant='primary' data-size='sm'>Small</button><button class='t-btn' data-variant='primary'>Medium</button><button class='t-btn' data-variant='primary' data-size='lg'>Large</button><button class='t-btn'><span class='t-icon'>⇩</span>Leading</button><button class='t-btn'>Counter <span class='t-counter'>12</span></button></div>\n<div class='t-cluster' data-gap='2'><button class='t-btn' data-variant='primary' disabled>Disabled</button><button class='t-btn' disabled>Disabled</button><button class='t-btn' data-variant='primary' aria-busy='true' disabled>Saving…</button><button class='t-btn' aria-pressed='true'>Pinned</button><button class='t-btn' aria-pressed='false' data-demo='toggle'>Toggle me</button></div>\n<div class='t-cluster' data-gap='2'><button class='t-btn' data-icon='only' data-tip='Edit'><span class='t-icon'>✎</span></button><button class='t-btn' data-icon='only' data-tip='Copy'><span class='t-icon'>⧉</span></button><button class='t-btn' data-icon='only' data-variant='danger' data-tip='Delete'><span class='t-icon'>🗑</span></button><button class='t-btn' data-icon='only' data-variant='ghost' data-tip='More'><span class='t-icon'>⋮</span></button><button class='t-btn' data-icon='only' data-variant='primary' data-size='sm' data-tip='Add'><span class='t-icon'>＋</span></button><button class='t-btn' data-icon='only' data-size='lg' data-tip='Settings'><span class='t-icon'>⚙</span></button></div>\n</div>",
+      "notes": "Loading = disabled + aria-busy, never a second click. No per-tone solid buttons beyond primary/danger/warning: colour is the outcome, not decoration.",
+      "source": "dracula.css .btn-*, cards-forms.css .btn-icon/.btn-ghost/.btn-link"
+    },
+    {
+      "id": "button-group",
+      "name": "Button group & quick filter",
+      "tier": 1,
+      "group": "actions",
+      "description": "Buttons fused into one row. data-role=filter is the single-select quick filter: the active button carries aria-pressed=true and keeps its look on hover.",
+      "root": "t-btn-group",
+      "attributes": {
+        "data-role": [
+          "filter"
+        ],
+        "data-size": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      "states": [
+        "aria-pressed=true"
+      ],
+      "behaviour": "js:Tailor.filters (optional)",
+      "a11y": "role=group + aria-label; filter buttons use aria-pressed.",
+      "markup": "<div class='t-btn-group' role='group' aria-label='Range'>\n  <button class='t-btn' data-size='sm'>Hour</button>\n  <button class='t-btn' data-size='sm'>Day</button>\n  <button class='t-btn' data-size='sm'>Week</button>\n</div>\n<div class='t-btn-group' role='group' data-role='filter' aria-label='State'>\n  <button class='t-btn' data-size='sm' aria-pressed='true'>All</button>\n  <button class='t-btn' data-size='sm' aria-pressed='false'>Running</button>\n  <button class='t-btn' data-size='sm' aria-pressed='false'>Updates <span class='t-counter' data-tone='warning'>15</span></button>\n</div>",
+      "source": "cards-forms.css .btn-filter-active",
+      "demo": "<div class='t-cluster' data-gap='3'><div class='t-btn-group' role='group' aria-label='Range'>  <button class='t-btn' data-size='sm'>Hour</button>  <button class='t-btn' data-size='sm'>Day</button>  <button class='t-btn' data-size='sm'>Week</button></div><div class='t-btn-group' role='group' data-role='filter' aria-label='State'>  <button class='t-btn' data-size='sm' aria-pressed='true'>All</button>  <button class='t-btn' data-size='sm' aria-pressed='false'>Running</button>  <button class='t-btn' data-size='sm' aria-pressed='false'>Updates <span class='t-counter' data-tone='warning'>15</span></button></div></div>"
+    },
+    {
+      "id": "segmented",
+      "name": "Segmented control",
+      "tier": 1,
+      "group": "actions",
+      "description": "Mutually exclusive view/density switch built from radio inputs; the checked one lifts to the surface with an accent mark.",
+      "root": "t-segmented",
+      "parts": {
+        "t-segmented-item": "<label> wrapping the radio and its text/icon",
+        "t-segmented-input": "the radio (visually hidden)"
+      },
+      "attributes": {
+        "data-size": [
+          "sm",
+          "md"
+        ]
+      },
+      "states": [
+        ":checked",
+        ":focus-visible",
+        ":disabled"
+      ],
+      "behaviour": "none",
+      "a11y": "role=group + aria-label on the root; icon-only items carry data-tip.",
+      "markup": "<div class='t-segmented' role='group' aria-label='View'>\n  <label class='t-segmented-item'><input class='t-segmented-input' type='radio' name='view' checked><span>Cards</span></label>\n  <label class='t-segmented-item'><input class='t-segmented-input' type='radio' name='view'><span>Table</span></label>\n  <label class='t-segmented-item'><input class='t-segmented-input' type='radio' name='view' disabled><span>List</span></label>\n</div>",
+      "demo": "<div class='t-cluster' data-gap='3' data-align='center'><div class='t-segmented' role='group' aria-label='View'><label class='t-segmented-item'><input class='t-segmented-input' type='radio' name='seg-view' checked><span>Cards</span></label><label class='t-segmented-item'><input class='t-segmented-input' type='radio' name='seg-view'><span>Table</span></label><label class='t-segmented-item'><input class='t-segmented-input' type='radio' name='seg-view' disabled><span>List</span></label></div><div class='t-segmented' role='group' aria-label='Density' data-size='sm'><label class='t-segmented-item' data-tip='Comfortable'><input class='t-segmented-input' type='radio' name='seg-dens' checked><span>☰</span></label><label class='t-segmented-item' data-tip='Compact'><input class='t-segmented-input' type='radio' name='seg-dens'><span>≡</span></label></div></div>",
+      "source": "lists.css .segmented"
+    },
+    {
+      "id": "menu",
+      "name": "Menu (dropdown)",
+      "tier": 1,
+      "group": "actions",
+      "description": "Dropdown action menu on <details>: headers, check items, dividers, a danger item. Works without JS; Tailor.menus closes it on outside click / Esc.",
+      "root": "t-menu",
+      "parts": {
+        "t-menu-list": "the popup <ul role=menu>",
+        "t-menu-item": "<a>/<button> row; role=menuitem | menuitemcheckbox",
+        "t-menu-header": "small-caps group header <li>",
+        "t-menu-divider": "rule <li>",
+        "t-menu-desc": "secondary line under an item",
+        "t-menu-kbd": "trailing shortcut"
+      },
+      "attributes": {
+        "data-align": [
+          "start",
+          "end"
+        ],
+        "data-tone": [
+          "danger"
+        ]
+      },
+      "states": [
+        "details[open]",
+        "aria-checked=true",
+        ":hover",
+        "aria-disabled=true"
+      ],
+      "behaviour": "js:Tailor.menus",
+      "a11y": "<summary> is the trigger (any .t-btn look); items role=menuitem; check items role=menuitemcheckbox + aria-checked.",
+      "markup": "<details class='t-menu' data-align='start'>\n  <summary class='t-btn'>Filter ▾</summary>\n  <ul class='t-menu-list' role='menu'>\n    <li class='t-menu-header'>Show</li>\n    <li><button class='t-menu-item' role='menuitemcheckbox' aria-checked='true'>Running</button></li>\n    <li><button class='t-menu-item' role='menuitemcheckbox' aria-checked='false'>Stopped</button></li>\n    <li class='t-menu-divider'></li>\n    <li><button class='t-menu-item' role='menuitem' data-tone='danger'>Delete…</button></li>\n  </ul>\n</details>",
+      "demo": "<div class='t-cluster' data-gap='3'><details class='t-menu'><summary class='t-btn'>Filter ▾</summary><ul class='t-menu-list' role='menu'><li class='t-menu-header'>Show</li><li><button class='t-menu-item' role='menuitemcheckbox' aria-checked='true' data-demo='check'>Running</button></li><li><button class='t-menu-item' role='menuitemcheckbox' aria-checked='false' data-demo='check'>Stopped</button></li><li><button class='t-menu-item' role='menuitemcheckbox' aria-checked='false' data-demo='check'>Updates available<span class='t-menu-desc'>images behind the registry</span></button></li><li class='t-menu-divider'></li><li><button class='t-menu-item' role='menuitem' data-tone='danger'>Delete…</button></li></ul></details><details class='t-menu' data-align='end'><summary class='t-btn' data-variant='primary'>Start ▾</summary><ul class='t-menu-list' role='menu'><li><button class='t-menu-item' role='menuitem'>Start with rebuild<span class='t-menu-kbd'>⌘R</span></button></li><li><button class='t-menu-item' role='menuitem'>Start and follow logs</button></li></ul></details></div>",
+      "source": "lists.css .dropdown-check, dracula.css .dropdown-*"
+    },
+    {
+      "id": "tabs",
+      "name": "Tabs",
+      "tier": 1,
+      "group": "navigation",
+      "description": "Underline tabs (default) or boxed tabs with counters; panels toggled by Tailor.tabs.",
+      "root": "t-tabs",
+      "parts": {
+        "t-tabs-list": "[role=tablist]",
+        "t-tab": "[role=tab] button; aria-selected marks the active",
+        "t-tab-panel": "[role=tabpanel]; hidden when inactive"
+      },
+      "attributes": {
+        "data-variant": [
+          "underline",
+          "boxed"
+        ]
+      },
+      "states": [
+        "aria-selected=true",
+        ":hover",
+        ":disabled",
+        "[hidden]"
+      ],
+      "behaviour": "js:Tailor.tabs",
+      "a11y": "aria-controls/id pairing, roving tabindex (0 on selected, -1 otherwise), ←/→ move, Home/End.",
+      "markup": "<div class='t-tabs' data-variant='underline'>\n  <div class='t-tabs-list' role='tablist'>\n    <button class='t-tab' role='tab' aria-selected='true' aria-controls='p-open' id='t-open'>Open <span class='t-counter'>24</span></button>\n    <button class='t-tab' role='tab' aria-selected='false' aria-controls='p-closed' id='t-closed' tabindex='-1'>Closed <span class='t-counter'>180</span></button>\n  </div>\n  <div class='t-tab-panel' role='tabpanel' id='p-open' aria-labelledby='t-open'>…</div>\n  <div class='t-tab-panel' role='tabpanel' id='p-closed' aria-labelledby='t-closed' hidden>…</div>\n</div>",
+      "demo": "<div class='t-grid' data-cols='2' data-min='sm'><div class='t-tabs' data-variant='underline'><div class='t-tabs-list' role='tablist'><button class='t-tab' role='tab' aria-selected='true' aria-controls='dp-u1' id='dt-u1'>Open <span class='t-counter'>24</span></button><button class='t-tab' role='tab' aria-selected='false' aria-controls='dp-u2' id='dt-u2' tabindex='-1'>Closed <span class='t-counter'>180</span></button><button class='t-tab' role='tab' aria-selected='false' aria-controls='dp-u3' id='dt-u3' tabindex='-1'>Pull requests <span class='t-counter'>6</span></button></div><div class='t-tab-panel t-muted' role='tabpanel' id='dp-u1' aria-labelledby='dt-u1'>24 open issues, newest first.</div><div class='t-tab-panel t-muted' role='tabpanel' id='dp-u2' aria-labelledby='dt-u2' hidden>Closed in the last 30 days.</div><div class='t-tab-panel t-muted' role='tabpanel' id='dp-u3' aria-labelledby='dt-u3' hidden>Awaiting review.</div></div><div class='t-tabs' data-variant='boxed'><div class='t-tabs-list' role='tablist'><button class='t-tab' role='tab' aria-selected='true' aria-controls='dp-b1' id='dt-b1'>Compose</button><button class='t-tab' role='tab' aria-selected='false' aria-controls='dp-b2' id='dt-b2' tabindex='-1'>Environment</button><button class='t-tab' role='tab' aria-selected='false' disabled tabindex='-1'>Logs</button></div><div class='t-tab-panel' role='tabpanel' id='dp-b1' aria-labelledby='dt-b1'><code>compose.yaml</code> as the console wrote it.</div><div class='t-tab-panel' role='tabpanel' id='dp-b2' aria-labelledby='dt-b2' hidden>Non-secret structural variables only.</div></div></div>",
+      "source": "lists.css .nav-underline/.nav-tabs"
+    },
+    {
+      "id": "breadcrumb",
+      "name": "Breadcrumb",
+      "tier": 1,
+      "group": "navigation",
+      "description": "Path to the current page; the last item is the page itself.",
+      "root": "t-breadcrumb",
+      "states": [
+        "aria-current=page",
+        ":hover"
+      ],
+      "behaviour": "none",
+      "a11y": "<nav aria-label='Breadcrumb'> > <ol>; last <li> carries aria-current=page.",
+      "markup": "<nav class='t-breadcrumb' aria-label='Breadcrumb'>\n  <ol>\n    <li><a href='/'>Home</a></li>\n    <li><a href='/services'>Services</a></li>\n    <li aria-current='page'>render</li>\n  </ol>\n</nav>",
+      "source": "lists.css .breadcrumb"
+    },
+    {
+      "id": "pagination",
+      "name": "Pagination",
+      "tier": 1,
+      "group": "navigation",
+      "description": "Page links or newer/older pair.",
+      "root": "t-pagination",
+      "parts": {
+        "t-page-link": "a page link/button"
+      },
+      "attributes": {
+        "data-size": [
+          "sm",
+          "md"
+        ]
+      },
+      "states": [
+        "aria-current=page",
+        "aria-disabled=true",
+        ":hover"
+      ],
+      "behaviour": "none",
+      "a11y": "<nav aria-label='Pagination'> > <ul>; current page aria-current=page; unavailable links aria-disabled=true (no href).",
+      "markup": "<nav class='t-pagination' aria-label='Pagination' data-size='sm'>\n  <ul>\n    <li><a class='t-page-link' aria-disabled='true'>«</a></li>\n    <li><a class='t-page-link' href='?p=1' aria-current='page'>1</a></li>\n    <li><a class='t-page-link' href='?p=2'>2</a></li>\n    <li><a class='t-page-link' aria-disabled='true'>…</a></li>\n    <li><a class='t-page-link' href='?p=12'>12</a></li>\n    <li><a class='t-page-link' href='?p=2'>»</a></li>\n  </ul>\n</nav>",
+      "demo": "<div class='t-cluster' data-gap='4' data-align='center'><nav class='t-pagination' aria-label='Pages' data-size='sm'><ul><li><a class='t-page-link' aria-disabled='true'>«</a></li><li><a class='t-page-link' href='#pagination' aria-current='page'>1</a></li><li><a class='t-page-link' href='#pagination'>2</a></li><li><a class='t-page-link' href='#pagination'>3</a></li><li><a class='t-page-link' aria-disabled='true'>…</a></li><li><a class='t-page-link' href='#pagination'>12</a></li><li><a class='t-page-link' href='#pagination'>»</a></li></ul></nav><nav class='t-pagination' aria-label='Newer/older'><ul><li><a class='t-page-link' href='#pagination'>‹ Newer</a></li><li><a class='t-page-link' href='#pagination'>Older ›</a></li></ul></nav></div>",
+      "source": "dracula.css .pagination"
+    },
+    {
+      "id": "list",
+      "name": "Selectable list",
+      "tier": 1,
+      "group": "navigation",
+      "description": "A listbox of rows (leading icon, name, description, trailing text/badge) with single or multi selection, group headers and dividers. Keyboard: ↑↓ move, Space/Enter toggle.",
+      "root": "t-list",
+      "parts": {
+        "t-list-item": "<button role=option>",
+        "t-list-lead": "leading icon / checkbox slot",
+        "t-list-body": "name + desc column",
+        "t-list-name": "truncating title",
+        "t-list-desc": "secondary line",
+        "t-list-trail": "trailing slot",
+        "t-list-group": "group header row",
+        "t-list-divider": "rule row"
+      },
+      "attributes": {
+        "aria-multiselectable": [
+          "true"
+        ],
+        "data-size": [
+          "sm",
+          "md"
+        ]
+      },
+      "states": [
+        "aria-selected=true",
+        ":hover",
+        ":focus-visible",
+        ":disabled"
+      ],
+      "behaviour": "js:Tailor.listbox",
+      "a11y": "role=listbox + aria-label; items role=option + aria-selected; multi via aria-multiselectable=true (skin draws a checkbox in .t-list-lead).",
+      "markup": "<div class='t-list' role='listbox' aria-label='Host'>\n  <div class='t-list-group'>Hosts</div>\n  <button class='t-list-item' role='option' aria-selected='true'><span class='t-icon t-list-lead'>▤</span><span class='t-list-body'><span class='t-list-name'>web-1</span><span class='t-list-desc'>192.168.1.20 · 24 services</span></span><span class='t-list-trail'>primary</span></button>\n  <button class='t-list-item' role='option' aria-selected='false'><span class='t-icon t-list-lead'>▤</span><span class='t-list-body'><span class='t-list-name'>nas</span></span><span class='t-badge t-list-trail' data-tone='success'>online</span></button>\n  <div class='t-list-divider'></div>\n  <button class='t-list-item' role='option' aria-selected='false' disabled><span class='t-icon t-list-lead'>＋</span><span class='t-list-body'><span class='t-list-name'>Add a host</span><span class='t-list-desc'>needs the admin role</span></span></button>\n</div>",
+      "demo": "<div class='t-grid' data-cols='2' data-min='sm'><div class='t-list' role='listbox' aria-label='Host'><div class='t-list-group'>Hosts</div><button class='t-list-item' role='option' aria-selected='true'><span class='t-icon t-list-lead'>▤</span><span class='t-list-body'><span class='t-list-name'>web-1</span><span class='t-list-desc'>192.168.1.20 · 24 services</span></span><span class='t-list-trail'>primary</span></button><button class='t-list-item' role='option' aria-selected='false'><span class='t-icon t-list-lead'>▤</span><span class='t-list-body'><span class='t-list-name'>nas</span><span class='t-list-desc'>192.168.1.50 · NAS</span></span><span class='t-badge t-list-trail' data-tone='success'>online</span></button><button class='t-list-item' role='option' aria-selected='false'><span class='t-icon t-list-lead'>▤</span><span class='t-list-body'><span class='t-list-name'>node-3-with-a-very-long-hostname-that-truncates</span></span><span class='t-badge t-list-trail' data-tone='neutral'>offline</span></button><div class='t-list-divider'></div><button class='t-list-item' role='option' aria-selected='false' disabled><span class='t-icon t-list-lead'>＋</span><span class='t-list-body'><span class='t-list-name'>Add a host</span><span class='t-list-desc'>needs the admin role</span></span></button></div><div class='t-list' role='listbox' aria-multiselectable='true' aria-label='Checks'><button class='t-list-item' role='option' aria-selected='true'><span class='t-list-lead'></span><span class='t-list-body'><span class='t-list-name'>HTTP 200</span></span></button><button class='t-list-item' role='option' aria-selected='true'><span class='t-list-lead'></span><span class='t-list-body'><span class='t-list-name'>Body <code>ok == true</code></span></span></button><button class='t-list-item' role='option' aria-selected='false'><span class='t-list-lead'></span><span class='t-list-body'><span class='t-list-name'>Certificate &gt; 7 days</span><span class='t-list-desc'>warns a week before expiry</span></span></button></div></div>",
+      "source": "lists.css .select-list"
+    },
+    {
+      "id": "field",
+      "name": "Field",
+      "tier": 1,
+      "group": "forms",
+      "description": "Label + control + hint/feedback. Controls: .t-input (text/number/password/file/range), .t-select, .t-textarea; .t-input-group fuses addons and buttons to a control.",
+      "root": "t-field",
+      "parts": {
+        "t-label": "<label> (small caps in the Dracula look)",
+        "t-input": "<input>",
+        "t-select": "<select>",
+        "t-textarea": "<textarea>",
+        "t-input-group": "row fusing addon(s) + control + button(s)",
+        "t-input-addon": "static prefix/suffix text or icon",
+        "t-hint": "caption under the control",
+        "t-feedback": "validation message; data-tone success|danger"
+      },
+      "attributes": {
+        "data-size": [
+          "sm",
+          "md"
+        ],
+        "data-tone (on .t-feedback)": [
+          "success",
+          "danger"
+        ]
+      },
+      "states": [
+        ":focus-visible",
+        ":disabled",
+        "[readonly]",
+        "aria-invalid=true",
+        "::placeholder"
+      ],
+      "behaviour": "none",
+      "a11y": "Every control has a <label for> (or aria-label). Invalid controls set aria-invalid=true and aria-describedby → the .t-feedback id. Validation glyphs are not drawn; the message carries the meaning.",
+      "markup": "<div class='t-field'>\n  <label class='t-label' for='host'>Hostname</label>\n  <input class='t-input' id='host' placeholder='example.internal'>\n  <p class='t-hint'>The LAN name, without scheme.</p>\n</div>\n<div class='t-field'>\n  <label class='t-label' for='port'>Port</label>\n  <input class='t-input' id='port' value='99999' aria-invalid='true' aria-describedby='port-fb'>\n  <p class='t-feedback' id='port-fb' data-tone='danger'>Must be between 1 and 65535.</p>\n</div>\n<div class='t-field'>\n  <label class='t-label' for='tok'>Token</label>\n  <div class='t-input-group'><span class='t-input-addon'>🔑</span><input class='t-input' id='tok' type='password' value='secret'><button class='t-btn' type='button' data-tip='Show'>👁</button></div>\n</div>",
+      "demo": "<div class='t-grid' data-cols='2' data-min='sm'><div class='t-stack' data-gap='3'><div class='t-field'><label class='t-label' for='f-host'>Hostname</label><input class='t-input' id='f-host' placeholder='example.internal'><p class='t-hint'>Caption: the LAN name, without scheme.</p></div><div class='t-field'><label class='t-label' for='f-tok'>Token</label><div class='t-input-group'><span class='t-input-addon'>🔑</span><input class='t-input' id='f-tok' type='password' value='secret-token'><button class='t-btn' type='button' data-tip='Show' data-demo='reveal'>👁</button></div><p class='t-hint'>Leading addon + trailing action.</p></div><div class='t-field'><label class='t-label' for='f-ok'>Subdomain</label><input class='t-input' id='f-ok' value='render' aria-describedby='f-ok-fb'><p class='t-feedback' id='f-ok-fb' data-tone='success'>✓ Available.</p></div><div class='t-field'><label class='t-label' for='f-bad'>Port</label><input class='t-input' id='f-bad' value='99999' aria-invalid='true' aria-describedby='f-bad-fb'><p class='t-feedback' id='f-bad-fb' data-tone='danger'>✕ Must be between 1 and 65535.</p></div></div><div class='t-stack' data-gap='3'><div class='t-cluster' data-gap='2'><div class='t-field'><label class='t-label' for='f-vis'>Visibility</label><select class='t-select' id='f-vis'><option>public</option><option>local</option></select></div><div class='t-field'><label class='t-label' for='f-port'>Port</label><div class='t-input-group'><span class='t-input-addon'>:</span><input class='t-input' id='f-port' value='9292' size='6'></div></div></div><div class='t-cluster' data-gap='2'><div class='t-field'><label class='t-label' for='f-ro'>Read-only</label><input class='t-input' id='f-ro' readonly value='ses_f159fc741ffe'></div><div class='t-field'><label class='t-label' for='f-dis'>Disabled</label><input class='t-input' id='f-dis' disabled value='not editable'></div></div><div class='t-field'><label class='t-label' for='f-notes'>Notes</label><textarea class='t-textarea' id='f-notes' rows='2'>Grows with its content.</textarea></div><div class='t-field'><label class='t-label' for='f-range'>Brightness <output class='t-muted' for='f-range' id='f-range-out'>60 %</output></label><input class='t-input' type='range' id='f-range' value='60' data-demo='range'></div><div class='t-field' data-size='sm'><label class='t-label' for='f-sm'>Small field</label><input class='t-input' id='f-sm' value='data-size=sm'></div></div></div>",
+      "source": "dracula.css .form-*, cards-forms.css validation"
+    },
+    {
+      "id": "check",
+      "name": "Checkbox, radio, switch",
+      "tier": 1,
+      "group": "forms",
+      "description": "A checkbox or radio with its label (and optional description); data-variant=switch renders a toggle. Groups go in a fieldset with a legend.",
+      "root": "t-check",
+      "parts": {
+        "t-check-input": "the <input type=checkbox|radio>",
+        "t-check-label": "label text",
+        "t-check-desc": "description under the label",
+        "t-check-group": "<fieldset> wrapper; <legend class='t-label'>"
+      },
+      "attributes": {
+        "data-variant": [
+          "switch"
+        ]
+      },
+      "states": [
+        ":checked",
+        ":indeterminate",
+        ":focus-visible",
+        ":disabled",
+        "aria-invalid=true"
+      ],
+      "behaviour": "none",
+      "a11y": "<label class='t-check'> wraps the input, so the whole row is the target; groups: <fieldset class='t-check-group'><legend class='t-label'>.",
+      "markup": "<fieldset class='t-check-group'>\n  <legend class='t-label'>Notify on</legend>\n  <label class='t-check'><input class='t-check-input' type='checkbox' checked><span class='t-check-label'>Failure<span class='t-check-desc'>Any job that exits non-zero.</span></span></label>\n  <label class='t-check'><input class='t-check-input' type='checkbox'><span class='t-check-label'>Recovery</span></label>\n</fieldset>\n<label class='t-check' data-variant='switch'><input class='t-check-input' type='checkbox' role='switch' checked><span class='t-check-label'>Protected</span></label>",
+      "demo": "<div class='t-grid' data-cols='3' data-min='xs'><fieldset class='t-check-group'><legend class='t-label'>Notify on</legend><label class='t-check'><input class='t-check-input' type='checkbox' checked><span class='t-check-label'>Failure<span class='t-check-desc'>Any job that exits non-zero.</span></span></label><label class='t-check'><input class='t-check-input' type='checkbox'><span class='t-check-label'>Recovery</span></label><label class='t-check'><input class='t-check-input' type='checkbox' aria-invalid='true'><span class='t-check-label'>Needs at least one</span></label><label class='t-check'><input class='t-check-input' type='checkbox' disabled><span class='t-check-label'>Disabled</span></label></fieldset><fieldset class='t-check-group'><legend class='t-label'>Exposure</legend><label class='t-check'><input class='t-check-input' type='radio' name='exp' checked><span class='t-check-label'>Public<span class='t-check-desc'>Tunnel + Access policy.</span></span></label><label class='t-check'><input class='t-check-input' type='radio' name='exp'><span class='t-check-label'>LAN only</span></label></fieldset><fieldset class='t-check-group'><legend class='t-label'>Switches</legend><label class='t-check' data-variant='switch'><input class='t-check-input' type='checkbox' role='switch' checked><span class='t-check-label'>Protected</span></label><label class='t-check' data-variant='switch'><input class='t-check-input' type='checkbox' role='switch'><span class='t-check-label'>Auto-update</span></label><label class='t-check' data-variant='switch'><input class='t-check-input' type='checkbox' role='switch' disabled checked><span class='t-check-label'>Locked</span></label></fieldset></div>",
+      "source": "dracula.css .form-check, cards-forms.css switch retint"
+    },
+    {
+      "id": "duration-input",
+      "name": "Duration input",
+      "tier": 1,
+      "group": "forms",
+      "description": "Number + unit select (s / min / h); the stored value is always seconds in data-value. Never a bare seconds field.",
+      "root": "t-duration",
+      "attributes": {
+        "data-value": [
+          "*"
+        ],
+        "data-setting": [
+          "*"
+        ],
+        "data-size": [
+          "sm",
+          "md"
+        ]
+      },
+      "behaviour": "js:Tailor.duration",
+      "a11y": "The number input carries the label; the unit select has aria-label='unit'.",
+      "markup": "<div class='t-input-group t-duration' data-setting='offline_after_s' data-value='900'>\n  <input class='t-input' type='number' min='0' step='1' id='offline' aria-label='Offline after'>\n  <select class='t-select' aria-label='unit'><option value='1'>s</option><option value='60'>min</option><option value='3600'>h</option></select>\n</div>",
+      "notes": "Tailor.duration.set(group, seconds) picks the largest unit dividing evenly; Tailor.duration.get(group) → seconds.",
+      "source": "settings.css/.js .duration"
+    },
+    {
+      "id": "settings-row",
+      "name": "Settings row",
+      "tier": 1,
+      "group": "forms",
+      "description": "Human-readable label (never the key) + help popover + a control that auto-saves on change; the state cell shows spinner → check / cross. No per-row Save button.",
+      "root": "t-setting",
+      "parts": {
+        "t-setting-label": "label cell (label + .t-help)",
+        "t-setting-control": "control cell; the control carries data-setting",
+        "t-setting-state": "feedback cell",
+        "t-settings": "wrapper for a stack of rows (max-width)"
+      },
+      "attributes": {
+        "data-state": [
+          "saving",
+          "saved",
+          "failed"
+        ]
+      },
+      "states": [
+        "data-state=saving",
+        "data-state=saved",
+        "data-state=failed"
+      ],
+      "behaviour": "js:Tailor.settingsAutoSave",
+      "a11y": "label for → control id; the state cell is aria-live=polite text (skins may replace it with an icon via ::before but keep the text).",
+      "markup": "<div class='t-settings'>\n  <div class='t-setting'>\n    <div class='t-setting-label'><label for='s-name'>Device name</label>\n      <span class='t-help' data-tone='info'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='About device name'>i</button><div class='t-help-box' hidden><p>Shown in every list and toast. Defaults to the hostname.</p></div></span></div>\n    <div class='t-setting-control'><input class='t-input' data-size='sm' id='s-name' data-setting='name' value='epaper-display'></div>\n    <span class='t-setting-state' aria-live='polite'></span>\n  </div>\n</div>",
+      "demo": "<div class='t-settings' data-demo='settings'><div class='t-setting'><div class='t-setting-label'><label for='s-name'>Device name</label><span class='t-help' data-tone='info'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='About device name'>i</button><div class='t-help-box' hidden><p>Shown in every list, toast and alert. Defaults to the hostname.</p></div></span></div><div class='t-setting-control'><input class='t-input' data-size='sm' id='s-name' data-setting='name' value='epaper-display'></div><span class='t-setting-state' aria-live='polite'></span></div><div class='t-setting'><div class='t-setting-label'><label for='s-regime'>Power regime</label><span class='t-help' data-tone='info'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='About power regime'>i</button><div class='t-help-box' hidden><p><b>Always on</b> keeps the panel awake on mains.</p><p><b>Hold on battery</b> shows the dashboard, then holds the wallpaper.</p></div></span></div><div class='t-setting-control'><select class='t-select' data-size='sm' id='s-regime' data-setting='regime'><option value='always_on'>Always on</option><option value='battery_hold' selected>Hold on battery</option></select></div><span class='t-setting-state' aria-live='polite'></span></div><div class='t-setting'><div class='t-setting-label'><label for='s-offline'>Offline after</label></div><div class='t-setting-control'><div class='t-input-group t-duration' data-size='sm' data-setting='offline_after_s' data-value='900'><input class='t-input' type='number' min='0' step='1' id='s-offline'><select class='t-select' aria-label='unit'><option value='1'>s</option><option value='60'>min</option><option value='3600'>h</option></select></div></div><span class='t-setting-state' aria-live='polite'></span></div><div class='t-setting'><div class='t-setting-label'><label for='s-overlay'>Battery overlay</label></div><div class='t-setting-control'><label class='t-check' data-variant='switch'><input class='t-check-input' type='checkbox' role='switch' id='s-overlay' data-setting='battery_overlay_enabled' checked><span class='t-check-label'></span></label></div><span class='t-setting-state' aria-live='polite'></span></div><div class='t-setting'><div class='t-setting-label'><label for='s-fail'>Fails on purpose</label><span class='t-help' data-tone='danger'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='Important'>!</button><div class='t-help-box' hidden><p>Demo of the error path: the save is rejected, the toast says why, the control reverts.</p></div></span></div><div class='t-setting-control'><input class='t-input' data-size='sm' id='s-fail' data-setting='fail_demo' value='change me'></div><span class='t-setting-state' aria-live='polite'></span></div></div>",
+      "notes": "Tailor.settingsAutoSave(root, save) — save(key, value) → Promise<{ok, message}>; on error the control reverts to its last saved value and a danger toast names the reason.",
+      "source": "settings.css/.js"
+    },
+    {
+      "id": "badge",
+      "name": "Badge",
+      "tier": 1,
+      "group": "data",
+      "description": "Small quiet label. Tinted by default (hue at a weak alpha behind hue text); solid is reserved for things needing attention now; outline for primary/neutral emphasis.",
+      "root": "t-badge",
+      "attributes": {
+        "data-tone": [
+          "*"
+        ],
+        "data-variant": [
+          "tint",
+          "solid",
+          "outline"
+        ],
+        "data-size": [
+          "xs",
+          "sm",
+          "lg"
+        ]
+      },
+      "behaviour": "none",
+      "a11y": "Text only; a badge that is also a control is a <button class='t-badge'>.",
+      "markup": "<span class='t-badge' data-tone='success'>running</span>\n<span class='t-badge' data-tone='neutral'>stopped</span>\n<span class='t-badge' data-tone='warning' data-variant='solid'>Update</span>",
+      "demo": "<div class='t-stack' data-gap='2'><div class='t-cluster' data-gap='1'><span class='t-badge'>default</span><span class='t-badge' data-tone='text' data-variant='outline'>primary</span><span class='t-badge' data-tone='accent'>accent</span><span class='t-badge' data-tone='success'>success</span><span class='t-badge' data-tone='warning'>attention</span><span class='t-badge' data-tone='pink'>severe</span><span class='t-badge' data-tone='danger'>danger</span><span class='t-badge' data-tone='purple'>✓ done</span><span class='t-badge' data-tone='yellow'>auth</span><span class='t-badge' data-tone='info'>open</span><span class='t-badge' data-tone='warning' data-variant='solid'>▲ Update</span></div><div class='t-cluster' data-gap='1' data-align='center'><span class='t-badge' data-tone='info' data-size='xs'>xs</span><span class='t-badge' data-tone='info' data-size='sm'>sm</span><span class='t-badge' data-tone='info'>default</span><span class='t-badge' data-tone='info' data-size='lg'>lg</span><button class='t-badge' data-tone='accent' data-demo='badge-toggle'>badge as button</button></div></div>",
+      "source": "badges.css"
+    },
+    {
+      "id": "counter",
+      "name": "Counter",
+      "tier": 1,
+      "group": "data",
+      "description": "Round count next to a tab, nav item or title; plain or tinted.",
+      "root": "t-counter",
+      "attributes": {
+        "data-tone": [
+          "*"
+        ]
+      },
+      "behaviour": "none",
+      "markup": "Issues <span class='t-counter'>24</span>  Failing <span class='t-counter' data-tone='danger'>3</span>",
+      "demo": "<div class='t-cluster' data-gap='3' data-align='center'><span>Issues <span class='t-counter'>24</span></span><span>Failing <span class='t-counter' data-tone='danger'>3</span></span><span>Updates <span class='t-counter' data-tone='warning'>15</span></span><span>New <span class='t-counter' data-tone='success'>+2</span></span><span class='t-counter' data-tone='accent'>1 204</span></div>",
+      "source": "badges.css .counter"
+    },
+    {
+      "id": "chip",
+      "name": "Chip",
+      "tier": 1,
+      "group": "data",
+      "description": "Label chip (host, owner, filter token): tinted, slightly larger than a badge, optional remove button.",
+      "root": "t-chip",
+      "parts": {
+        "t-chip-remove": "trailing × button"
+      },
+      "attributes": {
+        "data-tone": [
+          "*"
+        ]
+      },
+      "behaviour": "none",
+      "a11y": "The remove button carries aria-label='Remove <text>'.",
+      "markup": "<span class='t-chip' data-tone='success'><span class='t-icon'>▤</span>web-1</span>\n<span class='t-chip' data-tone='info'>host:web-1 <button class='t-chip-remove' aria-label='Remove host:web-1'>×</button></span>",
+      "demo": "<div class='t-cluster' data-gap='2'><span class='t-chip' data-tone='success'><span class='t-icon'>▤</span>web-1</span><span class='t-chip' data-tone='warning'><span class='t-icon'>▤</span>nas</span><span class='t-chip' data-tone='info'>host:web-1 <button class='t-chip-remove' aria-label='Remove host:web-1' data-demo='remove'>×</button></span><span class='t-chip' data-tone='accent'>kind:custom <button class='t-chip-remove' aria-label='Remove kind:custom' data-demo='remove'>×</button></span></div>",
+      "source": "badges.css .label-chip"
+    },
+    {
+      "id": "state-label",
+      "name": "State label",
+      "tier": 1,
+      "group": "data",
+      "description": "Icon + word pill for a lifecycle state (issue, PR, job, device). The icon is mandatory so colour-blind users read the state.",
+      "root": "t-state",
+      "attributes": {
+        "data-state": [
+          "open",
+          "closed",
+          "done",
+          "draft",
+          "warning",
+          "info"
+        ],
+        "data-variant": [
+          "solid"
+        ],
+        "data-size": [
+          "sm"
+        ]
+      },
+      "behaviour": "none",
+      "a11y": "Text carries the state; the icon is decorative (aria-hidden).",
+      "markup": "<span class='t-state' data-state='open'><span class='t-icon' aria-hidden='true'>◉</span>Open</span>\n<span class='t-state' data-state='done' data-variant='solid'><span class='t-icon' aria-hidden='true'>✓</span>Deployed</span>",
+      "demo": "<div class='t-stack' data-gap='2'><div class='t-cluster' data-gap='2'><span class='t-state' data-state='open'><span class='t-icon' aria-hidden='true'>◉</span>Open</span><span class='t-state' data-state='closed'><span class='t-icon' aria-hidden='true'>⊘</span>Closed</span><span class='t-state' data-state='done'><span class='t-icon' aria-hidden='true'>✓</span>Completed</span><span class='t-state' data-state='done'><span class='t-icon' aria-hidden='true'>⑃</span>Merged</span><span class='t-state' data-state='draft'><span class='t-icon' aria-hidden='true'>✎</span>Draft</span></div><div class='t-cluster' data-gap='2'><span class='t-state' data-state='info'><span class='t-icon' aria-hidden='true'>◎</span>In review</span><span class='t-state' data-state='warning'><span class='t-icon' aria-hidden='true'>▲</span>Degraded</span><span class='t-state' data-state='done' data-variant='solid'><span class='t-icon' aria-hidden='true'>🚀</span>Deployed</span><span class='t-state' data-state='open' data-size='sm'><span class='t-icon' aria-hidden='true'>◉</span>Open</span><span class='t-state' data-state='draft' data-size='sm'><span class='t-icon' aria-hidden='true'>⧗</span>Queued</span></div></div>",
+      "notes": "State → tone: open=success, closed=danger, done=accent, draft=neutral, warning=warning, info=info. tokens.css does not map data-state; skins (and base.css) do.",
+      "source": "status.css .state-label"
+    },
+    {
+      "id": "status-dot",
+      "name": "Status dot",
+      "tier": 1,
+      "group": "data",
+      "description": "Health as colour: running green, degraded orange, stopped red, muted/unknown neutral.",
+      "root": "t-dot",
+      "attributes": {
+        "data-status": [
+          "running",
+          "degraded",
+          "stopped",
+          "muted"
+        ]
+      },
+      "behaviour": "none",
+      "a11y": "Colour alone is not enough: pair with text, or set title / aria-label on the dot.",
+      "markup": "<span class='t-dot' data-status='running' title='running'></span>",
+      "demo": "<div class='t-cluster' data-gap='3' data-align='center'><span><span class='t-dot' data-status='running'></span> healthy</span><span><span class='t-dot' data-status='degraded'></span> degraded</span><span><span class='t-dot' data-status='stopped'></span> stopped</span><span><span class='t-dot' data-status='muted'></span> muted</span></div>",
+      "source": "status.css .status-dot"
+    },
+    {
+      "id": "avatar",
+      "name": "Avatar",
+      "tier": 1,
+      "group": "data",
+      "description": "Circle (or square for machines/orgs) with initials or an image, tinted; sizes; status dot; overlapping stack; avatar + name + description row.",
+      "root": "t-avatar",
+      "parts": {
+        "t-avatar-wrap": "relative wrapper for the status dot",
+        "t-avatar-status": "dot bottom-right; data-status online|busy|offline",
+        "t-avatar-stack": "overlapping row; spreads on hover",
+        "t-avatar-row": "avatar + text row",
+        "t-avatar-name": "name",
+        "t-avatar-desc": "description"
+      },
+      "attributes": {
+        "data-size": [
+          "xs",
+          "sm",
+          "md",
+          "lg",
+          "xl"
+        ],
+        "data-shape": [
+          "square"
+        ],
+        "data-tone": [
+          "*"
+        ],
+        "data-more": [
+          "*"
+        ],
+        "data-status (on .t-avatar-status)": [
+          "online",
+          "busy",
+          "offline"
+        ]
+      },
+      "behaviour": "none",
+      "a11y": "Images carry alt (empty when the name is next to it); initials-only avatars are aria-hidden when the name is adjacent.",
+      "markup": "<span class='t-avatar' data-tone='purple'>AL</span>\n<img class='t-avatar' data-size='lg' src='…' alt=''>\n<span class='t-avatar-wrap'><span class='t-avatar' data-tone='cyan'>TM</span><span class='t-avatar-status' data-status='online'></span></span>\n<span class='t-avatar-stack'><span class='t-avatar' data-tone='purple'>AL</span><span class='t-avatar' data-tone='green'>TM</span><span class='t-avatar' data-more>+3</span></span>\n<span class='t-avatar-row'><span class='t-avatar' data-tone='green'>AL</span><span><span class='t-avatar-name'>alice</span><span class='t-avatar-desc'>owner</span></span></span>",
+      "demo": "<div class='t-stack' data-gap='2'><div class='t-cluster' data-gap='2' data-align='center'><span class='t-avatar' data-size='xs' data-tone='purple'>a</span><span class='t-avatar' data-size='sm' data-tone='green'>rs</span><span class='t-avatar' data-tone='cyan'>AL</span><span class='t-avatar' data-size='lg' data-tone='orange'>AL</span><span class='t-avatar' data-size='xl' data-tone='pink'>AL</span><span class='t-avatar' data-size='lg' data-shape='square' data-tone='purple'>▤</span></div><div class='t-cluster' data-gap='3' data-align='center'><span class='t-avatar-wrap'><span class='t-avatar' data-tone='purple'>AL</span><span class='t-avatar-status' data-status='online'></span></span><span class='t-avatar-wrap'><span class='t-avatar' data-tone='cyan'>TM</span><span class='t-avatar-status' data-status='busy'></span></span><span class='t-avatar-wrap'><span class='t-avatar' data-tone='neutral'>OF</span><span class='t-avatar-status' data-status='offline'></span></span><span class='t-avatar-stack'><span class='t-avatar' data-tone='purple'>AL</span><span class='t-avatar' data-tone='green'>TM</span><span class='t-avatar' data-tone='cyan'>AK</span><span class='t-avatar' data-more>+3</span></span><span class='t-avatar-row'><span class='t-avatar' data-tone='green'>AL</span><span><span class='t-avatar-name'>alice</span><span class='t-avatar-desc'>owner · last seen <time class='t-time' data-relative datetime='' data-ago='5400'></time></span></span></span></div></div>",
+      "source": "avatars.css"
+    },
+    {
+      "id": "table",
+      "name": "Table",
+      "tier": 1,
+      "group": "data",
+      "description": "Dense data table: shrink-to-fit icon/action columns, group header rows, sortable headers (aria-sort), hover rows. data-variant=log is the scrolling log table with a sticky head and outcome-tinted rows.",
+      "root": "t-table",
+      "parts": {
+        "t-table-wrap": "scroll + border wrapper (max-height for log tables)",
+        "t-col-icon": "icon-only <th>/<td> (1% width)",
+        "t-col-actions": "actions <th>/<td> (1% width, nowrap)",
+        "t-col-num": "right-aligned numeric column",
+        "t-table-group": "group header <tr> (one <td colspan>)",
+        "t-sort-icon": "sort arrow inside a sortable <th>"
+      },
+      "attributes": {
+        "data-variant": [
+          "data",
+          "log"
+        ],
+        "data-density": [
+          "compact"
+        ],
+        "data-tone (on <tr>)": [
+          "success",
+          "warning",
+          "danger"
+        ],
+        "data-sort (on <th>)": [
+          "*"
+        ]
+      },
+      "states": [
+        "aria-sort=ascending|descending|none",
+        "tr:hover",
+        "tr[aria-selected=true]"
+      ],
+      "behaviour": "js:Tailor.sortable (optional)",
+      "a11y": "<caption> or aria-label; sortable headers are <th aria-sort> containing a <button>; icon cells carry data-sort-value.",
+      "markup": "<div class='t-table-wrap'>\n  <table class='t-table' data-variant='data'>\n    <thead><tr><th class='t-col-icon'></th><th aria-sort='ascending' data-sort='name'><button>Name <span class='t-sort-icon'></span></button></th><th class='t-col-num' data-sort='cpu'><button>CPU <span class='t-sort-icon'></span></button></th><th>State</th><th class='t-col-actions'>Actions</th></tr></thead>\n    <tbody>\n      <tr class='t-table-group'><td colspan='5'>Custom</td></tr>\n      <tr><td class='t-col-icon'><span class='t-dot' data-status='running'></span></td><td>console</td><td class='t-col-num'>12 %</td><td><span class='t-badge' data-tone='success'>running</span></td><td class='t-col-actions'><button class='t-btn' data-size='sm' data-icon='only' data-tip='Restart'>↻</button></td></tr>\n    </tbody>\n  </table>\n</div>",
+      "demo": "<div class='t-stack' data-gap='3'><div class='t-table-wrap'><table class='t-table' data-variant='data' data-demo='sortable'><thead><tr><th class='t-col-icon'></th><th aria-sort='ascending' data-sort='name'><button type='button'>Name <span class='t-sort-icon'></span></button></th><th data-sort='image'><button type='button'>Image <span class='t-sort-icon'></span></button></th><th class='t-col-num' data-sort='cpu'><button type='button'>CPU <span class='t-sort-icon'></span></button></th><th>State</th><th>Owner</th><th class='t-col-actions'>Actions</th></tr></thead><tbody><tr class='t-table-group'><td colspan='7'>Custom</td></tr><tr data-name='console' data-image='build' data-cpu='12'><td class='t-col-icon'><span class='t-dot' data-status='running'></span></td><td>console</td><td class='t-muted'>build</td><td class='t-col-num t-mono'>12 %</td><td><span class='t-badge' data-tone='success'>running</span></td><td><span class='t-avatar-row'><span class='t-avatar' data-size='xs' data-tone='purple'>a</span>alice</span></td><td class='t-col-actions'><button class='t-btn' data-size='sm' data-icon='only' data-tip='Restart'>↻</button> <button class='t-btn' data-size='sm' data-icon='only' data-variant='danger' data-tip='Stop'>■</button></td></tr><tr data-name='myokymia' data-image='build' data-cpu='0'><td class='t-col-icon'><span class='t-dot' data-status='stopped'></span></td><td>myokymia</td><td class='t-muted'>build</td><td class='t-col-num t-mono'>0 %</td><td><span class='t-badge' data-tone='neutral'>stopped</span></td><td><span class='t-avatar-row'><span class='t-avatar' data-size='xs' data-tone='purple'>a</span>alice</span></td><td class='t-col-actions'><button class='t-btn' data-size='sm' data-icon='only' data-tip='Start'>▶</button></td></tr><tr class='t-table-group'><td colspan='7'>Self-hosted</td></tr><tr data-name='beszel' data-image='henrygd/beszel' data-cpu='4'><td class='t-col-icon'><span class='t-dot' data-status='degraded'></span></td><td>beszel</td><td class='t-muted'>henrygd/beszel:latest</td><td class='t-col-num t-mono'>4 %</td><td><span class='t-badge' data-tone='warning' data-variant='solid'>Update</span></td><td><span class='t-avatar-row'><span class='t-avatar' data-size='xs' data-tone='cyan'>n</span>nas</span></td><td class='t-col-actions'><button class='t-btn' data-size='sm' data-icon='only' data-variant='warning' data-tip='Pull update'>⇩</button></td></tr></tbody></table></div><div class='t-table-wrap' style='max-height:9rem'><table class='t-table' data-variant='log'><thead><tr><th>When</th><th>Via</th><th>Op</th><th>Result</th><th>Code</th><th>Detail</th></tr></thead><tbody><tr data-tone='success'><td class='t-mono'>15:02:41</td><td><span class='t-badge' data-tone='green' data-size='xs'>mqtt</span></td><td class='t-mono'>status</td><td data-tone='success' class='t-tone-text'>ok</td><td class='t-mono'>200</td><td class='t-muted'></td></tr><tr data-tone='danger'><td class='t-mono'>15:01:12</td><td><span class='t-badge' data-tone='purple' data-size='xs'>http</span></td><td class='t-mono'>install</td><td data-tone='danger' class='t-tone-text'>rejected</td><td class='t-mono'>401</td><td class='t-muted'>unauthorized</td></tr><tr data-tone='warning'><td class='t-mono'>14:02:09</td><td><span class='t-badge' data-tone='cyan' data-size='xs'>stream</span></td><td class='t-mono'>install display 0.3.0</td><td data-tone='warning' class='t-tone-text'>accepted</td><td class='t-mono'>202</td><td class='t-muted'>flashed ota_1 · rebooting</td></tr><tr data-tone='warning'><td class='t-mono'>13:58:40</td><td><span class='t-badge' data-tone='orange' data-size='xs'>queue</span></td><td class='t-mono'>reboot</td><td data-tone='warning' class='t-tone-text'>queued</td><td class='t-mono'>–</td><td class='t-muted'>waiting for the device</td></tr><tr data-tone='success'><td class='t-mono'>13:40:02</td><td><span class='t-badge' data-tone='green' data-size='xs'>mqtt</span></td><td class='t-mono'>status</td><td data-tone='success' class='t-tone-text'>ok</td><td class='t-mono'>200</td><td class='t-muted'></td></tr></tbody></table></div></div>",
+      "source": "tables.css, dracula.css .table, codeblock.css log table"
+    },
+    {
+      "id": "card",
+      "name": "Card",
+      "tier": 1,
+      "group": "data",
+      "description": "Raised surface with header (title + end slot), body, footer/actions. Variants: clickable (whole card is the target), stat (label + value + chart box), collapsible (<details>), thumb (preview + meta row). aria-selected=true = selected ring. Facts: a <dl class='t-facts'> label/value grid.",
+      "root": "t-card",
+      "parts": {
+        "t-card-header": "header row (title truncates, end slot right)",
+        "t-card-title": "h2/h3",
+        "t-card-body": "content",
+        "t-card-footer": "footer row",
+        "t-card-actions": "wrapping action buttons row",
+        "t-card-thumb": "fixed-aspect preview box; data-ratio=square",
+        "t-card-meta": "icon + name + badge row under a thumb",
+        "t-facts": "<dl> two-column grid",
+        "t-stat-label": "stat variant: label",
+        "t-stat-value": "stat variant: value",
+        "t-stat-sub": "stat variant: sub text",
+        "t-stat-box": "stat variant: fixed-height chart box; data-empty"
+      },
+      "attributes": {
+        "data-variant": [
+          "clickable",
+          "stat",
+          "collapsible",
+          "thumb"
+        ],
+        "data-ratio (on .t-card-thumb)": [
+          "square"
+        ]
+      },
+      "states": [
+        "aria-selected=true",
+        "[data-variant=clickable]:hover",
+        "details[open]"
+      ],
+      "behaviour": "none",
+      "a11y": "Clickable cards: role=link or button + tabindex=0 + Enter/Space handled by the project; inner buttons stopPropagation. Collapsible: <details class='t-card' data-variant='collapsible'><summary class='t-card-header'>.",
+      "markup": "<div class='t-card'>\n  <div class='t-card-header'><h3 class='t-card-title'><span class='t-icon'>▣</span>render</h3><span class='t-dot' data-status='running'></span></div>\n  <div class='t-card-body'>…</div>\n  <div class='t-card-footer t-card-actions'><button class='t-btn' data-size='sm'>Reboot</button></div>\n</div>\n<details class='t-card' data-variant='collapsible' open>\n  <summary class='t-card-header'><h3 class='t-card-title'>Self-hosted <span class='t-counter'>3</span></h3></summary>\n  <div class='t-card-body'>…</div>\n</details>",
+      "demo": "<div class='t-stack' data-gap='3'><div class='t-grid' data-cols='3' data-min='xs'><div class='t-card' data-variant='clickable' role='button' tabindex='0' data-demo='card-click'><div class='t-card-header'><h3 class='t-card-title'><span class='t-icon'>▣</span>render</h3><span class='t-dot' data-status='running'></span></div><div class='t-card-body'><div class='t-cluster' data-gap='1'><span class='t-badge' data-tone='accent'>custom</span><span class='t-chip' data-tone='success'>web-1</span></div><p class='t-muted t-small'>Whole card is the target, buttons stop propagation.</p><button class='t-btn' data-size='sm' data-variant='danger' data-demo='stop'>■ Stop</button></div></div><div class='t-card' data-variant='clickable' aria-selected='true' role='button' tabindex='0'><div class='t-card-header'><h3 class='t-card-title'><span class='t-icon'>▣</span>console-with-a-very-long-name</h3><span class='t-badge' data-tone='warning' data-variant='solid'>Update</span></div><div class='t-card-body'><div class='t-cluster' data-gap='1'><span class='t-badge' data-tone='info'>self-hosted</span><span class='t-chip' data-tone='warning'>nas</span></div><p class='t-muted t-small'>aria-selected: sticky accent ring, title truncates.</p></div></div><div class='t-card'><div class='t-card-header'><h3 class='t-card-title'><span class='t-icon'>▦</span>sensor-c3</h3><span class='t-dot' data-status='degraded'></span></div><div class='t-card-body'><dl class='t-facts'><dt>IP</dt><dd>192.168.1.42</dd><dt>Firmware</dt><dd>v0.6.2 · base 1.4</dd><dt>Playlist</dt><dd>printer-status-with-a-long-name</dd><dt>RSSI</dt><dd data-tone='warning' class='t-tone-text'>-71 dBm</dd></dl><div class='t-card-actions'><button class='t-btn' data-size='sm'>↻ Reboot</button><button class='t-btn' data-size='sm' data-variant='primary'>Identify</button></div></div></div></div><div class='t-grid' data-cols='4' data-min='xs'><div class='t-card' data-variant='thumb clickable' role='button' tabindex='0'><div class='t-card-thumb'><svg viewBox='0 0 160 120' aria-hidden='true'><rect x='20' y='30' width='120' height='70' rx='6' fill='var(--t-selection)'/><circle cx='60' cy='60' r='14' fill='var(--t-accent)'/><path d='M40 95 L80 60 L110 85 L140 65 L140 100 L40 100Z' fill='var(--t-success)'/></svg></div><div class='t-card-meta'><span class='t-icon t-muted'>▨</span><span class='t-truncate'>render-front-view-final.png</span><span class='t-badge' data-size='xs'>1.2 MB</span></div></div><div class='t-card' data-variant='thumb clickable' role='button' tabindex='0'><div class='t-card-thumb' data-ratio='square'><svg viewBox='0 0 100 100' aria-hidden='true'><circle cx='50' cy='50' r='48' fill='var(--t-canvas)' stroke='var(--t-border)'/><circle cx='50' cy='50' r='36' fill='none' stroke='var(--t-success)' stroke-width='6' stroke-dasharray='160 66' transform='rotate(-90 50 50)'/></svg></div><div class='t-card-meta'><span class='t-truncate'>printing-240</span><span class='t-badge' data-tone='info' data-size='xs'>240</span></div></div><div class='t-card' data-variant='stat'><div class='t-card-body'><div class='t-cluster' data-align='baseline'><span class='t-stat-label'>Requests / min</span><span class='t-toolbar-spacer'></span><span class='t-stat-value'>1 204</span></div><div class='t-stat-box'><svg viewBox='0 0 100 30' preserveAspectRatio='none' aria-hidden='true'><polyline fill='none' stroke='var(--t-success)' stroke-width='1.5' points='0,25 10,20 20,22 30,12 40,15 50,8 60,12 70,6 80,10 90,4 100,7'/></svg></div></div></div><div class='t-card' data-variant='stat'><div class='t-card-body'><div class='t-cluster' data-align='baseline'><span class='t-stat-label'>Renders / min</span><span class='t-toolbar-spacer'></span><span class='t-stat-value'><span class='t-stat-sub'>no data</span></span></div><div class='t-stat-box' data-empty>Collecting…</div></div></div></div><div class='t-grid' data-cols='2' data-min='sm'><details class='t-card' data-variant='collapsible' open><summary class='t-card-header'><h3 class='t-card-title'>Self-hosted <span class='t-counter'>3</span></h3><span class='t-sidebar-chevron'></span></summary><div class='t-card-body'><ul class='t-plain-list'><li><span class='t-dot' data-status='running'></span> beszel <span class='t-muted t-small'>henrygd/beszel</span></li><li><span class='t-dot' data-status='running'></span> gatus <span class='t-muted t-small'>twinproduction/gatus</span></li><li><span class='t-dot' data-status='stopped'></span> registry <span class='t-muted t-small'>registry:2</span></li></ul></div></details><div class='t-card'><div class='t-card-body'><div class='t-empty'><span class='t-icon t-empty-icon'>▭</span><h3 class='t-empty-title'>No services yet</h3><p>Register the first one and it shows up here with its health.</p><div class='t-empty-actions'><button class='t-btn' data-variant='primary' data-size='sm'>＋ New service</button><button class='t-btn' data-variant='ghost' data-size='sm'>Import compose</button></div></div></div></div></div></div>",
+      "source": "dracula.css .card, cards-forms.css"
+    },
+    {
+      "id": "empty-state",
+      "name": "Empty state",
+      "tier": 1,
+      "group": "data",
+      "description": "Centred icon + heading + one line naming the next action, with primary/secondary actions. Never just 'nothing here'.",
+      "root": "t-empty",
+      "parts": {
+        "t-empty-icon": "large icon",
+        "t-empty-title": "heading",
+        "t-empty-actions": "centred action row"
+      },
+      "attributes": {
+        "data-size": [
+          "sm"
+        ]
+      },
+      "behaviour": "none",
+      "markup": "<div class='t-empty'>\n  <span class='t-icon t-empty-icon'>▭</span>\n  <h3 class='t-empty-title'>No services yet</h3>\n  <p>Register the first one and it shows up here with its health.</p>\n  <div class='t-empty-actions'><button class='t-btn' data-variant='primary'>New service</button></div>\n</div>",
+      "demo": "<div class='t-grid' data-cols='2' data-min='sm'><div class='t-empty'><span class='t-icon t-empty-icon'>▭</span><h3 class='t-empty-title'>No services yet</h3><p>Register the first one and it shows up here with its health.</p><div class='t-empty-actions'><button class='t-btn' data-variant='primary' data-size='sm'>＋ New service</button><button class='t-btn' data-variant='ghost' data-size='sm'>Import compose</button></div></div><div class='t-empty' data-size='sm'><span class='t-icon t-empty-icon'>⌕</span><p>No token matches — clear the filter.</p></div></div>",
+      "source": "cards-forms.css .empty-state"
+    },
+    {
+      "id": "timeline",
+      "name": "Timeline",
+      "tier": 1,
+      "group": "data",
+      "description": "Vertical rail with one round tinted badge per event, body (who did what + relative time + optional detail card), condensed runs and breaks between groups.",
+      "root": "t-timeline",
+      "parts": {
+        "t-timeline-item": "<li> event",
+        "t-timeline-badge": "round icon on the rail; data-tone, data-variant=solid",
+        "t-timeline-body": "text column",
+        "t-timeline-card": "detail box under the body",
+        "t-timeline-break": "<li> thick rule between groups"
+      },
+      "attributes": {
+        "data-density (on item)": [
+          "condensed"
+        ],
+        "data-tone (on badge)": [
+          "*"
+        ],
+        "data-variant (on badge)": [
+          "solid"
+        ]
+      },
+      "behaviour": "none",
+      "a11y": "<ol>; the badge icon is decorative; the body text names the event.",
+      "markup": "<ol class='t-timeline'>\n  <li class='t-timeline-item'><span class='t-timeline-badge' data-tone='success'>＋</span><div class='t-timeline-body'><b>alice</b> created the service <time class='t-time' data-relative datetime='2026-10-11T10:00:00Z'></time></div></li>\n  <li class='t-timeline-item' data-density='condensed'><span class='t-timeline-badge' data-tone='accent'>⑂</span><div class='t-timeline-body'><code>a1b2c3d</code> fix: tunnel order</div></li>\n  <li class='t-timeline-break'></li>\n  <li class='t-timeline-item'><span class='t-timeline-badge' data-tone='accent' data-variant='solid'>🚀</span><div class='t-timeline-body'><b>console</b> deployed <b>v0.9.2</b></div></li>\n</ol>",
+      "demo": "<ol class='t-timeline'><li class='t-timeline-item'><span class='t-timeline-badge' data-tone='success'>＋</span><div class='t-timeline-body'><b>alice</b> created the service <time class='t-time' data-relative datetime='' data-ago='259200'></time></div></li><li class='t-timeline-item' data-density='condensed'><span class='t-timeline-badge' data-tone='accent'>⑂</span><div class='t-timeline-body'><code>a1b2c3d</code> fix: tunnel ingress order <time class='t-time' data-relative datetime='' data-ago='200000'></time></div></li><li class='t-timeline-item' data-density='condensed'><span class='t-timeline-badge' data-tone='accent'>⑂</span><div class='t-timeline-body'><code>d4e5f6a</code> feat: health monitor <time class='t-time' data-relative datetime='' data-ago='190000'></time></div></li><li class='t-timeline-item'><span class='t-timeline-badge' data-tone='info'>✎</span><div class='t-timeline-body'><b>agent</b> commented <time class='t-time' data-relative datetime='' data-ago='86400'></time><div class='t-timeline-card'>Health check green from inside the container; the host loopback probe proves nothing.</div></div></li><li class='t-timeline-break'></li><li class='t-timeline-item'><span class='t-timeline-badge' data-tone='danger'>✕</span><div class='t-timeline-body'><b>gatus</b> reported <span class='t-state' data-state='closed' data-size='sm'><span class='t-icon' aria-hidden='true'>⊘</span>down</span> for 4 min <time class='t-time' data-relative datetime='' data-ago='5400'></time></div></li><li class='t-timeline-item'><span class='t-timeline-badge' data-tone='accent' data-variant='solid'>🚀</span><div class='t-timeline-body'><b>console</b> deployed <b>v0.9.2</b> <time class='t-time' data-relative datetime='' data-ago='120'></time></div></li></ol>",
+      "source": "timeline.css"
+    },
+    {
+      "id": "relative-time",
+      "name": "Relative time",
+      "tier": 1,
+      "group": "data",
+      "description": "<time> with the ISO value in datetime, upgraded client-side to 'just now' · '3 min ago' · 'yesterday' · short date; the full date is always in title.",
+      "root": "t-time",
+      "attributes": {
+        "data-relative": [
+          ""
+        ],
+        "datetime": [
+          "ISO 8601"
+        ]
+      },
+      "behaviour": "js:Tailor.times",
+      "a11y": "The server renders the absolute date as text; JS only improves it. title carries the full local date.",
+      "markup": "<time class='t-time' data-relative datetime='2026-10-13T14:02:09Z'>13 Oct 2026, 16:02</time>",
+      "demo": "<div class='t-cluster' data-gap='3'><time class='t-time' data-relative datetime='' data-ago='10'></time><time class='t-time' data-relative datetime='' data-ago='180'></time><time class='t-time' data-relative datetime='' data-ago='7200'></time><time class='t-time' data-relative datetime='' data-ago='86400'></time><time class='t-time' data-relative datetime='' data-ago='345600'></time><time class='t-time' data-relative datetime='' data-ago='2592000'></time><time class='t-time' data-relative datetime='' data-ago='-3600'></time></div>",
+      "notes": "Rules: < 45 s just now; minutes to 59; hours to 23; yesterday/tomorrow; days to 6; then short date, year only when it differs.",
+      "source": "time.js"
+    },
+    {
+      "id": "tooltip",
+      "name": "Tooltip",
+      "tier": 1,
+      "group": "data",
+      "description": "data-tip on any element shows a small label on hover/focus; data-tip-at picks the side. Tooltips only repeat or label — explanations go in the help popover.",
+      "root": "t-tooltip",
+      "attributes": {
+        "data-tip (on the trigger)": [
+          "*"
+        ],
+        "data-tip-at (on the trigger)": [
+          "top",
+          "bottom",
+          "left",
+          "right"
+        ]
+      },
+      "behaviour": "js:Tailor.tooltips",
+      "a11y": "Tailor.tooltips renders one shared <div class='t-tooltip' role='tooltip'> and links it with aria-describedby while visible. Icon-only controls need data-tip or aria-label.",
+      "markup": "<button class='t-btn' data-icon='only' data-tip='Edit' data-tip-at='bottom'><span class='t-icon'>✎</span></button>",
+      "demo": "<div class='t-cluster' data-gap='2' data-align='center'><button class='t-btn' data-size='sm' data-tip='Tooltips repeat or label, nothing more'>Hover me</button><span class='t-badge' data-tone='info' data-tip='Open 3 days' data-tip-at='bottom'>tip below</span><a href='#tooltip' data-tip='Opens the service' data-tip-at='right'>link with tip</a></div>",
+      "source": "tooltips.js/.css"
+    },
+    {
+      "id": "help-popover",
+      "name": "Help popover",
+      "tier": 1,
+      "group": "data",
+      "description": "A small circled icon next to a label; click toggles and pins a popover, hovering 1 s peeks. Three meanings by tone: accent '?' help (how to set/use), info 'i' context, danger '!' important.",
+      "root": "t-help",
+      "parts": {
+        "t-help-btn": "the trigger; aria-expanded",
+        "t-help-box": "the popover; hidden when closed; data-pinned when pinned"
+      },
+      "attributes": {
+        "data-tone": [
+          "accent",
+          "info",
+          "danger"
+        ]
+      },
+      "states": [
+        "aria-expanded=true",
+        "data-pinned"
+      ],
+      "behaviour": "js:Tailor.help",
+      "a11y": "Trigger has aria-label; aria-controls → box id; Esc / outside click closes.",
+      "markup": "<span class='t-help' data-tone='info'>\n  <button class='t-help-btn' type='button' aria-expanded='false' aria-label='About heartbeat'>i</button>\n  <div class='t-help-box' hidden><p>The broker publishes this on the device's behalf when its connection drops.</p></div>\n</span>",
+      "demo": "<div class='t-stack' data-gap='2'><div><b>Heartbeat</b> <span class='t-muted'>60 s</span> <span class='t-help' data-tone='accent'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='Help: heartbeat'>?</button><div class='t-help-box' hidden><p><b>Help</b> (accent ?): configuration values and how to set, configure or use the thing.</p><p>Set in <code>Settings → Devices</code>; the board reads it at its next check-in.</p></div></span></div><div><b>Last will</b> <span class='t-muted'>offline</span> <span class='t-help' data-tone='info'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='Info: last will'>i</button><div class='t-help-box' hidden><p><b>Info</b> (i): pure explanation and added context, nothing to act on.</p></div></span></div><div><b>Factory slot</b> <span class='t-muted'>recovery 1.4.0</span> <span class='t-help' data-tone='danger'><button class='t-help-btn' type='button' aria-expanded='false' aria-label='Important: factory slot'>!</button><div class='t-help-box' hidden><p><b>Important</b> (!): the field is critical or dangerous, read before touching.</p><p>Overwriting the factory slot removes the only way back after a bad OTA.</p></div></span></div></div>",
+      "source": "codeblock.css .qm/.helpbox"
+    },
+    {
+      "id": "code-block",
+      "name": "Code block",
+      "tier": 1,
+      "group": "data",
+      "description": "Monospace block on the inset surface with a copy button, optional tabs that swap the content, shell tokens; data-variant=json for payloads.",
+      "root": "t-code",
+      "parts": {
+        "t-code-tabs": "row of tab buttons above the block (aria-selected)",
+        "t-code-pre": "the <pre>",
+        "t-code-copy": "copy button in the corner; data-copied after success",
+        "t-tok-prompt": "shell prompt (dim, not selectable)",
+        "t-tok-cmd": "command",
+        "t-tok-flag": "flag",
+        "t-tok-str": "string",
+        "t-tok-url": "URL",
+        "t-tok-key": "JSON key",
+        "t-tok-num": "number",
+        "t-tok-bool": "boolean/null"
+      },
+      "attributes": {
+        "data-variant (on .t-code-pre)": [
+          "shell",
+          "json"
+        ]
+      },
+      "states": [
+        "aria-selected=true (tab)",
+        "data-copied"
+      ],
+      "behaviour": "js:Tailor.copy",
+      "a11y": "Copy button has aria-label='Copy'; the prompt token is user-select:none so copied text is runnable.",
+      "markup": "<div class='t-code'>\n  <div class='t-code-tabs' role='tablist'><button role='tab' aria-selected='true'>Admin login</button><button role='tab' aria-selected='false'>Device token</button></div>\n  <pre class='t-code-pre' data-variant='shell'><button class='t-code-copy' type='button' aria-label='Copy'>⧉</button><span class='t-tok-prompt'>$</span> <span class='t-tok-cmd'>curl</span> <span class='t-tok-flag'>-H</span> <span class='t-tok-str'>'Authorization: Basic …'</span> <span class='t-tok-url'>http://192.168.1.114/api</span></pre>\n</div>\n<pre class='t-code-pre' data-variant='json'>{ <span class='t-tok-key'>\"ok\"</span>: <span class='t-tok-bool'>true</span>, <span class='t-tok-key'>\"code\"</span>: <span class='t-tok-num'>202</span> }</pre>",
+      "demo": "<div class='t-grid' data-cols='2' data-min='sm'><div class='t-code' data-demo='codetabs'><div class='t-code-tabs' role='tablist'><button type='button' role='tab' aria-selected='true' data-text=\"'Authorization: Basic YWRtaW46czNjcmV0'\">Admin login</button><button type='button' role='tab' aria-selected='false' data-text=\"'Authorization: Bearer hgr_2884858d607c_9Kd3pQx7Lm2Vn8Rt'\">Device token</button></div><pre class='t-code-pre' data-variant='shell'><button class='t-code-copy' type='button' aria-label='Copy'>⧉</button><span class='t-tok-prompt'>$</span> <span class='t-tok-cmd'>curl</span> <span class='t-tok-flag'>-H</span> <span class='t-tok-str' data-demo='code-auth'>'Authorization: Basic YWRtaW46czNjcmV0'</span> \\\n    <span class='t-tok-flag'>-d</span> <span class='t-tok-str'>'{\"op\":\"status\"}'</span> \\\n    <span class='t-tok-url'>http://192.168.1.114/api</span></pre></div><pre class='t-code-pre' data-variant='json'><button class='t-code-copy' type='button' aria-label='Copy'>⧉</button>{\n  <span class='t-tok-key'>\"id\"</span>: <span class='t-tok-str'>\"7c1e\"</span>,\n  <span class='t-tok-key'>\"code\"</span>: <span class='t-tok-num'>202</span>,\n  <span class='t-tok-key'>\"ok\"</span>: <span class='t-tok-bool'>true</span>,\n  <span class='t-tok-key'>\"detail\"</span>: <span class='t-tok-str'>\"flashed ota_1 · rebooting\"</span>\n}</pre></div>",
+      "source": "codeblock.css"
+    },
+    {
+      "id": "truncate",
+      "name": "Truncate",
+      "tier": 1,
+      "group": "data",
+      "description": "Single-line ellipsis with the full text in title; data-expand makes it expand on click.",
+      "root": "t-truncate",
+      "attributes": {
+        "data-expand": [
+          ""
+        ],
+        "aria-expanded": [
+          "true",
+          "false"
+        ]
+      },
+      "states": [
+        "aria-expanded=true"
+      ],
+      "behaviour": "js:Tailor.truncate",
+      "markup": "<span class='t-truncate' title='console-with-a-very-long-service-name'>console-with-a-very-long-service-name</span>\n<span class='t-truncate' data-expand title='click to expand' aria-expanded='false'>ghcr.io/example/app:2026.10.13-fork-amd64-with-a-tag-this-long</span>",
+      "demo": "<div class='t-stack' data-gap='1' style='max-width:320px'><span class='t-truncate' title='console-with-a-very-long-service-name-that-does-not-fit'>console-with-a-very-long-service-name-that-does-not-fit</span><span class='t-truncate' data-expand title='click to expand' aria-expanded='false' tabindex='0' role='button'>ghcr.io/example/app:2026.10.13-fork-amd64-with-a-tag-this-long-expands-on-click</span></div>",
+      "source": "cards-forms.css .truncate"
+    },
+    {
+      "id": "alert",
+      "name": "Alert",
+      "tier": 1,
+      "group": "feedback",
+      "description": "Inline banner with a tone, optional title, dismiss and actions. Every error names a reason and the resulting state.",
+      "root": "t-alert",
+      "parts": {
+        "t-alert-icon": "leading icon",
+        "t-alert-body": "text column",
+        "t-alert-actions": "buttons row",
+        "t-alert-close": "dismiss button"
+      },
+      "attributes": {
+        "data-tone": [
+          "neutral",
+          "info",
+          "success",
+          "warning",
+          "danger"
+        ],
+        "data-size": [
+          "sm"
+        ]
+      },
+      "behaviour": "js:Tailor.dismiss",
+      "a11y": "role=status (info/success) or role=alert (warning/danger); close button aria-label='Dismiss'.",
+      "markup": "<div class='t-alert' data-tone='warning' role='alert'>\n  <span class='t-icon t-alert-icon'>▲</span>\n  <div class='t-alert-body'><b>Health check answered slowly</b> (2.4 s). Probes keep running.</div>\n  <div class='t-alert-actions'><button class='t-btn' data-size='sm'>Open health checks</button></div>\n  <button class='t-alert-close' aria-label='Dismiss' data-dismiss>×</button>\n</div>",
+      "demo": "<div class='t-stack' data-gap='2'><div class='t-alert' data-tone='info' role='status'><span class='t-icon t-alert-icon'>ⓘ</span><div class='t-alert-body'><b>Sync scheduled.</b> The next DNS sync runs in 30 minutes.</div><button class='t-alert-close' aria-label='Dismiss' data-dismiss>×</button></div><div class='t-alert' data-tone='success' role='status'><span class='t-icon t-alert-icon'>✓</span><div class='t-alert-body'><b>12 services synced.</b> Health checks and DNS match the registry.</div></div><div class='t-alert' data-tone='warning' role='alert'><span class='t-icon t-alert-icon'>▲</span><div class='t-alert-body'><b>Health check answered slowly</b> (2.4 s). Probes keep running.</div><div class='t-alert-actions'><button class='t-btn' data-size='sm' data-variant='warning'>Open health checks</button></div></div><div class='t-alert' data-tone='danger' role='alert'><span class='t-icon t-alert-icon'>✕</span><div class='t-alert-body'><b>DNS provider rejected the record.</b> Quota exceeded for this zone — the DNS entry was not created, the container is up.<div class='t-alert-actions'><button class='t-btn' data-size='sm' data-variant='danger'>Retry</button><button class='t-btn' data-size='sm' data-variant='ghost'>View log</button></div></div></div><div class='t-alert' data-tone='neutral' data-size='sm'><span class='t-icon t-alert-icon'>☼</span><div class='t-alert-body'>Neutral flash: compact, one line.</div></div></div>",
+      "source": "dracula.css .alert-*"
+    },
+    {
+      "id": "toast",
+      "name": "Toast",
+      "tier": 1,
+      "group": "feedback",
+      "description": "Transient outcome message in a fixed top-right stack: drops in, floats out after ~2.5 s. Colour is the outcome. Every fetch() action ends in one.",
+      "root": "t-toast",
+      "parts": {
+        "t-toasts": "the fixed stack region (one per page, id t-toasts, aria-live=polite)",
+        "t-toast-icon": "leading icon",
+        "t-toast-body": "message text"
+      },
+      "attributes": {
+        "data-tone": [
+          "success",
+          "warning",
+          "danger",
+          "info"
+        ],
+        "data-leaving": [
+          ""
+        ]
+      },
+      "states": [
+        "data-leaving"
+      ],
+      "behaviour": "js:Tailor.toast",
+      "a11y": "Region aria-live=polite aria-atomic=false; each toast role=status; pointer-events only on the toasts, never on the region.",
+      "markup": "<div class='t-toasts' id='t-toasts' aria-live='polite' aria-atomic='false'></div>\n<!-- Tailor.toast('success', 'Saved and synced to health checks') appends: -->\n<div class='t-toast' data-tone='success' role='status'><span class='t-icon t-toast-icon'>✓</span><span class='t-toast-body'>Saved and synced to health checks</span></div>",
+      "demo": "<div class='t-stack' data-gap='2'><div class='t-cluster' data-gap='2'><button class='t-btn' data-size='sm' data-tone='success' data-demo='toast' data-toast-tone='success'>Success</button><button class='t-btn' data-size='sm' data-variant='warning' data-demo='toast' data-toast-tone='warning'>Warning</button><button class='t-btn' data-size='sm' data-variant='danger' data-demo='toast' data-toast-tone='danger'>Error</button><button class='t-btn' data-size='sm' data-demo='toast' data-toast-tone='info'>Info</button></div><div class='t-cluster' data-gap='2'><div class='t-toast' data-tone='success' role='status' style='animation:none'><span class='t-icon t-toast-icon'>✓</span><span class='t-toast-body'>Saved and synced to health checks</span></div><div class='t-toast' data-tone='danger' role='status' style='animation:none'><span class='t-icon t-toast-icon'>✕</span><span class='t-toast-body'>DNS provider rejected the record: quota exceeded</span></div></div></div>",
+      "notes": "Tailor.toast(tone, message, {timeout = 2500}) → the element. Tone 'error' is accepted as an alias of 'danger'.",
+      "source": "toasts.css"
+    },
+    {
+      "id": "dialog",
+      "name": "Dialog",
+      "tier": 1,
+      "group": "feedback",
+      "description": "Native <dialog> for edits: pre-filled, vertically centred, Esc closes, backdrop click closes. Sizes sm/md/lg.",
+      "root": "t-dialog",
+      "parts": {
+        "t-dialog-header": "title row + close",
+        "t-dialog-title": "h2",
+        "t-dialog-close": "× button",
+        "t-dialog-body": "content (scrolls when tall)",
+        "t-dialog-footer": "actions row"
+      },
+      "attributes": {
+        "data-size": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "data-tone": [
+          "danger"
+        ],
+        "data-dialog-open (on a trigger)": [
+          "<dialog id>"
+        ],
+        "data-dialog-close (inside the dialog)": [
+          ""
+        ]
+      },
+      "states": [
+        "[open]",
+        "::backdrop"
+      ],
+      "behaviour": "js:Tailor.dialogs",
+      "a11y": "aria-labelledby → title id; focus moves into the dialog on open and back to the trigger on close; <form method='dialog'> for the footer buttons where it fits.",
+      "markup": "<button class='t-btn' data-dialog-open='edit-dlg'>Edit</button>\n<dialog class='t-dialog' id='edit-dlg' aria-labelledby='edit-dlg-title'>\n  <div class='t-dialog-header'><h2 class='t-dialog-title' id='edit-dlg-title'>Edit service</h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div>\n  <div class='t-dialog-body'><div class='t-field'><label class='t-label' for='d-sub'>Subdomain</label><input class='t-input' id='d-sub' value='render'></div></div>\n  <div class='t-dialog-footer'><button class='t-btn' data-dialog-close>Cancel</button><button class='t-btn' data-variant='primary' data-dialog-close='save'>Save</button></div>\n</dialog>",
+      "demo": "<div class='t-cluster' data-gap='2'><button class='t-btn' data-size='sm' data-dialog-open='demo-dlg'>Edit dialog</button><button class='t-btn' data-size='sm' data-dialog-open='demo-dlg-lg'>Large</button><button class='t-btn' data-size='sm' data-dialog-open='demo-dlg-sm'>Small</button></div><dialog class='t-dialog' id='demo-dlg' aria-labelledby='demo-dlg-t'><div class='t-dialog-header'><h2 class='t-dialog-title' id='demo-dlg-t'>Edit service</h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div><div class='t-dialog-body'><div class='t-field'><label class='t-label' for='d-sub'>Subdomain</label><input class='t-input' id='d-sub' value='render'><p class='t-hint'>Pre-filled from the card's data-* attributes.</p></div></div><div class='t-dialog-footer'><button class='t-btn' data-dialog-close>Cancel</button><button class='t-btn' data-variant='primary' data-dialog-close='save' data-demo='dialog-save'>Save</button></div></dialog><dialog class='t-dialog' id='demo-dlg-lg' data-size='lg' aria-labelledby='demo-dlg-lg-t'><div class='t-dialog-header'><h2 class='t-dialog-title' id='demo-dlg-lg-t'>Compose file</h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div><div class='t-dialog-body'><pre class='t-code-pre' data-variant='json'>services:\n  render:\n    image: example/render:2025.08\n    ports: [\"8080:80\"]\n    restart: unless-stopped</pre></div><div class='t-dialog-footer'><span class='t-muted t-small' style='margin-right:auto'>Large + scrollable body</span><button class='t-btn' data-dialog-close>Close</button></div></dialog><dialog class='t-dialog' id='demo-dlg-sm' data-size='sm' aria-labelledby='demo-dlg-sm-t'><div class='t-dialog-header'><h2 class='t-dialog-title' id='demo-dlg-sm-t'>Rename</h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div><div class='t-dialog-body'><input class='t-input' value='render' aria-label='Name'></div><div class='t-dialog-footer'><button class='t-btn' data-dialog-close>Cancel</button><button class='t-btn' data-variant='primary' data-dialog-close='save'>Save</button></div></dialog>",
+      "source": "dracula.css .modal-*"
+    },
+    {
+      "id": "confirm",
+      "name": "Confirm dialog",
+      "tier": 1,
+      "group": "feedback",
+      "description": "THE way to destroy: one #t-confirm dialog per page, driven by Tailor.confirm(title, bodyHtml, {label, danger}) → Promise<boolean>. Never window.confirm/alert/prompt.",
+      "root": "t-dialog",
+      "parts": {
+        "t-confirm-title": "id t-confirm-title (text span inside)",
+        "t-confirm-body": "id t-confirm-body",
+        "t-confirm-ok": "id t-confirm-ok"
+      },
+      "attributes": {
+        "data-variant": [
+          "confirm"
+        ],
+        "data-tone": [
+          "danger",
+          "neutral"
+        ]
+      },
+      "behaviour": "js:Tailor.confirm",
+      "a11y": "Same as dialog; danger=true sets data-tone=danger on the dialog and the OK button becomes data-variant=danger, else primary.",
+      "markup": "<dialog class='t-dialog' id='t-confirm' data-variant='confirm' data-tone='danger' aria-labelledby='t-confirm-title'>\n  <div class='t-dialog-header'><h2 class='t-dialog-title' id='t-confirm-title'><span class='t-icon'>▲</span><span>Are you sure?</span></h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div>\n  <div class='t-dialog-body' id='t-confirm-body'></div>\n  <div class='t-dialog-footer'><button class='t-btn' data-dialog-close>Cancel</button><button class='t-btn' data-variant='danger' id='t-confirm-ok'>Confirm</button></div>\n</dialog>",
+      "demo": "<div class='t-cluster' data-gap='2'><button class='t-btn' data-size='sm' data-variant='danger' data-demo='confirm-danger'>🗑 Delete…</button><button class='t-btn' data-size='sm' data-demo='confirm-neutral'>↻ Reboot… (neutral)</button></div><dialog class='t-dialog' id='t-confirm' data-variant='confirm' data-tone='danger' aria-labelledby='t-confirm-title'><div class='t-dialog-header'><h2 class='t-dialog-title' id='t-confirm-title'><span class='t-icon'>▲</span><span>Are you sure?</span></h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div><div class='t-dialog-body' id='t-confirm-body'></div><div class='t-dialog-footer'><button class='t-btn' data-dialog-close>Cancel</button><button class='t-btn' data-variant='danger' id='t-confirm-ok'>Confirm</button></div></dialog>",
+      "notes": "bodyHtml is HTML: escape anything from the user or the API. Resolves true on OK, false on Cancel / × / Esc / backdrop.",
+      "source": "confirm.js"
+    },
+    {
+      "id": "progress",
+      "name": "Progress",
+      "tier": 1,
+      "group": "feedback",
+      "description": "Determinate bar; the value is the --t-value custom property on the bar. data-variant=stacked holds several bars. Labelled bars show the percentage inside.",
+      "root": "t-progress",
+      "parts": {
+        "t-progress-bar": "the fill; style='--t-value: 62%'; data-tone"
+      },
+      "attributes": {
+        "data-size": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "data-variant": [
+          "stacked"
+        ],
+        "data-tone (on bar)": [
+          "*"
+        ]
+      },
+      "behaviour": "none",
+      "a11y": "role=progressbar + aria-valuenow/min/max on the root (or aria-label per bar when stacked).",
+      "markup": "<div class='t-progress' role='progressbar' aria-valuenow='62' aria-valuemin='0' aria-valuemax='100'><div class='t-progress-bar' style='--t-value: 62%'></div></div>\n<div class='t-progress' data-variant='stacked' data-size='sm'>\n  <div class='t-progress-bar' data-tone='success' style='--t-value: 55%' data-tip='running 55 %'></div>\n  <div class='t-progress-bar' data-tone='warning' style='--t-value: 20%'></div>\n  <div class='t-progress-bar' data-tone='danger' style='--t-value: 15%'></div>\n</div>",
+      "demo": "<div class='t-stack' data-gap='2' style='max-width:420px'><div class='t-progress' data-size='sm' role='progressbar' aria-valuenow='62' aria-valuemin='0' aria-valuemax='100'><div class='t-progress-bar' style='--t-value: 62%'></div></div><div class='t-progress' data-size='lg' role='progressbar' aria-valuenow='38' aria-valuemin='0' aria-valuemax='100'><div class='t-progress-bar' data-tone='warning' style='--t-value: 38%'>38 %</div></div><div class='t-progress' data-variant='stacked' data-size='sm' aria-label='Fleet state'><div class='t-progress-bar' data-tone='success' style='--t-value: 55%' data-tip='running 55 %'></div><div class='t-progress-bar' data-tone='warning' style='--t-value: 20%' data-tip='degraded 20 %'></div><div class='t-progress-bar' data-tone='danger' style='--t-value: 15%' data-tip='stopped 15 %'></div></div></div>",
+      "source": "dracula.css .progress"
+    },
+    {
+      "id": "spinner",
+      "name": "Spinner",
+      "tier": 1,
+      "group": "feedback",
+      "description": "Indeterminate loading indicator, inline or standalone, in sizes.",
+      "root": "t-spinner",
+      "attributes": {
+        "data-size": [
+          "sm",
+          "md",
+          "lg"
+        ],
+        "data-tone": [
+          "*"
+        ]
+      },
+      "behaviour": "none",
+      "a11y": "role=status + aria-label='Loading' (or visible text next to it).",
+      "markup": "<span class='t-spinner' role='status' aria-label='Loading'></span>\n<span class='t-muted'><span class='t-spinner' data-size='sm' role='status'></span> Loading services…</span>",
+      "demo": "<div class='t-cluster' data-gap='3' data-align='center'><span class='t-spinner' data-size='sm' role='status' aria-label='Loading'></span><span class='t-spinner' role='status' aria-label='Loading'></span><span class='t-spinner' data-size='lg' data-tone='accent' role='status' aria-label='Loading'></span><span class='t-muted t-small'><span class='t-spinner' data-size='sm' role='status'></span> Loading services…</span></div>",
+      "source": "Bootstrap .spinner-border, retinted"
+    },
+    {
+      "id": "drawer",
+      "name": "Drawer",
+      "tier": 2,
+      "group": "feedback",
+      "description": "Side panel on <dialog> sliding from the right/left; for filters, detail panes, logs.",
+      "root": "t-drawer",
+      "parts": {
+        "t-drawer-header": "title + close",
+        "t-drawer-body": "scrolling content",
+        "t-drawer-footer": "actions"
+      },
+      "attributes": {
+        "data-side": [
+          "right",
+          "left"
+        ],
+        "data-size": [
+          "sm",
+          "md",
+          "lg"
+        ]
+      },
+      "behaviour": "js:Tailor.dialogs",
+      "markup": "<dialog class='t-drawer' id='filters' data-side='right' aria-labelledby='filters-t'>\n  <div class='t-drawer-header'><h2 id='filters-t'>Filters</h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div>\n  <div class='t-drawer-body'>…</div>\n</dialog>"
+    },
+    {
+      "id": "command-palette",
+      "name": "Command palette",
+      "tier": 2,
+      "group": "navigation",
+      "description": "Quick switcher: overlay with one search input and a result list; '/' or Ctrl+K opens, ↑↓ move, Enter opens, Esc closes.",
+      "root": "t-palette",
+      "parts": {
+        "t-palette-input": "search input row",
+        "t-palette-results": "scrolling list",
+        "t-palette-item": "result row; aria-selected on the active",
+        "t-palette-kbd": "shortcut hint"
+      },
+      "behaviour": "js:Tailor.dialogs",
+      "markup": "<dialog class='t-palette' id='t-palette' aria-label='Quick switcher'>\n  <div class='t-palette-input'><input type='search' placeholder='Jump to…' aria-label='Search'><kbd class='t-palette-kbd'>esc</kbd></div>\n  <div class='t-palette-results' role='listbox'><a class='t-palette-item' role='option' aria-selected='true' href='#'>render</a></div>\n</dialog>",
+      "source": "navigation.css .palette-*"
+    },
+    {
+      "id": "stepper",
+      "name": "Stepper",
+      "tier": 2,
+      "group": "navigation",
+      "description": "Numbered steps of a wizard; current step aria-current=step, done steps data-state=done.",
+      "root": "t-stepper",
+      "parts": {
+        "t-step": "<li>",
+        "t-step-label": "label under the number"
+      },
+      "attributes": {
+        "data-state (on step)": [
+          "done",
+          "error"
+        ]
+      },
+      "states": [
+        "aria-current=step"
+      ],
+      "behaviour": "none",
+      "markup": "<ol class='t-stepper'>\n  <li class='t-step' data-state='done'><span class='t-step-label'>Image</span></li>\n  <li class='t-step' aria-current='step'><span class='t-step-label'>Network</span></li>\n  <li class='t-step'><span class='t-step-label'>Review</span></li>\n</ol>"
+    },
+    {
+      "id": "rating",
+      "name": "Rating",
+      "tier": 2,
+      "group": "forms",
+      "description": "Radio group drawn as stars.",
+      "root": "t-rating",
+      "behaviour": "none",
+      "markup": "<fieldset class='t-rating'><legend class='t-label'>Rating</legend><label><input type='radio' name='r' value='1'><span>★</span></label>…</fieldset>"
+    },
+    {
+      "id": "history-bars",
+      "name": "History bars",
+      "tier": 2,
+      "group": "data",
+      "description": "One thin bar per probe, newest right, coloured by result.",
+      "root": "t-history",
+      "parts": {
+        "t-history-bar": "one probe; data-result ok|fail|none"
+      },
+      "behaviour": "none",
+      "markup": "<span class='t-history' data-tip='last 30 probes'><span class='t-history-bar' data-result='ok'></span><span class='t-history-bar' data-result='fail'></span>…</span>",
+      "source": "status.css .history-bars"
+    },
+    {
+      "id": "mini-bars",
+      "name": "Mini bars",
+      "tier": 2,
+      "group": "data",
+      "description": "Fixed-height bar chart (per-core load): fill grows from the bottom via --t-value.",
+      "root": "t-minibars",
+      "parts": {
+        "t-minibar": "one bar; style='--t-value: 40%'"
+      },
+      "behaviour": "none",
+      "markup": "<span class='t-minibars'><span class='t-minibar' style='--t-value: 40%'></span><span class='t-minibar' style='--t-value: 75%'></span></span>",
+      "source": "status.css .mini-bars"
+    },
+    {
+      "id": "swatch-picker",
+      "name": "Swatch picker",
+      "tier": 2,
+      "group": "forms",
+      "description": "Colour choice from palette tones only (radios drawn as dots), never a free hex field.",
+      "root": "t-swatches",
+      "parts": {
+        "t-swatch": "<label> with a radio; data-tone"
+      },
+      "behaviour": "none",
+      "markup": "<fieldset class='t-swatches'><legend class='t-label'>Colour</legend><label class='t-swatch' data-tone='purple'><input type='radio' name='c' value='purple' checked></label><label class='t-swatch' data-tone='green'><input type='radio' name='c' value='green'></label></fieldset>",
+      "source": "cards-forms.css .color-swatch"
+    },
+    {
+      "id": "accordion",
+      "name": "Accordion",
+      "tier": 2,
+      "group": "data",
+      "description": "Stack of <details> with shared borders; optional exclusive open via name=.",
+      "root": "t-accordion",
+      "behaviour": "none",
+      "markup": "<div class='t-accordion'><details name='faq'><summary>Question</summary><p>Answer</p></details><details name='faq'><summary>Question 2</summary><p>Answer</p></details></div>"
+    }
+  ]
+}

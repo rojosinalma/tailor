@@ -1,0 +1,26 @@
+{
+  "$schema": "../manifest.schema.json",
+  "id": "webtui",
+  "name": "WebTUI (terminal look)",
+  "system": "webtui",
+  "version": "0.1.0",
+  "description": "Terminal/TUI rendering of the tailor vocabulary: monospace character grid, ch/lh rhythm, square corners, 2px frames, inverse-video selection, bracket checkboxes, braille spinner. WebTUI's attribute rules translated onto t-* selectors (nothing imported).",
+  "coverage": [
+    "app-shell", "navbar", "sidebar", "footer", "page", "section", "toolbar", "grid", "stack", "split",
+    "button", "button-group", "segmented", "menu", "tabs", "breadcrumb", "pagination", "list",
+    "field", "check", "duration-input", "settings-row",
+    "badge", "counter", "chip", "state-label", "status-dot", "avatar", "table", "card", "empty-state", "timeline", "relative-time", "tooltip", "help-popover", "code-block", "truncate",
+    "alert", "toast", "dialog", "confirm", "progress", "spinner"
+  ],
+  "tier2": [],
+  "palette_constraints": { "mode": "both" },
+  "vendor": { "package": "@webtui/css", "version": "0.1.10", "license": "MIT", "url": "https://webtui.ironclad.sh", "vendored": false },
+  "files": { "css": "skin.css" },
+  "tokens_overridden": [
+    "--t-font-sans", "--t-font-mono", "--t-border-w",
+    "--t-radius-sm", "--t-radius-md", "--t-radius-lg", "--t-radius-xl", "--t-radius-full",
+    "--t-shadow-sm", "--t-shadow-md", "--t-shadow-lg",
+    "--t-control-h", "--t-control-h-sm", "--t-control-h-lg"
+  ],
+  "notes": "Translation, not a vendoring: the relevant @webtui/css 0.1.10 rules (box utility, button, badge, input, checkbox/radio/switch, spinner, progress, dialog, table) were rewritten on t-* selectors with --t-* colours; WebTUI's --background0..3/--foreground0..2/--box-border-color are bridged to --t-* for projects that add WebTUI markup alongside. Known WebTUI gotchas deliberately not carried over: body word-break:break-all, dialog position:absolute, 3lh default buttons. Badge/button text on a tone fill uses --t-canvas (WebTUI's background0 convention), so it depends on the palette's tone-vs-canvas contrast."
+}

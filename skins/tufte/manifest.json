@@ -1,0 +1,15 @@
+{
+  "$schema": "../manifest.schema.json",
+  "id": "tufte",
+  "name": "Tufte CSS (translated)",
+  "system": "tufte",
+  "version": "0.1.0",
+  "description": "Tufte CSS's long-form book look on the t-* vocabulary: et-book/Palatino serif, generous leading, weight-400 italic headings, hairline rules instead of boxes, no fills, no shadows, 2px corners. App components Tufte never had (buttons, forms, badges, toasts, dialogs, switches) are printed labels: thin tone-coloured rules and italics, never loud fills.",
+  "coverage": ["app-shell","navbar","sidebar","footer","page","section","toolbar","grid","stack","split","button","button-group","segmented","menu","tabs","breadcrumb","pagination","list","field","check","duration-input","settings-row","badge","counter","chip","state-label","status-dot","avatar","table","card","empty-state","timeline","relative-time","tooltip","help-popover","code-block","truncate","alert","toast","dialog","confirm","progress","spinner"],
+  "tier2": [],
+  "palette_constraints": { "mode": "both" },
+  "vendor": { "package": "tufte-css", "version": "1.9.0", "license": "MIT", "url": "https://edwardtufte.github.io/tufte-css/", "vendored": false },
+  "files": { "css": "skin.css" },
+  "tokens_overridden": ["--t-font-sans", "--t-font-mono", "--t-text-xs", "--t-text-sm", "--t-text-md", "--t-text-base", "--t-text-lg", "--t-text-xl", "--t-leading", "--t-radius-sm", "--t-radius-md", "--t-radius-lg", "--t-radius-xl", "--t-shadow-sm", "--t-shadow-md", "--t-shadow-lg"],
+  "notes": "Translated, not vendored: tufte.css styles bare elements page-wide (body width/padding, 15px root, 1.4rem paragraphs, 55 % measure, sidenote counters) and has no controls, tables cells, nav or dialog, so nothing can be aliased onto tailor markup. Fonts: the stack leads with the et-book family names (et-book, 'ET Book') and falls back to Palatino / Palatino Linotype / Book Antiqua / Georgia / serif; the et-book woff files (MIT) are NOT shipped here — a project wanting the real face adds the four @font-face rules itself. Links inherit the ink and are underlined (Tufte); --t-link appears only on hover. Semantic tones stay distinguishable as tone-coloured hairlines/text, never washes. Dark palettes read as Tufte's own dark mode (colour-only swap)."
+}

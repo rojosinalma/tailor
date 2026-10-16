@@ -1,0 +1,27 @@
+name: run-tests
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4"
+      # The repo root has no dependencies (no bun.lock); bin/* run on Bun alone.
+      - name: Build
+        run: bin/build
+      - name: Verify
+        run: bin/verify
+      - name: React typecheck
+        working-directory: react
+        run: |
+          bun install --frozen-lockfile
+          bun run typecheck

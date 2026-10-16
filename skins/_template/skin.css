@@ -1,0 +1,36 @@
+/*
+ * tailor skin — <id> — <system> <version>
+ * Styles the t-* vocabulary (core/components.json) in <system>'s look. Colours: --t-* tokens only
+ * (read core/tokens.css); palette tokens are never SET here (skins/SKIN-CONTRACT.md rule 4).
+ * Loaded after core/base.css + core/layout.css, before palettes/<id>.css.
+ */
+
+/* 1. scale overrides the system needs (list them in manifest.tokens_overridden) */
+:root {
+  /* --t-radius-md: 0.375rem; */
+}
+
+/* 2. bridge the system's own variables onto the tokens, if vendored CSS is @imported */
+/* :root { --bs-body-bg: var(--t-canvas); --bs-body-color: var(--t-text); } */
+
+/* 3. one block per tier-1 component, in components.json order ─────────────── */
+
+/* app-shell / navbar / sidebar / footer / page / section / toolbar / grid / stack / split */
+.t-navbar { }
+.t-sidebar-item { } .t-sidebar-item[aria-current="page"] { }
+.t-footer { }
+
+/* button */
+.t-btn { }
+.t-btn[data-variant="primary"] { }
+.t-btn[data-variant="danger"] { }
+.t-btn[data-variant="warning"] { }
+.t-btn[data-variant="ghost"] { }
+.t-btn[data-variant="link"] { }
+.t-btn[data-size="sm"] { } .t-btn[data-size="lg"] { }
+.t-btn:disabled { } .t-btn[aria-pressed="true"] { } .t-btn[aria-busy="true"] { }
+
+/* button-group, segmented, menu, tabs, breadcrumb, pagination, list */
+/* field, check, duration-input, settings-row */
+/* badge, counter, chip, state-label, status-dot, avatar, table, card, empty-state, timeline, relative-time, tooltip, help-popover, code-block, truncate */
+/* alert, toast, dialog, confirm, progress, spinner */

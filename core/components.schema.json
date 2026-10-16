@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "components.schema.json",
+  "title": "tailor vocabulary (core/components.json)",
+  "type": "object",
+  "required": ["version", "prefix", "token_prefix", "tones", "sizes", "groups", "components"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "type": "string", "pattern": "^\\d+\\.\\d+\\.\\d+$" },
+    "prefix": { "const": "t-" },
+    "token_prefix": { "const": "--t-" },
+    "tones": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true },
+    "sizes": { "type": "array", "items": { "type": "string" }, "minItems": 1, "uniqueItems": true },
+    "groups": {
+      "type": "object",
+      "additionalProperties": { "type": "string" },
+      "description": "group id → showcase section title, in display order"
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "tier", "group", "root", "markup", "behaviour", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "name": { "type": "string", "minLength": 1 },
+          "tier": { "enum": [1, 2] },
+          "group": { "type": "string" },
+          "description": { "type": "string", "minLength": 1 },
+          "root": { "type": "string", "pattern": "^t-[a-z0-9-]+$", "description": "the block class a skin must style" },
+          "parts": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "element class → meaning. Every class a skin may style, besides root."
+          },
+          "attributes": {
+            "type": "object",
+            "additionalProperties": { "type": "array", "items": { "type": "string" } },
+            "description": "data-*/aria attribute → allowed values (\"*\" = free). Variants and sizes live here, never in extra classes."
+          },
+          "states": { "type": "array", "items": { "type": "string" }, "description": "state selectors a skin must handle (native pseudo-classes, aria-*, data-state)" },
+          "behaviour": { "type": "string", "pattern": "^(none|js:Tailor\\.[a-zA-Z]+( \\(optional\\))?)$" },
+          "a11y": { "type": "string" },
+          "markup": { "type": "string", "minLength": 1, "description": "canonical minimal tailor markup" },
+          "demo": { "type": "string", "description": "showcase markup (all variants/states); defaults to markup" },
+          "notes": { "type": "string" },
+          "source": { "type": "string", "description": "where the concept came from (reference file)" }
+        }
+      }
+    }
+  }
+}

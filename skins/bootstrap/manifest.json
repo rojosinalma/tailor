@@ -1,0 +1,22 @@
+{
+  "$schema": "../manifest.schema.json",
+  "id": "bootstrap",
+  "name": "Bootstrap 5 (Dracula look)",
+  "system": "bootstrap",
+  "version": "0.1.0",
+  "description": "The migration skin: a Bootstrap 5 + Dracula foundation (dracula.css + its reference component set), translated onto the t-* vocabulary. Bootstrap 5.3 metrics (control padding, 6px radius, 1.5 line-height, system font stack) in pure CSS; nothing vendored.",
+  "coverage": [
+    "app-shell", "navbar", "sidebar", "footer", "page", "section", "toolbar", "grid", "stack", "split",
+    "button", "button-group", "segmented", "menu",
+    "tabs", "breadcrumb", "pagination", "list",
+    "field", "check", "duration-input", "settings-row",
+    "badge", "counter", "chip", "state-label", "status-dot", "avatar", "table", "card", "empty-state", "timeline", "relative-time", "tooltip", "help-popover", "code-block", "truncate",
+    "alert", "toast", "dialog", "confirm", "progress", "spinner"
+  ],
+  "tier2": ["drawer", "command-palette", "history-bars", "mini-bars", "swatch-picker"],
+  "palette_constraints": { "mode": "both" },
+  "vendor": { "package": "none", "version": "0", "license": "MIT", "url": "https://getbootstrap.com", "vendored": false },
+  "files": { "css": "skin.css" },
+  "tokens_overridden": ["--t-font-sans", "--t-radius-sm", "--t-radius-md", "--t-radius-lg", "--t-radius-xl", "--t-control-h", "--t-control-h-sm", "--t-control-h-lg", "--t-leading"],
+  "notes": "Pure CSS translation of dracula.css + reference/*.css: every --drac-* became its --t-* token, every rgba() tint a color-mix() of the tone. Bootstrap itself is not vendored: that foundation already overrode nearly every Bootstrap default, Bootstrap's class selectors cannot be aliased onto tailor attributes without re-declaring anyway, and its JS is unusable under the no-JS rule. Icons: projects using tailor typically use Bootstrap Icons in .t-icon slots; the skin does not depend on them. Light mode checked with Dracula/Alucard; dark with Dracula and Gruvbox."
+}

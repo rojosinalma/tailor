@@ -1,0 +1,22 @@
+{
+  "$schema": "../manifest.schema.json",
+  "id": "luz",
+  "name": "luz (d00m-gui)",
+  "system": "luz",
+  "version": "0.1.0",
+  "description": "@d00m-gui/luz 0.5.0 translated onto the t-* vocabulary: scheme-tinted soft fills over outlines, depth-shifted nested surfaces, pill badges, boxed field groups, segmented tabs, notice-style toasts — troopy's feel. luz's OKLCH ramp maths cannot run per-palette, so depth is approximated with decaying color-mix() steps of --t-text into --t-canvas, enumerated over three nesting levels like luz's own _depth.css.",
+  "coverage": [
+    "app-shell", "navbar", "sidebar", "footer", "page", "section", "toolbar", "grid", "stack", "split",
+    "button", "button-group", "segmented", "menu",
+    "tabs", "breadcrumb", "pagination", "list",
+    "field", "check", "duration-input", "settings-row",
+    "badge", "counter", "chip", "state-label", "status-dot", "avatar", "table", "card", "empty-state", "timeline", "relative-time", "tooltip", "help-popover", "code-block", "truncate",
+    "alert", "toast", "dialog", "confirm", "progress", "spinner"
+  ],
+  "tier2": ["drawer", "history-bars", "mini-bars"],
+  "palette_constraints": { "mode": "both" },
+  "vendor": { "package": "@d00m-gui/luz", "version": "0.5.0", "license": "MIT", "url": "https://github.com/d00m-gui/luz/releases/download/v0.5.0/d00m-gui-luz-0.5.0.tgz", "vendored": false },
+  "files": { "css": "skin.css" },
+  "tokens_overridden": ["--t-radius-sm", "--t-radius-md", "--t-radius-lg", "--t-radius-xl", "--t-control-h", "--t-control-h-sm", "--t-control-h-lg", "--t-shadow-sm", "--t-shadow-md", "--t-shadow-lg"],
+  "notes": "Translation, not a vendoring (luz is distributed as a release tarball, not on npm; its component CSS depends on generated OKLCH ramp tokens that do not exist per tailor palette). Known deviations from upstream, deliberate: list rows do not end-align their last child (luz gotcha 14), row/table hover uses the palette's --t-selection instead of luz's near-black --table-hover-bg (gotcha 13), warning ink is mixed 55% toward --t-text so orange shades stay readable (gotcha 25). Light palettes get surfaces slightly darker than the page (the dark-mode depth direction) — accepted approximation."
+}
