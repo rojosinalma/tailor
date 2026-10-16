@@ -1,6 +1,6 @@
 {
   "name": "tailor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A design system with one component vocabulary, swappable skins, canonical palettes.",
   "license": "MIT",
   "private": true,

@@ -2,7 +2,7 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
-## [Unreleased]
+## [0.2.0] — 2026-10-16
 
 ### Changed
 - Palette sources are canonical in the repo: `palettes/src/<id>.json` + `palette.schema.json`;
