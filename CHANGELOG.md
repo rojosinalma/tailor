@@ -2,6 +2,18 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
+## [Unreleased]
+
+### Added
+- `<div data-tailor-pickers>`: `Tailor.theme.init` renders the skin/palette/mode selects into it (skin and palette
+  only when more than one is vendored); options are sorted alphabetically by name, the "none" skin last. Empty
+  `[data-tailor-picker]` selects are filled the same way. The head snippet now carries `labels` (skin and palette
+  names) for that; `.t-pickers` in `layout.css`. Convention (§8): the switcher goes in the footer when the layout
+  has one, otherwise last in the navbar.
+
+### Changed
+- Showcase pickers sorted by name.
+
 ## [0.3.0] — 2026-10-16
 
 ### Added

@@ -28,7 +28,9 @@ Tailor.theme.init({
 </script>
 ```
 
-   `tailor apply` writes this block for you as `public/tailor/tailor-head.html`.
+   `tailor apply` writes this block for you as `public/tailor/tailor-head.html`. The switcher is one
+   element: `<div data-tailor-pickers></div>` — `Tailor.theme` renders skin, palette and mode selects into
+   it, options sorted by name. Put it in the footer when the layout has one, otherwise last in the navbar.
 
 3. Write markup from `core/components.json` (every component has a canonical `markup` snippet) and
    read `core/conventions.md` once. Icons: `<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"/></svg>`

@@ -92,8 +92,11 @@ data-base>`. Pre-paint IIFE (template in `core/tailor.js` header, live copy in
 mode"]` → defaults, whitelists against the bundled lists, resolves `auto` via
 `prefers-color-scheme`, clamps the mode to what the palette offers, and `document.write`s the two
 links **after the core links** (same specificity as `tokens.css :root`, so order decides). Runtime:
-`Tailor.theme.init(config)` wires `[data-tailor-picker="skin|palette|mode"]` and
+`Tailor.theme.init(config)` renders `[data-tailor-pickers]` into skin/palette/mode selects (options
+sorted by name from `config.labels`, skin/palette only when there is a choice), fills empty
+`[data-tailor-picker="skin|palette|mode"]` selects the same way, wires them and
 `[data-tailor-mode-toggle]`, persists, emits `t:theme`. Query params win for the first paint only.
+Placement convention: footer when the layout has one, else the navbar end (conventions §8).
 
 ### 2.5 Build & manifest (`bin/build`)
 

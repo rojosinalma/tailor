@@ -131,13 +131,16 @@ function fileSet({ project, skins, skin, palettes, icons = [], mode, react }) {
   for (const id of list)
     files[join("skins", id, "skin.css")] = header(`skin ${id}`) + readFileSync(join(SKINS, id, "skin.css"), "utf8");
   const modes = {};
+  const labels = { skins: {}, palettes: {} };
+  for (const id of list) labels.skins[id] = JSON.parse(readFileSync(join(SKINS, id, "manifest.json"), "utf8")).name || id;
   for (const id of palettes) {
     const p = loadPalette(id);
     modes[id] = paletteModes(p);
+    labels.palettes[id] = p.name || id;
     files[join("palettes", `${id}.css`)] = header(`palette ${id}`) + paletteCss(p);
   }
   if (icons.length) files["icons.svg"] = renderSprite(icons, { header: header(`icons (${icons.length})`, "svg") });
-  const cfg = { skins: [...list, "none"], palettes, modes, defaults: { skin: list[0], palette: palettes[0], mode } };
+  const cfg = { skins: [...list, "none"], palettes, modes, labels, defaults: { skin: list[0], palette: palettes[0], mode } };
   files["tailor-head.html"] = headSnippet(project, cfg);
   return files;
 }

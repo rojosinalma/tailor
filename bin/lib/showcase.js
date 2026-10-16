@@ -49,8 +49,9 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
         </div>
       </section>` : "";
 
-  const paletteOpts = palettes.map((p) => `<option value="${p.id}">${esc(p.name)}${p.license.startsWith("values-only") ? " ·" : ""}</option>`).join("");
-  const skinOpts = ['<option value="none">none (core only)</option>', ...skins.map((s) => `<option value="${s.id}">${esc(s.name)}</option>`)].join("");
+  const byName = (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+  const paletteOpts = [...palettes].sort(byName).map((p) => `<option value="${p.id}">${esc(p.name)}${p.license.startsWith("values-only") ? " ·" : ""}</option>`).join("");
+  const skinOpts = [...[...skins].sort(byName).map((s) => `<option value="${s.id}">${esc(s.name)}</option>`), '<option value="none">No skin (core only)</option>'].join("");
 
   return `<!doctype html>
 <html lang="en" data-palette="dracula" data-mode="dark" data-skin="none">

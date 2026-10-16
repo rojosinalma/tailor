@@ -184,3 +184,8 @@ it; they should not need to undo it.
   tokens only.
 - The pre-paint snippet from `docs/SDD.md § Switcher` goes in `<head>` right after the three core `<link>`s (it writes the skin and palette links there, so they cascade over `tokens.css`).
 - Palette and skin are app settings (settings table); localStorage is only the flash cache.
+- **The switcher is one element**: `<div data-tailor-pickers></div>`. `Tailor.theme` renders the skin,
+  palette and mode `<select>`s into it (skin/palette only when the project vendors more than one),
+  options **sorted alphabetically by name** from the vendored config — never hand-write option lists.
+  A bare `<select data-tailor-picker="skin|palette|mode">` with no options is filled the same way.
+  **Placement: in `.t-footer-end` when the layout has a footer, otherwise last in `.t-navbar-end`.**
