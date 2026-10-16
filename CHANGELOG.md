@@ -4,6 +4,8 @@ All notable changes to tailor. Semver; the `version` in `package.json` is the so
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-10-16
+
 ### Added
 - Vocabulary gaps reported by the first fifteen consumers, now in core so their `app.css` workarounds can go:
   `t-btn[data-size="xs"]` (compact toolbar/icon buttons; token `--t-control-h-xs`, sized in every skin),
