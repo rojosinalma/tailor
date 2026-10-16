@@ -2,7 +2,7 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
-## [Unreleased]
+## [0.3.0] — 2026-10-16
 
 ### Added
 - Icon sets, via Iconify JSON data: `icons/` pins `@iconify-json/bi` (Bootstrap Icons, MIT), `@iconify-json/lucide`
