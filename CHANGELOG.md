@@ -4,6 +4,14 @@ All notable changes to tailor. Semver; the `version` in `package.json` is the so
 
 ## [Unreleased]
 
+## [0.7.1] — 2026-10-19
+
+### Fixed
+- `Tailor.selects` copies `data-tip`/`data-tip-at` from the native select to the drawn button, so a tooltip on a
+  select shows again.
+- `.t-tooltip` keeps line breaks (`white-space: pre-line`) for multi-line `data-tip` text.
+- `.t-number` input text is left-aligned like every other input (was centred).
+
 ## [0.7.0] — 2026-10-19
 
 Nothing browser-native. Every form control the browser used to draw itself is now drawn by tailor with tokens;
