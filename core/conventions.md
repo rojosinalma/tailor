@@ -184,14 +184,23 @@ it; they should not need to undo it.
 
 ## 8. Project rules (consumers)
 
-- Vendor `core/`, one or more `skins/<id>/`, the `palettes/*.css` you offer, your icon sprite
-  (`--icons`) and `tailor.js` via the `tailor` CLI (header `/* managed by tailor <version> — do not edit */`). Never edit vendored files.
+- Vendor **every skin and every palette tailor ships at that moment** (`tailor apply <dir>` — the defaults are
+  `--skin all --palettes all`; list a favourite first to make it the default: `--palettes gruvbox,all`), your icon
+  sprite (`--icons`) and `tailor.js` via the `tailor` CLI (header `/* managed by tailor <version> — do not edit */`).
+  Never edit vendored files. Skins/palettes added later reach adopted projects through a central
+  `tailor sync` pass, never by hand per project.
 - `app.css` holds the project's own components, named without the `t-` prefix, coloured with `--t-*`
   tokens only.
 - The pre-paint snippet from `docs/SDD.md § Switcher` goes in `<head>` right after the three core `<link>`s (it writes the skin and palette links there, so they cascade over `tokens.css`).
 - Palette and skin are app settings (settings table); localStorage is only the flash cache.
-- **The switcher is one element**: `<div data-tailor-pickers></div>`. `Tailor.theme` renders the skin,
-  palette and mode `<select>`s into it (skin/palette only when the project vendors more than one),
-  options **sorted alphabetically by name** from the vendored config — never hand-write option lists.
-  A bare `<select data-tailor-picker="skin|palette|mode">` with no options is filled the same way.
-  **Placement: in `.t-footer-end` when the layout has a footer, otherwise last in `.t-navbar-end`.**
+- **The switcher is one element**: `<div data-tailor-pickers></div>`. `Tailor.theme` renders into it a
+  **sun/moon mode toggle** (`.t-btn[data-icon=only]`, icons `bi:sun`/`bi:moon-stars` from the sprite, disabled
+  when the palette has one mode) plus the skin and palette `<select>`s (only when the project vendors more than
+  one), options **sorted alphabetically by name** from the vendored config — never hand-write option lists, and
+  no "Auto" option: `auto` exists only as the first-visit default (follows the OS until the user toggles).
+  `data-tailor-pickers="mode"` / `"skin palette"` renders a subset.
+  **Placement: the mode toggle is always the first (leftmost) item of `.t-footer-end`; the skin/palette selects
+  live on the settings page when the project has one, otherwise right after the toggle in `.t-footer-end`.**
+  A layout without a footer puts the same element last in `.t-navbar-end`.
+- **App shell**: `.t-shell` spans the full viewport width; the sidebar column exists only when a
+  `.t-shell-side` child is present — a shell without a sidebar needs no attribute.

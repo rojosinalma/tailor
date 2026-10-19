@@ -38,6 +38,8 @@ import { listIconSets, iconsInstalled, iconsMissingMessage, loadIconSet, resolve
 const CONSUMERS_FILE = join(ROOT, "consumers.json");
 const WEB_UI_DESIGN_ASSETS = process.env.WEB_UI_DESIGN_ASSETS || "";
 const CORE_FILES = ["tokens.css", "base.css", "layout.css", "tailor.js"];
+// Icons Tailor.theme itself renders (sun/moon mode toggle): always part of the consumer sprite.
+const THEME_ICONS = ["bi:sun", "bi:moon-stars"];
 const MARKER = "managed by tailor";
 const header = (what, comment = "css") =>
   comment === "html" || comment === "svg"
@@ -75,17 +77,16 @@ const saveConsumers = (reg) => writeFileSync(CONSUMERS_FILE, JSON.stringify(reg,
 
 // ---------- vendored file set for one consumer ----------
 function skinIds() { return listSkins(); }
-function resolveSkins(spec) {
-  const ids = spec === "all" ? skinIds() : spec.split(",").map((s) => s.trim()).filter(Boolean);
-  for (const id of ids) if (!skinIds().includes(id)) die(`unknown skin "${id}" \u2014 valid skins: ${skinIds().join(" ")} (or "all")`);
-  if (!ids.length) die(`--skin needs at least one id \u2014 valid skins: ${skinIds().join(" ")} (or "all")`);
+// "<id,...|all>": `all` expands in place to every known id, duplicates dropped, order kept — so
+// `gruvbox,all` = every palette with gruvbox as the default (first = default).
+function expandIds(spec, known, flag) {
+  const ids = [...new Set(spec.split(",").map((s) => s.trim()).filter(Boolean).flatMap((id) => (id === "all" ? known : [id])))];
+  for (const id of ids) if (!known.includes(id)) die(`unknown ${flag} "${id}" \u2014 valid: ${known.join(" ")} (or "all")`);
+  if (!ids.length) die(`--${flag === "skin" ? "skin" : "palettes"} needs at least one id \u2014 valid: ${known.join(" ")} (or "all")`);
   return ids;
 }
-function resolvePalettes(ids) {
-  const known = listSourcePalettes();
-  for (const id of ids) if (!known.includes(id)) die(`unknown palette "${id}" \u2014 valid palettes: ${known.join(" ")}`);
-  return ids;
-}
+function resolveSkins(spec) { return expandIds(spec, skinIds(), "skin"); }
+function resolvePalettes(spec) { return expandIds(spec, listSourcePalettes(), "palette"); }
 function resolveIcons(spec) {
   const refs = [...new Set(spec.split(",").map((s) => s.trim()).filter(Boolean))];
   if (!refs.length) die("--icons needs at least one <set>:<name> (e.g. bi:house,lucide:settings)");
@@ -139,7 +140,9 @@ function fileSet({ project, skins, skin, palettes, icons = [], mode, react }) {
     labels.palettes[id] = p.name || id;
     files[join("palettes", `${id}.css`)] = header(`palette ${id}`) + paletteCss(p);
   }
-  if (icons.length) files["icons.svg"] = renderSprite(icons, { header: header(`icons (${icons.length})`, "svg") });
+  const sprite = [...new Set([...THEME_ICONS, ...icons])];
+  if (!iconsInstalled()) die(iconsMissingMessage());
+  files["icons.svg"] = renderSprite(sprite, { header: header(`icons (${sprite.length})`, "svg") });
   const cfg = { skins: [...list, "none"], palettes, modes, labels, defaults: { skin: list[0], palette: palettes[0], mode } };
   files["tailor-head.html"] = headSnippet(project, cfg);
   return files;
@@ -174,15 +177,15 @@ function report(results) {
 
 // ---------- commands ----------
 function cmdApply() {
-  const skins = resolveSkins(takeFlag("--skin") ?? "bootstrap");
-  const palettes = resolvePalettes((takeFlag("--palettes") ?? "dracula").split(",").map((s) => s.trim()).filter(Boolean));
-  const mode = takeFlag("--mode") ?? "dark";
+  const skins = resolveSkins(takeFlag("--skin") ?? "all");
+  const palettes = resolvePalettes(takeFlag("--palettes") ?? "all");
+  const mode = takeFlag("--mode") ?? "auto";
   if (!["dark", "light", "auto"].includes(mode)) die(`--mode must be dark|light|auto, got "${mode}"`);
   const react = takeBool("--react");
   const iconSpec = takeFlag("--icons");
   rejectUnknownFlags();
   const dir = argv.shift();
-  if (!dir) die("usage: tailor apply <project-dir> [--skin <id[,id...]|all>] [--palettes <id,...>] [--icons <set:name,...>] [--mode dark|light|auto] [--react] [-n]", 2);
+  if (!dir) die("usage: tailor apply <project-dir> [--skin <id[,id...]|all>] [--palettes <id[,id...]|all>] [--icons <set:name,...>] [--mode dark|light|auto] [--react] [-n]", 2);
   const projectDir = resolve(dir);
   if (!existsSync(projectDir) || !statSync(projectDir).isDirectory()) die(`not a directory: ${projectDir}`);
   const project = basename(projectDir);
@@ -330,10 +333,13 @@ async function cmdGen() {
 const HELP = `tailor v${VERSION} \u2014 vendor the tailor design system into a project (no package manager)
 
 usage:
-  tailor apply <project-dir> [--skin <id[,id...]|all>] [--palettes <id,...>] [--icons <set:name,...>] [--mode dark|light|auto] [--react] [-n]
-      Vendor core + skin + palettes + icon sprite + head snippet into <project-dir>/public/tailor/ and
-      record the consumer. --icons lists the icons the project uses (icons.svg is subsetted to them;
-      omitted on a re-apply = keep the recorded list). --react skips tailor.js (use the react/ adapter).
+  tailor apply <project-dir> [--skin <id[,id...]|all>] [--palettes <id[,id...]|all>] [--icons <set:name,...>] [--mode dark|light|auto] [--react] [-n]
+      Vendor core + skins + palettes + icon sprite + head snippet into <project-dir>/public/tailor/ and
+      record the consumer. Defaults: every skin, every palette, mode auto (adopting = everything tailor
+      ships at that moment); the first id listed is the default, so "gruvbox,all" = every palette, gruvbox
+      default. --icons lists the icons the project uses
+      (icons.svg is subsetted to them + the sun/moon toggle icons; omitted on a re-apply = keep the recorded
+      list). --react skips tailor.js (use the react/ adapter).
   tailor sync [<project-dir> | --all] [-n]
       Re-vendor current versions into recorded consumers. Only files carrying the
       "${MARKER}" header are overwritten; anything else is refused.
@@ -348,8 +354,8 @@ usage:
   -n, --dry-run   print what would be written, write nothing
 
 examples:
-  tailor apply ~/code/myapp --skin bootstrap --palettes dracula,gruvbox
-  tailor apply ~/code/myapp --skin pico --palettes dracula --mode auto -n
+  tailor apply ~/code/myapp                                   # every skin + palette, bootstrap/first palette default
+  tailor apply ~/code/myapp --skin bootstrap,webtui --palettes gruvbox,dracula --mode dark -n
   tailor apply ~/code/myapp --icons bi:house,lucide:settings,simple-icons:github
   tailor icons search gear
   tailor sync --all

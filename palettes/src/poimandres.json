@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Poimandres. Source: https://github.com/drcmda/poimandres-theme. Licence: MIT. No orange and no purple: pink2 and blue stand in. accent = teal, link = blue2 #add7ff, red = pink #d0679d (the theme's error colour).",
+  "$comment": "Poimandres. Source: https://github.com/drcmda/poimandres-theme. Licence: MIT. No orange and no purple: pink2 and blue stand in. accent = teal, link = blue2 #add7ff, red = pink #d0679d (the theme's error colour). Light block derived from the dark values (no upstream light variant): OKLCH, canvas hue kept, hues darkened in lightness for text on canvas (accent #057d6a, link/info #4c7296, success #227c6c, warning #af4c82, danger #b04a81).",
   "id": "poimandres",
   "name": "Poimandres",
   "docs": "https://github.com/drcmda/poimandres-theme",
@@ -54,6 +54,42 @@
     "#f087bd",
     "#fffac2"
   ],
+  "light": {
+    "canvas": "#f2f5fe",
+    "inset": "#e8ebf3",
+    "surface": "#fafcff",
+    "selection": "#e0e3eb",
+    "border": "#d6d9e1",
+    "text": "#1b1e28",
+    "muted": "#656978",
+    "disabled": "#9498a5",
+    "accent": "#057d6a",
+    "on_accent": "#ffffff",
+    "link": "#4c7296",
+    "success": "#227c6c",
+    "warning": "#af4c82",
+    "danger": "#b04a81",
+    "info": "#4c7296",
+    "extra": {
+      "red": "#b04a81",
+      "orange": "#af4c82",
+      "yellow": "#95905c",
+      "green": "#227c6c",
+      "cyan": "#1b7897",
+      "purple": "#1b7897",
+      "pink": "#af4c82",
+      "blue": "#4c7296",
+      "teal": "#057d6a"
+    },
+    "neutrals": [
+      "#1b1e28",
+      "#656978",
+      "#d6d9e1",
+      "#e8ebf3",
+      "#f2f5fe",
+      "#fafcff"
+    ]
+  },
   "primer": {
     "$comment": "Poimandres palette for gen-primer-theme. Source: https://github.com/drcmda/poimandres-theme themes/poimandres-color-theme.json (MIT) — bg #1b1e28, bg2 #303340, bg3 #506477, text #e4f0fb, text2 #a6accd (editor.foreground), text3 #767c9d, white #ffffff, teal #5de4c7, teal2 #5fb3a1, teal3 #42675a, blue #89ddff, blue2 #add7ff (textLink), blue3 #91b4d5, blue4 #7390aa, pink #d0679d, pink2 #f087bd, yellow #fffac2. Base: @primer/primitives dark. Canvas bg, raised bg2, borders bg2/bg3, text #e4f0fb / muted text2 (text3 is 4.1:1 -> disabled), accent + primary button teal (dark text), link blue2 (the theme's own link colour), success teal2, danger pink, attention yellow, severe pink2 and done blue (#89ddff) — Poimandres has no orange and no purple; sponsors pink2. Nothing darker than bg, so inset/shadow #0f1118 is derived.",
     "neutral_chroma_max": 0.025,

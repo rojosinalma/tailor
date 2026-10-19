@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Zenburn. Source: https://github.com/jnurmine/Zenburn. Licence: values-only (GPL header, no LICENSE file). Deliberately low contrast: muted #9fafaf (comment green is 3.6:1 → disabled), success text lifted to #9bb195, purple text #ec93d3; inset, border and darker steps derived.",
+  "$comment": "Zenburn. Source: https://github.com/jnurmine/Zenburn. Licence: values-only (GPL header, no LICENSE file). Deliberately low contrast: muted #9fafaf (comment green is 3.6:1 → disabled), success text lifted to #9bb195, purple text #ec93d3; inset, border and darker steps derived. Light block derived from the dark values (no upstream light variant): OKLCH, surfaces tinted with the fg hue (the canvas is neutral grey), hues darkened in lightness for text on canvas (accent/link/info #35797d, success from comment green #587758, warning #916648, danger #956162).",
   "id": "zenburn",
   "name": "Zenburn",
   "docs": "https://github.com/jnurmine/Zenburn",
@@ -55,6 +55,41 @@
     "#dfaf8f",
     "#dc8cc3"
   ],
+  "light": {
+    "canvas": "#f6f6ed",
+    "inset": "#ecece3",
+    "surface": "#fcfcf8",
+    "selection": "#e4e4db",
+    "border": "#dadad1",
+    "text": "#3f3f3f",
+    "muted": "#6a6a5b",
+    "disabled": "#99998d",
+    "accent": "#35797d",
+    "on_accent": "#ffffff",
+    "link": "#35797d",
+    "success": "#587758",
+    "warning": "#916648",
+    "danger": "#956162",
+    "info": "#35797d",
+    "extra": {
+      "red": "#956162",
+      "orange": "#916648",
+      "yellow": "#9d8d60",
+      "green": "#587758",
+      "cyan": "#35797d",
+      "purple": "#a0558a",
+      "pink": "#a4518f",
+      "blue": "#35797d"
+    },
+    "neutrals": [
+      "#3f3f3f",
+      "#6a6a5b",
+      "#dadad1",
+      "#ecece3",
+      "#f6f6ed",
+      "#fcfcf8"
+    ]
+  },
   "primer": {
     "$comment": "Zenburn palette for gen-primer-theme. Source: https://github.com/jnurmine/Zenburn colors/zenburn.vim, which declares GNU GPL in its header and has no LICENSE file — colour values only, no code reused. Values: Normal bg #3f3f3f (#1f1f1f for the high-contrast option), fg #dcdccc, CursorColumn #4f4f4f, Visual #2f2f2f, LineNr/Directory #9fafaf, Comment #7f9f7f, Constant #dca3a3, String #cc9393, Error-ish #e37170, Function #efef8f, Keyword #f0dfaf, Number #8cd0d3, cyan #93e0e3, magenta #dc8cc3 / #ec93d3, orange #dfaf8f, green #88b090 / #709080, Title #efefef, StatusLine #ccdc90. Base: @primer/primitives dark. Zenburn is deliberately low-contrast: canvas #3f3f3f, inset/shadow #2b2b2b and #232323 derived, raised #4f4f4f, borders #5f5f5f/#6f6f6f derived. Text fg, muted #9fafaf (4.6:1; the comment green is 3.6:1 -> disabled), accent + primary button + link #8cd0d3 (dark text), success #7f9f7f for backgrounds with text lifted to #9bb195 (4.6:1), danger #dca3a3 (#e37170 for emphasis bgs), attention #f0dfaf, severe #dfaf8f, done + sponsors #dc8cc3 with text #ec93d3 (4.9:1).",
     "neutral_chroma_max": 0.025,

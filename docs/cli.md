@@ -5,7 +5,7 @@ tooling) distributes tailor's assets to consuming projects: idempotent vendoring
 manager, managed-header files, a consumer registry.
 
 ```
-tailor apply <project-dir> --skin bootstrap[,webtui,...|all] --palettes dracula,gruvbox [--icons bi:house,...] [--mode dark] [--react] [-n]
+tailor apply <project-dir> [--skin all|bootstrap,webtui,...] [--palettes all|gruvbox,all|dracula,nord] [--icons bi:house,...] [--mode auto|dark|light] [--react] [-n]
 tailor sync [<project-dir>|--all]      # re-vendor managed files (header-guarded, idempotent)
 tailor list                            # skins · palettes · icon sets · consumers
 tailor icons search <term>             # find <set>:<name> refs across the adopted icon sets (icons list: the sets)
@@ -23,16 +23,16 @@ ln -s "$PWD/bin/tailor" ~/.local/bin/tailor
 
 ## Commands
 
-### `tailor apply <project-dir> [--skin <id,...>] [--palettes <id,...>] [--icons <set:name,...>] [--mode dark|light|auto] [--react] [-n]`
+### `tailor apply <project-dir> [--skin <id,...|all>] [--palettes <id,...|all>] [--icons <set:name,...>] [--mode dark|light|auto] [--react] [-n]`
 
 Vendors into `<project-dir>/public/tailor/`:
 
 | File | What |
 |---|---|
 | `tokens.css` `base.css` `layout.css` `tailor.js` | core (contract load order) |
-| `skins/<id>/skin.css` | each chosen skin (default `bootstrap`; `all` = every skin, first = default) |
-| `palettes/<id>.css` | each chosen palette (default `dracula`), generated from `palettes/src/<id>.json` |
-| `icons.svg` | sprite of the icons named in `--icons`, one `<symbol id="<set>-<name>">` each, from the adopted sets (`icons/`); absent when none |
+| `skins/<id>/skin.css` | each chosen skin (default `all` = every skin; first listed = default, `webtui,all` = all with webtui default) |
+| `palettes/<id>.css` | each chosen palette (default `all`; first listed = default, `gruvbox,all`), generated from `palettes/src/<id>.json` |
+| `icons.svg` | sprite of the icons named in `--icons` plus the sun/moon toggle icons (`bi:sun`, `bi:moon-stars`), one `<symbol id="<set>-<name>">` each, from the adopted sets (`icons/`) |
 | `tailor-head.html` | ready-made `<head>` snippet — see below |
 
 The snippet carries the three core `<link>`s in contract order, the pre-paint IIFE (configured with
@@ -46,8 +46,10 @@ layout's `<head>`; app CSS loads after it. Asset URLs assume `public/` is served
 adopted set or apply exits non-zero. It needs the icon data installed (`bun install` in `icons/`). On a
 re-apply, omitting `--icons` keeps the consumer's recorded list; passing it replaces the list.
 `--react` skips `tailor.js` and points at the `react/` adapter workspace instead.
-The first palette in `--palettes` becomes the default. `--mode` sets the default mode choice
-(`auto` resolves via `prefers-color-scheme`).
+The first skin/palette listed becomes the default; `all` expands in place to every id tailor ships, so
+`--palettes gruvbox,all` = every palette with gruvbox as default. Adopting means taking everything tailor
+ships at that moment; later additions arrive through `tailor sync`. `--mode` (default `auto`) sets the
+first-visit mode: `auto` follows `prefers-color-scheme` until the user clicks the sun/moon toggle.
 
 Every apply upserts the consumer into `consumers.json` (path, skins, palettes, icons, mode, react,
 version, date).
@@ -129,9 +131,9 @@ See [configuration.md](configuration.md) for `TAILOR_PALETTES`, `TAILOR_PRIMER_P
 ## Examples
 
 ```sh
-tailor apply ~/code/myapp --skin bootstrap --palettes dracula,gruvbox
-tailor apply ~/code/myapp --skin all --palettes dracula,nord,gruvbox       # runtime skin switcher in the consumer
-tailor apply ~/code/myapp --skin pico --palettes dracula --mode auto -n
+tailor apply ~/code/myapp                                                   # every skin + palette, bootstrap/ayu default, mode auto
+tailor apply ~/code/myapp --skin webtui,all --palettes gruvbox,all          # everything, webtui + gruvbox default
+tailor apply ~/code/myapp --skin pico --palettes dracula --mode dark -n     # a deliberate subset
 tailor apply ~/code/myapp --icons bi:house,bi:gear,lucide:settings,simple-icons:github
 tailor icons search gear
 tailor sync --all

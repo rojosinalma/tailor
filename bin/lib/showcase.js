@@ -12,7 +12,8 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
   const groups = Object.entries(vocab.groups);
   const tier1 = vocab.components.filter((c) => c.tier === 1);
   const byGroup = (g) => tier1.filter((c) => c.group === g);
-  const config = { project: "tailor-showcase", skins: ["none", ...skins.map((s) => s.id)], palettes: palettes.map((p) => p.id), modes, defaults: { skin: skins[0]?.id ?? "none", palette: "dracula", mode: "dark" } };
+  const labels = { skins: Object.fromEntries(skins.map((s) => [s.id, s.name])), palettes: Object.fromEntries(palettes.map((p) => [p.id, p.name + (p.license.startsWith("values-only") ? " \u00b7" : "")])) };
+  const config = { project: "tailor-showcase", icons: "icons.svg", skins: ["none", ...skins.map((s) => s.id)], palettes: palettes.map((p) => p.id), modes, labels, defaults: { skin: skins[0]?.id ?? "none", palette: "dracula", mode: "auto" } };
 
   const sideNav = groups.map(([g, title]) => `
         <li class="t-sidebar-group">${esc(title)}</li>
@@ -49,10 +50,6 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
         </div>
       </section>` : "";
 
-  const byName = (a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
-  const paletteOpts = [...palettes].sort(byName).map((p) => `<option value="${p.id}">${esc(p.name)}${p.license.startsWith("values-only") ? " ·" : ""}</option>`).join("");
-  const skinOpts = [...[...skins].sort(byName).map((s) => `<option value="${s.id}">${esc(s.name)}</option>`), '<option value="none">No skin (core only)</option>'].join("");
-
   return `<!doctype html>
 <html lang="en" data-palette="dracula" data-mode="dark" data-skin="none">
 <head>
@@ -84,14 +81,6 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
     <span class="t-badge" data-tone="accent">v${VERSION}</span>
     <span class="t-badge" data-tone="info">${tier1.length} tier-1 · ${vocab.components.length - tier1.length} tier-2</span>
     <span class="sc-only-bar t-small t-muted" hidden>Showing one section · <a href="./">all sections</a></span>
-    <div class="t-navbar-end" style="margin-left:auto">
-      <label class="t-visually-hidden" for="pick-skin">Skin</label>
-      <select class="t-select" data-size="sm" id="pick-skin" data-tailor-picker="skin">${skinOpts}</select>
-      <label class="t-visually-hidden" for="pick-palette">Palette</label>
-      <select class="t-select" data-size="sm" id="pick-palette" data-tailor-picker="palette">${paletteOpts}</select>
-      <label class="t-visually-hidden" for="pick-mode">Mode</label>
-      <select class="t-select" data-size="sm" id="pick-mode" data-tailor-picker="mode"><option value="dark">Dark</option><option value="light">Light</option><option value="auto">Auto</option></select>
-    </div>
   </header>
   <aside class="t-shell-side">
     <nav class="t-sidebar" aria-label="Sections" id="sections-nav">
@@ -110,7 +99,7 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
     </div>
   </main>
   <footer class="t-footer t-shell-foot">
-    <div class="t-footer-end"><span class="t-footer-version">tailor ${VERSION} · ${skins.length} skins · ${palettes.length} palettes</span><button class="t-btn" data-variant="ghost" data-size="sm" data-tailor-mode-toggle aria-label="Toggle light/dark">☼</button></div>
+    <div class="t-footer-end"><div data-tailor-pickers></div><span class="t-footer-version">tailor ${VERSION} · ${skins.length} skins · ${palettes.length} palettes</span></div>
   </footer>
 </div>
 <div class="t-toasts" id="t-toasts" aria-live="polite" aria-atomic="false"></div>

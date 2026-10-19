@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Modus Vivendi. Source: https://protesilaos.com/emacs/modus-themes. Licence: values-only (GPL-3.0-or-later). Pure black canvas; inset = bg-popup #0c0c0c; link = blue-warmer (Modus' fg-link); orange = rust, purple = magenta-cooler.",
+  "$comment": "Modus Vivendi. Source: https://protesilaos.com/emacs/modus-themes. Licence: values-only (GPL-3.0-or-later). Pure black canvas; inset = bg-popup #0c0c0c; link = blue-warmer (Modus' fg-link); orange = rust, purple = magenta-cooler. The light block is Modus Operandi (https://protesilaos.com/emacs/modus-themes-colors; values from modus-themes.el modus-themes-operandi-palette): canvas = surface = bg-main, inset bg-popup, selection bg-inactive, border bg-active, disabled border #9f9f9f, muted fg-dim, accent blue, link/info blue-warmer, orange/warning rust, purple magenta-cooler; all upstream values, none adjusted.",
   "id": "modusvivendi",
   "name": "Modus Vivendi",
   "docs": "https://protesilaos.com/emacs/modus-themes",
@@ -53,6 +53,41 @@
     "#b6a0ff",
     "#feacd0"
   ],
+  "light": {
+    "canvas": "#ffffff",
+    "inset": "#f3f3f3",
+    "surface": "#ffffff",
+    "selection": "#e0e0e0",
+    "border": "#c4c4c4",
+    "text": "#000000",
+    "muted": "#595959",
+    "disabled": "#9f9f9f",
+    "accent": "#0031a9",
+    "on_accent": "#ffffff",
+    "link": "#3548cf",
+    "success": "#006800",
+    "warning": "#8a290f",
+    "danger": "#a60000",
+    "info": "#3548cf",
+    "extra": {
+      "red": "#a60000",
+      "orange": "#8a290f",
+      "yellow": "#6f5500",
+      "green": "#006800",
+      "cyan": "#005e8b",
+      "purple": "#531ab6",
+      "pink": "#7b435c",
+      "blue": "#0031a9"
+    },
+    "neutrals": [
+      "#9f9f9f",
+      "#c4c4c4",
+      "#e0e0e0",
+      "#f2f2f2",
+      "#f3f3f3",
+      "#ffffff"
+    ]
+  },
   "primer": {
     "$comment": "Modus Vivendi palette for gen-primer-theme. Source: https://github.com/protesilaos/modus-themes modus-themes.el, modus-themes-vivendi-palette (GPL-3.0-or-later — colour values only, no code reused, like Gruvbox). Values: bg-main #000000, bg-dim #1e1e1e, bg-inactive #303030, bg-active #535353, border #646464, bg-popup #0c0c0c, fg-main #ffffff, fg-dim #989898, fg-alt #c6daff, red #ff5f59, green #44bc44, yellow #d0bc00, blue #2fafff, blue-warmer #79a8ff (fg-link), magenta #feacd0, magenta-cooler #b6a0ff, cyan #00d3d0, rust #db7b5f, bg-*-intense #9d1f1f/#2f822f/#7a6100/#1640b0/#7030af/#2266ae, bg-*-subtle #620f2a/#00422a/#4a4000/#242679/#552f5f/#004065. Base: @primer/primitives dark. Canvas black; nothing is darker, so the inset is bg-popup #0c0c0c and shadows stay #000000. Raised bg-dim, borders bg-inactive/bg-active/border, text fg-main / muted fg-dim, disabled border grey. Accent + primary button blue (dark text), link blue-warmer (Modus' own fg-link, not plain blue), success green, danger red, attention yellow, severe rust, done magenta-cooler, sponsors magenta. Emphasis backgrounds are Modus' bg-*-intense values (white text 4.8–8.8:1).",
     "neutral_chroma_max": 0.02,

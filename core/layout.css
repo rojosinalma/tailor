@@ -6,17 +6,25 @@
  */
 
 /* ── app shell ─────────────────────────────────────────────────────────────── */
+/* Full width by default; the side column exists only while a .t-shell-side child is present.
+   data-sidebar="none" hides an existing sidebar, "collapsed" narrows it. */
 .t-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: var(--t-sidebar-w) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
   grid-template-rows: var(--t-nav-h) 1fr var(--t-footer-h);
+  grid-template-areas:
+    "nav"
+    "main"
+    "foot";
+}
+.t-shell:has(> .t-shell-side):not([data-sidebar="none"]) {
+  grid-template-columns: var(--t-sidebar-w) minmax(0, 1fr);
   grid-template-areas:
     "nav  nav"
     "side main"
     "foot foot";
 }
-.t-shell[data-sidebar="none"] { grid-template-columns: minmax(0, 1fr); grid-template-areas: "nav" "main" "foot"; }
 .t-shell[data-sidebar="none"] > .t-shell-side { display: none; }
 .t-shell[data-sidebar="collapsed"] { --t-sidebar-w: 3.5rem; }
 
@@ -26,8 +34,7 @@
 .t-shell-foot { grid-area: foot; position: sticky; bottom: 0; z-index: var(--t-z-sticky); }
 
 @media (max-width: 991.98px) {
-  .t-shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "nav" "side" "main" "foot"; grid-template-rows: var(--t-nav-h) auto 1fr var(--t-footer-h); }
-  .t-shell[data-sidebar="none"] { grid-template-areas: "nav" "main" "foot"; grid-template-rows: var(--t-nav-h) 1fr var(--t-footer-h); }
+  .t-shell:has(> .t-shell-side):not([data-sidebar="none"]) { grid-template-columns: minmax(0, 1fr); grid-template-areas: "nav" "side" "main" "foot"; grid-template-rows: var(--t-nav-h) auto 1fr var(--t-footer-h); }
   .t-shell-side { position: static; max-height: none; }
 }
 

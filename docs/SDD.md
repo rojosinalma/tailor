@@ -92,11 +92,16 @@ data-base>`. Pre-paint IIFE (template in `core/tailor.js` header, live copy in
 mode"]` → defaults, whitelists against the bundled lists, resolves `auto` via
 `prefers-color-scheme`, clamps the mode to what the palette offers, and `document.write`s the two
 links **after the core links** (same specificity as `tokens.css :root`, so order decides). Runtime:
-`Tailor.theme.init(config)` renders `[data-tailor-pickers]` into skin/palette/mode selects (options
-sorted by name from `config.labels`, skin/palette only when there is a choice), fills empty
-`[data-tailor-picker="skin|palette|mode"]` selects the same way, wires them and
-`[data-tailor-mode-toggle]`, persists, emits `t:theme`. Query params win for the first paint only.
-Placement convention: footer when the layout has one, else the navbar end (conventions §8).
+`Tailor.theme.init(config)` renders `[data-tailor-pickers]` into a sun/moon mode toggle
+(`[data-tailor-mode-toggle]`, icons `bi:sun`/`bi:moon-stars` from `config.icons` = `config.base + "icons.svg"`,
+disabled when the palette offers one mode) plus skin/palette selects (options sorted by name from
+`config.labels`, only when there is a choice; `data-tailor-pickers="mode"` / `"skin palette"` renders a subset),
+fills empty `[data-tailor-picker="skin|palette|mode"]` selects the same way, wires them, persists, emits
+`t:theme`. There is no "Auto" choice in the UI: `auto` is only a default (first visit follows
+`prefers-color-scheme` until the user toggles). Query params win for the first paint only.
+Placement convention: toggle first in `.t-footer-end`; selects on the settings page when there is one,
+else next to the toggle (conventions §8). `.t-shell` is single-column unless a `.t-shell-side` child exists
+(`:has()`).
 
 ### 2.5 Build & manifest (`bin/build`)
 

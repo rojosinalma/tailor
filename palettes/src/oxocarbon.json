@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Oxocarbon Dark. Source: https://github.com/nyoom-engineering/oxocarbon.nvim. Licence: MIT. No yellow and no orange: warning = base12 pink #ff7eb6, yellow = base14 purple (the theme's own WarningMsg); base01–05 blends from the source; muted #a8a8a8 is a ramp grey.",
+  "$comment": "Oxocarbon Dark. Source: https://github.com/nyoom-engineering/oxocarbon.nvim. Licence: MIT. No yellow and no orange: warning = base12 pink #ff7eb6, yellow = base14 purple (the theme's own WarningMsg); base01–05 blends from the source; muted #a8a8a8 is a ramp grey. Light block is Oxocarbon Light (https://github.com/nyoom-engineering/oxocarbon.nvim lua/oxocarbon/init.lua, background=light): canvas blend #fafafa, surface base00 #ffffff, inset base01 #f2f2f2 and border base02 #d0d0d0 (HSLuv blends from the source), selection a derived 0.9 blend #e4e4e4; text base04 #37474f, muted base06 #525252, disabled base05 #90a4ae, accent base11 #0f62fe; warning = base10 orange, yellow = base14 purple (DiagnosticWarn); success darkened to #00852e, warning to #cf4100, danger to #ce337b for text.",
   "id": "oxocarbon",
   "name": "Oxocarbon Dark",
   "docs": "https://github.com/nyoom-engineering/oxocarbon.nvim",
@@ -54,6 +54,44 @@
     "#ff7eb6",
     "#be95ff"
   ],
+  "light": {
+    "canvas": "#fafafa",
+    "inset": "#f2f2f2",
+    "surface": "#ffffff",
+    "selection": "#e4e4e4",
+    "border": "#d0d0d0",
+    "text": "#37474f",
+    "muted": "#525252",
+    "disabled": "#90a4ae",
+    "accent": "#0f62fe",
+    "on_accent": "#ffffff",
+    "link": "#0f62fe",
+    "success": "#00852e",
+    "warning": "#cf4100",
+    "danger": "#ce337b",
+    "info": "#0f62fe",
+    "extra": {
+      "red": "#ee5396",
+      "orange": "#ff6f00",
+      "yellow": "#be95ff",
+      "green": "#42be65",
+      "cyan": "#08bdba",
+      "purple": "#673ab7",
+      "pink": "#ff7eb6",
+      "blue": "#0f62fe",
+      "teal": "#08bdba"
+    },
+    "neutrals": [
+      "#ffffff",
+      "#fafafa",
+      "#f2f2f2",
+      "#e4e4e4",
+      "#d0d0d0",
+      "#90a4ae",
+      "#525252",
+      "#37474f"
+    ]
+  },
   "primer": {
     "$comment": "Oxocarbon (dark) palette for gen-primer-theme. Source: https://github.com/nyoom-engineering/oxocarbon.nvim lua/oxocarbon/init.lua (MIT) — base00 #161616, base01..05 are blends of base00 toward base06 #ffffff at 0.085/0.18/0.3/0.82/0.95 (#2a2a2a #404040 #5c5c5c #d5d5d5 #f3f3f3), blend #131313, base07 #08bdba, base08 #3ddbd9, base09 #78a9ff, base10 #ee5396, base11 #33b1ff, base12 #ff7eb6, base13 #42be65, base14 #be95ff, base15 #82cfff; the grey #a8a8a8 is the theme's csv column grey. Base: @primer/primitives dark. Canvas base00, inset blend, raised base01, borders base02/base03, text base05 / muted #a8a8a8 (derived from the ramp: base04 is too close to the text), disabled base03-ish #6f6f6f. Accent + primary button + link base09 blue (dark text), success base13, danger base10. Oxocarbon has no yellow and no orange: attention is base14 purple (the theme's own WarningMsg colour), done is the same purple, severe and sponsors are base12 pink.",
     "neutral_chroma_max": 0.02,

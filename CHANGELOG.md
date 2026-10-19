@@ -4,6 +4,38 @@ All notable changes to tailor. Semver; the `version` in `package.json` is the so
 
 ## [Unreleased]
 
+## [0.6.0] — 2026-10-19
+
+### Changed
+- `layout.css`: `.t-shell` is single-column (full width) by default; the sidebar column exists only while a
+  `.t-shell-side` child is present (`:has()`), on desktop and in the stacked ≤991px template. Until now the shell
+  reserved a 220px `side` column unconditionally, so every consumer without `data-sidebar="none"` rendered its
+  content shifted right by the sidebar width. `data-sidebar="none"` (hide an existing sidebar) and `collapsed`
+  keep working; a shell without a sidebar needs no attribute.
+- `tokens.css`: `--t-content-max` defaults to `none` (was 1400px) — `.t-page` spans the viewport; set the token
+  to cap it.
+- Switcher: `[data-tailor-pickers]` renders a **sun/moon mode toggle** (`[data-tailor-mode-toggle]`, icons
+  `bi:sun`/`bi:moon-stars` from the consumer sprite, disabled when the palette has one mode) followed by the skin
+  and palette selects; the mode `<select>` and its "Auto" option are gone (`auto` stays as a first-visit default,
+  resolved from `prefers-color-scheme` until the user toggles). `data-tailor-pickers="mode"` / `"skin palette"`
+  renders a subset so the selects can live on a settings page while the toggle stays in the footer.
+  Placement rule (conventions §8): toggle first in `.t-footer-end`; selects on the settings page when there is
+  one, otherwise next to the toggle. `Tailor.theme.init` reads `base` (→ `icons`) from the head-snippet config.
+- CLI: `tailor apply` defaults to `--skin all --palettes all --mode auto`; `all` expands in place so
+  `--palettes gruvbox,all` = every palette with gruvbox as default. The sprite always carries the two toggle
+  icons. Adopting tailor = everything it ships at that moment; later skins/palettes reach consumers via
+  `tailor sync`.
+- Showcase: switcher moved from the navbar to the footer per the placement rule; sprite includes the toggle icons.
+
+### Added
+- Every palette now has a light counterpart (21/21, was dracula only): ayu (Ayu Light), catppuccin (Latte),
+  everforest (Light medium), flexoki (Light), gruvbox (Light medium), kanagawa (Lotus), modusvivendi (Modus
+  Operandi), nightfox (Dayfox), nightowl (Night Owl Light), onedark (One Light), oxocarbon (Light), rosepine
+  (Dawn), selenized (Light), solarized (Light), tokyonight (Day), vitesse (Light) from the upstream light
+  variants; nord, poimandres, synthwave84 and zenburn derived in OKLCH from their dark values (no upstream light
+  exists; marked in each `$comment`). Text-role colours darkened where upstream fell under 4.5:1 — each
+  `$comment` lists them; `bin/verify` gates every block.
+
 ## [0.5.1] — 2026-10-16
 
 ### Fixed

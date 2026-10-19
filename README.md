@@ -35,11 +35,11 @@ bin/build                        # palettes/*.css, manifest.json, showcase/index
 bunx serve .                     # or: python3 -m http.server
 ```
 
-Open `/showcase/`: every component, with skin/palette/mode pickers top right;
+Open `/showcase/`: every component, with the skin/palette switcher and sun/moon toggle in the footer;
 `?skin=pico&palette=nord&mode=dark` deep-links a combination. `bin/verify` runs the checks.
 
-To use tailor in your own project, copy `core/*` plus the skins and palettes you want into your
-static assets — or let `bin/tailor apply <project-dir>` do it. Load order, the head snippet and
+To use tailor in your own project, let `bin/tailor apply <project-dir>` vendor the core, every skin and every
+palette (all 21 come in dark and light) into your static assets. Load order, the head snippet and
 `Tailor.theme.init` are in [docs/usage.md](docs/usage.md); the CLI in [docs/cli.md](docs/cli.md);
 icons in [docs/icons.md](docs/icons.md); the layering in [docs/architecture.md](docs/architecture.md).
 

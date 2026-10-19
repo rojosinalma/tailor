@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Nord. Source: https://www.nordtheme.com/docs/colors-and-palettes. Licence: MIT. Nord has no pink: nord15 purple stands in. danger is nord11 lifted to #d08a92 for text (nord11 is 3.6:1 on nord0); inset #272c36 is derived (nothing darker than nord0).",
+  "$comment": "Nord. Source: https://www.nordtheme.com/docs/colors-and-palettes. Licence: MIT. Nord has no pink: nord15 purple stands in. danger is nord11 lifted to #d08a92 for text (nord11 is 3.6:1 on nord0); inset #272c36 is derived (nothing darker than nord0). Light block derived from the dark values (no upstream light variant): OKLCH, canvas hue kept, hues darkened in lightness for text on canvas (accent/link/info #3f7685, success #5e7647, warning #a15d47, danger from nord11 #ae525c).",
   "id": "nord",
   "name": "Nord",
   "docs": "https://www.nordtheme.com/docs/colors-and-palettes",
@@ -53,6 +53,41 @@
     "#a3be8c",
     "#b48ead"
   ],
+  "light": {
+    "canvas": "#f1f5fe",
+    "inset": "#e7ebf3",
+    "surface": "#fafcff",
+    "selection": "#dfe3eb",
+    "border": "#d5d9e1",
+    "text": "#2e3440",
+    "muted": "#636978",
+    "disabled": "#9198a7",
+    "accent": "#3f7685",
+    "on_accent": "#ffffff",
+    "link": "#3f7685",
+    "success": "#5e7647",
+    "warning": "#a15d47",
+    "danger": "#ae525c",
+    "info": "#3f7685",
+    "extra": {
+      "red": "#ae525c",
+      "orange": "#a15d47",
+      "yellow": "#a88a4c",
+      "green": "#5e7647",
+      "cyan": "#3f7685",
+      "purple": "#876481",
+      "pink": "#876481",
+      "blue": "#53718f"
+    },
+    "neutrals": [
+      "#2e3440",
+      "#636978",
+      "#d5d9e1",
+      "#e7ebf3",
+      "#f1f5fe",
+      "#fafcff"
+    ]
+  },
   "primer": {
     "$comment": "Nord palette for gen-primer-theme. Base: @primer/primitives dark. Accent/primary nord8 (Frost cyan, dark text), link nord8, success nord14, danger nord11, attention nord13, severe nord12, done/sponsors nord15. Nord has nothing darker than nord0, so the inset surface (#272c36) and shadow (#242933) are derived shades.",
     "neutral_chroma_max": 0.025,

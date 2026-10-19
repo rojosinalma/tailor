@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Kanagawa Wave. Source: https://github.com/rebelot/kanagawa.nvim. Licence: MIT. red = peachRed (samuraiRed is 3.7:1), cyan = springBlue, teal = waveAqua2, purple = oniViolet, pink = sakuraPink, blue = crystalBlue.",
+  "$comment": "Kanagawa Wave. Source: https://github.com/rebelot/kanagawa.nvim. Licence: MIT. red = peachRed (samuraiRed is 3.7:1), cyan = springBlue, teal = waveAqua2, purple = oniViolet, pink = sakuraPink, blue = crystalBlue. The light block is Kanagawa Lotus (https://github.com/rebelot/kanagawa.nvim lua/kanagawa/colors.lua + themes.lua lotus): canvas lotusWhite3, inset lotusWhite2, surface #f8f5dd derived (lotusWhite3 mixed with white; Lotus has nothing lighter than its bg), selection lotusWhite5, border lotusViolet1, text lotusInk1, disabled lotusGray3, accent/link/info lotusBlue4, cyan lotusTeal1, purple lotusViolet4, teal lotusAqua; muted darkened lotusGray2 #6d6a5d (#716e61 is 4.3:1), success darkened lotusGreen #587137, warning darkened lotusOrange #ab4f00, danger darkened lotusRed #bf374c for text.",
   "id": "kanagawa",
   "name": "Kanagawa Wave",
   "docs": "https://github.com/rebelot/kanagawa.nvim",
@@ -55,6 +55,42 @@
     "#957fb8",
     "#d27e99"
   ],
+  "light": {
+    "canvas": "#f2ecbc",
+    "inset": "#e5ddb0",
+    "surface": "#f8f5dd",
+    "selection": "#e4d794",
+    "border": "#a09cac",
+    "text": "#545464",
+    "muted": "#6d6a5d",
+    "disabled": "#8a8980",
+    "accent": "#4d699b",
+    "on_accent": "#f2ecbc",
+    "link": "#4d699b",
+    "success": "#587137",
+    "warning": "#ab4f00",
+    "danger": "#bf374c",
+    "info": "#4d699b",
+    "extra": {
+      "red": "#c84053",
+      "orange": "#cc6d00",
+      "yellow": "#de9800",
+      "green": "#6f894e",
+      "cyan": "#4e8ca2",
+      "purple": "#624c83",
+      "pink": "#b35b79",
+      "blue": "#4d699b",
+      "teal": "#597b75"
+    },
+    "neutrals": [
+      "#a09cac",
+      "#d5cea3",
+      "#dcd5ac",
+      "#e5ddb0",
+      "#f2ecbc",
+      "#f8f5dd"
+    ]
+  },
   "primer": {
     "$comment": "Kanagawa (wave) palette for gen-primer-theme. Source: https://github.com/rebelot/kanagawa.nvim lua/kanagawa/colors.lua (MIT) — sumiInk0 #16161d, sumiInk1 #181820, sumiInk3 #1f1f28 (editor bg), sumiInk4 #2a2a37, sumiInk5 #363646, sumiInk6 #54546d, fujiWhite #dcd7ba, oldWhite #c8c093, fujiGray #727169, crystalBlue #7e9cd8, springBlue #7fb4ca, waveAqua2 #7aa89f, springGreen #98bb6c, autumnRed #c34043, samuraiRed #e82424, peachRed #ff5d62, waveRed #e46876, roninYellow #ff9e3b, surimiOrange #ffa066, carpYellow #e6c384, autumnYellow #dca561, oniViolet #957fb8, springViolet1 #938aa9, sakuraPink #d27e99. Base: @primer/primitives dark. Canvas sumiInk3 (the wave editor background, not sumiInk0 as first assumed), inset sumiInk0, raised sumiInk4, borders sumiInk5/sumiInk6, text fujiWhite / muted oldWhite (fujiGray is 3.3:1 -> disabled), accent + primary button + link crystalBlue (dark text), success springGreen, danger samuraiRed for emphasis bgs with peachRed as text (samuraiRed is 3.7:1 on sumiInk3), attention carpYellow, severe roninYellow, done oniViolet, sponsors sakuraPink.",
     "neutral_chroma_max": 0.025,

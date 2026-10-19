@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Night Owl. Source: https://github.com/sdras/night-owl-vscode-theme. Licence: MIT. pink = purple (no pink); muted #829ab0 derived (comment grey is 3.9:1); danger text #ff5874.",
+  "$comment": "Night Owl. Source: https://github.com/sdras/night-owl-vscode-theme. Licence: MIT. pink = purple (no pink); muted #829ab0 derived (comment grey is 3.9:1); danger text #ff5874. The light block is Night Owl Light (https://github.com/sdras/night-owl-vscode-theme themes/Night Owl-Light-color-theme.json): canvas editor.background, inset sideBar.background, surface #ffffff, selection list.hoverBackground, border editorWidget.border, text foreground, disabled input.placeholderForeground, accent blue #4876d6 (strings), purple #994cc3, pink ansiMagenta #d6438a, cyan ansiCyan, teal #0c969b; no orange, so warning/orange = editorWarning #daaa01; muted darkened #5f7e97 to #597790, link/info/accent_solid darkened #4876d6 to #4370d0, success darkened ansiGreen to #00845e, warning darkened to #996b00, danger darkened ansiRed to #d73535 for text.",
   "id": "nightowl",
   "name": "Night Owl",
   "docs": "https://github.com/sdras/night-owl-vscode-theme",
@@ -53,6 +53,43 @@
     "#ecc48d",
     "#c792ea"
   ],
+  "light": {
+    "canvas": "#fbfbfb",
+    "inset": "#f0f0f0",
+    "surface": "#ffffff",
+    "selection": "#d3e8f8",
+    "border": "#d9d9d9",
+    "text": "#403f53",
+    "muted": "#597790",
+    "disabled": "#93a1a1",
+    "accent": "#4876d6",
+    "accent_solid": "#4370d0",
+    "on_accent": "#ffffff",
+    "link": "#4370d0",
+    "success": "#00845e",
+    "warning": "#996b00",
+    "danger": "#d73535",
+    "info": "#4370d0",
+    "extra": {
+      "red": "#de3d3b",
+      "orange": "#daaa01",
+      "yellow": "#e0af02",
+      "green": "#08916a",
+      "cyan": "#2aa298",
+      "purple": "#994cc3",
+      "pink": "#d6438a",
+      "blue": "#4876d6",
+      "teal": "#0c969b"
+    },
+    "neutrals": [
+      "#d0d0d0",
+      "#d9d9d9",
+      "#e0e7ea",
+      "#f0f0f0",
+      "#f6f6f6",
+      "#fbfbfb"
+    ]
+  },
   "primer": {
     "$comment": "Night Owl palette for gen-primer-theme. Source: https://github.com/sdras/night-owl-vscode-theme themes/Night Owl-color-theme.json (MIT) — editor.background #011627, editorWidget.background #021320, input.background #0b253a, focusBorder #122d42, badge/panel.border #5f7e97, editorLineNumber #4b6479, editor.foreground #d6deeb, comment #637777, blue #82aaff, green #addb67 (strings/tags; terminal green #22da6e), red #ef5350 (errors) / #ff5874, orange #f78c6c, yellow #ecc48d / #ffcb8b, purple #c792ea, cyan #7fdbca, teal #80cbc4. Base: @primer/primitives dark. Canvas editor bg, inset widget bg, raised input bg, borders focusBorder / badge, text editor fg; the comment grey is 3.9:1 and badge grey 4.3:1, so muted is a derived #829ab0 and badge grey is disabled. Accent + primary button + link blue (dark text), success green, danger red (fg #ff5874 for text), attention yellow #ecc48d, severe orange, done + sponsors purple (the single purple).",
     "neutral_chroma_max": 0.025,

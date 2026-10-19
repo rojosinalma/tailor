@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "SynthWave '84. Source: https://github.com/robb0wen/synthwave-vscode. Licence: MIT. link = the theme's textLink #f97e72; danger text #fb6567; the neon glow is a CSS effect and is not part of the palette.",
+  "$comment": "SynthWave '84. Source: https://github.com/robb0wen/synthwave-vscode. Licence: MIT. link = the theme's textLink #f97e72; danger text #fb6567; the neon glow is a CSS effect and is not part of the palette. Light block derived from the dark values (no upstream light variant): OKLCH, canvas hue kept, hues darkened in lightness for text on canvas (accent #b83c9a, link/info #bd4840, success #077f57, warning #b15502, danger #cb3740); no neon glow.",
   "id": "synthwave84",
   "name": "SynthWave '84",
   "docs": "https://github.com/robb0wen/synthwave-vscode",
@@ -54,6 +54,41 @@
     "#b893ce",
     "#fe4450"
   ],
+  "light": {
+    "canvas": "#f5f4fd",
+    "inset": "#ebeaf3",
+    "surface": "#fcfbff",
+    "selection": "#e3e2ea",
+    "border": "#d9d8e1",
+    "text": "#262335",
+    "muted": "#6a677c",
+    "disabled": "#9895ac",
+    "accent": "#b83c9a",
+    "on_accent": "#ffffff",
+    "link": "#bd4840",
+    "success": "#077f57",
+    "warning": "#b15502",
+    "danger": "#cb3740",
+    "info": "#bd4840",
+    "extra": {
+      "red": "#db1634",
+      "orange": "#b15502",
+      "yellow": "#a78c06",
+      "green": "#077f57",
+      "cyan": "#027c7a",
+      "purple": "#846198",
+      "pink": "#b83c9a",
+      "blue": "#017a88"
+    },
+    "neutrals": [
+      "#262335",
+      "#6a677c",
+      "#d9d8e1",
+      "#ebeaf3",
+      "#f5f4fd",
+      "#fcfbff"
+    ]
+  },
   "primer": {
     "$comment": "SynthWave '84 palette for gen-primer-theme. Source: https://github.com/robb0wen/synthwave-vscode themes/synthwave-color-theme.json (MIT) — editor.background #262335, sideBar/statusBar #241b2f, input/badge #2a2139, editorWidget #171520, dropdown #232530, hover #37294d, button #614d85, foreground #ffffff, comment #848bbd, muted text #b6b1b1, pink #ff7edb, textLink/cursor #f97e72, orange #ff8b39, yellow #fede5d, green #72f1b8, cyan #36f9f6, blue #2ee2fa / #03edf9, purple #b893ce, red #fe4450. Base: @primer/primitives dark. Canvas editor bg, inset sidebar bg, raised input bg, borders derived (#37294d hover, #4a3d6b), text white / muted comment #848bbd (4.7:1), disabled derived #6b6f9c. Accent + primary button pink (dark text), link the theme's own textLink #f97e72, success green, danger red (4.5:1 on canvas, text lifted to #fb6567), attention yellow, severe orange, done purple, sponsors pink. The neon text glow of the original is a CSS effect and is not reproduced in tokens — colours only.",
     "neutral_chroma_max": 0.03,

@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Tokyo Night. Source: https://github.com/folke/tokyonight.nvim. Licence: Apache-2.0. night variant. pink = magenta.",
+  "$comment": "Tokyo Night. Source: https://github.com/folke/tokyonight.nvim. Licence: Apache-2.0. night variant. pink = magenta. Light block is Tokyo Night Day (https://github.com/folke/tokyonight.nvim extras/lua/tokyonight_day.lua): bg canvas, bg_dark inset, bg_highlight selection, fg_gutter border, fg text, comment disabled; surface #efeff2 derived; muted fg_dark darkened to #52629e, link/info/accent_solid blue darkened to #0761ca, success green to #506c30, warning orange to #a14d00, danger red to #ca0045 for text.",
   "id": "tokyonight",
   "name": "Tokyo Night",
   "docs": "https://github.com/folke/tokyonight.nvim",
@@ -57,6 +57,47 @@
     "#f7768e",
     "#db4b4b"
   ],
+  "light": {
+    "canvas": "#e1e2e7",
+    "inset": "#d0d5e3",
+    "surface": "#efeff2",
+    "selection": "#c4c8da",
+    "border": "#a8aecb",
+    "text": "#3760bf",
+    "muted": "#52629e",
+    "disabled": "#848cb5",
+    "accent": "#2e7de9",
+    "accent_solid": "#0761ca",
+    "on_accent": "#ffffff",
+    "link": "#0761ca",
+    "success": "#506c30",
+    "warning": "#a14d00",
+    "danger": "#ca0045",
+    "info": "#0761ca",
+    "extra": {
+      "red": "#f52a65",
+      "orange": "#b15c00",
+      "yellow": "#8c6c3e",
+      "green": "#587539",
+      "cyan": "#007197",
+      "purple": "#7847bd",
+      "pink": "#9854f1",
+      "blue": "#2e7de9",
+      "teal": "#118c74"
+    },
+    "neutrals": [
+      "#efeff2",
+      "#e1e2e7",
+      "#d0d5e3",
+      "#c4c8da",
+      "#a8aecb",
+      "#a1a6c5",
+      "#848cb5",
+      "#68709a",
+      "#6172b0",
+      "#3760bf"
+    ]
+  },
   "primer": {
     "$comment": "Tokyo Night (night) palette for gen-primer-theme. Source: https://github.com/folke/tokyonight.nvim lua/tokyonight/colors/night.lua (+ storm.lua it inherits from; Apache-2.0) — bg #1a1b26, bg_dark #16161e, bg_highlight #292e42, terminal_black #414868, dark3 #545c7e, fg #c0caf5, fg_dark #a9b1d6, fg_gutter #3b4261, comment #565f89, blue #7aa2f7, cyan #7dcfff, magenta #bb9af7, purple #9d7cd8, orange #ff9e64, yellow #e0af68, green #9ece6a, teal #1abc9c, red #f7768e, red1 #db4b4b. Base: @primer/primitives dark. Canvas bg, inset bg_dark, raised bg_highlight, borders fg_gutter/terminal_black, text fg / muted fg_dark, accent + primary button + link blue (dark text), success green, danger red (red1 for emphasis bgs), attention yellow, severe orange, done purple, sponsors magenta. One derived raised step (#232739) between bg and bg_highlight.",
     "neutral_chroma_max": 0.025,

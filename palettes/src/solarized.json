@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Solarized Dark. Source: https://ethanschoonover.com/solarized. Licence: MIT. Deliberately low contrast: text is base1 #93a1a1, on_accent base3; accent blue cannot carry text so accent_solid #316893 is used for solid fills; link/danger lifted; inset and border steps derived. purple = violet, pink = magenta.",
+  "$comment": "Solarized Dark. Source: https://ethanschoonover.com/solarized. Licence: MIT. Deliberately low contrast: text is base1 #93a1a1, on_accent base3; accent blue cannot carry text so accent_solid #316893 is used for solid fills; link/danger lifted; inset and border steps derived. purple = violet, pink = magenta. Light block is Solarized Light (https://ethanschoonover.com/solarized): base3 canvas, base2 inset, text base01 #586e75 (base00 is 4.1:1), muted base00 darkened to #5e747c, disabled base1; surface #fefaf1, selection #e3dfcf and border #d3d3c5 derived; accent blue cannot carry text so accent_solid/link/info #0075bb; success darkened to #677900, warning to #c6460e, danger to #d72c2a for text.",
   "id": "solarized",
   "name": "Solarized Dark",
   "docs": "https://ethanschoonover.com/solarized",
@@ -55,6 +55,43 @@
     "#2aa198",
     "#859900"
   ],
+  "light": {
+    "canvas": "#fdf6e3",
+    "inset": "#eee8d5",
+    "surface": "#fefaf1",
+    "selection": "#e3dfcf",
+    "border": "#d3d3c5",
+    "text": "#586e75",
+    "muted": "#5e747c",
+    "disabled": "#93a1a1",
+    "accent": "#268bd2",
+    "accent_solid": "#0075bb",
+    "on_accent": "#fdf6e3",
+    "link": "#0075bb",
+    "success": "#677900",
+    "warning": "#c6460e",
+    "danger": "#d72c2a",
+    "info": "#0075bb",
+    "extra": {
+      "red": "#dc322f",
+      "orange": "#cb4b16",
+      "yellow": "#b58900",
+      "green": "#859900",
+      "cyan": "#2aa198",
+      "purple": "#6c71c4",
+      "pink": "#d33682",
+      "blue": "#268bd2"
+    },
+    "neutrals": [
+      "#fefaf1",
+      "#fdf6e3",
+      "#eee8d5",
+      "#93a1a1",
+      "#839496",
+      "#657b83",
+      "#586e75"
+    ]
+  },
   "primer": {
     "$comment": "Solarized (dark) palette for gen-primer-theme. Source: https://ethanschoonover.com/solarized (MIT) — base03 #002b36 … base3 #fdf6e3, yellow #b58900, orange #cb4b16, red #dc322f, magenta #d33682, violet #6c71c4, blue #268bd2, cyan #2aa198, green #859900. Base: @primer/primitives dark. Canvas base03, raised base02, text base1 / muted base0, accent + link blue (link lightened to #4a9fe0 for 4.5:1), success green, danger red (text lightened), attention yellow, severe orange, done violet, sponsors magenta. Solarized has nothing darker than base03 and no shades between base02 and base01, so inset/shadow (#00212b) and the border steps are derived.",
     "neutral_chroma_max": 0.025,

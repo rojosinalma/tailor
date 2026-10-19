@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Rosé Pine. Source: https://rosepinetheme.com/palette. Licence: MIT. red/pink = love, orange = rose, yellow = gold, green/cyan = foam (pine #31748f is too dark for text; kept as blue), purple = iris.",
+  "$comment": "Rosé Pine. Source: https://rosepinetheme.com/palette. Licence: MIT. red/pink = love, orange = rose, yellow = gold, green/cyan = foam (pine #31748f is too dark for text; kept as blue), purple = iris. Light block is Rosé Pine Dawn (https://rosepinetheme.com/palette): base canvas, surface, overlay inset, highlight_med selection, highlight_high border; link/info = pine #286983; muted subtle darkened to #706c8a, success foam darkened to #3b7984, warning gold darkened to #a65e00 (rose is too close to love when darkened), danger love darkened to #a7576e for text; accent_solid iris darkened to #7d6795 for surface-coloured text.",
   "id": "rosepine",
   "name": "Rosé Pine",
   "docs": "https://rosepinetheme.com/palette",
@@ -51,6 +51,44 @@
     "#9ccfd8",
     "#c4a7e7"
   ],
+  "light": {
+    "canvas": "#faf4ed",
+    "inset": "#f2e9e1",
+    "surface": "#fffaf3",
+    "selection": "#dfdad9",
+    "border": "#cecacd",
+    "text": "#464261",
+    "muted": "#706c8a",
+    "disabled": "#9893a5",
+    "accent": "#907aa9",
+    "accent_solid": "#7d6795",
+    "on_accent": "#fffaf3",
+    "link": "#286983",
+    "success": "#3b7984",
+    "warning": "#a65e00",
+    "danger": "#a7576e",
+    "info": "#286983",
+    "extra": {
+      "red": "#b4637a",
+      "orange": "#d7827e",
+      "yellow": "#ea9d34",
+      "green": "#56949f",
+      "cyan": "#56949f",
+      "purple": "#907aa9",
+      "pink": "#b4637a",
+      "blue": "#286983"
+    },
+    "neutrals": [
+      "#fffaf3",
+      "#faf4ed",
+      "#f2e9e1",
+      "#dfdad9",
+      "#cecacd",
+      "#9893a5",
+      "#797593",
+      "#464261"
+    ]
+  },
   "primer": {
     "$comment": "Rosé Pine (main) palette for gen-primer-theme. Source: https://rosepinetheme.com/palette (MIT) — base #191724, surface #1f1d2e, overlay #26233a, muted #6e6a86, subtle #908caa, text #e0def4, love #eb6f92, gold #f6c177, rose #ebbcba, pine #31748f, foam #9ccfd8, iris #c4a7e7, highlight low/med/high #21202e/#403d52/#524f67. Base: @primer/primitives dark. Canvas base, raised surface/overlay, borders highlight med/high, text / subtle, accent + primary button iris (dark text), link foam, success foam (pine is too dark for text; it stays in the success emphasis bg), danger love, attention gold, severe rose, done iris, sponsors love. Nothing darker than base, so inset/shadow (#141220) is derived.",
     "neutral_chroma_max": 0.025,

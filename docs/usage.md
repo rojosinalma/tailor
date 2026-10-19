@@ -20,17 +20,20 @@
 <script>
 Tailor.theme.init({
   project: "myapp",
+  base: "/tailor/",
   skins: ["bootstrap", "webtui"],
   palettes: ["dracula", "gruvbox"],
-  modes: { dracula: ["dark", "light"], gruvbox: ["dark"] },
-  defaults: { skin: "bootstrap", palette: "dracula", mode: "dark" }
+  modes: { dracula: ["dark", "light"], gruvbox: ["dark", "light"] },
+  defaults: { skin: "bootstrap", palette: "dracula", mode: "auto" }
 });
 </script>
 ```
 
    `tailor apply` writes this block for you as `public/tailor/tailor-head.html`. The switcher is one
-   element: `<div data-tailor-pickers></div>` — `Tailor.theme` renders skin, palette and mode selects into
-   it, options sorted by name. Put it in the footer when the layout has one, otherwise last in the navbar.
+   element: `<div data-tailor-pickers></div>` — `Tailor.theme` renders a sun/moon mode toggle plus skin and
+   palette selects into it, options sorted by name. The toggle goes first in `.t-footer-end`; the selects live
+   on the settings page when the app has one (`<div data-tailor-pickers="skin palette">`), otherwise next to
+   the toggle. `.t-shell` is full-width; add a `.t-shell-side` child only when you want a sidebar column.
 
 3. Write markup from `core/components.json` (every component has a canonical `markup` snippet) and
    read `core/conventions.md` once. Icons: `<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"/></svg>`

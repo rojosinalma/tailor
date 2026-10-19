@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Gruvbox Dark (medium). Source: https://github.com/morhetz/gruvbox. Licence: values-only (no LICENSE file in the repo). Bright variants. cyan = aqua, pink = purple (no pink). danger is red lifted to #fb6d5c for text.",
+  "$comment": "Gruvbox Dark (medium). Source: https://github.com/morhetz/gruvbox. Licence: values-only (no LICENSE file in the repo). Bright variants. cyan = aqua, pink = purple (no pink). danger is red lifted to #fb6d5c for text. The light block is Gruvbox Light (medium) from https://github.com/morhetz/gruvbox/blob/master/colors/gruvbox.vim (light0 canvas, light0_soft inset, light0_hard surface, light1/light2 selection/border, dark1 text, faded hues), with muted (dark4) darkened to #786b60 and success (faded green) to #767006 for text, and the primary button light0 on accent_solid #9d6000 (faded yellow darkened).",
   "id": "gruvbox",
   "name": "Gruvbox Dark (medium)",
   "docs": "https://github.com/morhetz/gruvbox",
@@ -52,6 +52,43 @@
     "#8ec07c",
     "#fe8019"
   ],
+  "light": {
+    "canvas": "#fbf1c7",
+    "inset": "#f2e5bc",
+    "surface": "#f9f5d7",
+    "selection": "#ebdbb2",
+    "border": "#d5c4a1",
+    "text": "#3c3836",
+    "muted": "#786b60",
+    "disabled": "#928374",
+    "accent": "#b57614",
+    "accent_solid": "#9d6000",
+    "on_accent": "#fbf1c7",
+    "link": "#076678",
+    "success": "#767006",
+    "warning": "#af3a03",
+    "danger": "#9d0006",
+    "info": "#076678",
+    "extra": {
+      "red": "#9d0006",
+      "orange": "#af3a03",
+      "yellow": "#b57614",
+      "green": "#79740e",
+      "cyan": "#427b58",
+      "purple": "#8f3f71",
+      "pink": "#8f3f71",
+      "blue": "#076678"
+    },
+    "neutrals": [
+      "#a89984",
+      "#bdae93",
+      "#d5c4a1",
+      "#ebdbb2",
+      "#f2e5bc",
+      "#fbf1c7",
+      "#f9f5d7"
+    ]
+  },
   "primer": {
     "$comment": "Gruvbox (dark, medium) palette for gen-primer-theme. Source: https://github.com/morhetz/gruvbox (README + colors/gruvbox.vim; the repo has no LICENSE file, only colour values are used here) — bg #282828, bg0_h #1d2021, bg1 #3c3836, bg2 #504945, bg3 #665c54, bg4 #7c6f64, fg #ebdbb2, fg2 #d5c4a1, fg4 #a89984, gray #928374, bright red #fb4934, green #b8bb26, yellow #fabd2f, blue #83a598, purple #d3869b, aqua #8ec07c, orange #fe8019. Base: @primer/primitives dark. Canvas bg, inset bg0_h, raised bg1/bg2, borders bg2/bg3, text fg / muted fg4, accent + primary button yellow (dark text), link blue, success green, danger red, attention yellow, severe orange, done/sponsors purple.",
     "neutral_chroma_max": 0.025,

@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Flexoki Dark. Source: https://stephango.com/flexoki. Licence: MIT. -400 steps. blue-400 cannot carry light or dark text, so accent_solid is the blue-600-class #1c507b with light text; danger text is red-300 #e8705f.",
+  "$comment": "Flexoki Dark. Source: https://stephango.com/flexoki. Licence: MIT. -400 steps. blue-400 cannot carry light or dark text, so accent_solid is the blue-600-class #1c507b with light text; danger text is red-300 #e8705f. The light block is Flexoki Light from https://stephango.com/flexoki (paper bg, base-50 bg-2, base-100/150 ui/ui-2, black tx, base-600 tx-2, base-300 tx-3, 600 accents), surface #ffffff derived (paper is the lightest upstream value) and success the green-700 #536907 because green-600 is 4.39:1 on paper.",
   "id": "flexoki",
   "name": "Flexoki Dark",
   "docs": "https://stephango.com/flexoki",
@@ -58,6 +58,41 @@
     "#8b7ec8",
     "#ce5d97"
   ],
+  "light": {
+    "canvas": "#fffcf0",
+    "inset": "#f2f0e5",
+    "surface": "#ffffff",
+    "selection": "#e6e4d9",
+    "border": "#dad8ce",
+    "text": "#100f0f",
+    "muted": "#6f6e69",
+    "disabled": "#b7b5ac",
+    "accent": "#205ea6",
+    "on_accent": "#fffcf0",
+    "link": "#205ea6",
+    "success": "#536907",
+    "warning": "#bc5215",
+    "danger": "#af3029",
+    "info": "#205ea6",
+    "extra": {
+      "red": "#af3029",
+      "orange": "#bc5215",
+      "yellow": "#ad8301",
+      "green": "#66800b",
+      "cyan": "#24837b",
+      "purple": "#5e409d",
+      "pink": "#a02f6f",
+      "blue": "#205ea6"
+    },
+    "neutrals": [
+      "#b7b5ac",
+      "#cecdc3",
+      "#dad8ce",
+      "#e6e4d9",
+      "#f2f0e5",
+      "#fffcf0"
+    ]
+  },
   "primer": {
     "$comment": "Flexoki (dark) palette for gen-primer-theme. Source: https://stephango.com/flexoki + https://github.com/kepano/flexoki README (MIT) — black #100f0f, base-950 #1c1b1a, base-900 #282726, base-850 #343331, base-800 #403e3c, base-700 #575653, base-500 #878580, base-200 #cecdc3, paper #fffcf0; dark accents are the 400 shades: red #d14d41, orange #da702c, yellow #d0a215, green #879a39, cyan #3aa99f, blue #4385be, purple #8b7ec8, magenta #ce5d97. Base: @primer/primitives dark. Canvas black, raised base-950/900, borders base-850/800, text base-200 / muted base-500, accent + link blue-400, primary button light text on a blue-600-class shade, success green, danger red (text lightened to red-300 #e8705f), attention yellow, severe orange, done purple, sponsors magenta. Nothing darker than black, so inset/shadow (#0a0909) is derived.",
     "neutral_chroma_max": 0.025,

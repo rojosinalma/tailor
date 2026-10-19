@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Nightfox. Source: https://github.com/EdenEast/nightfox.nvim. Licence: MIT. nightfox variant; purple = magenta; danger text #cd6b80.",
+  "$comment": "Nightfox. Source: https://github.com/EdenEast/nightfox.nvim. Licence: MIT. nightfox variant; purple = magenta; danger text #cd6b80. The light block is Dayfox (https://github.com/EdenEast/nightfox.nvim lua/nightfox/palette/dayfox.lua): canvas bg1, inset bg0, surface #fbf9f7 derived (bg1 mixed with white; Dayfox's bg2 is darker), selection bg3, border bg4, text fg1, muted fg2, disabled comment; warning and orange/yellow = Dayfox yellow #ac5402 (an orange hue; Dayfox's orange #955f61 is a rose-brown and it has no true yellow), purple = magenta; all upstream values, none adjusted.",
   "id": "nightfox",
   "name": "Nightfox",
   "docs": "https://github.com/EdenEast/nightfox.nvim",
@@ -52,6 +52,41 @@
     "#9d79d6",
     "#d67ad2"
   ],
+  "light": {
+    "canvas": "#f6f2ee",
+    "inset": "#e4dcd4",
+    "surface": "#fbf9f7",
+    "selection": "#d3c7bb",
+    "border": "#aab0ad",
+    "text": "#3d2b5a",
+    "muted": "#643f61",
+    "disabled": "#837a72",
+    "accent": "#2848a9",
+    "on_accent": "#f6f2ee",
+    "link": "#2848a9",
+    "success": "#396847",
+    "warning": "#ac5402",
+    "danger": "#a5222f",
+    "info": "#2848a9",
+    "extra": {
+      "red": "#a5222f",
+      "orange": "#ac5402",
+      "yellow": "#ac5402",
+      "green": "#396847",
+      "cyan": "#287980",
+      "purple": "#6e33ce",
+      "pink": "#a440b5",
+      "blue": "#2848a9"
+    },
+    "neutrals": [
+      "#aab0ad",
+      "#d3c7bb",
+      "#dbd1dd",
+      "#e4dcd4",
+      "#f6f2ee",
+      "#fbf9f7"
+    ]
+  },
   "primer": {
     "$comment": "Nightfox (nightfox) palette for gen-primer-theme. Source: https://github.com/EdenEast/nightfox.nvim lua/nightfox/palette/nightfox.lua (MIT) — bg0 #131a24, bg1 #192330, bg2 #212e3f, bg3 #29394f, bg4 #39506d, sel0 #2b3b51, fg0 #d6d6d7, fg1 #cdcecf, fg2 #aeafb0, fg3 #71839b, comment #738091, blue #719cd6, green #81b29a, red #c94f6d, yellow #dbc074, magenta #9d79d6, cyan #63cdcf, orange #f4a261, pink #d67ad2. Base: @primer/primitives dark. Canvas bg1, inset bg0, raised bg2, borders bg3/bg4, text fg1 / muted fg2 (fg3 is 4.1:1 -> disabled), accent + primary button + link blue (dark text), success green, danger red (3.6:1 on bg1; text uses a lightened #cd6b80 close to the palette's red.bright), attention yellow, severe orange, done magenta, sponsors pink.",
     "neutral_chroma_max": 0.025,

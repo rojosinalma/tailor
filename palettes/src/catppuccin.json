@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Catppuccin Mocha. Source: https://catppuccin.com/palette. Licence: MIT. orange = peach, cyan = sky, purple = mauve.",
+  "$comment": "Catppuccin Mocha. Source: https://catppuccin.com/palette. Licence: MIT. orange = peach, cyan = sky, purple = mauve. The light block is Catppuccin Latte from https://github.com/catppuccin/palette/blob/main/palette.json (base canvas, mantle inset, surface0 selection/border, mauve accent with base text), surface #fafcff derived (Latte has nothing lighter than base), muted (subtext0) darkened to #696c82, link/info (blue) to #1b63f2, success (green) to #188000 and warning (peach) to #ce3400 for text.",
   "id": "catppuccin",
   "name": "Catppuccin Mocha",
   "docs": "https://catppuccin.com/palette",
@@ -58,6 +58,42 @@
     "#cba6f7",
     "#f5c2e7"
   ],
+  "light": {
+    "canvas": "#eff1f5",
+    "inset": "#e6e9ef",
+    "surface": "#fafcff",
+    "selection": "#ccd0da",
+    "border": "#ccd0da",
+    "text": "#4c4f69",
+    "muted": "#696c82",
+    "disabled": "#8c8fa1",
+    "accent": "#8839ef",
+    "on_accent": "#eff1f5",
+    "link": "#1b63f2",
+    "success": "#188000",
+    "warning": "#ce3400",
+    "danger": "#d20f39",
+    "info": "#1b63f2",
+    "extra": {
+      "red": "#d20f39",
+      "orange": "#fe640b",
+      "yellow": "#df8e1d",
+      "green": "#40a02b",
+      "cyan": "#04a5e5",
+      "purple": "#8839ef",
+      "pink": "#ea76cb",
+      "blue": "#1e66f5",
+      "teal": "#179299"
+    },
+    "neutrals": [
+      "#acb0be",
+      "#bcc0cc",
+      "#ccd0da",
+      "#dce0e8",
+      "#e6e9ef",
+      "#eff1f5"
+    ]
+  },
   "primer": {
     "$comment": "Catppuccin Mocha palette for gen-primer-theme. Base: @primer/primitives dark. Accent/primary mauve, link blue, success green, danger red, attention yellow, severe peach, done mauve, sponsors pink.",
     "neutral_chroma_max": 0.025,

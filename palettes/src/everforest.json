@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Everforest Dark (medium). Source: https://github.com/sainnhe/everforest/blob/master/palette.md. Licence: MIT. cyan = aqua, pink = purple (no pink). Accent is green as in the theme's own UI.",
+  "$comment": "Everforest Dark (medium). Source: https://github.com/sainnhe/everforest/blob/master/palette.md. Licence: MIT. cyan = aqua, pink = purple (no pink). Accent is green as in the theme's own UI. The light block is Everforest Light (medium) from https://github.com/sainnhe/everforest/blob/master/palette.md (bg0 canvas, bg_dim inset, the hard bg0 #fffbef as surface, bg3/bg4 selection/border, fg text), with muted (grey2) darkened to #677566, link/info (blue) to #1378a7, success and accent_solid (green) to #677900, warning (orange) to #c04d00 and danger (red) to #d43135 for text.",
   "id": "everforest",
   "name": "Everforest Dark (medium)",
   "docs": "https://github.com/sainnhe/everforest/blob/master/palette.md",
@@ -53,6 +53,43 @@
     "#7fbbb3",
     "#d699b6"
   ],
+  "light": {
+    "canvas": "#fdf6e3",
+    "inset": "#efebd4",
+    "surface": "#fffbef",
+    "selection": "#e6e2cc",
+    "border": "#e0dcc7",
+    "text": "#5c6a72",
+    "muted": "#677566",
+    "disabled": "#939f91",
+    "accent": "#8da101",
+    "accent_solid": "#677900",
+    "on_accent": "#fdf6e3",
+    "link": "#1378a7",
+    "success": "#677900",
+    "warning": "#c04d00",
+    "danger": "#d43135",
+    "info": "#1378a7",
+    "extra": {
+      "red": "#f85552",
+      "orange": "#f57d26",
+      "yellow": "#dfa000",
+      "green": "#8da101",
+      "cyan": "#35a77c",
+      "purple": "#df69ba",
+      "pink": "#df69ba",
+      "blue": "#3a94c5"
+    },
+    "neutrals": [
+      "#bdc3af",
+      "#e0dcc7",
+      "#e6e2cc",
+      "#efebd4",
+      "#f4f0d9",
+      "#fdf6e3",
+      "#fffbef"
+    ]
+  },
   "primer": {
     "$comment": "Everforest (dark, medium) palette for gen-primer-theme. Source: https://github.com/sainnhe/everforest/blob/master/palette.md (MIT) — bg_dim #232a2e, bg0 #2d353b, bg1 #343f44, bg2 #3d484d, bg3 #475258, bg4 #4f585e, bg5 #56635f, fg #d3c6aa, red #e67e80, orange #e69875, yellow #dbbc7f, green #a7c080, aqua #83c092, blue #7fbbb3, purple #d699b6, grey0 #7a8478, grey1 #859289, grey2 #9da9a0. Base: @primer/primitives dark. Canvas bg0, inset bg_dim, raised bg1/bg2, borders bg3/bg4, text fg / muted grey2, accent + primary button green (dark text), link blue, success green, danger red, attention yellow, severe orange, done/sponsors purple.",
     "neutral_chroma_max": 0.025,

@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Vitesse Dark. Source: https://github.com/antfu/vscode-theme-vitesse. Licence: MIT. green is accent, link and success alike (as the theme's own button/link); purple/pink = magenta; borders and inset are derived greys (upstream #191919 is invisible).",
+  "$comment": "Vitesse Dark. Source: https://github.com/antfu/vscode-theme-vitesse. Licence: MIT. green is accent, link and success alike (as the theme's own button/link); purple/pink = magenta; borders and inset are derived greys (upstream #191919 is invisible). Light block is Vitesse Light (https://github.com/antfu/vscode-theme-vitesse themes/vitesse-light.json): canvas activeBackground #f7f7f7, surface background #ffffff, inset #f0f0f0 (upstream border), selection #e1e4e8 and border #d1d5da (indent guide / checkbox border); text foreground, muted activeForeground, disabled comment; accent/link/info primary #1c6b48 with white button text, success green #1e754f; every upstream value already passes as text.",
   "id": "vitesse",
   "name": "Vitesse Dark",
   "docs": "https://github.com/antfu/vscode-theme-vitesse",
@@ -52,6 +52,43 @@
     "#e6cc77",
     "#d9739f"
   ],
+  "light": {
+    "canvas": "#f7f7f7",
+    "inset": "#f0f0f0",
+    "surface": "#ffffff",
+    "selection": "#e1e4e8",
+    "border": "#d1d5da",
+    "text": "#393a34",
+    "muted": "#4e4f47",
+    "disabled": "#a0ada0",
+    "accent": "#1c6b48",
+    "on_accent": "#ffffff",
+    "link": "#1c6b48",
+    "success": "#1e754f",
+    "warning": "#a65e2b",
+    "danger": "#ab5959",
+    "info": "#1c6b48",
+    "extra": {
+      "red": "#ab5959",
+      "orange": "#a65e2b",
+      "yellow": "#bda437",
+      "green": "#1e754f",
+      "cyan": "#2993a3",
+      "purple": "#a13865",
+      "pink": "#a13865",
+      "blue": "#296aa3"
+    },
+    "neutrals": [
+      "#ffffff",
+      "#f7f7f7",
+      "#f0f0f0",
+      "#e1e4e8",
+      "#d1d5da",
+      "#a0ada0",
+      "#4e4f47",
+      "#393a34"
+    ]
+  },
   "primer": {
     "$comment": "Vitesse (dark) palette for gen-primer-theme. Source: https://github.com/antfu/vscode-theme-vitesse themes/vitesse-dark.json (MIT) — editor.background #121212, input.background #181818, panel.border #191919, foreground #dbd7ca, secondary #bfbaaa (activityBarBadge), comment #758575, terminal.ansiBrightBlack #777777, primary green #4d9375 (button, textLink, added), green2 #80a665, yellow #e6cc77, orange #d4976c, red #cb7676, blue #6394bf, magenta #d9739f, cyan #5eaab5. Base: @primer/primitives dark. Canvas #121212, raised #181818; Vitesse's borders (#191919) are near-invisible on Primer's bordered components, so the two border steps (#262626, #333333) and the inset (#0a0a0a) are derived. Text foreground / muted secondary, comment green-grey for disabled. Accent + primary button + link + success the Vitesse green (dark text, as its own button), danger red, attention yellow, severe orange, done + sponsors magenta (no purple in Vitesse).",
     "neutral_chroma_max": 0.025,

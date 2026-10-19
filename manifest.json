@@ -1,8 +1,8 @@
 {
   "$schema": "manifest.schema.json",
   "name": "tailor",
-  "version": "0.5.1",
-  "generated": "2026-10-16T14:38:39.210Z",
+  "version": "0.6.0",
+  "generated": "2026-10-19T14:03:48.505Z",
   "contract": {
     "prefix": "t-",
     "token_prefix": "--t-",
@@ -120,7 +120,7 @@
         "name": "App shell",
         "tier": 1,
         "group": "shell",
-        "description": "The page frame: sticky navbar, optional sticky scrolling sidebar, main column, fixed footer. Stacks below 992px.",
+        "description": "The page frame: sticky navbar, main column spanning the full width, fixed footer; a sidebar column appears only when a .t-shell-side child is present (sticky, scrolls on its own). Stacks below 992px.",
         "root": "t-shell",
         "parts": {
           "t-shell-nav": "navbar slot (a .t-navbar)",
@@ -135,7 +135,7 @@
           ]
         },
         "behaviour": "none",
-        "a11y": "<header>, <aside>, <main>, <footer> landmarks; exactly one <main>.",
+        "a11y": "<header>, <aside>, <main>, <footer> landmarks; exactly one <main>. A shell without a sidebar needs no attribute (omit .t-shell-side); data-sidebar=none hides an existing one, collapsed narrows it.",
         "markup": "<div class='t-shell'>\n  <header class='t-navbar t-shell-nav'>…</header>\n  <aside class='t-shell-side'><nav class='t-sidebar' aria-label='Sections'>…</nav></aside>\n  <main class='t-shell-main t-page'>…</main>\n  <footer class='t-footer t-shell-foot'>…</footer>\n</div>",
         "notes": "layout.css owns the geometry (--t-nav-h, --t-footer-h, --t-sidebar-w, --t-gutter). Skins colour the slots via .t-navbar/.t-sidebar/.t-footer, never reposition them.",
         "source": "reference/index.html shell-mock, dracula.css .main-content"
@@ -198,11 +198,12 @@
         "root": "t-footer",
         "parts": {
           "t-footer-repo": "centred repo link",
-          "t-footer-end": "right-aligned group",
+          "t-footer-end": "right-aligned group; the switcher ([data-tailor-pickers] → .t-pickers) is its first item",
+          "t-pickers": "the rendered switcher: sun/moon toggle, then skin/palette selects",
           "t-footer-version": "monospace version string"
         },
         "behaviour": "none",
-        "markup": "<footer class='t-footer'>\n  <a class='t-footer-repo' href='https://github.com/…' title='repo'><span class='t-icon'>⌥</span></a>\n  <div class='t-footer-end'><span class='t-footer-version'>v0.9.2</span><button class='t-btn' data-variant='ghost' data-size='sm' data-tailor-mode-toggle aria-label='Toggle light/dark'>☼</button></div>\n</footer>",
+        "markup": "<footer class='t-footer'>\n  <a class='t-footer-repo' href='https://github.com/…' title='repo'><span class='t-icon'>⌥</span></a>\n  <div class='t-footer-end'><div data-tailor-pickers></div><span class='t-footer-version'>v0.9.2</span></div>\n</footer>",
         "source": "footer.css"
       },
       {
@@ -2165,7 +2166,8 @@
       "name": "Ayu Dark",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://github.com/ayu-theme/ayu-colors",
@@ -2177,7 +2179,8 @@
       "name": "Catppuccin Mocha",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://catppuccin.com/palette",
@@ -2202,7 +2205,8 @@
       "name": "Everforest Dark (medium)",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://github.com/sainnhe/everforest/blob/master/palette.md",
@@ -2214,7 +2218,8 @@
       "name": "Flexoki Dark",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://stephango.com/flexoki",
@@ -2226,7 +2231,8 @@
       "name": "Gruvbox Dark (medium)",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "values-only (no LICENSE file in the repo)",
       "docs": "https://github.com/morhetz/gruvbox",
@@ -2238,7 +2244,8 @@
       "name": "Kanagawa Wave",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://github.com/rebelot/kanagawa.nvim",
@@ -2250,7 +2257,8 @@
       "name": "Modus Vivendi",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "values-only (GPL-3.0-or-later)",
       "docs": "https://protesilaos.com/emacs/modus-themes",
@@ -2262,7 +2270,8 @@
       "name": "Nightfox",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://github.com/EdenEast/nightfox.nvim",
@@ -2274,7 +2283,8 @@
       "name": "Night Owl",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://github.com/sdras/night-owl-vscode-theme",
@@ -2286,7 +2296,8 @@
       "name": "Nord",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://www.nordtheme.com/docs/colors-and-palettes",
@@ -2298,7 +2309,8 @@
       "name": "One Dark",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://github.com/joshdick/onedark.vim",
@@ -2310,7 +2322,8 @@
       "name": "Oxocarbon Dark",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://github.com/nyoom-engineering/oxocarbon.nvim",
@@ -2322,7 +2335,8 @@
       "name": "Poimandres",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://github.com/drcmda/poimandres-theme",
@@ -2334,7 +2348,8 @@
       "name": "Rosé Pine",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://rosepinetheme.com/palette",
@@ -2346,7 +2361,8 @@
       "name": "Selenized Dark",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://github.com/jan-warchol/selenized",
@@ -2358,7 +2374,8 @@
       "name": "Solarized Dark",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://ethanschoonover.com/solarized",
@@ -2370,7 +2387,8 @@
       "name": "SynthWave '84",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://github.com/robb0wen/synthwave-vscode",
@@ -2382,7 +2400,8 @@
       "name": "Tokyo Night",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "Apache-2.0",
       "docs": "https://github.com/folke/tokyonight.nvim",
@@ -2394,7 +2413,8 @@
       "name": "Vitesse Dark",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "MIT",
       "docs": "https://github.com/antfu/vscode-theme-vitesse",
@@ -2406,7 +2426,8 @@
       "name": "Zenburn",
       "mode": "dark",
       "modes": [
-        "dark"
+        "dark",
+        "light"
       ],
       "license": "values-only (GPL header, no LICENSE file)",
       "docs": "https://github.com/jnurmine/Zenburn",
@@ -2485,530 +2506,690 @@
   "compatibility": {
     "bootstrap": {
       "ayu": [
-        "dark"
+        "dark",
+        "light"
       ],
       "catppuccin": [
-        "dark"
+        "dark",
+        "light"
       ],
       "dracula": [
         "dark",
         "light"
       ],
       "everforest": [
-        "dark"
+        "dark",
+        "light"
       ],
       "flexoki": [
-        "dark"
+        "dark",
+        "light"
       ],
       "gruvbox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "kanagawa": [
-        "dark"
+        "dark",
+        "light"
       ],
       "modusvivendi": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightfox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightowl": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nord": [
-        "dark"
+        "dark",
+        "light"
       ],
       "onedark": [
-        "dark"
+        "dark",
+        "light"
       ],
       "oxocarbon": [
-        "dark"
+        "dark",
+        "light"
       ],
       "poimandres": [
-        "dark"
+        "dark",
+        "light"
       ],
       "rosepine": [
-        "dark"
+        "dark",
+        "light"
       ],
       "selenized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "solarized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "synthwave84": [
-        "dark"
+        "dark",
+        "light"
       ],
       "tokyonight": [
-        "dark"
+        "dark",
+        "light"
       ],
       "vitesse": [
-        "dark"
+        "dark",
+        "light"
       ],
       "zenburn": [
-        "dark"
+        "dark",
+        "light"
       ]
     },
     "daisyui": {
       "ayu": [
-        "dark"
+        "dark",
+        "light"
       ],
       "catppuccin": [
-        "dark"
+        "dark",
+        "light"
       ],
       "dracula": [
         "dark",
         "light"
       ],
       "everforest": [
-        "dark"
+        "dark",
+        "light"
       ],
       "flexoki": [
-        "dark"
+        "dark",
+        "light"
       ],
       "gruvbox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "kanagawa": [
-        "dark"
+        "dark",
+        "light"
       ],
       "modusvivendi": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightfox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightowl": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nord": [
-        "dark"
+        "dark",
+        "light"
       ],
       "onedark": [
-        "dark"
+        "dark",
+        "light"
       ],
       "oxocarbon": [
-        "dark"
+        "dark",
+        "light"
       ],
       "poimandres": [
-        "dark"
+        "dark",
+        "light"
       ],
       "rosepine": [
-        "dark"
+        "dark",
+        "light"
       ],
       "selenized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "solarized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "synthwave84": [
-        "dark"
+        "dark",
+        "light"
       ],
       "tokyonight": [
-        "dark"
+        "dark",
+        "light"
       ],
       "vitesse": [
-        "dark"
+        "dark",
+        "light"
       ],
       "zenburn": [
-        "dark"
+        "dark",
+        "light"
       ]
     },
     "govuk": {
       "ayu": [
-        "dark"
+        "dark",
+        "light"
       ],
       "catppuccin": [
-        "dark"
+        "dark",
+        "light"
       ],
       "dracula": [
         "dark",
         "light"
       ],
       "everforest": [
-        "dark"
+        "dark",
+        "light"
       ],
       "flexoki": [
-        "dark"
+        "dark",
+        "light"
       ],
       "gruvbox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "kanagawa": [
-        "dark"
+        "dark",
+        "light"
       ],
       "modusvivendi": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightfox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightowl": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nord": [
-        "dark"
+        "dark",
+        "light"
       ],
       "onedark": [
-        "dark"
+        "dark",
+        "light"
       ],
       "oxocarbon": [
-        "dark"
+        "dark",
+        "light"
       ],
       "poimandres": [
-        "dark"
+        "dark",
+        "light"
       ],
       "rosepine": [
-        "dark"
+        "dark",
+        "light"
       ],
       "selenized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "solarized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "synthwave84": [
-        "dark"
+        "dark",
+        "light"
       ],
       "tokyonight": [
-        "dark"
+        "dark",
+        "light"
       ],
       "vitesse": [
-        "dark"
+        "dark",
+        "light"
       ],
       "zenburn": [
-        "dark"
+        "dark",
+        "light"
       ]
     },
     "luz": {
       "ayu": [
-        "dark"
+        "dark",
+        "light"
       ],
       "catppuccin": [
-        "dark"
+        "dark",
+        "light"
       ],
       "dracula": [
         "dark",
         "light"
       ],
       "everforest": [
-        "dark"
+        "dark",
+        "light"
       ],
       "flexoki": [
-        "dark"
+        "dark",
+        "light"
       ],
       "gruvbox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "kanagawa": [
-        "dark"
+        "dark",
+        "light"
       ],
       "modusvivendi": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightfox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightowl": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nord": [
-        "dark"
+        "dark",
+        "light"
       ],
       "onedark": [
-        "dark"
+        "dark",
+        "light"
       ],
       "oxocarbon": [
-        "dark"
+        "dark",
+        "light"
       ],
       "poimandres": [
-        "dark"
+        "dark",
+        "light"
       ],
       "rosepine": [
-        "dark"
+        "dark",
+        "light"
       ],
       "selenized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "solarized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "synthwave84": [
-        "dark"
+        "dark",
+        "light"
       ],
       "tokyonight": [
-        "dark"
+        "dark",
+        "light"
       ],
       "vitesse": [
-        "dark"
+        "dark",
+        "light"
       ],
       "zenburn": [
-        "dark"
+        "dark",
+        "light"
       ]
     },
     "pico": {
       "ayu": [
-        "dark"
+        "dark",
+        "light"
       ],
       "catppuccin": [
-        "dark"
+        "dark",
+        "light"
       ],
       "dracula": [
         "dark",
         "light"
       ],
       "everforest": [
-        "dark"
+        "dark",
+        "light"
       ],
       "flexoki": [
-        "dark"
+        "dark",
+        "light"
       ],
       "gruvbox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "kanagawa": [
-        "dark"
+        "dark",
+        "light"
       ],
       "modusvivendi": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightfox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightowl": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nord": [
-        "dark"
+        "dark",
+        "light"
       ],
       "onedark": [
-        "dark"
+        "dark",
+        "light"
       ],
       "oxocarbon": [
-        "dark"
+        "dark",
+        "light"
       ],
       "poimandres": [
-        "dark"
+        "dark",
+        "light"
       ],
       "rosepine": [
-        "dark"
+        "dark",
+        "light"
       ],
       "selenized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "solarized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "synthwave84": [
-        "dark"
+        "dark",
+        "light"
       ],
       "tokyonight": [
-        "dark"
+        "dark",
+        "light"
       ],
       "vitesse": [
-        "dark"
+        "dark",
+        "light"
       ],
       "zenburn": [
-        "dark"
+        "dark",
+        "light"
       ]
     },
     "simple": {
       "ayu": [
-        "dark"
+        "dark",
+        "light"
       ],
       "catppuccin": [
-        "dark"
+        "dark",
+        "light"
       ],
       "dracula": [
         "dark",
         "light"
       ],
       "everforest": [
-        "dark"
+        "dark",
+        "light"
       ],
       "flexoki": [
-        "dark"
+        "dark",
+        "light"
       ],
       "gruvbox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "kanagawa": [
-        "dark"
+        "dark",
+        "light"
       ],
       "modusvivendi": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightfox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightowl": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nord": [
-        "dark"
+        "dark",
+        "light"
       ],
       "onedark": [
-        "dark"
+        "dark",
+        "light"
       ],
       "oxocarbon": [
-        "dark"
+        "dark",
+        "light"
       ],
       "poimandres": [
-        "dark"
+        "dark",
+        "light"
       ],
       "rosepine": [
-        "dark"
+        "dark",
+        "light"
       ],
       "selenized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "solarized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "synthwave84": [
-        "dark"
+        "dark",
+        "light"
       ],
       "tokyonight": [
-        "dark"
+        "dark",
+        "light"
       ],
       "vitesse": [
-        "dark"
+        "dark",
+        "light"
       ],
       "zenburn": [
-        "dark"
+        "dark",
+        "light"
       ]
     },
     "tufte": {
       "ayu": [
-        "dark"
+        "dark",
+        "light"
       ],
       "catppuccin": [
-        "dark"
+        "dark",
+        "light"
       ],
       "dracula": [
         "dark",
         "light"
       ],
       "everforest": [
-        "dark"
+        "dark",
+        "light"
       ],
       "flexoki": [
-        "dark"
+        "dark",
+        "light"
       ],
       "gruvbox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "kanagawa": [
-        "dark"
+        "dark",
+        "light"
       ],
       "modusvivendi": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightfox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightowl": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nord": [
-        "dark"
+        "dark",
+        "light"
       ],
       "onedark": [
-        "dark"
+        "dark",
+        "light"
       ],
       "oxocarbon": [
-        "dark"
+        "dark",
+        "light"
       ],
       "poimandres": [
-        "dark"
+        "dark",
+        "light"
       ],
       "rosepine": [
-        "dark"
+        "dark",
+        "light"
       ],
       "selenized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "solarized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "synthwave84": [
-        "dark"
+        "dark",
+        "light"
       ],
       "tokyonight": [
-        "dark"
+        "dark",
+        "light"
       ],
       "vitesse": [
-        "dark"
+        "dark",
+        "light"
       ],
       "zenburn": [
-        "dark"
+        "dark",
+        "light"
       ]
     },
     "webtui": {
       "ayu": [
-        "dark"
+        "dark",
+        "light"
       ],
       "catppuccin": [
-        "dark"
+        "dark",
+        "light"
       ],
       "dracula": [
         "dark",
         "light"
       ],
       "everforest": [
-        "dark"
+        "dark",
+        "light"
       ],
       "flexoki": [
-        "dark"
+        "dark",
+        "light"
       ],
       "gruvbox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "kanagawa": [
-        "dark"
+        "dark",
+        "light"
       ],
       "modusvivendi": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightfox": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nightowl": [
-        "dark"
+        "dark",
+        "light"
       ],
       "nord": [
-        "dark"
+        "dark",
+        "light"
       ],
       "onedark": [
-        "dark"
+        "dark",
+        "light"
       ],
       "oxocarbon": [
-        "dark"
+        "dark",
+        "light"
       ],
       "poimandres": [
-        "dark"
+        "dark",
+        "light"
       ],
       "rosepine": [
-        "dark"
+        "dark",
+        "light"
       ],
       "selenized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "solarized": [
-        "dark"
+        "dark",
+        "light"
       ],
       "synthwave84": [
-        "dark"
+        "dark",
+        "light"
       ],
       "tokyonight": [
-        "dark"
+        "dark",
+        "light"
       ],
       "vitesse": [
-        "dark"
+        "dark",
+        "light"
       ],
       "zenburn": [
-        "dark"
+        "dark",
+        "light"
       ]
     }
   }

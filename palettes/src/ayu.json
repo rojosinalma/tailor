@@ -1,6 +1,6 @@
 {
   "$schema": "palette.schema.json",
-  "$comment": "Ayu Dark. Source: https://github.com/ayu-theme/ayu-colors. Licence: MIT. accent = ayu accent #e6b450 (yellow-gold), link = tag/indigo #39bae6, pink = markup coral #f07178; muted #8a9199 derived (ui.fg is 3:1 → disabled only); danger text #f26d78.",
+  "$comment": "Ayu Dark. Source: https://github.com/ayu-theme/ayu-colors. Licence: MIT. accent = ayu accent #e6b450 (yellow-gold), link = tag/indigo #39bae6, pink = markup coral #f07178; muted #8a9199 derived (ui.fg is 3:1 → disabled only); danger text #f26d78. The light block is Ayu Light from https://github.com/ayu-theme/ayu-colors/blob/master/themes/light.yaml (surface sunk/base/over, editor.fg text, ui.fg disabled, selection/border = ui.line #6b7d8f flattened at 14%/22%, primary button white on accent_solid #b66000), with muted darkened to #687484, link/info (tag) to #097d9c, success to #567e00, warning to #c05000 and danger (error) to #d13b3f for text.",
   "id": "ayu",
   "name": "Ayu Dark",
   "docs": "https://github.com/ayu-theme/ayu-colors",
@@ -58,6 +58,42 @@
     "#f29668",
     "#d95757"
   ],
+  "light": {
+    "canvas": "#f8f9fa",
+    "inset": "#ebeef0",
+    "surface": "#ffffff",
+    "selection": "#e4e8eb",
+    "border": "#d9dee2",
+    "text": "#5c6166",
+    "muted": "#687484",
+    "disabled": "#828e9f",
+    "accent": "#f29718",
+    "accent_solid": "#b66000",
+    "on_accent": "#ffffff",
+    "link": "#097d9c",
+    "success": "#567e00",
+    "warning": "#c05000",
+    "danger": "#d13b3f",
+    "info": "#097d9c",
+    "extra": {
+      "red": "#e65050",
+      "orange": "#fa8532",
+      "yellow": "#eba400",
+      "green": "#86b300",
+      "cyan": "#4cbf99",
+      "purple": "#a37acc",
+      "pink": "#f07171",
+      "blue": "#55b4d4"
+    },
+    "neutrals": [
+      "#828e9f",
+      "#adaeb1",
+      "#ebeef0",
+      "#f8f9fa",
+      "#fcfcfc",
+      "#ffffff"
+    ]
+  },
   "primer": {
     "$comment": "Ayu (dark) palette for gen-primer-theme. Source: https://github.com/ayu-theme/ayu-colors themes/dark.yaml (MIT) — surface.base #0d1017, surface.lift (editor bg) #10141c, ui.panel.bg #141821, ui.popup.bg #0f131a, ui.line #1b1f29, editor.fg #bfbdb6, ui.fg #5a6378, accent #e6b450, tag/indigo #39bae6, func/yellow #ffb454, entity/blue #59c2ff, string/green #aad94c, regexp/teal #95e6cb, markup/red #f07178, keyword/orange #ff8f40, special/peach #e6c08a, constant/purple #d2a6ff, operator/pink #f29668, error #d95757, vcs added #70bf56 / modified #73b8ff / removed #f26d78. Base: @primer/primitives dark. Canvas surface.base, inset derived (#0a0d13), raised editor bg / panel bg, borders ui.line + derived #2a303c, text editor.fg, muted #8a9199 (derived from the gray ramp — ui.fg is 3:1 and stays on disabled), accent + primary button accent (dark text), link indigo, success green, danger error (text vcs.removed), attention yellow, severe orange, done purple, sponsors pink.",
     "neutral_chroma_max": 0.025,

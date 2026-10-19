@@ -40,7 +40,7 @@
       "name": "App shell",
       "tier": 1,
       "group": "shell",
-      "description": "The page frame: sticky navbar, optional sticky scrolling sidebar, main column, fixed footer. Stacks below 992px.",
+      "description": "The page frame: sticky navbar, main column spanning the full width, fixed footer; a sidebar column appears only when a .t-shell-side child is present (sticky, scrolls on its own). Stacks below 992px.",
       "root": "t-shell",
       "parts": {
         "t-shell-nav": "navbar slot (a .t-navbar)",
@@ -55,7 +55,7 @@
         ]
       },
       "behaviour": "none",
-      "a11y": "<header>, <aside>, <main>, <footer> landmarks; exactly one <main>.",
+      "a11y": "<header>, <aside>, <main>, <footer> landmarks; exactly one <main>. A shell without a sidebar needs no attribute (omit .t-shell-side); data-sidebar=none hides an existing one, collapsed narrows it.",
       "markup": "<div class='t-shell'>\n  <header class='t-navbar t-shell-nav'>…</header>\n  <aside class='t-shell-side'><nav class='t-sidebar' aria-label='Sections'>…</nav></aside>\n  <main class='t-shell-main t-page'>…</main>\n  <footer class='t-footer t-shell-foot'>…</footer>\n</div>",
       "demo": "<div class='t-shell t-demo-shell' data-demo='mock'>\n  <header class='t-navbar t-shell-nav'><a class='t-navbar-brand' href='#'>console</a><ul class='t-navbar-nav'><li><a class='t-navbar-link' href='#' aria-current='page'>Services</a></li><li><a class='t-navbar-link' href='#'>Hosts</a></li></ul></header>\n  <aside class='t-shell-side'><nav class='t-sidebar' aria-label='Mock'><ul><li class='t-sidebar-group'>Fleet</li><li><a class='t-sidebar-item' href='#' aria-current='page'><span class='t-sidebar-item-name'>Overview</span></a></li><li><a class='t-sidebar-item' href='#'><span class='t-sidebar-item-name'>Devices</span><span class='t-counter'>12</span></a></li></ul></nav></aside>\n  <main class='t-shell-main t-page'><header class='t-page-header'><h1 class='t-page-title'>Services</h1></header><p class='t-muted'>Main column scrolls; sidebar and navbar stay.</p></main>\n  <footer class='t-footer t-shell-foot'><span class='t-footer-version'>v0.9.2</span></footer>\n</div>",
       "notes": "layout.css owns the geometry (--t-nav-h, --t-footer-h, --t-sidebar-w, --t-gutter). Skins colour the slots via .t-navbar/.t-sidebar/.t-footer, never reposition them.",
@@ -119,12 +119,13 @@
       "root": "t-footer",
       "parts": {
         "t-footer-repo": "centred repo link",
-        "t-footer-end": "right-aligned group",
+        "t-footer-end": "right-aligned group; the switcher ([data-tailor-pickers] → .t-pickers) is its first item",
+        "t-pickers": "the rendered switcher: sun/moon toggle, then skin/palette selects",
         "t-footer-version": "monospace version string"
       },
       "behaviour": "none",
-      "markup": "<footer class='t-footer'>\n  <a class='t-footer-repo' href='https://github.com/…' title='repo'><span class='t-icon'>⌥</span></a>\n  <div class='t-footer-end'><span class='t-footer-version'>v0.9.2</span><button class='t-btn' data-variant='ghost' data-size='sm' data-tailor-mode-toggle aria-label='Toggle light/dark'>☼</button></div>\n</footer>",
-      "demo": "<footer class='t-footer' style='position:static'>\n  <a class='t-footer-repo' href='#' title='repo'><span class='t-icon'>⌥</span></a>\n  <div class='t-footer-end'><span class='t-footer-version'>tailor 0.1.0</span><button class='t-btn' data-variant='ghost' data-size='sm' data-tailor-mode-toggle aria-label='Toggle light/dark'>☼</button></div>\n</footer>",
+      "markup": "<footer class='t-footer'>\n  <a class='t-footer-repo' href='https://github.com/…' title='repo'><span class='t-icon'>⌥</span></a>\n  <div class='t-footer-end'><div data-tailor-pickers></div><span class='t-footer-version'>v0.9.2</span></div>\n</footer>",
+      "demo": "<footer class='t-footer' style='position:static'>\n  <a class='t-footer-repo' href='#' title='repo'><span class='t-icon'>⌥</span></a>\n  <div class='t-footer-end'><div class='t-pickers'><button type='button' class='t-btn' data-variant='ghost' data-size='sm' data-icon='only' aria-label='Switch to light mode' data-demo='static'><span class='t-icon' aria-hidden='true'>☼</span></button></div><span class='t-footer-version'>tailor 0.1.0</span></div>\n</footer>",
       "source": "footer.css"
     },
     {
