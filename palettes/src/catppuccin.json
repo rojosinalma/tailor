@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "Catppuccin Mocha. Source: https://catppuccin.com/palette. Licence: MIT. orange = peach, cyan = sky, purple = mauve. The light block is Catppuccin Latte from https://github.com/catppuccin/palette/blob/main/palette.json (base canvas, mantle inset, surface0 selection/border, mauve accent with base text), surface #fafcff derived (Latte has nothing lighter than base), muted (subtext0) darkened to #696c82, link/info (blue) to #1b63f2, success (green) to #188000 and warning (peach) to #ce3400 for text.",
   "id": "catppuccin",
-  "name": "Catppuccin Mocha",
+  "name": "Catppuccin",
   "docs": "https://catppuccin.com/palette",
   "license": "MIT",
   "mode": "dark",

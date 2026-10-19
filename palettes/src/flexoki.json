@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "Flexoki Dark. Source: https://stephango.com/flexoki. Licence: MIT. -400 steps. blue-400 cannot carry light or dark text, so accent_solid is the blue-600-class #1c507b with light text; danger text is red-300 #e8705f. The light block is Flexoki Light from https://stephango.com/flexoki (paper bg, base-50 bg-2, base-100/150 ui/ui-2, black tx, base-600 tx-2, base-300 tx-3, 600 accents), surface #ffffff derived (paper is the lightest upstream value) and success the green-700 #536907 because green-600 is 4.39:1 on paper.",
   "id": "flexoki",
-  "name": "Flexoki Dark",
+  "name": "Flexoki",
   "docs": "https://stephango.com/flexoki",
   "license": "MIT",
   "mode": "dark",

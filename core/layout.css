@@ -58,6 +58,8 @@
 .t-footer-end { position: absolute; right: var(--t-space-5); display: flex; align-items: center; gap: var(--t-space-3); }
 /* skin/palette/mode pickers ([data-tailor-pickers], rendered by Tailor.theme): footer when the layout has one, else navbar end */
 .t-pickers { display: inline-flex; align-items: center; gap: var(--t-space-2); }
+/* inside a settings row the selects stack and take the control width (two side by side would truncate) */
+.t-setting-control > .t-pickers { display: flex; flex-wrap: wrap; } .t-setting-control > .t-pickers > .t-select { flex: 1 1 100%; }
 
 /* ── page ──────────────────────────────────────────────────────────────────── */
 .t-page { padding: var(--t-space-6) var(--t-gutter) var(--t-space-6); max-width: var(--t-content-max); }

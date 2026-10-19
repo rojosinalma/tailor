@@ -4,6 +4,16 @@ All notable changes to tailor. Semver; the `version` in `package.json` is the so
 
 ## [Unreleased]
 
+## [0.6.1] — 2026-10-19
+
+### Changed
+- Palette names are mode-neutral now that every palette ships dark and light: Ayu, Catppuccin, Everforest, Flexoki,
+  Gruvbox, Kanagawa, Modus, Atom One, Oxocarbon, Selenized, Solarized, Vitesse (ids unchanged).
+
+### Fixed
+- `layout.css`: `.t-pickers` inside a `.t-setting-control` stacks its selects at the control width — two side by
+  side truncated the labels in the 560px settings column.
+
 ## [0.6.0] — 2026-10-19
 
 ### Changed

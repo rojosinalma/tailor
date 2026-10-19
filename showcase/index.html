@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../core/layout.css">
   <script>
     /* Pre-paint (after the core links so skin + palette cascade over tokens.css): ?skin= ?palette= ?mode= → localStorage → defaults; sets data-* on <html> and the two <link>s before first paint. */
-    (function(){var C={"project":"tailor-showcase","icons":"icons.svg","skins":["none","bootstrap","daisyui","govuk","luz","pico","simple","tufte","webtui"],"palettes":["ayu","catppuccin","dracula","everforest","flexoki","gruvbox","kanagawa","modusvivendi","nightfox","nightowl","nord","onedark","oxocarbon","poimandres","rosepine","selenized","solarized","synthwave84","tokyonight","vitesse","zenburn"],"modes":{"ayu":["dark","light"],"catppuccin":["dark","light"],"dracula":["dark","light"],"everforest":["dark","light"],"flexoki":["dark","light"],"gruvbox":["dark","light"],"kanagawa":["dark","light"],"modusvivendi":["dark","light"],"nightfox":["dark","light"],"nightowl":["dark","light"],"nord":["dark","light"],"onedark":["dark","light"],"oxocarbon":["dark","light"],"poimandres":["dark","light"],"rosepine":["dark","light"],"selenized":["dark","light"],"solarized":["dark","light"],"synthwave84":["dark","light"],"tokyonight":["dark","light"],"vitesse":["dark","light"],"zenburn":["dark","light"]},"labels":{"skins":{"bootstrap":"Bootstrap 5 (Dracula look)","daisyui":"daisyUI 5","govuk":"GOV.UK Frontend (translated)","luz":"luz (d00m-gui)","pico":"Pico CSS","simple":"Simple.css (translated)","tufte":"Tufte CSS (translated)","webtui":"WebTUI (terminal look)"},"palettes":{"ayu":"Ayu Dark","catppuccin":"Catppuccin Mocha","dracula":"Dracula","everforest":"Everforest Dark (medium)","flexoki":"Flexoki Dark","gruvbox":"Gruvbox Dark (medium) ·","kanagawa":"Kanagawa Wave","modusvivendi":"Modus Vivendi ·","nightfox":"Nightfox","nightowl":"Night Owl","nord":"Nord","onedark":"One Dark","oxocarbon":"Oxocarbon Dark","poimandres":"Poimandres","rosepine":"Rosé Pine","selenized":"Selenized Dark","solarized":"Solarized Dark","synthwave84":"SynthWave '84","tokyonight":"Tokyo Night","vitesse":"Vitesse Dark","zenburn":"Zenburn ·"}},"defaults":{"skin":"bootstrap","palette":"dracula","mode":"auto"}};var P=C.project,q=new URLSearchParams(location.search);
+    (function(){var C={"project":"tailor-showcase","icons":"icons.svg","skins":["none","bootstrap","daisyui","govuk","luz","pico","simple","tufte","webtui"],"palettes":["ayu","catppuccin","dracula","everforest","flexoki","gruvbox","kanagawa","modusvivendi","nightfox","nightowl","nord","onedark","oxocarbon","poimandres","rosepine","selenized","solarized","synthwave84","tokyonight","vitesse","zenburn"],"modes":{"ayu":["dark","light"],"catppuccin":["dark","light"],"dracula":["dark","light"],"everforest":["dark","light"],"flexoki":["dark","light"],"gruvbox":["dark","light"],"kanagawa":["dark","light"],"modusvivendi":["dark","light"],"nightfox":["dark","light"],"nightowl":["dark","light"],"nord":["dark","light"],"onedark":["dark","light"],"oxocarbon":["dark","light"],"poimandres":["dark","light"],"rosepine":["dark","light"],"selenized":["dark","light"],"solarized":["dark","light"],"synthwave84":["dark","light"],"tokyonight":["dark","light"],"vitesse":["dark","light"],"zenburn":["dark","light"]},"labels":{"skins":{"bootstrap":"Bootstrap 5 (Dracula look)","daisyui":"daisyUI 5","govuk":"GOV.UK Frontend (translated)","luz":"luz (d00m-gui)","pico":"Pico CSS","simple":"Simple.css (translated)","tufte":"Tufte CSS (translated)","webtui":"WebTUI (terminal look)"},"palettes":{"ayu":"Ayu","catppuccin":"Catppuccin","dracula":"Dracula","everforest":"Everforest","flexoki":"Flexoki","gruvbox":"Gruvbox ·","kanagawa":"Kanagawa","modusvivendi":"Modus ·","nightfox":"Nightfox","nightowl":"Night Owl","nord":"Nord","onedark":"Atom One","oxocarbon":"Oxocarbon","poimandres":"Poimandres","rosepine":"Rosé Pine","selenized":"Selenized","solarized":"Solarized","synthwave84":"SynthWave '84","tokyonight":"Tokyo Night","vitesse":"Vitesse","zenburn":"Zenburn ·"}},"defaults":{"skin":"bootstrap","palette":"dracula","mode":"auto"}};var P=C.project,q=new URLSearchParams(location.search);
     function g(k){var v=q.get(k);try{return v||localStorage.getItem(P+'.'+k)||C.defaults[k]}catch(e){return v||C.defaults[k]}}
     var h=document.documentElement,s=g('skin'),p=g('palette'),m=g('mode');
     if(C.skins.indexOf(s)<0)s=C.defaults.skin;if(C.palettes.indexOf(p)<0)p=C.defaults.palette;
@@ -26,7 +26,7 @@
 <div class="t-shell">
   <header class="t-navbar t-shell-nav">
     <a class="t-navbar-brand" href="./"><span class="t-icon">✂</span>tailor</a>
-    <span class="t-badge" data-tone="accent">v0.6.0</span>
+    <span class="t-badge" data-tone="accent">v0.6.1</span>
     <span class="t-badge" data-tone="info">43 tier-1 · 9 tier-2</span>
     <span class="sc-only-bar t-small t-muted" hidden>Showing one section · <a href="./">all sections</a></span>
   </header>
@@ -739,7 +739,7 @@
     </div>
   </main>
   <footer class="t-footer t-shell-foot">
-    <div class="t-footer-end"><div data-tailor-pickers></div><span class="t-footer-version">tailor 0.6.0 · 8 skins · 21 palettes</span></div>
+    <div class="t-footer-end"><div data-tailor-pickers></div><span class="t-footer-version">tailor 0.6.1 · 8 skins · 21 palettes</span></div>
   </footer>
 </div>
 <div class="t-toasts" id="t-toasts" aria-live="polite" aria-atomic="false"></div>

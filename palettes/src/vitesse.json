@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "Vitesse Dark. Source: https://github.com/antfu/vscode-theme-vitesse. Licence: MIT. green is accent, link and success alike (as the theme's own button/link); purple/pink = magenta; borders and inset are derived greys (upstream #191919 is invisible). Light block is Vitesse Light (https://github.com/antfu/vscode-theme-vitesse themes/vitesse-light.json): canvas activeBackground #f7f7f7, surface background #ffffff, inset #f0f0f0 (upstream border), selection #e1e4e8 and border #d1d5da (indent guide / checkbox border); text foreground, muted activeForeground, disabled comment; accent/link/info primary #1c6b48 with white button text, success green #1e754f; every upstream value already passes as text.",
   "id": "vitesse",
-  "name": "Vitesse Dark",
+  "name": "Vitesse",
   "docs": "https://github.com/antfu/vscode-theme-vitesse",
   "license": "MIT",
   "mode": "dark",

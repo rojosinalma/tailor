@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "One Dark. Source: https://github.com/joshdick/onedark.vim. Licence: MIT. orange = dark_yellow, pink = purple (no pink); muted #9299a7 derived (comment_grey is 2.3:1); danger text #da7880. The light block is One Light (https://github.com/atom/atom/tree/master/packages/one-light-syntax styles/colors.less + one-light-ui ui-variables): canvas syntax-bg #fafafa, inset level-3 #eaeaeb, surface level-1 #ffffff, selection darken(bg,8%), border ui-border, text mono-1, muted mono-2, disabled mono-3, cyan hue-1, blue hue-2, purple hue-3 (pink = purple, no pink), green hue-4, red hue-5, orange hue-6, yellow hue-6-2; link/info/accent_solid darkened hue-2 to #356ce5, success darkened hue-4 to #318332, warning darkened hue-6 to #ab6000, danger darkened hue-5 to #ce4136 for text.",
   "id": "onedark",
-  "name": "One Dark",
+  "name": "Atom One",
   "docs": "https://github.com/joshdick/onedark.vim",
   "license": "MIT",
   "mode": "dark",

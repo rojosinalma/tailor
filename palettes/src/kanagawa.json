@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "Kanagawa Wave. Source: https://github.com/rebelot/kanagawa.nvim. Licence: MIT. red = peachRed (samuraiRed is 3.7:1), cyan = springBlue, teal = waveAqua2, purple = oniViolet, pink = sakuraPink, blue = crystalBlue. The light block is Kanagawa Lotus (https://github.com/rebelot/kanagawa.nvim lua/kanagawa/colors.lua + themes.lua lotus): canvas lotusWhite3, inset lotusWhite2, surface #f8f5dd derived (lotusWhite3 mixed with white; Lotus has nothing lighter than its bg), selection lotusWhite5, border lotusViolet1, text lotusInk1, disabled lotusGray3, accent/link/info lotusBlue4, cyan lotusTeal1, purple lotusViolet4, teal lotusAqua; muted darkened lotusGray2 #6d6a5d (#716e61 is 4.3:1), success darkened lotusGreen #587137, warning darkened lotusOrange #ab4f00, danger darkened lotusRed #bf374c for text.",
   "id": "kanagawa",
-  "name": "Kanagawa Wave",
+  "name": "Kanagawa",
   "docs": "https://github.com/rebelot/kanagawa.nvim",
   "license": "MIT",
   "mode": "dark",

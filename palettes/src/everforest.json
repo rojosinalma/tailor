@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "Everforest Dark (medium). Source: https://github.com/sainnhe/everforest/blob/master/palette.md. Licence: MIT. cyan = aqua, pink = purple (no pink). Accent is green as in the theme's own UI. The light block is Everforest Light (medium) from https://github.com/sainnhe/everforest/blob/master/palette.md (bg0 canvas, bg_dim inset, the hard bg0 #fffbef as surface, bg3/bg4 selection/border, fg text), with muted (grey2) darkened to #677566, link/info (blue) to #1378a7, success and accent_solid (green) to #677900, warning (orange) to #c04d00 and danger (red) to #d43135 for text.",
   "id": "everforest",
-  "name": "Everforest Dark (medium)",
+  "name": "Everforest",
   "docs": "https://github.com/sainnhe/everforest/blob/master/palette.md",
   "license": "MIT",
   "mode": "dark",

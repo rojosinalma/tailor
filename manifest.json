@@ -1,8 +1,8 @@
 {
   "$schema": "manifest.schema.json",
   "name": "tailor",
-  "version": "0.6.0",
-  "generated": "2026-10-19T14:03:48.505Z",
+  "version": "0.6.1",
+  "generated": "2026-10-19T14:26:58.881Z",
   "contract": {
     "prefix": "t-",
     "token_prefix": "--t-",
@@ -2163,7 +2163,7 @@
   "palettes": [
     {
       "id": "ayu",
-      "name": "Ayu Dark",
+      "name": "Ayu",
       "mode": "dark",
       "modes": [
         "dark",
@@ -2176,7 +2176,7 @@
     },
     {
       "id": "catppuccin",
-      "name": "Catppuccin Mocha",
+      "name": "Catppuccin",
       "mode": "dark",
       "modes": [
         "dark",
@@ -2202,7 +2202,7 @@
     },
     {
       "id": "everforest",
-      "name": "Everforest Dark (medium)",
+      "name": "Everforest",
       "mode": "dark",
       "modes": [
         "dark",
@@ -2215,7 +2215,7 @@
     },
     {
       "id": "flexoki",
-      "name": "Flexoki Dark",
+      "name": "Flexoki",
       "mode": "dark",
       "modes": [
         "dark",
@@ -2228,7 +2228,7 @@
     },
     {
       "id": "gruvbox",
-      "name": "Gruvbox Dark (medium)",
+      "name": "Gruvbox",
       "mode": "dark",
       "modes": [
         "dark",
@@ -2241,7 +2241,7 @@
     },
     {
       "id": "kanagawa",
-      "name": "Kanagawa Wave",
+      "name": "Kanagawa",
       "mode": "dark",
       "modes": [
         "dark",
@@ -2254,7 +2254,7 @@
     },
     {
       "id": "modusvivendi",
-      "name": "Modus Vivendi",
+      "name": "Modus",
       "mode": "dark",
       "modes": [
         "dark",
@@ -2306,7 +2306,7 @@
     },
     {
       "id": "onedark",
-      "name": "One Dark",
+      "name": "Atom One",
       "mode": "dark",
       "modes": [
         "dark",
@@ -2319,7 +2319,7 @@
     },
     {
       "id": "oxocarbon",
-      "name": "Oxocarbon Dark",
+      "name": "Oxocarbon",
       "mode": "dark",
       "modes": [
         "dark",
@@ -2358,7 +2358,7 @@
     },
     {
       "id": "selenized",
-      "name": "Selenized Dark",
+      "name": "Selenized",
       "mode": "dark",
       "modes": [
         "dark",
@@ -2371,7 +2371,7 @@
     },
     {
       "id": "solarized",
-      "name": "Solarized Dark",
+      "name": "Solarized",
       "mode": "dark",
       "modes": [
         "dark",
@@ -2410,7 +2410,7 @@
     },
     {
       "id": "vitesse",
-      "name": "Vitesse Dark",
+      "name": "Vitesse",
       "mode": "dark",
       "modes": [
         "dark",

@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "Oxocarbon Dark. Source: https://github.com/nyoom-engineering/oxocarbon.nvim. Licence: MIT. No yellow and no orange: warning = base12 pink #ff7eb6, yellow = base14 purple (the theme's own WarningMsg); base01–05 blends from the source; muted #a8a8a8 is a ramp grey. Light block is Oxocarbon Light (https://github.com/nyoom-engineering/oxocarbon.nvim lua/oxocarbon/init.lua, background=light): canvas blend #fafafa, surface base00 #ffffff, inset base01 #f2f2f2 and border base02 #d0d0d0 (HSLuv blends from the source), selection a derived 0.9 blend #e4e4e4; text base04 #37474f, muted base06 #525252, disabled base05 #90a4ae, accent base11 #0f62fe; warning = base10 orange, yellow = base14 purple (DiagnosticWarn); success darkened to #00852e, warning to #cf4100, danger to #ce337b for text.",
   "id": "oxocarbon",
-  "name": "Oxocarbon Dark",
+  "name": "Oxocarbon",
   "docs": "https://github.com/nyoom-engineering/oxocarbon.nvim",
   "license": "MIT",
   "mode": "dark",

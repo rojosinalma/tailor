@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "Selenized Dark. Source: https://github.com/jan-warchol/selenized. Licence: MIT. accent blue is 3.9:1 and carries no text, so link is lightened #71abf0 and accent_solid is #0253a5 with fg_1 text; danger text #f28174; inset derived. purple = violet, pink = magenta. Light block is Selenized Light (https://github.com/jan-warchol/selenized the-values.md): bg_0 canvas, bg_1 inset, bg_2 border, fg_1 text, fg_0 muted, dim_0 disabled; surface #fcf8ec and selection #e1d8c1 derived; link/info and accent_solid = br_blue #006dce with bg_0 text; success green darkened to #367f00, warning orange to #b6520c for text.",
   "id": "selenized",
-  "name": "Selenized Dark",
+  "name": "Selenized",
   "docs": "https://github.com/jan-warchol/selenized",
   "license": "MIT",
   "mode": "dark",

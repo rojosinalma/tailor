@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "Solarized Dark. Source: https://ethanschoonover.com/solarized. Licence: MIT. Deliberately low contrast: text is base1 #93a1a1, on_accent base3; accent blue cannot carry text so accent_solid #316893 is used for solid fills; link/danger lifted; inset and border steps derived. purple = violet, pink = magenta. Light block is Solarized Light (https://ethanschoonover.com/solarized): base3 canvas, base2 inset, text base01 #586e75 (base00 is 4.1:1), muted base00 darkened to #5e747c, disabled base1; surface #fefaf1, selection #e3dfcf and border #d3d3c5 derived; accent blue cannot carry text so accent_solid/link/info #0075bb; success darkened to #677900, warning to #c6460e, danger to #d72c2a for text.",
   "id": "solarized",
-  "name": "Solarized Dark",
+  "name": "Solarized",
   "docs": "https://ethanschoonover.com/solarized",
   "license": "MIT",
   "mode": "dark",

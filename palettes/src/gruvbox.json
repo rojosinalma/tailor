@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "Gruvbox Dark (medium). Source: https://github.com/morhetz/gruvbox. Licence: values-only (no LICENSE file in the repo). Bright variants. cyan = aqua, pink = purple (no pink). danger is red lifted to #fb6d5c for text. The light block is Gruvbox Light (medium) from https://github.com/morhetz/gruvbox/blob/master/colors/gruvbox.vim (light0 canvas, light0_soft inset, light0_hard surface, light1/light2 selection/border, dark1 text, faded hues), with muted (dark4) darkened to #786b60 and success (faded green) to #767006 for text, and the primary button light0 on accent_solid #9d6000 (faded yellow darkened).",
   "id": "gruvbox",
-  "name": "Gruvbox Dark (medium)",
+  "name": "Gruvbox",
   "docs": "https://github.com/morhetz/gruvbox",
   "license": "values-only (no LICENSE file in the repo)",
   "mode": "dark",

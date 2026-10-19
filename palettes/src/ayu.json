@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "Ayu Dark. Source: https://github.com/ayu-theme/ayu-colors. Licence: MIT. accent = ayu accent #e6b450 (yellow-gold), link = tag/indigo #39bae6, pink = markup coral #f07178; muted #8a9199 derived (ui.fg is 3:1 → disabled only); danger text #f26d78. The light block is Ayu Light from https://github.com/ayu-theme/ayu-colors/blob/master/themes/light.yaml (surface sunk/base/over, editor.fg text, ui.fg disabled, selection/border = ui.line #6b7d8f flattened at 14%/22%, primary button white on accent_solid #b66000), with muted darkened to #687484, link/info (tag) to #097d9c, success to #567e00, warning to #c05000 and danger (error) to #d13b3f for text.",
   "id": "ayu",
-  "name": "Ayu Dark",
+  "name": "Ayu",
   "docs": "https://github.com/ayu-theme/ayu-colors",
   "license": "MIT",
   "mode": "dark",

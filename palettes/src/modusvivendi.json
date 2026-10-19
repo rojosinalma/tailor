@@ -2,7 +2,7 @@
   "$schema": "palette.schema.json",
   "$comment": "Modus Vivendi. Source: https://protesilaos.com/emacs/modus-themes. Licence: values-only (GPL-3.0-or-later). Pure black canvas; inset = bg-popup #0c0c0c; link = blue-warmer (Modus' fg-link); orange = rust, purple = magenta-cooler. The light block is Modus Operandi (https://protesilaos.com/emacs/modus-themes-colors; values from modus-themes.el modus-themes-operandi-palette): canvas = surface = bg-main, inset bg-popup, selection bg-inactive, border bg-active, disabled border #9f9f9f, muted fg-dim, accent blue, link/info blue-warmer, orange/warning rust, purple magenta-cooler; all upstream values, none adjusted.",
   "id": "modusvivendi",
-  "name": "Modus Vivendi",
+  "name": "Modus",
   "docs": "https://protesilaos.com/emacs/modus-themes",
   "license": "values-only (GPL-3.0-or-later)",
   "mode": "dark",
