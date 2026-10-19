@@ -4,6 +4,35 @@ All notable changes to tailor. Semver; the `version` in `package.json` is the so
 
 ## [Unreleased]
 
+## [0.7.0] — 2026-10-19
+
+Nothing browser-native. Every form control the browser used to draw itself is now drawn by tailor with tokens;
+the native element stays in the DOM (hidden) so forms, `.value` and `change` listeners keep working, and
+`Tailor.upgrade` does the rest — consumers change no markup.
+
+### Added
+- `Tailor.selects`: every `select.t-select` becomes a drawn button (`.t-select-btn`, painted by the skin like the
+  native one) plus a listbox popup (`.t-select-list`, optgroup headers, type-ahead, Home/End, flip-up, one popup
+  open at a time). `data-native` opts out, `data-placeholder` labels an empty choice. Tier-2 `select`.
+- `Tailor.numbers`: native spinners hidden; `−`/`+` steppers (`.t-number`) honouring min/max/step, hold-repeat;
+  fuses into `.t-duration`. `data-steppers="none"` opts out. Tier-2 `number`.
+- `Tailor.files`: `.t-file` (button + chosen name), `data-variant="drop"` drop zone honouring `accept`/`multiple`.
+  Tier-2 `file`.
+- `Tailor.dates` / `Tailor.clocks` / `Tailor.colors`: drawn calendar (Monday first, min/max, Today/Clear),
+  hour/minute(/second) columns from `step`, palette swatches from the live `--t-*` tokens with an optional hex
+  field (`data-hex="none"`). Tier-2 `date`, `time`, `color`, shared `.t-picker` popup.
+- `Tailor.forms` / `Tailor.validate(form)`: `novalidate` on every form, invalid controls get `aria-invalid` and
+  their `validationMessage` drawn into `.t-feedback`; `data-validate="live"` validates on blur,
+  `data-native-validation` opts out. Tier-2 `form`.
+- `Tailor.popup` (shared open/close/flip for drawn popups) and `Tailor.sync(el)` for programmatic value changes.
+- Showcase: a "Tier 2 (drawn controls)" group renders every tier-2 component that has a demo.
+
+### Changed
+- `title=` is banned: every tooltip is `data-tip` (`Tailor.tooltips` is now document-level delegation, so
+  dynamically inserted elements need no re-run); `bin/verify` fails on a `title=` attribute in markup/demo or the
+  generated showcase. Relative times and the mode toggle use `data-tip`.
+- `core/conventions.md §4`: "Nothing browser-native" paragraph lists every control and its opt-out.
+
 ## [0.6.1] — 2026-10-19
 
 ### Changed

@@ -65,6 +65,10 @@ const vocab = readJson(join(CORE, "components.json"));
     if (!declared.has(cls) && !utilities.has(cls)) undeclared.add(`${cls} (${c.id})`);
   }
   undeclared.size ? fail(`classes used but not declared as root/part of any component: ${[...undeclared].join(", ")}`) : ok("every class in markup/demo is a declared t-* root/part or a base utility");
+  // no browser-native tooltip: title= never appears in markup/demo (SVG <title> elements are fine — they are not tooltips)
+  const TITLE_ATTR = /\stitle=['"]/;
+  const titled = vocab.components.filter((c) => TITLE_ATTR.test(c.markup) || TITLE_ATTR.test(c.demo ?? ""));
+  titled.length ? fail(`title= attribute in markup/demo of: ${titled.map((c) => c.id).join(", ")} — data-tip is the tooltip (conventions §4)`) : ok("no title= attribute in any markup/demo (data-tip is the tooltip)");
   // tones used exist
   const tones = new Set(vocab.tones);
   for (const c of vocab.components) for (const m of (c.markup + (c.demo ?? "")).matchAll(/data-tone=['"]([^'"]+)['"]/g)) if (!tones.has(m[1])) fail(`${c.id}: unknown tone "${m[1]}"`);
@@ -219,6 +223,8 @@ for (const id of skins) {
     if (iconSetsForShowcase.length) for (const s of iconSetsForShowcase) for (const ref of s.samples) if (!html.includes(`href="icons.svg#${ref.replace(":", "-")}"`)) fail(`showcase: icon sample ${ref} not rendered`);
     const ids = [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]), dup = [...new Set(ids.filter((x, i) => ids.indexOf(x) !== i))];
     dup.length ? fail(`showcase: duplicate ids ${dup.join(", ")}`) : ok(`showcase: ${tier1.length} sections, ${ids.length} ids unique`);
+    const titles = [...html.matchAll(/<[a-z][^>]*\stitle=['"]/gi)].map((m) => m[0]);
+    titles.length ? fail(`showcase: title= attribute in generated html (${titles.length}×, e.g. ${titles[0].slice(0, 60)}…) — data-tip is the tooltip`) : ok("showcase: no title= attribute (tailor tooltips only)");
     const committed = join(ROOT, "showcase", "index.html");
     if (!existsSync(committed)) warn("showcase/index.html not built yet — run bin/build");
     else if (read(committed) !== html) warn("showcase/index.html is stale — run bin/build");

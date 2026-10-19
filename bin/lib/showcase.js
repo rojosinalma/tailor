@@ -9,21 +9,23 @@ const prettyMarkup = (m) => m.replace(/'/g, '"');
 
 export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
   const vocab = readJson(join(CORE, "components.json"));
-  const groups = Object.entries(vocab.groups);
+  const groups = [...Object.entries(vocab.groups), ["tier2", "Tier 2 (drawn controls)"]];
   const tier1 = vocab.components.filter((c) => c.tier === 1);
-  const byGroup = (g) => tier1.filter((c) => c.group === g);
+  // tier-2 components with a live demo render in a "Tier 2" group after the tier-1 ones
+  const tier2 = vocab.components.filter((c) => c.tier === 2 && c.demo);
+  const byGroup = (g) => (g === "tier2" ? tier2 : tier1.filter((c) => c.group === g));
   const labels = { skins: Object.fromEntries(skins.map((s) => [s.id, s.name])), palettes: Object.fromEntries(palettes.map((p) => [p.id, p.name + (p.license.startsWith("values-only") ? " \u00b7" : "")])) };
   const config = { project: "tailor-showcase", icons: "icons.svg", skins: ["none", ...skins.map((s) => s.id)], palettes: palettes.map((p) => p.id), modes, labels, defaults: { skin: skins[0]?.id ?? "none", palette: "dracula", mode: "auto" } };
 
   const sideNav = groups.map(([g, title]) => `
         <li class="t-sidebar-group">${esc(title)}</li>
-        ${byGroup(g).map((c) => `<li><a class="t-sidebar-item" href="#${c.id}"><span class="t-sidebar-item-name">${esc(c.name)}</span>${c.behaviour !== "none" ? '<span class="t-badge" data-size="xs" data-tone="accent" title="has behaviour (tailor.js)">js</span>' : ""}</a></li>`).join("\n        ")}`).join("");
+        ${byGroup(g).map((c) => `<li><a class="t-sidebar-item" href="#${c.id}"><span class="t-sidebar-item-name">${esc(c.name)}</span>${c.behaviour !== "none" ? '<span class="t-badge" data-size="xs" data-tone="accent" data-tip="has behaviour (tailor.js)">js</span>' : ""}</a></li>`).join("\n        ")}`).join("");
 
   const sections = groups.map(([g, title]) => `
       <h2 class="sc-group" id="group-${g}">${esc(title)}</h2>
       ${byGroup(g).map((c) => `
       <section class="t-card sc-component" id="${c.id}" data-group="${g}">
-        <div class="t-card-header"><h3 class="t-card-title">${esc(c.name)} <code class="sc-id">${c.root}</code></h3>${c.behaviour !== "none" ? `<span class="t-badge" data-tone="accent" data-size="xs">${esc(c.behaviour)}</span>` : ""}<a class="sc-only" href="?only=${c.id}" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-header"><h3 class="t-card-title">${esc(c.name)} <code class="sc-id">${c.root}</code></h3>${c.behaviour !== "none" ? `<span class="t-badge" data-tone="accent" data-size="xs">${esc(c.behaviour)}</span>` : ""}<a class="sc-only" href="?only=${c.id}" data-only-link data-tip="Show only this section" aria-label="Show only this section">⤢</a></div>
         <div class="t-card-body">
           <p class="t-muted t-small sc-desc">${esc(c.description)}</p>
           <div class="sc-demo">${c.demo ?? c.markup}</div>
@@ -37,12 +39,12 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
   const iconsSection = iconSets.length ? `
       <h2 class="sc-group" id="group-icons">Icons</h2>
       <section class="t-card sc-component" id="icons" data-group="icons">
-        <div class="t-card-header"><h3 class="t-card-title">Icon sets <code class="sc-id">t-icon</code></h3><a class="sc-only" href="?only=icons" data-only-link title="Show only this section">⤢</a></div>
+        <div class="t-card-header"><h3 class="t-card-title">Icon sets <code class="sc-id">t-icon</code></h3><a class="sc-only" href="?only=icons" data-only-link data-tip="Show only this section" aria-label="Show only this section">⤢</a></div>
         <div class="t-card-body">
           <p class="t-muted t-small sc-desc">The adopted sets, a sample of each through the sprite built from them (<code>showcase/icons.svg</code>). Icons inherit <code>currentColor</code>; <code>data-size</code> scales the slot.</p>
           <div class="sc-demo">${iconSets.map((s) => `
             <div class="sc-iconset"><p class="t-small"><b>${esc(s.name)}</b> <span class="t-muted">${esc(s.version)} · ${s.count} icons · ${esc(s.license)} · <code>${esc(s.prefix)}:*</code></span></p>
-              <div class="sc-icons">${(s.samples ?? []).map((ref) => { const id = ref.replace(":", "-"); return `<span class="sc-icon" title="${esc(ref)}"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#${id}"/></svg><code>${esc(ref.split(":")[1])}</code></span>`; }).join("")}</div>
+              <div class="sc-icons">${(s.samples ?? []).map((ref) => { const id = ref.replace(":", "-"); return `<span class="sc-icon" data-tip="${esc(ref)}"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#${id}"/></svg><code>${esc(ref.split(":")[1])}</code></span>`; }).join("")}</div>
             </div>`).join("")}
           </div>
           <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>${esc(`<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"/></svg>

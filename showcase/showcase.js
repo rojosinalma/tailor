@@ -36,6 +36,7 @@
       case "confirm-neutral": Tailor.confirm("Reboot epaper-display?", "The screen goes blank for about 20 seconds.", { label: "Reboot", danger: false }).then((ok) => Tailor.toast(ok ? "success" : "info", ok ? "Reboot sent" : "Cancelled")); break;
     }
   });
+  $("[data-demo=form]")?.addEventListener("submit", (e) => { e.preventDefault(); Tailor.toast("success", "Valid — the form would submit now"); });
   $("[data-demo=range]")?.addEventListener("input", (e) => { $("#f-range-out").textContent = e.target.value + " %"; });
   $("[data-demo=codetabs]")?.addEventListener("t:change", (e) => { $("[data-demo=code-auth]").textContent = e.detail.tab.dataset.text; });
   const settings = $("[data-demo=settings]");

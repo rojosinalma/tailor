@@ -1,8 +1,8 @@
 {
   "$schema": "manifest.schema.json",
   "name": "tailor",
-  "version": "0.6.1",
-  "generated": "2026-10-19T14:26:58.881Z",
+  "version": "0.7.0",
+  "generated": "2026-10-19T16:11:27.199Z",
   "contract": {
     "prefix": "t-",
     "token_prefix": "--t-",
@@ -112,7 +112,14 @@
       "mini-bars",
       "swatch-picker",
       "accordion",
-      "icon"
+      "icon",
+      "number",
+      "file",
+      "form",
+      "date",
+      "time",
+      "color",
+      "select"
     ],
     "components": [
       {
@@ -203,7 +210,7 @@
           "t-footer-version": "monospace version string"
         },
         "behaviour": "none",
-        "markup": "<footer class='t-footer'>\n  <a class='t-footer-repo' href='https://github.com/…' title='repo'><span class='t-icon'>⌥</span></a>\n  <div class='t-footer-end'><div data-tailor-pickers></div><span class='t-footer-version'>v0.9.2</span></div>\n</footer>",
+        "markup": "<footer class='t-footer'>\n  <a class='t-footer-repo' href='https://github.com/…' data-tip='Repository' aria-label='Repository'><span class='t-icon'>⌥</span></a>\n  <div class='t-footer-end'><div data-tailor-pickers></div><span class='t-footer-version'>v0.9.2</span></div>\n</footer>",
         "source": "footer.css"
       },
       {
@@ -652,7 +659,7 @@
           "::placeholder"
         ],
         "behaviour": "none",
-        "a11y": "Every control has a <label for> (or aria-label). Invalid controls set aria-invalid=true and aria-describedby → the .t-feedback id. Validation glyphs are not drawn; the message carries the meaning.",
+        "a11y": "Every control has a <label for> (or aria-label). Invalid controls set aria-invalid=true and aria-describedby → the .t-feedback id (server-rendered, or Tailor.forms on submit — see form). Validation glyphs are not drawn; the message carries the meaning.",
         "markup": "<div class='t-field'>\n  <label class='t-label' for='host'>Hostname</label>\n  <input class='t-input' id='host' placeholder='example.internal'>\n  <p class='t-hint'>The LAN name, without scheme.</p>\n</div>\n<div class='t-field'>\n  <label class='t-label' for='port'>Port</label>\n  <input class='t-input' id='port' value='99999' aria-invalid='true' aria-describedby='port-fb'>\n  <p class='t-feedback' id='port-fb' data-tone='danger'>Must be between 1 and 65535.</p>\n</div>\n<div class='t-field'>\n  <label class='t-label' for='tok'>Token</label>\n  <div class='t-input-group'><span class='t-input-addon'>🔑</span><input class='t-input' id='tok' type='password' value='secret'><button class='t-btn' type='button' data-tip='Show'>👁</button></div>\n</div>\n<div class='t-toolbar'><select class='t-select' data-width='auto' aria-label='Range'><option>24 h</option></select><input class='t-input' data-width='auto' placeholder='Filter…' aria-label='Filter'></div>",
         "source": "dracula.css .form-*, cards-forms.css validation"
       },
@@ -850,8 +857,8 @@
           ]
         },
         "behaviour": "none",
-        "a11y": "Colour alone is not enough: pair with text, or set title / aria-label on the dot.",
-        "markup": "<span class='t-dot' data-status='running' title='running'></span>",
+        "a11y": "Colour alone is not enough: pair with text, or set data-tip + aria-label on the dot (never title=).",
+        "markup": "<span class='t-dot' data-status='running' data-tip='running'></span>",
         "source": "status.css .status-dot"
       },
       {
@@ -1040,7 +1047,7 @@
         "name": "Relative time",
         "tier": 1,
         "group": "data",
-        "description": "<time> with the ISO value in datetime, upgraded client-side to 'just now' · '3 min ago' · 'yesterday' · short date; the full date is always in title.",
+        "description": "<time> with the ISO value in datetime, upgraded client-side to 'just now' · '3 min ago' · 'yesterday' · short date; the full date is always in data-tip (tailor tooltip on hover/focus).",
         "root": "t-time",
         "attributes": {
           "data-relative": [
@@ -1051,7 +1058,7 @@
           ]
         },
         "behaviour": "js:Tailor.times",
-        "a11y": "The server renders the absolute date as text; JS only improves it. title carries the full local date.",
+        "a11y": "The server renders the absolute date as text; JS only improves it. data-tip carries the full local date (never title=).",
         "markup": "<time class='t-time' data-relative datetime='2026-10-13T14:02:09Z'>13 Oct 2026, 16:02</time>",
         "notes": "Rules: < 45 s just now; minutes to 59; hours to 23; yesterday/tomorrow; days to 6; then short date, year only when it differs.",
         "source": "time.js"
@@ -1061,7 +1068,7 @@
         "name": "Tooltip",
         "tier": 1,
         "group": "data",
-        "description": "data-tip on any element shows a small label on hover/focus; data-tip-at picks the side. Tooltips only repeat or label — explanations go in the help popover.",
+        "description": "data-tip on any element shows a small label on hover/focus; data-tip-at picks the side. The only tooltip: title= is never used (browser-native). Tooltips only repeat or label — explanations go in the help popover.",
         "root": "t-tooltip",
         "attributes": {
           "data-tip (on the trigger)": [
@@ -1146,7 +1153,7 @@
         "name": "Truncate",
         "tier": 1,
         "group": "data",
-        "description": "Single-line ellipsis with the full text in title; data-expand makes it expand on click.",
+        "description": "Single-line ellipsis with the full text in data-tip (tailor tooltip, never title=); data-expand makes it expand on click.",
         "root": "t-truncate",
         "attributes": {
           "data-expand": [
@@ -1161,7 +1168,7 @@
           "aria-expanded=true"
         ],
         "behaviour": "js:Tailor.truncate",
-        "markup": "<span class='t-truncate' title='console-with-a-very-long-service-name'>console-with-a-very-long-service-name</span>\n<span class='t-truncate' data-expand title='click to expand' aria-expanded='false'>ghcr.io/example/app:2026.10.13-fork-amd64-with-a-tag-this-long</span>",
+        "markup": "<span class='t-truncate' data-tip='console-with-a-very-long-service-name'>console-with-a-very-long-service-name</span>\n<span class='t-truncate' data-expand data-tip='click to expand' aria-expanded='false'>ghcr.io/example/app:2026.10.13-fork-amd64-with-a-tag-this-long</span>",
         "source": "cards-forms.css .truncate"
       },
       {
@@ -1491,6 +1498,241 @@
         "markup": "<svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-house'/></svg>",
         "notes": "Symbols are <set>-<name> (bi-house, lucide-settings, simple-icons-github); the adopted sets are manifest.json → icon_sets. Never an icon font. See core/conventions.md §2 and docs/icons.md.",
         "source": "Iconify JSON data of the adopted sets (icons/sets.json)"
+      },
+      {
+        "id": "number",
+        "name": "Number input",
+        "tier": 2,
+        "group": "forms",
+        "description": "Number field without the browser spinner. base.css hides the native spin buttons on every .t-input[type=number]; Tailor.numbers() wraps the input in a .t-input-group with − / + stepper buttons that honour min, max and step, disable at the bounds and repeat while held (after 400 ms). Inside an existing .t-input-group (e.g. .t-duration) the steppers fuse into that group instead of nesting.",
+        "root": "t-number",
+        "parts": {
+          "t-number-step": "<button type=button class='t-btn t-number-step' data-variant=ghost data-icon=only data-step=-1|1>"
+        },
+        "attributes": {
+          "data-steppers (on the input)": [
+            "none"
+          ],
+          "data-size (on the input, copied to the group)": [
+            "sm",
+            "md"
+          ]
+        },
+        "behaviour": "js:Tailor.numbers",
+        "a11y": "The native input keeps its label and arrow-key stepping; the stepper buttons carry aria-label Increase/Decrease, are tabindex=-1 (the input is the one tab stop) and fire native input + change on the input so listeners (settings auto-save) keep working. Tailor.sync(input) repaints the bound state after a programmatic value change.",
+        "markup": "<input class='t-input' type='number' min='0' max='10' step='1' value='3' aria-label='Copies'>",
+        "notes": "Empty value + step starts at max(0, min). Decimals follow the longer of step and the current value. data-steppers='none' keeps the bare input (spinners still hidden)."
+      },
+      {
+        "id": "file",
+        "name": "File input",
+        "tier": 2,
+        "group": "forms",
+        "description": "File picker without the browser button. Tailor.files() moves the native input (kept, hidden) into a <label class='t-file'> with a .t-btn 'Choose file…' and a .t-file-name showing the chosen name, 'N files' or the placeholder. data-variant=drop renders a dashed drop zone (.t-file-drop); dropped files are assigned to input.files and fire change.",
+        "root": "t-file",
+        "parts": {
+          "t-file-btn": "<span class='t-btn'> that opens the picker (the whole label is clickable)",
+          "t-file-name": "chosen name(s) or placeholder",
+          "t-file-drop": "drop zone wrapper (data-variant=drop only); the label carries data-dragover while a drag hovers"
+        },
+        "attributes": {
+          "data-variant (on the input)": [
+            "drop"
+          ],
+          "data-placeholder (on the input)": [
+            "*"
+          ],
+          "data-label (on the input)": [
+            "*"
+          ],
+          "data-size (on the input)": [
+            "sm",
+            "md"
+          ]
+        },
+        "behaviour": "js:Tailor.files",
+        "a11y": "The native input stays focusable: Tab reaches it, Enter/Space opens the picker, the focus ring is drawn on .t-file-btn. The label text (button + name) names the control; keep an explicit <label for> or aria-label for the field name. Drops respect accept= and multiple. Tailor.sync(input) re-renders the name after input.files is set in code.",
+        "markup": "<input class='t-input' type='file' id='avatar' accept='image/*'>",
+        "notes": "Skins keep their ::file-selector-button rules for the no-JS fallback; once upgraded the native control is hidden so they never show."
+      },
+      {
+        "id": "form",
+        "name": "Form (drawn validation)",
+        "tier": 2,
+        "group": "forms",
+        "description": "Any <form> is upgraded by Tailor.forms: novalidate is set so the browser never shows a validation bubble; on submit every control runs checkValidity(), invalid ones get aria-invalid=true and their validationMessage drawn in the sibling .t-feedback[data-tone=danger] (created inside the .t-field when absent), the first invalid control is focused and the submit is stopped. .t-form is the optional class that stacks fields with the field gap.",
+        "root": "t-form",
+        "parts": {
+          "t-field": "the field wrapper the feedback is placed in (see field)",
+          "t-feedback": "data-tone=danger; written by Tailor.forms, hidden again once the control is valid"
+        },
+        "attributes": {
+          "data-validate (on the form)": [
+            "live"
+          ],
+          "data-native-validation (on the form)": [
+            "*"
+          ]
+        },
+        "states": [
+          "aria-invalid=true",
+          "[novalidate]"
+        ],
+        "behaviour": "js:Tailor.forms",
+        "a11y": "Feedback is linked with aria-describedby (appended, existing ids kept); focus moves to the first invalid control; messages are the browser's localised validationMessage. Tailor.validate(form) → boolean runs the same pass for fetch-submitted forms; the form emits t:invalid {controls}.",
+        "markup": "<form class='t-form'>\n  <div class='t-field'><label class='t-label' for='svc'>Service name</label><input class='t-input' id='svc' required minlength='3'></div>\n  <button class='t-btn' data-variant='primary' type='submit'>Save</button>\n</form>",
+        "notes": "data-validate='live' also validates a control on blur (once it has a value or was already flagged); input/change clears a control's feedback as soon as it is valid. data-native-validation opts a form out. Never title= and never window.alert for errors: data-tip and .t-feedback carry them."
+      },
+      {
+        "id": "date",
+        "name": "Date picker",
+        "tier": 2,
+        "group": "forms",
+        "description": "A .t-input[type=date] upgraded by Tailor.dates: the native input stays (hidden, 1px) for forms and .value; a .t-input-styled button shows the ISO value (YYYY-MM-DD) or the placeholder and opens a .t-picker with a month calendar — ‹ month YYYY › header, weekday row (Monday first), 6-week day grid, Today / Clear footer. Picking sets input.value (ISO) and fires input + change on the native input.",
+        "root": "t-picker-wrap",
+        "parts": {
+          "t-picker-native": "the hidden native input (added by tailor.js)",
+          "t-picker-btn": "<button class='t-input t-picker-btn' aria-haspopup=dialog aria-expanded>; data-empty while no value",
+          "t-picker-value": "the text inside the button",
+          "t-picker": "the popup (role=dialog, hidden); data-at=top when flipped above the button",
+          "t-cal-head": "‹ title › row (ghost icon-only .t-btn + .t-cal-title)",
+          "t-cal-title": "month + year, aria-live",
+          "t-cal-grid": "role=grid, 7 columns: .t-cal-wd row then 42 .t-cal-day",
+          "t-cal-wd": "weekday heading",
+          "t-cal-day": "<button role=gridcell data-date=YYYY-MM-DD aria-selected>; data-today, data-outside (other month), :disabled outside min/max",
+          "t-cal-foot": "Today + Clear ghost buttons"
+        },
+        "attributes": {
+          "min / max (on the input)": [
+            "YYYY-MM-DD"
+          ],
+          "data-size (on the input)": [
+            "sm"
+          ],
+          "data-width (on the input)": [
+            "auto"
+          ]
+        },
+        "states": [
+          "aria-expanded=true",
+          "aria-selected=true",
+          "[data-today]",
+          "[data-outside]",
+          ":disabled",
+          "[data-empty]"
+        ],
+        "behaviour": "js:Tailor.dates",
+        "a11y": "Button: aria-haspopup=dialog, aria-expanded, aria-controls, aria-labelledby from the <label for>. Popup: role=dialog; the grid is a roving-tabindex grid — arrows move a day/week, PageUp/PageDown a month, Home/End to the week's Monday/Sunday, Enter or Space picks, Escape closes and focus returns to the button, Tab past Clear leaves. Space/ArrowDown on the button opens. Tailor.sync(input) repaints after a programmatic input.value change.",
+        "markup": "<input class='t-input' type='date' id='due' value='2026-10-19' min='2026-01-01'>",
+        "notes": "Composes tier-1 parts (.t-input, .t-btn, .t-menu-list look via .t-picker) so skins need no rules; a skin may restyle .t-cal-day. One popup is open at a time across selects and pickers (Tailor.popup). Never a native date UI: the input is never focusable."
+      },
+      {
+        "id": "time",
+        "name": "Time picker",
+        "tier": 2,
+        "group": "forms",
+        "description": "A .t-input[type=time] upgraded by Tailor.clocks: button shows HH:MM (or HH:MM:SS) and opens a .t-picker with scrolling columns — hours 00–23, minutes in step increments (default 5 min), a seconds column only when step < 60 — drawn as .t-menu-item options. Clicking an option sets that part and commits the value (input + change fire); Enter confirms and closes.",
+        "root": "t-picker-wrap",
+        "parts": {
+          "t-picker-native": "the hidden native input",
+          "t-picker-btn": "<button class='t-input t-picker-btn' aria-haspopup=dialog>",
+          "t-picker-value": "the text inside the button",
+          "t-picker": "the popup; data-at=top when flipped",
+          "t-clock": "row of columns",
+          "t-clock-col": "role=listbox (aria-label Hours / Minutes / Seconds), scrolls; children are .t-menu-item[role=option] with aria-selected"
+        },
+        "attributes": {
+          "step (on the input, seconds)": [
+            "300 (default) → 5-minute steps",
+            "60 → every minute",
+            "< 60 → adds a seconds column"
+          ],
+          "data-size (on the input)": [
+            "sm"
+          ],
+          "data-width (on the input)": [
+            "auto"
+          ]
+        },
+        "states": [
+          "aria-expanded=true",
+          "aria-selected=true",
+          "[data-empty]"
+        ],
+        "behaviour": "js:Tailor.clocks",
+        "a11y": "Each column is a listbox with one tabbable option (the selected one): ArrowUp/Down move, PageUp/Down jump 5, Home/End, ArrowLeft/Right and Tab move between columns, Space commits without closing, Enter commits and closes, Escape closes (focus back on the button). Tailor.sync(input) repaints after a programmatic change.",
+        "markup": "<input class='t-input' type='time' id='at' value='09:30'>",
+        "notes": "Named clocks because Tailor.times is the relative-time painter. A step that does not divide 60 falls back to 1-minute (or 1-second) rows. Never a native time UI."
+      },
+      {
+        "id": "color",
+        "name": "Colour picker",
+        "tier": 2,
+        "group": "forms",
+        "description": "A .t-input[type=color] upgraded by Tailor.colors: button shows a .t-swatch square with the current value plus its hex; the popup offers the palette as swatch-picker dots — the computed values of --t-accent --t-success --t-warning --t-danger --t-info and every --t-hue-* on :root, resolved to #rrggbb — with the matching one checked, the token name below, and a small secondary hex field. Picking sets input.value and fires input + change.",
+        "root": "t-picker-wrap",
+        "parts": {
+          "t-picker-native": "the hidden native input",
+          "t-picker-btn": "<button class='t-input t-picker-btn'> with a .t-swatch (background = value) and the hex in .t-picker-value",
+          "t-picker-value": "the hex text",
+          "t-picker": "the popup; data-at=top when flipped",
+          "t-swatches": "the swatch-picker fieldset reused for the palette (label.t-swatch > radio, data-tip = token name)",
+          "t-picker-name": "token name (or custom) + hex of the current value",
+          "t-picker-hex": ".t-input-group[data-size=sm] with a # addon and the 6-digit hex field; absent with data-hex=none"
+        },
+        "attributes": {
+          "data-hex (on the input)": [
+            "none — palette swatches only, no hex field"
+          ],
+          "data-size (on the input)": [
+            "sm"
+          ],
+          "data-width (on the input)": [
+            "auto"
+          ]
+        },
+        "states": [
+          "aria-expanded=true",
+          ":checked (the matching swatch)",
+          "aria-invalid=true (bad hex)"
+        ],
+        "behaviour": "js:Tailor.colors",
+        "a11y": "Swatches are a radio group (each radio carries aria-label = token name): arrows move and commit without closing, Enter or a click commits and closes, Escape closes and focus returns to the button. The hex field validates #rrggbb (aria-invalid=true otherwise) and commits on change or Enter. No native colour UI appears anywhere.",
+        "markup": "<input class='t-input' type='color' id='accent' value='#bd93f9'>",
+        "notes": "Colour pickers offer palette swatches, not free-form hex: the hex field is secondary and data-hex=none removes it. Swatch dots are the swatch-picker component (base.css now carries its baseline so it renders without a skin). The native type=color input always holds #rrggbb; an empty value reads as #000000."
+      },
+      {
+        "id": "select",
+        "name": "Select (drawn)",
+        "tier": 2,
+        "group": "forms",
+        "description": "Every select.t-select is upgraded: the native <select> stays in the DOM for forms and value, hidden; tailor draws the button (.t-select, so skins paint it like the native one) and a listbox popup with optgroup headers, type-ahead, keyboard navigation and flip-up. Nothing browser-native is visible.",
+        "root": "t-select-wrap",
+        "parts": {
+          "t-select-btn": "the drawn trigger (also carries .t-select)",
+          "t-select-list": "listbox popup (a .t-menu-list, role=listbox)",
+          "t-select-placeholder": "state class on the button while no option is chosen"
+        },
+        "attributes": {
+          "data-native (on the select)": [
+            "opt out of the upgrade"
+          ],
+          "data-placeholder (on the select)": [
+            "*"
+          ],
+          "data-width": [
+            "auto"
+          ],
+          "data-size": [
+            "sm",
+            "md"
+          ]
+        },
+        "behaviour": "js:Tailor.selects",
+        "a11y": "button aria-haspopup=listbox aria-expanded aria-controls, labelled by the field's <label>; options role=option aria-selected; arrows/Home/End/type-ahead move, Enter/Space pick, Escape closes and refocuses the trigger; Alt+Down opens, Up/Down on the closed button steps the value.",
+        "markup": "<label class='t-label' for='vis'>Visibility</label>\\n<select class='t-select' id='vis'><option>public</option><option>local</option></select>",
+        "notes": "Multiple selects (<select multiple>) are not upgraded: use .t-list[role=listbox]. Programmatic value changes: set select.value then Tailor.sync(select) (or dispatch change). Native change/input events fire on the hidden select, so existing listeners keep working.",
+        "source": "0.7.0 nothing-native pass"
       }
     ]
   },

@@ -102,7 +102,8 @@ Rules:
 | Toggle pressed (filter, pin) | `aria-pressed="true|false"` | project / Tailor.filters |
 | Checked menu item | `aria-checked="true|false"` on `role=menuitemcheckbox` | project |
 | Expanded trigger (help, sidebar group) | `aria-expanded="true|false"` (or `details[open]`) | tailor.js |
-| Invalid control | `aria-invalid="true"` + `aria-describedby` → the `.t-feedback` | server / project |
+| Invalid control | `aria-invalid="true"` + `aria-describedby` → the `.t-feedback` | server / project / Tailor.forms |
+| Tooltip | `data-tip="…"` (+ `data-tip-at`) — **never `title=`**; `data-tip` is the tooltip, `title=` is the browser's | project / tailor.js |
 | Loading | `aria-busy="true"` (plus `disabled` on buttons) | project |
 | Disabled | `disabled` on form controls and buttons; `aria-disabled="true"` on links | project |
 | Hidden | the `hidden` attribute | tailor.js |
@@ -114,6 +115,16 @@ Rules:
 
 Skins style **these** selectors. A skin that needs `.active` or `.is-open` is wrong and `bin/verify`
 will not catch it — review does.
+
+**Nothing browser-native shows in a tailor UI.** The native element stays in the DOM (forms, `.value`, events);
+`Tailor.upgrade` hides it and draws the control with tokens: `select.t-select` → `Tailor.selects` (button +
+listbox), `input[type=number]` → `Tailor.numbers` (steppers, spinner hidden), `type=file` → `Tailor.files`,
+`type=date|time|color` → `Tailor.dates|clocks|colors` (calendar, time columns, palette swatches). No `title=`
+tooltip (`bin/verify` fails on one in markup/demo or the showcase; SVG `<title>` elements are labels, not
+tooltips), no validation bubble (every `<form>` gets `novalidate` and `Tailor.forms` draws the message into
+`.t-feedback`), no `window.alert/confirm/prompt` (`Tailor.toast`, `Tailor.confirm`), no HTTP Basic login dialog
+(a token or login page). Programmatic value changes call `Tailor.sync(el)`. Opt-outs exist per control
+(`data-native`, `data-steppers="none"`, `data-native-validation`) for the rare case the browser UI is wanted.
 
 ## 5. Behaviour contract (tailor.js)
 
@@ -132,7 +143,8 @@ functions are:
 | `Tailor.dialogs(root)` | `[data-dialog-open]`, `[data-dialog-close]`, `dialog.t-dialog`/`.t-drawer` | backdrop click closes; returnValue = the close button's value |
 | `Tailor.confirm(title, bodyHtml, {label='Confirm', danger=true})` | `#t-confirm` | `Promise<boolean>` |
 | `Tailor.times(root)` + `Tailor.relativeTime(date)` | `time.t-time[data-relative]` | re-paints every minute; `data-ago="<s>"` is a demo-only shortcut |
-| `Tailor.tooltips(root)` | `[data-tip]` | one shared `.t-tooltip[role=tooltip]` |
+| `Tailor.tooltips()` | `[data-tip]` | one shared `.t-tooltip[role=tooltip]`; delegated at the document, so later-added or re-labelled elements need no re-run; Esc hides |
+| `Tailor.forms(root)` + `Tailor.validate(form)` | every `<form>` without `data-native-validation` | sets `novalidate`; on submit `aria-invalid` + `validationMessage` in the `.t-feedback[data-tone=danger]` (created in the `.t-field` when absent, `aria-describedby` appended), first invalid focused, submit stopped, `t:invalid {controls}`; input/change clears once valid; `data-validate="live"` validates on blur |
 | `Tailor.help(root)` | `.t-help` | click pins, hover 1 s peeks, outside/Esc closes |
 | `Tailor.copy(root)` | `.t-code-copy`, `.t-code-tabs` | strips the prompt and line continuations; `data-copied` for 1.2 s |
 | `Tailor.truncate(root)` | `.t-truncate[data-expand]` | toggles `aria-expanded` |
