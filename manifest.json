@@ -1,8 +1,8 @@
 {
   "$schema": "manifest.schema.json",
   "name": "tailor",
-  "version": "0.8.0",
-  "generated": "2026-10-20T01:14:18.756Z",
+  "version": "0.8.1",
+  "generated": "2026-10-20T01:21:07.692Z",
   "contract": {
     "prefix": "t-",
     "token_prefix": "--t-",

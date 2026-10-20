@@ -2,6 +2,12 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
+## [0.8.1] — 2026-10-20
+
+### Fixed
+- luz and daisyUI skins: `.t-select` keeps `padding-right: 2rem`, so the drawn select's label never runs under
+  the chevron (the skins' padding shorthand dropped the room the base reserves).
+
 ## [0.8.0] — 2026-10-20
 
 ### Changed
