@@ -10,7 +10,7 @@
 
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
-import { ROOT, listSourcePalettes, loadPalette } from "./common.js";
+import { ROOT, listSourcePalettes, loadPalette, paletteModes, mix } from "./common.js";
 
 export const PRIMER_THEMES_OUT = join(ROOT, "react", "adapters", "primer", "themes");
 export const PRIMER_BASE = "dark";
@@ -31,6 +31,9 @@ export function primerVersion() {
 }
 export const primerThemeName = (p) => `${p.mode}_${p.id}`;
 export const listPrimerPalettes = () => listSourcePalettes().filter((id) => loadPalette(id).primer);
+// Every theme a palette yields: its own mode (hand-tuned `primer` section) + the counterpart mode when the
+// palette carries one (derived from the counterpart block, see counterpartPrimerPalette).
+export const primerThemeModes = (p) => paletteModes(p);
 export const listPrimerThemeFiles = () =>
   existsSync(PRIMER_THEMES_OUT) ? readdirSync(PRIMER_THEMES_OUT).filter((f) => /^(dark|light)_[a-z0-9-]+\.css$/.test(f)).sort() : [];
 
@@ -92,7 +95,9 @@ function makeMapper(palette) {
   const CHROMA_BOOST = cfg.chroma_boost ?? 1.25;
   const hueRanges = cfg.hue_ranges ?? [];
   const CANVAS = norm(palette.canvas);
+  const LIGHT = palette.mode === "light";
   const DARK_TINT_MAX_L = cfg.dark_tint_max_L ?? 0.4;
+  const LIGHT_TINT_MIN_L = cfg.light_tint_min_L ?? 0.9;
   const SHADOW = cfg.shadow_color ? norm(cfg.shadow_color) : null;
   const CANVAS_L = toOklch(CANVAS).L;
   const labs = neutrals.map((n) => ({ L: n.L, ...rgbToOklab(hexToRgb(n.hex).rgb) }));
@@ -135,13 +140,14 @@ function makeMapper(palette) {
       role = roles[0];
       for (const r of roles) if (hueDist(r.h, src.h) < hueDist(role.h, src.h)) role = r;
     }
-    // Dark tints (label/muted backgrounds): mix the role colour over the canvas instead of trying to
-    // hit the source's near-black lightness, which would clip to a pure primary.
-    if (src.L < DARK_TINT_MAX_L) {
-      const w = Math.min(0.45, Math.max(0.15, 0.2 + (src.L - 0.22) * 1.5));
+    // Tints (label/muted backgrounds — near-black on a dark base, near-white on a light one): mix the role
+    // colour over the canvas instead of trying to hit the source's extreme lightness, which would clip to a
+    // pure primary.
+    if (LIGHT ? src.L > LIGHT_TINT_MIN_L : src.L < DARK_TINT_MAX_L) {
+      const w = Math.min(0.45, Math.max(0.15, 0.2 + (LIGHT ? 0.97 - src.L : src.L - 0.22) * 1.5));
       const c = rgbToOklab(hexToRgb(CANVAS).rgb);
       const r = rgbToOklab(hexToRgb(role.hex).rgb);
-      return oklabToHexClipped({ L: c.L + w * 0.3, a: c.a + (r.a - c.a) * w, b: c.b + (r.b - c.b) * w });
+      return oklabToHexClipped({ L: c.L + (LIGHT ? -w * 0.3 : w * 0.3), a: c.a + (r.a - c.a) * w, b: c.b + (r.b - c.b) * w });
     }
     // Same hue family as the role at the source's lightness, laid over the palette neutral of that
     // lightness so near-neutral colours keep the palette's cast instead of clipping to a pure primary.
@@ -222,24 +228,88 @@ export function primerThemeCss(palette, baseCss, { base = PRIMER_BASE, name = pr
     return `${indent}${token}: ${rewriteValue(token, value)};${rest}`;
   });
   const header = `/**\n * ${name} — generated from @primer/primitives theme "${base}" by gen-primer-theme.\n * Do not edit by hand: tune the palette file and regenerate.\n */\n`;
-  return { css: header + lines.join("\n"), stats, sourceCount, name, mapRgbHex: m.mapRgbHex };
+  return { css: header + lines.join("\n"), stats, sourceCount, name, base, mapRgbHex: m.mapRgbHex };
 }
 
-/** Generate the theme for one palette id (or loaded palette). Throws when primitives or the primer section are missing. */
+/** Generate the theme for one palette id (or loaded palette). Throws when primitives or the primer section are missing.
+ *  `mode` picks the theme: the palette's own mode (default) or its counterpart (`light` for a dark palette with a
+ *  `light` block), which is derived by counterpartPrimerPalette from that block and the stock base of that mode. */
 export function generatePrimerTheme(ref, opts = {}) {
-  const palette = typeof ref === "string" ? loadPalette(ref) : ref;
+  let palette = typeof ref === "string" ? loadPalette(ref) : ref;
   const dir = primerThemesDir();
   if (!dir) throw new Error(primerMissingMessage());
-  const base = opts.base ?? PRIMER_BASE;
+  const mode = opts.mode ?? palette.mode;
+  const base = opts.base ?? mode;
   const baseFile = join(dir, `${base}.css`);
   if (!existsSync(baseFile)) throw new Error(`Primer base theme ${base}.css not found in ${dir}`);
-  return primerThemeCss(palette, readFileSync(baseFile, "utf8"), opts);
+  const baseCss = readFileSync(baseFile, "utf8");
+  if (mode !== palette.mode) palette = counterpartPrimerPalette(palette, baseCss);
+  return primerThemeCss(palette, baseCss, { ...opts, base });
+}
+
+// The stock base's own surface/text colours, read from its declarations (var() references skipped).
+function baseColours(baseCss) {
+  const pick = (token) => baseCss.match(new RegExp(`^\\s*${token}:\\s*(#[0-9a-fA-F]{6})\\b`, "m"))?.[1]?.toLowerCase();
+  return { canvas: pick("--bgColor-default"), inset: pick("--bgColor-muted"), border: pick("--borderColor-default"), text: pick("--fgColor-default"), muted: pick("--fgColor-muted"), disabled: pick("--fgColor-disabled"), accent: pick("--fgColor-accent") };
+}
+
+/**
+ * A palette's counterpart block (`light` on a dark palette) as a palette the mapper can use, with a `primer`
+ * section derived mechanically from the hand-tuned one: the same chroma thresholds, every hue band's target
+ * swapped for the counterpart colour of the same role, an exact map of the stock base surfaces/text onto
+ * the block's surfaces/text, and the link + primary-button tokens built from the block's link/accent.
+ * Hand-tuning stays in the palette's own mode; the counterpart follows it.
+ */
+export function counterpartPrimerPalette(p, baseCss) {
+  const mode = p.mode === "dark" ? "light" : "dark";
+  const c = p[mode];
+  if (!c) throw new Error(`palette ${p.id} has no ${mode} block`);
+  if (!p.primer) throw new Error(`palette ${p.id} has no \`primer\` section`);
+  const norm = (h) => h.toLowerCase();
+  const semantic = ["accent", "link", "success", "warning", "danger", "info"];
+  const roleOf = (hex) => {
+    hex = norm(hex);
+    for (const k of semantic) if (p[k] && norm(p[k]) === hex) return c[k];
+    for (const [k, v] of Object.entries(p.extra ?? {})) if (norm(v) === hex && c.extra?.[k]) return c.extra[k];
+    const src = toOklch(hex);
+    let best = null;
+    for (const r of roles) if (!best || hueDist(toOklch(r).h, src.h) < hueDist(toOklch(best).h, src.h)) best = r;
+    return best;
+  };
+  const uniq = (xs) => [...new Set(xs.filter(Boolean).map(norm))];
+  const roles = uniq([...semantic.map((k) => c[k]), ...Object.values(c.extra ?? {})]);
+  const neutrals = uniq([...(c.neutrals ?? []), c.canvas, c.inset, c.surface, c.selection, c.border, c.text, c.muted, c.disabled]);
+  const base = baseColours(baseCss);
+  const map = {};
+  for (const [k, hex] of Object.entries(base)) if (hex && c[k]) map[hex] = norm(c[k]);
+  const solid = norm(c.accent_solid ?? c.accent), on = norm(c.on_accent), text = norm(c.text), canvas = norm(c.canvas);
+  const tokens = {
+    "--fgColor-link": norm(c.link),
+    "--fgColor-danger": norm(c.danger),
+    "--button-primary-bgColor-rest": solid,
+    "--button-primary-bgColor-hover": mix(solid, text, 0.08),
+    "--button-primary-bgColor-active": mix(solid, text, 0.16),
+    "--button-primary-bgColor-disabled": mix(solid, canvas, 0.5),
+    "--button-primary-borderColor-disabled": mix(solid, canvas, 0.5),
+    "--button-primary-fgColor-rest": on,
+    "--button-primary-iconColor-rest": on,
+    "--button-primary-fgColor-disabled": `${on}99`,
+    "--buttonCounter-primary-bgColor-rest": `${on}33`,
+    "--buttonKeybindingHint-primary-fgColor-rest": on,
+    "--buttonKeybindingHint-primary-bgColor-disabled": `${on}1a`,
+    "--buttonKeybindingHint-primary-borderColor-rest": `${on}1a`,
+  };
+  const d = p.primer;
+  const primer = { neutral_chroma_max: d.neutral_chroma_max, chroma_boost: d.chroma_boost, hue_ranges: (d.hue_ranges ?? []).map((r) => ({ min: r.min, max: r.max, color: roleOf(r.color) })), map, tokens };
+  return { ...p, ...c, id: p.id, name: p.name, mode, roles, neutrals, primer };
 }
 
 // The adapter's index.ts: side-effect imports of every theme + the list and labels a consumer needs.
+// One entry per palette × mode (dark_<id> and, when the palette has a light block, light_<id>).
 export function primerThemesIndexTs(palettes) {
-  const rows = palettes.map((p) => `  ${JSON.stringify(primerThemeName(p))}: ${JSON.stringify(p.name)},`).join("\n");
-  const imports = palettes.map((p) => `import "./${primerThemeName(p)}.css";`).join("\n");
+  const themes = palettes.flatMap((p) => primerThemeModes(p).map((mode) => ({ name: `${mode}_${p.id}`, label: p.name })));
+  const rows = themes.map((t) => `  ${JSON.stringify(t.name)}: ${JSON.stringify(t.label)},`).join("\n");
+  const imports = themes.map((t) => `import "./${t.name}.css";`).join("\n");
   return `// Generated by bin/gen-primer-theme --all — do not edit, run bin/build.
 // Importing this module registers every tailor palette as a Primer Primitives theme (one CSS file each,
 // scoped to [data-color-mode][data-dark-theme="<name>"]); pick one with PRIMER_THEMES / primerThemeProps.

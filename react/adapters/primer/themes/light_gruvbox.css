@@ -1,0 +1,1933 @@
+/**
+ * light_gruvbox — generated from @primer/primitives theme "light" by gen-primer-theme.
+ * Do not edit by hand: tune the palette file and regenerate.
+ */
+/**
+ * @spec See /DESIGN_TOKENS_SPEC.md for naming logic and semantic pairings.
+ * @rule Never use raw values (hex/px). Use semantic tokens ONLY.
+ */
+[data-color-mode="light"][data-light-theme="light_gruvbox"],
+[data-color-mode="auto"][data-light-theme="light_gruvbox"] {
+  --ansi-cyan: #27798c; /** ANSI cyan for terminal text */
+  --ansi-cyanBright: #4291a4; /** ANSI bright cyan for highlighted terminal text */
+  --bgColor-success-emphasis: #47805d; /** Strong success background for prominent positive actions */
+  --button-outline-bgColor-active: #7f5108;
+  --button-primary-bgColor-active: #8d5a09;
+  --button-primary-bgColor-disabled: #cca964;
+  --button-primary-bgColor-hover: #955d04;
+  --buttonCounter-danger-fgColor-rest: #bb2e26;
+  --control-checked-bgColor-active: #7f5108;
+  --control-checked-bgColor-hover: #8c5904;
+  --fgColor-danger: #9d0006; /** Danger text for errors and destructive actions */
+  --reactionButton-selected-bgColor-hover: #cfdbc2;
+  --ansi-blackBright: #3c3836; /** ANSI bright black (dark gray) for dimmed terminal text */
+  --ansi-blue: #b57614; /** ANSI blue for informational terminal text */
+  --ansi-blueBright: #bd7d20; /** ANSI bright blue for highlighted info in terminal */
+  --ansi-gray: #786b60; /** ANSI gray for secondary terminal text */
+  --ansi-green: #265f3e; /** ANSI green for success indicators in terminal */
+  --ansi-greenBright: #3f7855; /** ANSI bright green for highlighted success in terminal */
+  --ansi-magenta: #a75587; /** ANSI magenta for special terminal text */
+  --ansi-magentaBright: #ca74a7; /** ANSI bright magenta for highlighted special text */
+  --ansi-red: #c5382f; /** ANSI red for errors and alerts in terminal output */
+  --ansi-redBright: #a41211; /** ANSI bright red for highlighted errors in terminal */
+  --ansi-white: #786b60; /** ANSI white for terminal text */
+  --ansi-whiteBright: #928374; /** ANSI bright white for emphasized terminal text */
+  --ansi-yellow: #4b2e05; /** ANSI yellow for warnings in terminal output */
+  --ansi-yellowBright: #603e0b; /** ANSI bright yellow for highlighted warnings in terminal */
+  --avatarStack-fade-bgColor-default: #d5c4a1;
+  --avatarStack-fade-bgColor-muted: #ebdbb2;
+  --bgColor-accent-emphasis: #b57614; /** Strong accent background for active states and focused states */
+  --bgColor-accent-muted: #d6dec3; /** Subtle accent background for informational or selected elements */
+  --bgColor-attention-emphasis: #9d6509; /** Strong attention background for prominent warnings */
+  --bgColor-attention-muted: #e7deac; /** Subtle attention background for warnings and caution states */
+  --bgColor-danger-emphasis: #c5382f; /** Emphasized danger background for critical errors and delete confirmations */
+  --bgColor-danger-muted: #fbf1c7; /** Muted danger background for error states and destructive action contexts */
+  --bgColor-disabled: #fbf1c7; /** Background for disabled interactive elements */
+  --bgColor-done-emphasis: #a75587; /** Strong background for completed/done state badges and labels */
+  --bgColor-done-muted: #f9f5d7; /** Subtle background for completed/done state indicators */
+  --bgColor-emphasis: #3c3836; /** High-emphasis dark background for strong visual contrast */
+  --bgColor-inverse: #3c3836; /** Inverse background that flips between light and dark modes */
+  --bgColor-muted: #f2e5bc; /** Muted background for secondary content areas and subtle grouping */
+  --bgColor-neutral-emphasis: #786b60; /** Strong neutral background for prominent neutral elements */
+  --bgColor-neutral-muted: #9283741f; /** Subtle neutral background for tags, labels, and secondary UI elements */
+  --bgColor-open-emphasis: var(--bgColor-success-emphasis); /** Strong background for open state badges and labels */
+  --bgColor-severe-emphasis: #be491c; /** Strong severe background for prominent high-priority warnings */
+  --bgColor-severe-muted: #f9f5d7; /** Subtle severe background for high-priority warnings */
+  --bgColor-sponsors-emphasis: #a85588; /** Strong background for prominent GitHub Sponsors elements */
+  --bgColor-sponsors-muted: #f9f5d7; /** Subtle background for GitHub Sponsors content */
+  --bgColor-success-muted: #dbdfb6; /** Subtle success background for positive feedback and completed states */
+  --bgColor-transparent: #ffffff00; /** Fully transparent background */
+  --borderColor-accent-emphasis: #b57614; /** Strong accent border for selected or focused elements */
+  --borderColor-accent-muted: #da994366; /** Subtle accent border for selected or focused elements */
+  --borderColor-attention-emphasis: #9d6509; /** Strong attention border for prominent warnings */
+  --borderColor-attention-muted: #e19f4966; /** Subtle attention border for warnings and caution states */
+  --borderColor-danger-emphasis: #c5382f; /** Strong danger border for destructive actions and errors */
+  --borderColor-danger-muted: #ff837466; /** Subtle danger border for errors and destructive contexts */
+  --borderColor-default: #d5c4a1; /** Default border color for most UI elements */
+  --borderColor-disabled: #9283741a; /** Border color for disabled interactive elements */
+  --borderColor-done-emphasis: #a75587; /** Strong border for completed/done state badges */
+  --borderColor-done-muted: #e78fc366; /** Subtle border for completed/done state indicators */
+  --borderColor-emphasis: #928374; /** Strong border for emphasis and visual weight */
+  --borderColor-neutral-emphasis: #786b60; /** Strong neutral semantic border */
+  --borderColor-severe-emphasis: #be491c; /** Strong severe border for prominent high-priority warnings */
+  --borderColor-severe-muted: #fb8c6766; /** Subtle severe border for high-priority warnings */
+  --borderColor-sponsors-emphasis: #a85588; /** Strong border for prominent GitHub Sponsors elements */
+  --borderColor-sponsors-muted: #ea92c666; /** Subtle border for GitHub Sponsors content */
+  --borderColor-success-emphasis: #3f7855; /** Strong success border for prominent positive elements */
+  --borderColor-success-muted: #7cb69066; /** Subtle success border for positive feedback elements */
+  --borderColor-transparent: #ffffff00; /** Fully transparent border */
+  --button-danger-bgColor-active: #a41211;
+  --button-danger-fgColor-disabled: #c73a3180;
+  --button-danger-fgColor-rest: var(--fgColor-danger);
+  --button-danger-shadow-selected: inset 0 1px 0 0 #4d020233;
+  --button-inactive-bgColor: #f2e5bc;
+  --button-inactive-fgColor: #786b60;
+  --button-invisible-bgColor-disabled: #ffffff00;
+  --button-invisible-borderColor-disabled: #ffffff00;
+  --button-outline-shadow-selected: inset 0 1px 0 0 #361f0033;
+  --button-primary-bgColor-rest: #9d6000;
+  --button-primary-borderColor-disabled: #cca964;
+  --button-primary-shadow-selected: inset 0 1px 0 0 #012d154d;
+  --button-star-iconColor: #d2cd74;
+  --buttonCounter-danger-fgColor-disabled: #c73a3180;
+  --buttonCounter-outline-fgColor-rest: #754b0d;
+  --buttonCounter-primary-bgColor-rest: #fbf1c733;
+  --buttonKeybindingHint-danger-bgColor-active: #3c383666;
+  --buttonKeybindingHint-danger-bgColor-hover: #3c383633;
+  --buttonKeybindingHint-default-bgColor-rest: #fbf1c7;
+  --buttonKeybindingHint-inactive-bgColor: #fbf1c7;
+  --buttonKeybindingHint-invisible-borderColor-rest: #ffffff00;
+  --codeMirror-syntax-fgColor-constant: #754b0d;
+  --codeMirror-syntax-fgColor-entity: #a75587;
+  --codeMirror-syntax-fgColor-keyword: #c5382f;
+  --codeMirror-syntax-fgColor-storage: #c5382f;
+  --codeMirror-syntax-fgColor-string: #482c04;
+  --codeMirror-syntax-fgColor-support: #754b0d;
+  --codeMirror-syntax-fgColor-variable: #963610;
+  --color-ansi-cyan: var(--ansi-cyan); /** Deprecated. Use ansi.cyan instead. */
+  --color-ansi-cyan-bright: var(--ansi-cyanBright); /** Deprecated. Use ansi.cyanBright instead. */
+  --contribution-default-bgColor-0: #fbf1c7;
+  --contribution-default-bgColor-1: #b0ecc4;
+  --contribution-default-bgColor-2: #7cb690;
+  --contribution-default-bgColor-3: #609975;
+  --contribution-default-bgColor-4: #265f3e;
+  --contribution-default-borderColor-0: #3c38360d;
+  --contribution-halloween-bgColor-1: #e2dd84;
+  --contribution-halloween-bgColor-2: #e3df85;
+  --contribution-halloween-bgColor-3: #fc855c;
+  --contribution-halloween-bgColor-4: #3c3836;
+  --contribution-winter-bgColor-1: #b3e7ec;
+  --contribution-winter-bgColor-2: #da9943;
+  --contribution-winter-bgColor-3: #b57614;
+  --contribution-winter-bgColor-4: #482c04;
+  --control-bgColor-active: #f2e5bc;
+  --control-bgColor-hover: #fbf1c7;
+  --control-bgColor-rest: #f2e5bc;
+  --control-checked-borderColor-active: var(--control-checked-bgColor-active);
+  --control-checked-borderColor-hover: var(--control-checked-bgColor-hover);
+  --control-danger-fgColor-hover: var(--fgColor-danger);
+  --control-danger-fgColor-rest: var(--fgColor-danger);
+  --control-fgColor-rest: #3c3836;
+  --control-transparent-bgColor-active: #92837426;
+  --control-transparent-bgColor-hover: #9283741a;
+  --control-transparent-bgColor-rest: #ffffff00;
+  --control-transparent-bgColor-selected: #92837426;
+  --control-transparent-borderColor-active: #ffffff00;
+  --control-transparent-borderColor-hover: #ffffff00;
+  --control-transparent-borderColor-rest: #ffffff00;
+  --controlTrack-bgColor-active: #ebdbb2;
+  --controlTrack-bgColor-hover: #f2e5bc;
+  --controlTrack-bgColor-rest: #f2e5bc;
+  --controlTrack-fgColor-rest: #786b60;
+  --counter-borderColor: #ffffff00;
+  --data-auburn-color-emphasis: #9d6159;
+  --data-auburn-color-muted: #fbf1c7;
+  --data-blue-color-emphasis: #9c6404;
+  --data-blue-color-muted: #d2dcc3;
+  --data-brown-color-emphasis: #8a6b48;
+  --data-brown-color-muted: #f2e5bc;
+  --data-coral-color-emphasis: #cc4035;
+  --data-coral-color-muted: #f8d0a6;
+  --data-gray-color-emphasis: #a2896b;
+  --data-gray-color-muted: #fbf1c7;
+  --data-green-color-emphasis: #5d9772;
+  --data-green-color-muted: #d5dcb3;
+  --data-lemon-color-emphasis: #797411;
+  --data-lemon-color-muted: #e2daa5;
+  --data-lime-color-emphasis: #417a58;
+  --data-lime-color-muted: #e1d9a4;
+  --data-olive-color-emphasis: #75711f;
+  --data-olive-color-muted: #e2daa5;
+  --data-orange-color-emphasis: #e56b41;
+  --data-orange-color-muted: #eed6a3;
+  --data-pine-color-emphasis: #407956;
+  --data-pine-color-muted: #d5dcb3;
+  --data-pink-color-emphasis: #ac598b;
+  --data-pink-color-muted: #f0d3c0;
+  --data-plum-color-emphasis: #ac598c;
+  --data-plum-color-muted: #f0d2bf;
+  --data-purple-color-emphasis: #aa588a;
+  --data-purple-color-muted: #efd1bf;
+  --data-red-color-emphasis: #cc3f35;
+  --data-red-color-muted: #fbcda8;
+  --data-teal-color-emphasis: #4694a7;
+  --data-teal-color-muted: #d2dcc3;
+  --data-yellow-color-emphasis: #c18126;
+  --data-yellow-color-muted: #e2daa6;
+  --diffBlob-additionNum-bgColor: #b0ecc4;
+  --diffBlob-additionWord-bgColor: #b0ecc4;
+  --diffBlob-deletionNum-bgColor: #fdd0c0;
+  --diffBlob-deletionWord-bgColor: #fdd0c0;
+  --diffBlob-hunkNum-bgColor-rest: #b3e7ec;
+  --display-auburn-bgColor-emphasis: #9d6159;
+  --display-auburn-bgColor-muted: #fbf1c7;
+  --display-auburn-borderColor-emphasis: #9d6159;
+  --display-auburn-borderColor-muted: #ebdbb2;
+  --display-auburn-fgColor: #8b554d;
+  --display-auburn-scale-0: #fbf1c7;
+  --display-auburn-scale-1: #ebdbb2;
+  --display-auburn-scale-2: #dcb69f;
+  --display-auburn-scale-3: #ca9d8d;
+  --display-auburn-scale-4: #b68277;
+  --display-auburn-scale-5: #9d6159;
+  --display-auburn-scale-6: #8b554d;
+  --display-auburn-scale-7: #75473f;
+  --display-auburn-scale-8: #5e3933;
+  --display-auburn-scale-9: #442924;
+  --display-blue-bgColor-emphasis: #9c6404;
+  --display-blue-bgColor-muted: #d2dcc3;
+  --display-blue-borderColor-emphasis: #9c6404;
+  --display-blue-borderColor-muted: #a8e5ef;
+  --display-blue-fgColor: #8b5904;
+  --display-blue-scale-0: #d2dcc3;
+  --display-blue-scale-1: #a8e5ef;
+  --display-blue-scale-2: #ecb169;
+  --display-blue-scale-3: #da9842;
+  --display-blue-scale-4: #bf7f23;
+  --display-blue-scale-5: #9c6404;
+  --display-blue-scale-6: #8b5904;
+  --display-blue-scale-7: #744b0b;
+  --display-blue-scale-8: #613c00;
+  --display-blue-scale-9: #472c03;
+  --display-brown-bgColor-emphasis: #8a6b48;
+  --display-brown-bgColor-muted: #f2e5bc;
+  --display-brown-borderColor-emphasis: #8a6b48;
+  --display-brown-borderColor-muted: #ebdbb2;
+  --display-brown-fgColor: #795d3e;
+  --display-brown-scale-0: #f2e5bc;
+  --display-brown-scale-1: #ebdbb2;
+  --display-brown-scale-2: #d6ba92;
+  --display-brown-scale-3: #c0a17a;
+  --display-brown-scale-4: #ab8960;
+  --display-brown-scale-5: #8a6b48;
+  --display-brown-scale-6: #795d3e;
+  --display-brown-scale-7: #675036;
+  --display-brown-scale-8: #53402c;
+  --display-brown-scale-9: #3b2e1f;
+  --display-coral-bgColor-emphasis: #cc4035;
+  --display-coral-bgColor-muted: #f8d0a6;
+  --display-coral-borderColor-emphasis: #cc4035;
+  --display-coral-borderColor-muted: #ffcfb6;
+  --display-coral-fgColor: #ba2d25;
+  --display-coral-scale-0: #f8d0a6;
+  --display-coral-scale-1: #ffcfb6;
+  --display-coral-scale-2: #fcab90;
+  --display-coral-scale-3: #f78863;
+  --display-coral-scale-4: #e56c42;
+  --display-coral-scale-5: #cc4035;
+  --display-coral-scale-6: #ba2d25;
+  --display-coral-scale-7: #9b251f;
+  --display-coral-scale-8: #7e1f19;
+  --display-coral-scale-9: #5d1712;
+  --display-cyan-bgColor-emphasis: #287a8c;
+  --display-cyan-bgColor-muted: #d1dcc3;
+  --display-cyan-borderColor-emphasis: #287a8c;
+  --display-cyan-borderColor-muted: #96e4f9;
+  --display-cyan-fgColor: #106a7c;
+  --display-cyan-scale-0: #d1dcc3;
+  --display-cyan-scale-1: #96e4f9;
+  --display-cyan-scale-2: #7bc9dd;
+  --display-cyan-scale-3: #64b2c5;
+  --display-cyan-scale-4: #4796a9;
+  --display-cyan-scale-5: #287a8c;
+  --display-cyan-scale-6: #106a7c;
+  --display-cyan-scale-7: #115968;
+  --display-cyan-scale-8: #014855;
+  --display-cyan-scale-9: #033741;
+  --display-gray-bgColor-emphasis: #826b53;
+  --display-gray-bgColor-muted: #fbf1c7;
+  --display-gray-borderColor-emphasis: #826b53;
+  --display-gray-borderColor-muted: #ebdbb2;
+  --display-gray-fgColor: #786b60;
+  --display-gray-scale-0: #fbf1c7;
+  --display-gray-scale-1: #ebdbb2;
+  --display-gray-scale-2: #d3bb96;
+  --display-gray-scale-3: #bca382;
+  --display-gray-scale-4: #a2896b;
+  --display-gray-scale-5: #826b53;
+  --display-gray-scale-6: #786b60;
+  --display-gray-scale-7: #3c3836;
+  --display-gray-scale-8: #3c3836;
+  --display-gray-scale-9: #3c3836;
+  --display-green-bgColor-emphasis: #437c59;
+  --display-green-bgColor-muted: #d5dcb3;
+  --display-green-borderColor-emphasis: #437c59;
+  --display-green-borderColor-muted: #aae6bf;
+  --display-green-fgColor: #336c4a;
+  --display-green-scale-0: #d5dcb3;
+  --display-green-scale-1: #aae6bf;
+  --display-green-scale-2: #8ec9a3;
+  --display-green-scale-3: #76b08a;
+  --display-green-scale-4: #5d9772;
+  --display-green-scale-5: #437c59;
+  --display-green-scale-6: #336c4a;
+  --display-green-scale-7: #265c3c;
+  --display-green-scale-8: #274b33;
+  --display-green-scale-9: #213425;
+  --display-indigo-bgColor-emphasis: #a0670d;
+  --display-indigo-bgColor-muted: #eed5a2;
+  --display-indigo-borderColor-emphasis: #a0670d;
+  --display-indigo-borderColor-muted: #f6d4a6;
+  --display-indigo-fgColor: #8d5b08;
+  --display-indigo-scale-0: #eed5a2;
+  --display-indigo-scale-1: #f6d4a6;
+  --display-indigo-scale-2: #e6b57b;
+  --display-indigo-scale-3: #da9943;
+  --display-indigo-scale-4: #c08025;
+  --display-indigo-scale-5: #a0670d;
+  --display-indigo-scale-6: #8d5b08;
+  --display-indigo-scale-7: #7c4f03;
+  --display-indigo-scale-8: #654006;
+  --display-indigo-scale-9: #492e06;
+  --display-lemon-bgColor-emphasis: #797411;
+  --display-lemon-bgColor-muted: #e2daa5;
+  --display-lemon-borderColor-emphasis: #797411;
+  --display-lemon-borderColor-muted: #e2dd84;
+  --display-lemon-fgColor: #6b660e;
+  --display-lemon-scale-0: #e2daa5;
+  --display-lemon-scale-1: #e2dd84;
+  --display-lemon-scale-2: #c6c168;
+  --display-lemon-scale-3: #b1ab52;
+  --display-lemon-scale-4: #979137;
+  --display-lemon-scale-5: #797411;
+  --display-lemon-scale-6: #6b660e;
+  --display-lemon-scale-7: #595409;
+  --display-lemon-scale-8: #484405;
+  --display-lemon-scale-9: #353202;
+  --display-lime-bgColor-emphasis: #417a58;
+  --display-lime-bgColor-muted: #e1d9a4;
+  --display-lime-borderColor-emphasis: #417a58;
+  --display-lime-borderColor-muted: #e0dc82;
+  --display-lime-fgColor: #346d4b;
+  --display-lime-scale-0: #e1d9a4;
+  --display-lime-scale-1: #e0dc82;
+  --display-lime-scale-2: #c4c067;
+  --display-lime-scale-3: #aaa64c;
+  --display-lime-scale-4: #949035;
+  --display-lime-scale-5: #417a58;
+  --display-lime-scale-6: #346d4b;
+  --display-lime-scale-7: #245e3c;
+  --display-lime-scale-8: #1b4d30;
+  --display-lime-scale-9: #183421;
+  --display-olive-bgColor-emphasis: #75711f;
+  --display-olive-bgColor-muted: #e2daa5;
+  --display-olive-borderColor-emphasis: #75711f;
+  --display-olive-borderColor-muted: #e1dd83;
+  --display-olive-fgColor: #66631f;
+  --display-olive-scale-0: #e2daa5;
+  --display-olive-scale-1: #e1dd83;
+  --display-olive-scale-2: #c5c168;
+  --display-olive-scale-3: #aba74d;
+  --display-olive-scale-4: #938e33;
+  --display-olive-scale-5: #75711f;
+  --display-olive-scale-6: #66631f;
+  --display-olive-scale-7: #58551f;
+  --display-olive-scale-8: #48451d;
+  --display-olive-scale-9: #333019;
+  --display-orange-bgColor-emphasis: #ba4d25;
+  --display-orange-bgColor-muted: #eed6a3;
+  --display-orange-borderColor-emphasis: #ba4d25;
+  --display-orange-borderColor-muted: #fad2a1;
+  --display-orange-fgColor: #a44321;
+  --display-orange-scale-0: #eed6a3;
+  --display-orange-scale-1: #fad2a1;
+  --display-orange-scale-2: #f2b56a;
+  --display-orange-scale-3: #fc855c;
+  --display-orange-scale-4: #e56b41;
+  --display-orange-scale-5: #ba4d25;
+  --display-orange-scale-6: #a44321;
+  --display-orange-scale-7: #8e3a1c;
+  --display-orange-scale-8: #712f17;
+  --display-orange-scale-9: #542211;
+  --display-pine-bgColor-emphasis: #407956;
+  --display-pine-bgColor-muted: #d5dcb3;
+  --display-pine-borderColor-emphasis: #407956;
+  --display-pine-borderColor-muted: #a9e5be;
+  --display-pine-fgColor: #336c4a;
+  --display-pine-scale-0: #d5dcb3;
+  --display-pine-scale-1: #a9e5be;
+  --display-pine-scale-2: #8bc69f;
+  --display-pine-scale-3: #77b18c;
+  --display-pine-scale-4: #5f9874;
+  --display-pine-scale-5: #407956;
+  --display-pine-scale-6: #336c4a;
+  --display-pine-scale-7: #225c3b;
+  --display-pine-scale-8: #1d4a2f;
+  --display-pine-scale-9: #163521;
+  --display-pink-bgColor-emphasis: #ac598b;
+  --display-pink-bgColor-muted: #f0d3c0;
+  --display-pink-borderColor-emphasis: #ac598b;
+  --display-pink-borderColor-muted: #fec9df;
+  --display-pink-fgColor: #9b4a7c;
+  --display-pink-scale-0: #f0d3c0;
+  --display-pink-scale-1: #fec9df;
+  --display-pink-scale-2: #f6a6d4;
+  --display-pink-scale-3: #e58dc0;
+  --display-pink-scale-4: #cb75a8;
+  --display-pink-scale-5: #ac598b;
+  --display-pink-scale-6: #9b4a7c;
+  --display-pink-scale-7: #863769;
+  --display-pink-scale-8: #6d2b55;
+  --display-pink-scale-9: #4d233d;
+  --display-plum-bgColor-emphasis: #ac598c;
+  --display-plum-bgColor-muted: #f0d2bf;
+  --display-plum-borderColor-emphasis: #ac598c;
+  --display-plum-borderColor-muted: #ffcae5;
+  --display-plum-fgColor: #9e4c7f;
+  --display-plum-scale-0: #f0d2bf;
+  --display-plum-scale-1: #ffcae5;
+  --display-plum-scale-2: #faa0d5;
+  --display-plum-scale-3: #e38bbf;
+  --display-plum-scale-4: #cb75a8;
+  --display-plum-scale-5: #ac598c;
+  --display-plum-scale-6: #9e4c7f;
+  --display-plum-scale-7: #8a3a6c;
+  --display-plum-scale-8: #76285b;
+  --display-plum-scale-9: #5c0d43;
+  --display-purple-bgColor-emphasis: #aa588a;
+  --display-purple-bgColor-muted: #efd1bf;
+  --display-purple-borderColor-emphasis: #aa588a;
+  --display-purple-borderColor-muted: #feccde;
+  --display-purple-fgColor: #9c4b7d;
+  --display-purple-scale-0: #efd1bf;
+  --display-purple-scale-1: #feccde;
+  --display-purple-scale-2: #f5a6d3;
+  --display-purple-scale-3: #e189bd;
+  --display-purple-scale-4: #c872a5;
+  --display-purple-scale-5: #aa588a;
+  --display-purple-scale-6: #9c4b7d;
+  --display-purple-scale-7: #7e5007;
+  --display-purple-scale-8: #664107;
+  --display-purple-scale-9: #4c2e00;
+  --display-red-bgColor-emphasis: #cc3f35;
+  --display-red-bgColor-muted: #fbcda8;
+  --display-red-borderColor-emphasis: #cc3f35;
+  --display-red-borderColor-muted: #ffcfbd;
+  --display-red-fgColor: #bb2e26;
+  --display-red-scale-0: #fbcda8;
+  --display-red-scale-1: #ffcfbd;
+  --display-red-scale-2: #fda79b;
+  --display-red-scale-3: #fb8577;
+  --display-red-scale-4: #f06153;
+  --display-red-scale-5: #cc3f35;
+  --display-red-scale-6: #bb2e26;
+  --display-red-scale-7: #a61311;
+  --display-red-scale-8: #88100e;
+  --display-red-scale-9: #620d0a;
+  --display-teal-bgColor-emphasis: #287a8d;
+  --display-teal-bgColor-muted: #d2dcc3;
+  --display-teal-borderColor-emphasis: #287a8d;
+  --display-teal-borderColor-muted: #96e5f9;
+  --display-teal-fgColor: #186c7e;
+  --display-teal-scale-0: #d2dcc3;
+  --display-teal-scale-1: #96e5f9;
+  --display-teal-scale-2: #78c6da;
+  --display-teal-scale-3: #61afc3;
+  --display-teal-scale-4: #4694a7;
+  --display-teal-scale-5: #287a8d;
+  --display-teal-scale-6: #186c7e;
+  --display-teal-scale-7: #165a68;
+  --display-teal-scale-8: #104753;
+  --display-teal-scale-9: #0c3740;
+  --display-yellow-bgColor-emphasis: #9c6510;
+  --display-yellow-bgColor-muted: #e2daa6;
+  --display-yellow-borderColor-emphasis: #9c6510;
+  --display-yellow-borderColor-muted: #e3df85;
+  --display-yellow-fgColor: #85550a;
+  --display-yellow-scale-0: #e2daa6;
+  --display-yellow-scale-1: #e3df85;
+  --display-yellow-scale-2: #f1ae59;
+  --display-yellow-scale-3: #d89741;
+  --display-yellow-scale-4: #c18126;
+  --display-yellow-scale-5: #9c6510;
+  --display-yellow-scale-6: #85550a;
+  --display-yellow-scale-7: #744a07;
+  --display-yellow-scale-8: #5f3b04;
+  --display-yellow-scale-9: #452901;
+  --fgColor-accent: #b57614; /** Accent text for links and interactive elements */
+  --fgColor-attention: #9d6509; /** Attention text for warnings and caution states */
+  --fgColor-closed: var(--fgColor-danger); /** Text color for closed state indicators (issues, PRs) */
+  --fgColor-disabled: #928374; /** Text color for disabled interactive elements */
+  --fgColor-done: #a75587; /** Text color for completed/done state indicators */
+  --fgColor-muted: #786b60; /** Muted text for secondary content and less important information */
+  --fgColor-neutral: #786b60; /** Neutral semantic text for icons and secondary elements */
+  --fgColor-severe: #be491c; /** Severe text for high-priority warnings */
+  --fgColor-sponsors: #a85588; /** Text color for GitHub Sponsors content */
+  --fgColor-success: #3f7855; /** Success text for positive feedback and completed states */
+  --header-bgColor: #3c3836;
+  --header-borderColor-divider: #928374;
+  --headerSearch-bgColor: #3c3836;
+  --headerSearch-borderColor: #928374;
+  --highlight-neutral-bgColor: #e7deac;
+  --label-auburn-bgColor-active: #dcb69f;
+  --label-auburn-bgColor-hover: #ebdbb2;
+  --label-auburn-bgColor-rest: #fbf1c7;
+  --label-auburn-borderColor: #ffffff00;
+  --label-auburn-fgColor-active: #5e3933;
+  --label-auburn-fgColor-hover: #75473f;
+  --label-auburn-fgColor-rest: #8b554d;
+  --label-blue-bgColor-active: #ecb169;
+  --label-blue-bgColor-hover: #a8e5ef;
+  --label-blue-bgColor-rest: #d2dcc3;
+  --label-blue-borderColor: #ffffff00;
+  --label-blue-fgColor-active: #613c00;
+  --label-blue-fgColor-hover: #744b0b;
+  --label-blue-fgColor-rest: #8b5904;
+  --label-brown-bgColor-active: #d6ba92;
+  --label-brown-bgColor-hover: #ebdbb2;
+  --label-brown-bgColor-rest: #f2e5bc;
+  --label-brown-borderColor: #ffffff00;
+  --label-brown-fgColor-active: #53402c;
+  --label-brown-fgColor-hover: #675036;
+  --label-brown-fgColor-rest: #795d3e;
+  --label-coral-bgColor-active: #fcab90;
+  --label-coral-bgColor-hover: #ffcfb6;
+  --label-coral-bgColor-rest: #f8d0a6;
+  --label-coral-borderColor: #ffffff00;
+  --label-coral-fgColor-active: #7e1f19;
+  --label-coral-fgColor-hover: #9b251f;
+  --label-coral-fgColor-rest: #ba2d25;
+  --label-cyan-bgColor-active: #7bc9dd;
+  --label-cyan-bgColor-hover: #96e4f9;
+  --label-cyan-bgColor-rest: #d1dcc3;
+  --label-cyan-borderColor: #ffffff00;
+  --label-cyan-fgColor-active: #014855;
+  --label-cyan-fgColor-hover: #115968;
+  --label-cyan-fgColor-rest: #106a7c;
+  --label-gray-bgColor-active: #d3bb96;
+  --label-gray-bgColor-hover: #ebdbb2;
+  --label-gray-bgColor-rest: #fbf1c7;
+  --label-gray-borderColor: #ffffff00;
+  --label-gray-fgColor-active: #3c3836;
+  --label-gray-fgColor-hover: #3c3836;
+  --label-gray-fgColor-rest: #786b60;
+  --label-green-bgColor-active: #8ec9a3;
+  --label-green-bgColor-hover: #aae6bf;
+  --label-green-bgColor-rest: #d5dcb3;
+  --label-green-borderColor: #ffffff00;
+  --label-green-fgColor-active: #274b33;
+  --label-green-fgColor-hover: #265c3c;
+  --label-green-fgColor-rest: #336c4a;
+  --label-indigo-bgColor-active: #e6b57b;
+  --label-indigo-bgColor-hover: #f6d4a6;
+  --label-indigo-bgColor-rest: #eed5a2;
+  --label-indigo-borderColor: #ffffff00;
+  --label-indigo-fgColor-active: #654006;
+  --label-indigo-fgColor-hover: #7c4f03;
+  --label-indigo-fgColor-rest: #8d5b08;
+  --label-lemon-bgColor-active: #c6c168;
+  --label-lemon-bgColor-hover: #e2dd84;
+  --label-lemon-bgColor-rest: #e2daa5;
+  --label-lemon-borderColor: #ffffff00;
+  --label-lemon-fgColor-active: #484405;
+  --label-lemon-fgColor-hover: #595409;
+  --label-lemon-fgColor-rest: #6b660e;
+  --label-lime-bgColor-active: #c4c067;
+  --label-lime-bgColor-hover: #e0dc82;
+  --label-lime-bgColor-rest: #e1d9a4;
+  --label-lime-borderColor: #ffffff00;
+  --label-lime-fgColor-active: #1b4d30;
+  --label-lime-fgColor-hover: #245e3c;
+  --label-lime-fgColor-rest: #346d4b;
+  --label-olive-bgColor-active: #c5c168;
+  --label-olive-bgColor-hover: #e1dd83;
+  --label-olive-bgColor-rest: #e2daa5;
+  --label-olive-borderColor: #ffffff00;
+  --label-olive-fgColor-active: #48451d;
+  --label-olive-fgColor-hover: #58551f;
+  --label-olive-fgColor-rest: #66631f;
+  --label-orange-bgColor-active: #f2b56a;
+  --label-orange-bgColor-hover: #fad2a1;
+  --label-orange-bgColor-rest: #eed6a3;
+  --label-orange-borderColor: #ffffff00;
+  --label-orange-fgColor-active: #712f17;
+  --label-orange-fgColor-hover: #8e3a1c;
+  --label-orange-fgColor-rest: #a44321;
+  --label-pine-bgColor-active: #8bc69f;
+  --label-pine-bgColor-hover: #a9e5be;
+  --label-pine-bgColor-rest: #d5dcb3;
+  --label-pine-borderColor: #ffffff00;
+  --label-pine-fgColor-active: #1d4a2f;
+  --label-pine-fgColor-hover: #225c3b;
+  --label-pine-fgColor-rest: #336c4a;
+  --label-pink-bgColor-active: #f6a6d4;
+  --label-pink-bgColor-hover: #fec9df;
+  --label-pink-bgColor-rest: #f0d3c0;
+  --label-pink-borderColor: #ffffff00;
+  --label-pink-fgColor-active: #6d2b55;
+  --label-pink-fgColor-hover: #863769;
+  --label-pink-fgColor-rest: #9b4a7c;
+  --label-plum-bgColor-active: #faa0d5;
+  --label-plum-bgColor-hover: #ffcae5;
+  --label-plum-bgColor-rest: #f0d2bf;
+  --label-plum-borderColor: #ffffff00;
+  --label-plum-fgColor-active: #76285b;
+  --label-plum-fgColor-hover: #8a3a6c;
+  --label-plum-fgColor-rest: #9e4c7f;
+  --label-purple-bgColor-active: #f5a6d3;
+  --label-purple-bgColor-hover: #feccde;
+  --label-purple-bgColor-rest: #efd1bf;
+  --label-purple-borderColor: #ffffff00;
+  --label-purple-fgColor-active: #664107;
+  --label-purple-fgColor-hover: #7e5007;
+  --label-purple-fgColor-rest: #9c4b7d;
+  --label-red-bgColor-active: #fda79b;
+  --label-red-bgColor-hover: #ffcfbd;
+  --label-red-bgColor-rest: #fbcda8;
+  --label-red-borderColor: #ffffff00;
+  --label-red-fgColor-active: #88100e;
+  --label-red-fgColor-hover: #a61311;
+  --label-red-fgColor-rest: #bb2e26;
+  --label-teal-bgColor-active: #78c6da;
+  --label-teal-bgColor-hover: #96e5f9;
+  --label-teal-bgColor-rest: #d2dcc3;
+  --label-teal-borderColor: #ffffff00;
+  --label-teal-fgColor-active: #104753;
+  --label-teal-fgColor-hover: #165a68;
+  --label-teal-fgColor-rest: #186c7e;
+  --label-yellow-bgColor-active: #f1ae59;
+  --label-yellow-bgColor-hover: #e3df85;
+  --label-yellow-bgColor-rest: #e2daa6;
+  --label-yellow-borderColor: #ffffff00;
+  --label-yellow-fgColor-active: #5f3b04;
+  --label-yellow-fgColor-hover: #744a07;
+  --label-yellow-fgColor-rest: #85550a;
+  --menu-bgColor-active: #ffffff00;
+  --overlay-backdrop-bgColor: #d5c4a166;
+  --prettylights-syntax-bracketHighlighterAngle: #786b60; /** Syntax highlighting color for angle brackets */
+  --prettylights-syntax-bracketHighlighterUnmatched: #820b0a; /** Syntax highlighting color for unmatched brackets */
+  --prettylights-syntax-carriageReturn-bg: #c5382f; /** Background color for carriage return characters in diffs */
+  --prettylights-syntax-carriageReturn-text: #f2e5bc; /** Text color for carriage return characters in diffs */
+  --prettylights-syntax-comment: #786b60; /** Syntax highlighting color for code comments */
+  --prettylights-syntax-constant: #754b0d; /** Syntax highlighting color for constants and literal values */
+  --prettylights-syntax-constantOtherReferenceLink: #482c04; /** Syntax highlighting color for reference links and URLs in code */
+  --prettylights-syntax-entity: #8a3b6d; /** Syntax highlighting color for class names, type definitions, and declarations */
+  --prettylights-syntax-entityTag: #754b0d; /** Syntax highlighting color for HTML/XML tags */
+  --prettylights-syntax-invalidIllegal-text: var(--fgColor-danger); /** Text color for invalid or illegal code syntax */
+  --prettylights-syntax-keyword: #c5382f; /** Syntax highlighting color for language keywords (if, else, return) */
+  --prettylights-syntax-markup-changed-bg: #ebd09b; /** Background color for changed lines in diff views */
+  --prettylights-syntax-markup-changed-text: #963610; /** Text color for changed lines in diff views */
+  --prettylights-syntax-markup-deleted-bg: #fbf1c7; /** Background color for deleted lines in diff views */
+  --prettylights-syntax-markup-deleted-text: #820b0a; /** Text color for deleted lines in diff views */
+  --prettylights-syntax-markup-heading: #754b0d; /** Syntax highlighting color for headings in markdown */
+  --prettylights-syntax-markup-ignored-bg: #754b0d; /** Background color for ignored content in diffs */
+  --prettylights-syntax-markup-ignored-text: #d5c4a1; /** Text color for ignored content in diffs */
+  --prettylights-syntax-markup-inserted-bg: #dbdfb6; /** Background color for inserted lines in diff views */
+  --prettylights-syntax-markup-inserted-text: #265f3e; /** Text color for inserted lines in diff views */
+  --prettylights-syntax-markup-list: #3a2303; /** Syntax highlighting color for list markers in markdown */
+  --prettylights-syntax-metaDiffRange: #a75587; /** Syntax highlighting color for diff range information (@@ lines) */
+  --prettylights-syntax-string: #482c04; /** Syntax highlighting color for string literals */
+  --prettylights-syntax-stringRegexp: #265f3e; /** Syntax highlighting color for regular expression literals */
+  --prettylights-syntax-sublimeLinterGutterMark: #928374; /** Color for linter gutter marks in code editors */
+  --prettylights-syntax-variable: #963610; /** Syntax highlighting color for variables and parameters */
+  --progressBar-bgColor-success: var(--bgColor-success-emphasis);
+  --progressBar-track-borderColor: #ffffff00;
+  --reactionButton-selected-bgColor-rest: #d6dec3;
+  --reactionButton-selected-fgColor-hover: #754b0d;
+  --selectMenu-bgColor-active: #b3e7ec;
+  --selectMenu-borderColor: #ffffff00;
+  --shadow-resting-medium: 0 1px 1px 0 #3c38361a, 0 3px 6px 0 #3c38361f; /** Medium resting shadow for cards and elevated surfaces */
+  --skeletonLoader-bgColor: #9283741a;
+  --topicTag-borderColor: #ffffff00;
+  --treeViewItem-leadingVisual-iconColor-rest: #da9943;
+  --underlineNav-borderColor-active: #fe8a7c;
+  --ansi-black: #3c3836; /** ANSI black for terminal text and backgrounds */
+  --avatar-bgColor: #fbf1c7;
+  --avatar-shadow: 0 0 0 2px #fbf1c7cc;
+  --bgColor-black: #3c3836; /** Pure black background */
+  --bgColor-closed-emphasis: var(--bgColor-danger-emphasis); /** Strong background for closed state badges and labels */
+  --bgColor-closed-muted: var(--bgColor-danger-muted); /** Subtle background for closed state indicators (issues, PRs) */
+  --bgColor-default: #fbf1c7; /** Default background color for pages and main content areas */
+  --bgColor-draft-emphasis: var(--bgColor-neutral-emphasis); /** Strong background for draft state badges and labels */
+  --bgColor-draft-muted: var(--bgColor-neutral-muted); /** Subtle background for draft state indicators */
+  --bgColor-inset: var(--bgColor-muted); /** Inset background for recessed content areas like wells or sunken panels */
+  --bgColor-open-muted: var(--bgColor-success-muted); /** Subtle background for open state indicators (issues, PRs) */
+  --bgColor-upsell-emphasis: var(--bgColor-done-emphasis); /** Strong background for prominent upsell elements */
+  --bgColor-upsell-muted: var(--bgColor-done-muted); /** Subtle background for upsell and promotional content */
+  --bgColor-white: #fbf1c7; /** Pure white background */
+  --border-accent-emphasis: var(--borderWidth-default) solid var(--borderColor-accent-emphasis);
+  --border-accent-muted: var(--borderWidth-default) solid var(--borderColor-accent-muted);
+  --border-attention-emphasis: var(--borderWidth-default) solid var(--borderColor-attention-emphasis);
+  --border-attention-muted: var(--borderWidth-default) solid var(--borderColor-attention-muted);
+  --border-danger-emphasis: var(--borderWidth-default) solid var(--borderColor-danger-emphasis);
+  --border-danger-muted: var(--borderWidth-default) solid var(--borderColor-danger-muted);
+  --border-default: var(--borderWidth-default) solid var(--borderColor-default);
+  --border-disabled: var(--borderWidth-default) solid var(--borderColor-disabled);
+  --border-done-emphasis: var(--borderWidth-default) solid var(--borderColor-done-emphasis);
+  --border-done-muted: var(--borderWidth-default) solid var(--borderColor-done-muted);
+  --border-emphasis: var(--borderWidth-default) solid var(--borderColor-emphasis);
+  --border-neutral-emphasis: var(--borderWidth-default) solid var(--borderColor-neutral-emphasis);
+  --border-severe-emphasis: var(--borderWidth-default) solid var(--borderColor-severe-emphasis);
+  --border-severe-muted: var(--borderWidth-default) solid var(--borderColor-severe-muted);
+  --border-sponsors-emphasis: var(--borderWidth-default) solid var(--borderColor-sponsors-emphasis);
+  --border-sponsors-muted: var(--borderWidth-default) solid var(--borderColor-sponsors-muted);
+  --border-success-emphasis: var(--borderWidth-default) solid var(--borderColor-success-emphasis);
+  --border-success-muted: var(--borderWidth-default) solid var(--borderColor-success-muted);
+  --border-transparent: var(--borderWidth-default) solid var(--borderColor-transparent);
+  --borderColor-closed-emphasis: var(--borderColor-danger-emphasis); /** Strong border for closed state badges */
+  --borderColor-closed-muted: var(--borderColor-danger-muted); /** Subtle border for closed state indicators */
+  --borderColor-draft-emphasis: var(--borderColor-neutral-emphasis); /** Strong border for draft state badges */
+  --borderColor-muted: #d5c4a1b3; /** Subtle border for secondary elements and light separators */
+  --borderColor-open-emphasis: var(--borderColor-success-emphasis); /** Strong border for open state badges */
+  --borderColor-open-muted: var(--borderColor-success-muted); /** Subtle border for open state indicators */
+  --borderColor-translucent: #3c383626; /** Semi-transparent border for overlays and layered elements. Border-specific token — no bgColor-translucent counterpart exists by design. */
+  --borderColor-upsell-emphasis: var(--borderColor-done-emphasis); /** Strong border for prominent upsell elements */
+  --borderColor-upsell-muted: var(--borderColor-done-muted); /** Subtle border for upsell and promotional content */
+  --button-danger-bgColor-hover: var(--bgColor-danger-emphasis);
+  --button-danger-bgColor-rest: var(--control-bgColor-rest);
+  --button-danger-fgColor-active: #fbf1c7;
+  --button-danger-fgColor-hover: #fbf1c7;
+  --button-danger-iconColor-disabled: var(--button-danger-fgColor-disabled);
+  --button-danger-iconColor-hover: #fbf1c7;
+  --button-danger-iconColor-rest: var(--button-danger-fgColor-rest);
+  --button-default-bgColor-active: var(--control-bgColor-active);
+  --button-default-bgColor-hover: var(--control-bgColor-hover);
+  --button-default-bgColor-rest: var(--control-bgColor-rest);
+  --button-default-bgColor-selected: var(--control-bgColor-active);
+  --button-default-fgColor-rest: var(--control-fgColor-rest);
+  --button-default-shadow-resting: 0 1px 0 0 #3c38360a;
+  --button-invisible-bgColor-active: var(--control-transparent-bgColor-active);
+  --button-invisible-bgColor-hover: var(--control-transparent-bgColor-hover);
+  --button-invisible-bgColor-rest: var(--control-transparent-bgColor-rest);
+  --button-invisible-borderColor-hover: var(--control-transparent-borderColor-hover);
+  --button-invisible-borderColor-rest: var(--control-transparent-borderColor-rest);
+  --button-invisible-fgColor-active: var(--control-fgColor-rest);
+  --button-invisible-fgColor-hover: var(--control-fgColor-rest);
+  --button-invisible-fgColor-rest: var(--control-fgColor-rest);
+  --button-invisible-iconColor-hover: var(--fgColor-muted);
+  --button-invisible-iconColor-rest: var(--fgColor-muted);
+  --button-outline-bgColor-hover: var(--bgColor-accent-emphasis);
+  --button-outline-bgColor-rest: var(--control-bgColor-rest);
+  --button-outline-fgColor-active: #fbf1c7;
+  --button-outline-fgColor-disabled: #b5761480;
+  --button-outline-fgColor-hover: #fbf1c7;
+  --button-outline-fgColor-rest: var(--fgColor-accent);
+  --button-primary-fgColor-disabled: #fbf1c799;
+  --buttonCounter-danger-bgColor-disabled: #c5382f0d;
+  --buttonCounter-danger-bgColor-hover: #fbf1c733;
+  --buttonCounter-danger-bgColor-rest: #c5382f1a;
+  --buttonCounter-danger-fgColor-hover: #fbf1c7;
+  --buttonCounter-default-bgColor-rest: var(--bgColor-neutral-muted);
+  --buttonCounter-invisible-bgColor-rest: var(--bgColor-neutral-muted);
+  --buttonCounter-outline-bgColor-disabled: #b576140d;
+  --buttonCounter-outline-bgColor-hover: #fbf1c733;
+  --buttonCounter-outline-bgColor-rest: #b576141a;
+  --buttonCounter-outline-fgColor-disabled: #b5761480;
+  --buttonCounter-outline-fgColor-hover: #fbf1c7;
+  --buttonKeybindingHint-danger-bgColor-rest: var(--buttonKeybindingHint-default-bgColor-rest);
+  --buttonKeybindingHint-default-bgColor-disabled: var(--buttonKeybindingHint-default-bgColor-rest);
+  --buttonKeybindingHint-default-fgColor-rest: var(--fgColor-muted);
+  --buttonKeybindingHint-inactive-fgColor: var(--button-inactive-fgColor);
+  --buttonKeybindingHint-invisible-bgColor-active: var(--control-transparent-bgColor-active);
+  --buttonKeybindingHint-invisible-bgColor-disabled: var(--button-invisible-bgColor-disabled);
+  --buttonKeybindingHint-invisible-bgColor-hover: var(--control-transparent-bgColor-hover);
+  --buttonKeybindingHint-invisible-bgColor-rest: var(--buttonKeybindingHint-default-bgColor-rest);
+  --buttonKeybindingHint-invisible-fgColor-rest: var(--fgColor-muted);
+  --buttonKeybindingHint-primary-bgColor-disabled: #fbf1c71a;
+  --buttonKeybindingHint-primary-bgColor-rest: var(--buttonCounter-primary-bgColor-rest);
+  --codeMirror-activeline-bgColor: var(--bgColor-neutral-muted);
+  --codeMirror-gutterMarker-fgColor-muted: var(--fgColor-muted);
+  --codeMirror-lineNumber-fgColor: var(--fgColor-muted);
+  --codeMirror-selection-bgColor: var(--borderColor-accent-muted);
+  --codeMirror-syntax-fgColor-comment: #3c3836;
+  --color-ansi-black-bright: var(--ansi-blackBright); /** Deprecated. Use ansi.blackBright instead. */
+  --color-ansi-blue: var(--ansi-blue); /** Deprecated. Use ansi.blue instead. */
+  --color-ansi-blue-bright: var(--ansi-blueBright); /** Deprecated. Use ansi.blueBright instead. */
+  --color-ansi-gray: var(--ansi-gray); /** Deprecated. Use ansi.gray instead. */
+  --color-ansi-green: var(--ansi-green); /** Deprecated. Use ansi.green instead. */
+  --color-ansi-green-bright: var(--ansi-greenBright); /** Deprecated. Use ansi.greenBright instead. */
+  --color-ansi-magenta: var(--ansi-magenta); /** Deprecated. Use ansi.magenta instead. */
+  --color-ansi-magenta-bright: var(--ansi-magentaBright); /** Deprecated. Use ansi.magentaBright instead. */
+  --color-ansi-red: var(--ansi-red); /** Deprecated. Use ansi.red instead. */
+  --color-ansi-red-bright: var(--ansi-redBright); /** Deprecated. Use ansi.redBright instead. */
+  --color-ansi-white: var(--ansi-white); /** Deprecated. Use ansi.white instead. */
+  --color-ansi-white-bright: var(--ansi-whiteBright); /** Deprecated. Use ansi.whiteBright instead. */
+  --color-ansi-yellow: var(--ansi-yellow); /** Deprecated. Use ansi.yellow instead. */
+  --color-ansi-yellow-bright: var(--ansi-yellowBright); /** Deprecated. Use ansi.yellowBright instead. */
+  --color-prettylights-syntax-brackethighlighter-angle: var(--prettylights-syntax-bracketHighlighterAngle); /** Deprecated. Use prettylights.syntax.bracketHighlighterAngle instead. */
+  --color-prettylights-syntax-brackethighlighter-unmatched: var(--prettylights-syntax-bracketHighlighterUnmatched); /** Deprecated. Use prettylights.syntax.bracketHighlighterUnmatched instead. */
+  --color-prettylights-syntax-carriage-return-bg: var(--prettylights-syntax-carriageReturn-bg); /** Deprecated. Use prettylights.syntax.carriageReturn.bg instead. */
+  --color-prettylights-syntax-carriage-return-text: var(--prettylights-syntax-carriageReturn-text); /** Deprecated. Use prettylights.syntax.carriageReturn.text instead. */
+  --color-prettylights-syntax-comment: var(--prettylights-syntax-comment); /** Deprecated. Use prettylights.syntax.comment instead. */
+  --color-prettylights-syntax-constant: var(--prettylights-syntax-constant); /** Deprecated. Use prettylights.syntax.constant instead. */
+  --color-prettylights-syntax-constant-other-reference-link: var(--prettylights-syntax-constantOtherReferenceLink); /** Deprecated. Use prettylights.syntax.constantOtherReferenceLink instead. */
+  --color-prettylights-syntax-entity: var(--prettylights-syntax-entity); /** Deprecated. Use prettylights.syntax.entity instead. */
+  --color-prettylights-syntax-entity-tag: var(--prettylights-syntax-entityTag); /** Deprecated. Use prettylights.syntax.entityTag instead. */
+  --color-prettylights-syntax-invalid-illegal-text: var(--prettylights-syntax-invalidIllegal-text); /** Deprecated. Use prettylights.syntax.invalidIllegal.text instead. */
+  --color-prettylights-syntax-keyword: var(--prettylights-syntax-keyword); /** Deprecated. Use prettylights.syntax.keyword instead. */
+  --color-prettylights-syntax-markup-changed-bg: var(--prettylights-syntax-markup-changed-bg); /** Deprecated. Use prettylights.syntax.markup.changed.bg instead. */
+  --color-prettylights-syntax-markup-changed-text: var(--prettylights-syntax-markup-changed-text); /** Deprecated. Use prettylights.syntax.markup.changed.text instead. */
+  --color-prettylights-syntax-markup-deleted-bg: var(--prettylights-syntax-markup-deleted-bg); /** Deprecated. Use prettylights.syntax.markup.deleted.bg instead. */
+  --color-prettylights-syntax-markup-deleted-text: var(--prettylights-syntax-markup-deleted-text); /** Deprecated. Use prettylights.syntax.markup.deleted.text instead. */
+  --color-prettylights-syntax-markup-heading: var(--prettylights-syntax-markup-heading); /** Deprecated. Use prettylights.syntax.markup.heading instead. */
+  --color-prettylights-syntax-markup-ignored-bg: var(--prettylights-syntax-markup-ignored-bg); /** Deprecated. Use prettylights.syntax.markup.ignored.bg instead. */
+  --color-prettylights-syntax-markup-ignored-text: var(--prettylights-syntax-markup-ignored-text); /** Deprecated. Use prettylights.syntax.markup.ignored.text instead. */
+  --color-prettylights-syntax-markup-inserted-bg: var(--prettylights-syntax-markup-inserted-bg); /** Deprecated. Use prettylights.syntax.markup.inserted.bg instead. */
+  --color-prettylights-syntax-markup-inserted-text: var(--prettylights-syntax-markup-inserted-text); /** Deprecated. Use prettylights.syntax.markup.inserted.text instead. */
+  --color-prettylights-syntax-markup-list: var(--prettylights-syntax-markup-list); /** Deprecated. Use prettylights.syntax.markup.list instead. */
+  --color-prettylights-syntax-meta-diff-range: var(--prettylights-syntax-metaDiffRange); /** Deprecated. Use prettylights.syntax.metaDiffRange instead. */
+  --color-prettylights-syntax-string: var(--prettylights-syntax-string); /** Deprecated. Use prettylights.syntax.string instead. */
+  --color-prettylights-syntax-string-regexp: var(--prettylights-syntax-stringRegexp); /** Deprecated. Use prettylights.syntax.stringRegexp instead. */
+  --color-prettylights-syntax-sublimelinter-gutter-mark: var(--prettylights-syntax-sublimeLinterGutterMark); /** Deprecated. Use prettylights.syntax.sublimeLinterGutterMark instead. */
+  --color-prettylights-syntax-variable: var(--prettylights-syntax-variable); /** Deprecated. Use prettylights.syntax.variable instead. */
+  --contribution-default-borderColor-1: var(--contribution-default-borderColor-0);
+  --contribution-default-borderColor-2: var(--contribution-default-borderColor-0);
+  --contribution-default-borderColor-3: var(--contribution-default-borderColor-0);
+  --contribution-default-borderColor-4: var(--contribution-default-borderColor-0);
+  --control-bgColor-disabled: var(--bgColor-disabled);
+  --control-bgColor-selected: var(--control-bgColor-rest);
+  --control-borderColor-danger: var(--borderColor-danger-emphasis);
+  --control-borderColor-disabled: var(--borderColor-disabled);
+  --control-borderColor-emphasis: var(--borderColor-emphasis);
+  --control-borderColor-rest: var(--borderColor-default);
+  --control-borderColor-success: var(--borderColor-success-emphasis);
+  --control-borderColor-warning: var(--borderColor-attention-emphasis);
+  --control-checked-bgColor-disabled: var(--fgColor-disabled);
+  --control-checked-bgColor-rest: var(--bgColor-accent-emphasis);
+  --control-danger-bgColor-active: #fbf1c766;
+  --control-danger-bgColor-hover: var(--bgColor-danger-muted);
+  --control-fgColor-disabled: var(--fgColor-disabled);
+  --control-fgColor-placeholder: var(--fgColor-muted);
+  --control-iconColor-rest: var(--fgColor-muted);
+  --control-transparent-bgColor-disabled: var(--bgColor-disabled);
+  --controlKnob-bgColor-checked: #fbf1c7;
+  --controlKnob-bgColor-rest: #fbf1c7;
+  --controlTrack-bgColor-disabled: var(--fgColor-disabled);
+  --controlTrack-borderColor-disabled: var(--fgColor-disabled);
+  --controlTrack-borderColor-rest: var(--borderColor-default);
+  --counter-bgColor-emphasis: var(--bgColor-neutral-emphasis);
+  --counter-bgColor-muted: var(--bgColor-neutral-muted);
+  --diffBlob-additionLine-bgColor: var(--bgColor-success-muted);
+  --diffBlob-deletionLine-bgColor: var(--bgColor-danger-muted);
+  --diffBlob-emptyLine-bgColor: var(--bgColor-muted);
+  --diffBlob-emptyNum-bgColor: var(--bgColor-muted);
+  --diffBlob-expander-iconColor: var(--fgColor-muted);
+  --diffBlob-hunkLine-bgColor: var(--bgColor-accent-muted);
+  --diffBlob-hunkLine-fgColor: var(--fgColor-muted);
+  --diffBlob-hunkNum-bgColor-hover: var(--bgColor-accent-emphasis);
+  --fgColor-black: #3c3836; /** Pure black text */
+  --fgColor-default: #3c3836; /** Default text color for primary content and headings */
+  --fgColor-draft: var(--fgColor-neutral); /** Text color for draft state indicators */
+  --fgColor-link: #076678; /** Text color for hyperlinks */
+  --fgColor-onEmphasis: #fbf1c7; /** Text color for use on emphasis backgrounds */
+  --fgColor-onInverse: #fbf1c7; /** Text color for use on inverse backgrounds */
+  --fgColor-open: var(--fgColor-success); /** Text color for open state indicators (issues, PRs) */
+  --fgColor-upsell: var(--fgColor-done); /** Text color for upsell and promotional content */
+  --fgColor-white: #fbf1c7; /** Pure white text */
+  --focus-outline-color: var(--borderColor-accent-emphasis); /** Outline color for focus states on interactive elements */
+  --header-fgColor-default: #fbf1c7b3;
+  --header-fgColor-logo: #fbf1c7;
+  --overlay-bgColor: #fbf1c7;
+  --page-header-bgColor: var(--bgColor-muted);
+  --prettylights-syntax-brackethighlighter-angle: var(--prettylights-syntax-bracketHighlighterAngle); /** Deprecated. Use prettylights.syntax.bracketHighlighterAngle instead. */
+  --prettylights-syntax-brackethighlighter-unmatched: var(--prettylights-syntax-bracketHighlighterUnmatched); /** Deprecated. Use prettylights.syntax.bracketHighlighterUnmatched instead. */
+  --prettylights-syntax-carriage-return-bg: var(--prettylights-syntax-carriageReturn-bg); /** Deprecated. Use prettylights.syntax.carriageReturn.bg instead. */
+  --prettylights-syntax-carriage-return-text: var(--prettylights-syntax-carriageReturn-text); /** Deprecated. Use prettylights.syntax.carriageReturn.text instead. */
+  --prettylights-syntax-constant-other-reference-link: var(--prettylights-syntax-constantOtherReferenceLink); /** Deprecated. Use prettylights.syntax.constantOtherReferenceLink instead. */
+  --prettylights-syntax-entity-tag: var(--prettylights-syntax-entityTag); /** Deprecated. Use prettylights.syntax.entityTag instead. */
+  --prettylights-syntax-invalid-illegal-text: var(--prettylights-syntax-invalidIllegal-text); /** Deprecated. Use prettylights.syntax.invalidIllegal.text instead. */
+  --prettylights-syntax-invalidIllegal-bg: var(--bgColor-danger-muted); /** Background color for invalid or illegal code syntax */
+  --prettylights-syntax-markup-bold: #3c3836; /** Syntax highlighting color for bold text in markdown */
+  --prettylights-syntax-markup-italic: #3c3836; /** Syntax highlighting color for italic text in markdown */
+  --prettylights-syntax-meta-diff-range: var(--prettylights-syntax-metaDiffRange); /** Deprecated. Use prettylights.syntax.metaDiffRange instead. */
+  --prettylights-syntax-storageModifierImport: #3c3836; /** Syntax highlighting color for import and require statements */
+  --prettylights-syntax-string-regexp: var(--prettylights-syntax-stringRegexp); /** Deprecated. Use prettylights.syntax.stringRegexp instead. */
+  --prettylights-syntax-sublimelinter-gutter-mark: var(--prettylights-syntax-sublimeLinterGutterMark); /** Deprecated. Use prettylights.syntax.sublimeLinterGutterMark instead. */
+  --progressBar-bgColor-accent: var(--bgColor-accent-emphasis);
+  --progressBar-bgColor-attention: var(--bgColor-attention-emphasis);
+  --progressBar-bgColor-danger: var(--bgColor-danger-emphasis);
+  --progressBar-bgColor-done: var(--bgColor-done-emphasis);
+  --progressBar-bgColor-neutral: var(--bgColor-neutral-emphasis);
+  --progressBar-bgColor-severe: var(--bgColor-severe-emphasis);
+  --progressBar-bgColor-sponsors: var(--bgColor-sponsors-emphasis);
+  --progressBar-track-bgColor: var(--borderColor-default);
+  --selection-bgColor: #b5761433; /** Background color for text selection highlights */
+  --shadow-inset: inset 0 1px 0 0 #3c38360a; /** Inset shadow for recessed elements */
+  --shadow-resting-small: 0 1px 1px 0 #3c38360a, 0 1px 2px 0 #3c383608; /** Small resting shadow for buttons and interactive elements */
+  --shadow-resting-xsmall: 0 1px 1px 0 #3c38360d; /** Extra small resting shadow for minimal elevation */
+  --sideNav-bgColor-selected: #fbf1c7;
+  --timelineBadge-bgColor: var(--bgColor-muted);
+  --tooltip-bgColor: var(--bgColor-emphasis);
+  --underlineNav-iconColor-rest: var(--fgColor-muted);
+  --avatar-borderColor: var(--borderColor-translucent);
+  --border-closed-emphasis: var(--border-danger-emphasis);
+  --border-closed-muted: var(--border-danger-muted);
+  --border-draft-emphasis: var(--borderWidth-default) solid var(--borderColor-draft-emphasis);
+  --border-muted: var(--borderWidth-default) solid var(--borderColor-muted);
+  --border-open-emphasis: var(--border-success-emphasis);
+  --border-open-muted: var(--border-success-muted);
+  --border-translucent: var(--borderWidth-default) solid var(--borderColor-translucent); /** Semi-transparent border shorthand for overlays and layered elements. Border-specific token — no bgColor-translucent counterpart exists by design. */
+  --border-upsell-emphasis: var(--borderWidth-default) solid var(--borderColor-upsell-emphasis);
+  --border-upsell-muted: var(--borderWidth-default) solid var(--borderColor-upsell-muted);
+  --borderColor-neutral-muted: var(--borderColor-muted); /** Subtle neutral semantic border */
+  --button-danger-bgColor-disabled: var(--control-bgColor-disabled);
+  --button-danger-borderColor-rest: var(--control-borderColor-rest);
+  --button-default-bgColor-disabled: var(--control-bgColor-disabled);
+  --button-default-borderColor-active: var(--control-borderColor-rest);
+  --button-default-borderColor-disabled: var(--control-borderColor-disabled);
+  --button-default-borderColor-rest: var(--control-borderColor-rest);
+  --button-default-fgColor-disabled: var(--control-fgColor-disabled);
+  --button-invisible-fgColor-disabled: var(--control-fgColor-disabled);
+  --button-invisible-iconColor-disabled: var(--control-fgColor-disabled);
+  --button-outline-bgColor-disabled: var(--control-bgColor-disabled);
+  --button-primary-borderColor-rest: var(--borderColor-translucent);
+  --button-primary-fgColor-rest: #fbf1c7;
+  --button-primary-iconColor-disabled: var(--button-primary-fgColor-disabled);
+  --button-primary-iconColor-rest: #fbf1c7;
+  --buttonKeybindingHint-danger-bgColor-disabled: var(--buttonKeybindingHint-default-bgColor-disabled);
+  --buttonKeybindingHint-danger-borderColor-hover: var(--borderColor-translucent);
+  --buttonKeybindingHint-danger-fgColor-active: var(--fgColor-onEmphasis);
+  --buttonKeybindingHint-danger-fgColor-hover: var(--fgColor-onEmphasis);
+  --buttonKeybindingHint-danger-fgColor-rest: var(--buttonKeybindingHint-default-fgColor-rest);
+  --buttonKeybindingHint-default-borderColor-disabled: var(--control-borderColor-disabled);
+  --buttonKeybindingHint-default-borderColor-rest: var(--borderColor-muted);
+  --buttonKeybindingHint-default-fgColor-disabled: var(--control-fgColor-disabled);
+  --buttonKeybindingHint-inactive-borderColor: var(--borderColor-muted);
+  --buttonKeybindingHint-invisible-borderColor-disabled: var(--control-borderColor-disabled);
+  --buttonKeybindingHint-invisible-fgColor-disabled: var(--control-fgColor-disabled);
+  --buttonKeybindingHint-primary-borderColor-disabled: var(--control-borderColor-disabled);
+  --buttonKeybindingHint-primary-borderColor-rest: #fbf1c71a;
+  --buttonKeybindingHint-primary-fgColor-disabled: var(--button-primary-fgColor-disabled);
+  --buttonKeybindingHint-primary-fgColor-rest: #fbf1c7;
+  --card-bgColor: var(--bgColor-default);
+  --codeMirror-bgColor: var(--bgColor-default);
+  --codeMirror-cursor-fgColor: var(--fgColor-default);
+  --codeMirror-fgColor: var(--fgColor-default);
+  --codeMirror-gutterMarker-fgColor-default: var(--bgColor-default);
+  --codeMirror-gutters-bgColor: var(--bgColor-default);
+  --codeMirror-lines-bgColor: var(--bgColor-default);
+  --codeMirror-matchingBracket-fgColor: var(--fgColor-default);
+  --color-ansi-black: var(--ansi-black); /** Deprecated. Use ansi.black instead. */
+  --color-prettylights-syntax-invalid-illegal-bg: var(--prettylights-syntax-invalidIllegal-bg); /** Deprecated. Use prettylights.syntax.invalidIllegal.bg instead. */
+  --color-prettylights-syntax-markup-bold: var(--prettylights-syntax-markup-bold); /** Deprecated. Use prettylights.syntax.markup.bold instead. */
+  --color-prettylights-syntax-markup-italic: var(--prettylights-syntax-markup-italic); /** Deprecated. Use prettylights.syntax.markup.italic instead. */
+  --color-prettylights-syntax-storage-modifier-import: var(--prettylights-syntax-storageModifierImport); /** Deprecated. Use prettylights.syntax.storageModifierImport instead. */
+  --control-borderColor-selected: var(--control-bgColor-selected);
+  --control-checked-borderColor-disabled: var(--control-checked-bgColor-disabled);
+  --control-checked-borderColor-rest: var(--control-checked-bgColor-rest);
+  --control-checked-fgColor-disabled: var(--fgColor-onEmphasis);
+  --control-checked-fgColor-rest: var(--fgColor-onEmphasis);
+  --controlKnob-bgColor-disabled: var(--control-bgColor-disabled);
+  --controlKnob-borderColor-checked: var(--control-checked-bgColor-rest);
+  --controlKnob-borderColor-disabled: var(--control-bgColor-disabled);
+  --controlKnob-borderColor-rest: var(--control-borderColor-rest);
+  --controlTrack-fgColor-disabled: var(--fgColor-onEmphasis);
+  --dashboard-bgColor: var(--bgColor-default);
+  --diffBlob-additionLine-fgColor: var(--fgColor-default);
+  --diffBlob-additionNum-fgColor: var(--fgColor-default);
+  --diffBlob-additionWord-fgColor: var(--fgColor-default);
+  --diffBlob-deletionLine-fgColor: var(--fgColor-default);
+  --diffBlob-deletionNum-fgColor: var(--fgColor-default);
+  --diffBlob-deletionWord-fgColor: var(--fgColor-default);
+  --diffBlob-hunkNum-fgColor-hover: var(--fgColor-onEmphasis);
+  --diffBlob-hunkNum-fgColor-rest: var(--fgColor-default);
+  --focus-outline: var(--focus-outline-width) solid var(--focus-outline-color); /** Focus ring outline for keyboard navigation and accessibility. */
+  --focus-outlineColor: var(--focus-outline-color); /** Deprecated. Use focus.outline-color instead. */
+  --overlay-borderColor: #d5c4a180;
+  --prettylights-syntax-invalid-illegal-bg: var(--prettylights-syntax-invalidIllegal-bg); /** Deprecated. Use prettylights.syntax.invalidIllegal.bg instead. */
+  --prettylights-syntax-storage-modifier-import: var(--prettylights-syntax-storageModifierImport); /** Deprecated. Use prettylights.syntax.storageModifierImport instead. */
+  --reactionButton-selected-fgColor-rest: var(--fgColor-link);
+  --tooltip-fgColor: var(--fgColor-onEmphasis);
+  --underlineNav-borderColor-hover: var(--borderColor-muted);
+  --border-neutral-muted: var(--borderWidth-default) solid var(--borderColor-neutral-muted);
+  --borderColor-draft-muted: var(--borderColor-neutral-muted); /** Subtle border for draft state indicators */
+  --button-danger-borderColor-hover: var(--button-primary-borderColor-rest);
+  --button-default-borderColor-hover: var(--button-default-borderColor-rest);
+  --button-primary-borderColor-active: var(--button-primary-borderColor-rest);
+  --button-primary-borderColor-hover: var(--button-primary-borderColor-rest);
+  --buttonKeybindingHint-danger-borderColor-active: var(--buttonKeybindingHint-danger-borderColor-hover);
+  --buttonKeybindingHint-danger-borderColor-disabled: var(--buttonKeybindingHint-default-borderColor-disabled);
+  --buttonKeybindingHint-danger-borderColor-rest: var(--buttonKeybindingHint-default-borderColor-rest);
+  --buttonKeybindingHint-danger-fgColor-disabled: var(--buttonKeybindingHint-default-fgColor-disabled);
+  --shadow-floating-large: 0 0 0 1px #d1d9e000, 0 40px 80px 0 #3c38363d; /** Large floating shadow for modals and dialogs */
+  --shadow-floating-medium: 0 0 0 1px #d1d9e000, 0 8px 16px -4px #3c383614, 0 4px 32px -4px #3c383614, 0 24px 48px -12px #3c383614, 0 48px 96px -24px #3c383614; /** Medium floating shadow for popovers and action menus */
+  --shadow-floating-small: 0 0 0 1px #d5c4a140, 0 6px 12px -3px #3c38360a, 0 6px 18px 0 #3c38361f; /** Small floating shadow for dropdowns, tooltips, and small overlays */
+  --shadow-floating-xlarge: 0 0 0 1px #d1d9e000, 0 56px 112px 0 #3c383652; /** Extra large floating shadow for full-screen overlays and sheets */
+  --border-draft-muted: var(--borderWidth-default) solid var(--borderColor-draft-muted);
+  --button-danger-borderColor-active: var(--button-danger-borderColor-hover);
+  --button-outline-borderColor-hover: var(--button-primary-borderColor-hover);
+  --button-outline-borderColor-active: var(--button-outline-borderColor-hover);
+}
+@media (prefers-color-scheme: dark) {
+  [data-color-mode][data-color-mode="auto"][data-dark-theme="light_gruvbox"] {
+    --ansi-cyan: #27798c; /** ANSI cyan for terminal text */
+    --ansi-cyanBright: #4291a4; /** ANSI bright cyan for highlighted terminal text */
+    --bgColor-success-emphasis: #47805d; /** Strong success background for prominent positive actions */
+    --button-outline-bgColor-active: #7f5108;
+    --button-primary-bgColor-active: #8d5a09;
+    --button-primary-bgColor-disabled: #cca964;
+    --button-primary-bgColor-hover: #955d04;
+    --buttonCounter-danger-fgColor-rest: #bb2e26;
+    --control-checked-bgColor-active: #7f5108;
+    --control-checked-bgColor-hover: #8c5904;
+    --fgColor-danger: #9d0006; /** Danger text for errors and destructive actions */
+    --reactionButton-selected-bgColor-hover: #cfdbc2;
+    --ansi-blackBright: #3c3836; /** ANSI bright black (dark gray) for dimmed terminal text */
+    --ansi-blue: #b57614; /** ANSI blue for informational terminal text */
+    --ansi-blueBright: #bd7d20; /** ANSI bright blue for highlighted info in terminal */
+    --ansi-gray: #786b60; /** ANSI gray for secondary terminal text */
+    --ansi-green: #265f3e; /** ANSI green for success indicators in terminal */
+    --ansi-greenBright: #3f7855; /** ANSI bright green for highlighted success in terminal */
+    --ansi-magenta: #a75587; /** ANSI magenta for special terminal text */
+    --ansi-magentaBright: #ca74a7; /** ANSI bright magenta for highlighted special text */
+    --ansi-red: #c5382f; /** ANSI red for errors and alerts in terminal output */
+    --ansi-redBright: #a41211; /** ANSI bright red for highlighted errors in terminal */
+    --ansi-white: #786b60; /** ANSI white for terminal text */
+    --ansi-whiteBright: #928374; /** ANSI bright white for emphasized terminal text */
+    --ansi-yellow: #4b2e05; /** ANSI yellow for warnings in terminal output */
+    --ansi-yellowBright: #603e0b; /** ANSI bright yellow for highlighted warnings in terminal */
+    --avatarStack-fade-bgColor-default: #d5c4a1;
+    --avatarStack-fade-bgColor-muted: #ebdbb2;
+    --bgColor-accent-emphasis: #b57614; /** Strong accent background for active states and focused states */
+    --bgColor-accent-muted: #d6dec3; /** Subtle accent background for informational or selected elements */
+    --bgColor-attention-emphasis: #9d6509; /** Strong attention background for prominent warnings */
+    --bgColor-attention-muted: #e7deac; /** Subtle attention background for warnings and caution states */
+    --bgColor-danger-emphasis: #c5382f; /** Emphasized danger background for critical errors and delete confirmations */
+    --bgColor-danger-muted: #fbf1c7; /** Muted danger background for error states and destructive action contexts */
+    --bgColor-disabled: #fbf1c7; /** Background for disabled interactive elements */
+    --bgColor-done-emphasis: #a75587; /** Strong background for completed/done state badges and labels */
+    --bgColor-done-muted: #f9f5d7; /** Subtle background for completed/done state indicators */
+    --bgColor-emphasis: #3c3836; /** High-emphasis dark background for strong visual contrast */
+    --bgColor-inverse: #3c3836; /** Inverse background that flips between light and dark modes */
+    --bgColor-muted: #f2e5bc; /** Muted background for secondary content areas and subtle grouping */
+    --bgColor-neutral-emphasis: #786b60; /** Strong neutral background for prominent neutral elements */
+    --bgColor-neutral-muted: #9283741f; /** Subtle neutral background for tags, labels, and secondary UI elements */
+    --bgColor-open-emphasis: var(--bgColor-success-emphasis); /** Strong background for open state badges and labels */
+    --bgColor-severe-emphasis: #be491c; /** Strong severe background for prominent high-priority warnings */
+    --bgColor-severe-muted: #f9f5d7; /** Subtle severe background for high-priority warnings */
+    --bgColor-sponsors-emphasis: #a85588; /** Strong background for prominent GitHub Sponsors elements */
+    --bgColor-sponsors-muted: #f9f5d7; /** Subtle background for GitHub Sponsors content */
+    --bgColor-success-muted: #dbdfb6; /** Subtle success background for positive feedback and completed states */
+    --bgColor-transparent: #ffffff00; /** Fully transparent background */
+    --borderColor-accent-emphasis: #b57614; /** Strong accent border for selected or focused elements */
+    --borderColor-accent-muted: #da994366; /** Subtle accent border for selected or focused elements */
+    --borderColor-attention-emphasis: #9d6509; /** Strong attention border for prominent warnings */
+    --borderColor-attention-muted: #e19f4966; /** Subtle attention border for warnings and caution states */
+    --borderColor-danger-emphasis: #c5382f; /** Strong danger border for destructive actions and errors */
+    --borderColor-danger-muted: #ff837466; /** Subtle danger border for errors and destructive contexts */
+    --borderColor-default: #d5c4a1; /** Default border color for most UI elements */
+    --borderColor-disabled: #9283741a; /** Border color for disabled interactive elements */
+    --borderColor-done-emphasis: #a75587; /** Strong border for completed/done state badges */
+    --borderColor-done-muted: #e78fc366; /** Subtle border for completed/done state indicators */
+    --borderColor-emphasis: #928374; /** Strong border for emphasis and visual weight */
+    --borderColor-neutral-emphasis: #786b60; /** Strong neutral semantic border */
+    --borderColor-severe-emphasis: #be491c; /** Strong severe border for prominent high-priority warnings */
+    --borderColor-severe-muted: #fb8c6766; /** Subtle severe border for high-priority warnings */
+    --borderColor-sponsors-emphasis: #a85588; /** Strong border for prominent GitHub Sponsors elements */
+    --borderColor-sponsors-muted: #ea92c666; /** Subtle border for GitHub Sponsors content */
+    --borderColor-success-emphasis: #3f7855; /** Strong success border for prominent positive elements */
+    --borderColor-success-muted: #7cb69066; /** Subtle success border for positive feedback elements */
+    --borderColor-transparent: #ffffff00; /** Fully transparent border */
+    --button-danger-bgColor-active: #a41211;
+    --button-danger-fgColor-disabled: #c73a3180;
+    --button-danger-fgColor-rest: var(--fgColor-danger);
+    --button-danger-shadow-selected: inset 0 1px 0 0 #4d020233;
+    --button-inactive-bgColor: #f2e5bc;
+    --button-inactive-fgColor: #786b60;
+    --button-invisible-bgColor-disabled: #ffffff00;
+    --button-invisible-borderColor-disabled: #ffffff00;
+    --button-outline-shadow-selected: inset 0 1px 0 0 #361f0033;
+    --button-primary-bgColor-rest: #9d6000;
+    --button-primary-borderColor-disabled: #cca964;
+    --button-primary-shadow-selected: inset 0 1px 0 0 #012d154d;
+    --button-star-iconColor: #d2cd74;
+    --buttonCounter-danger-fgColor-disabled: #c73a3180;
+    --buttonCounter-outline-fgColor-rest: #754b0d;
+    --buttonCounter-primary-bgColor-rest: #fbf1c733;
+    --buttonKeybindingHint-danger-bgColor-active: #3c383666;
+    --buttonKeybindingHint-danger-bgColor-hover: #3c383633;
+    --buttonKeybindingHint-default-bgColor-rest: #fbf1c7;
+    --buttonKeybindingHint-inactive-bgColor: #fbf1c7;
+    --buttonKeybindingHint-invisible-borderColor-rest: #ffffff00;
+    --codeMirror-syntax-fgColor-constant: #754b0d;
+    --codeMirror-syntax-fgColor-entity: #a75587;
+    --codeMirror-syntax-fgColor-keyword: #c5382f;
+    --codeMirror-syntax-fgColor-storage: #c5382f;
+    --codeMirror-syntax-fgColor-string: #482c04;
+    --codeMirror-syntax-fgColor-support: #754b0d;
+    --codeMirror-syntax-fgColor-variable: #963610;
+    --color-ansi-cyan: var(--ansi-cyan); /** Deprecated. Use ansi.cyan instead. */
+    --color-ansi-cyan-bright: var(--ansi-cyanBright); /** Deprecated. Use ansi.cyanBright instead. */
+    --contribution-default-bgColor-0: #fbf1c7;
+    --contribution-default-bgColor-1: #b0ecc4;
+    --contribution-default-bgColor-2: #7cb690;
+    --contribution-default-bgColor-3: #609975;
+    --contribution-default-bgColor-4: #265f3e;
+    --contribution-default-borderColor-0: #3c38360d;
+    --contribution-halloween-bgColor-1: #e2dd84;
+    --contribution-halloween-bgColor-2: #e3df85;
+    --contribution-halloween-bgColor-3: #fc855c;
+    --contribution-halloween-bgColor-4: #3c3836;
+    --contribution-winter-bgColor-1: #b3e7ec;
+    --contribution-winter-bgColor-2: #da9943;
+    --contribution-winter-bgColor-3: #b57614;
+    --contribution-winter-bgColor-4: #482c04;
+    --control-bgColor-active: #f2e5bc;
+    --control-bgColor-hover: #fbf1c7;
+    --control-bgColor-rest: #f2e5bc;
+    --control-checked-borderColor-active: var(--control-checked-bgColor-active);
+    --control-checked-borderColor-hover: var(--control-checked-bgColor-hover);
+    --control-danger-fgColor-hover: var(--fgColor-danger);
+    --control-danger-fgColor-rest: var(--fgColor-danger);
+    --control-fgColor-rest: #3c3836;
+    --control-transparent-bgColor-active: #92837426;
+    --control-transparent-bgColor-hover: #9283741a;
+    --control-transparent-bgColor-rest: #ffffff00;
+    --control-transparent-bgColor-selected: #92837426;
+    --control-transparent-borderColor-active: #ffffff00;
+    --control-transparent-borderColor-hover: #ffffff00;
+    --control-transparent-borderColor-rest: #ffffff00;
+    --controlTrack-bgColor-active: #ebdbb2;
+    --controlTrack-bgColor-hover: #f2e5bc;
+    --controlTrack-bgColor-rest: #f2e5bc;
+    --controlTrack-fgColor-rest: #786b60;
+    --counter-borderColor: #ffffff00;
+    --data-auburn-color-emphasis: #9d6159;
+    --data-auburn-color-muted: #fbf1c7;
+    --data-blue-color-emphasis: #9c6404;
+    --data-blue-color-muted: #d2dcc3;
+    --data-brown-color-emphasis: #8a6b48;
+    --data-brown-color-muted: #f2e5bc;
+    --data-coral-color-emphasis: #cc4035;
+    --data-coral-color-muted: #f8d0a6;
+    --data-gray-color-emphasis: #a2896b;
+    --data-gray-color-muted: #fbf1c7;
+    --data-green-color-emphasis: #5d9772;
+    --data-green-color-muted: #d5dcb3;
+    --data-lemon-color-emphasis: #797411;
+    --data-lemon-color-muted: #e2daa5;
+    --data-lime-color-emphasis: #417a58;
+    --data-lime-color-muted: #e1d9a4;
+    --data-olive-color-emphasis: #75711f;
+    --data-olive-color-muted: #e2daa5;
+    --data-orange-color-emphasis: #e56b41;
+    --data-orange-color-muted: #eed6a3;
+    --data-pine-color-emphasis: #407956;
+    --data-pine-color-muted: #d5dcb3;
+    --data-pink-color-emphasis: #ac598b;
+    --data-pink-color-muted: #f0d3c0;
+    --data-plum-color-emphasis: #ac598c;
+    --data-plum-color-muted: #f0d2bf;
+    --data-purple-color-emphasis: #aa588a;
+    --data-purple-color-muted: #efd1bf;
+    --data-red-color-emphasis: #cc3f35;
+    --data-red-color-muted: #fbcda8;
+    --data-teal-color-emphasis: #4694a7;
+    --data-teal-color-muted: #d2dcc3;
+    --data-yellow-color-emphasis: #c18126;
+    --data-yellow-color-muted: #e2daa6;
+    --diffBlob-additionNum-bgColor: #b0ecc4;
+    --diffBlob-additionWord-bgColor: #b0ecc4;
+    --diffBlob-deletionNum-bgColor: #fdd0c0;
+    --diffBlob-deletionWord-bgColor: #fdd0c0;
+    --diffBlob-hunkNum-bgColor-rest: #b3e7ec;
+    --display-auburn-bgColor-emphasis: #9d6159;
+    --display-auburn-bgColor-muted: #fbf1c7;
+    --display-auburn-borderColor-emphasis: #9d6159;
+    --display-auburn-borderColor-muted: #ebdbb2;
+    --display-auburn-fgColor: #8b554d;
+    --display-auburn-scale-0: #fbf1c7;
+    --display-auburn-scale-1: #ebdbb2;
+    --display-auburn-scale-2: #dcb69f;
+    --display-auburn-scale-3: #ca9d8d;
+    --display-auburn-scale-4: #b68277;
+    --display-auburn-scale-5: #9d6159;
+    --display-auburn-scale-6: #8b554d;
+    --display-auburn-scale-7: #75473f;
+    --display-auburn-scale-8: #5e3933;
+    --display-auburn-scale-9: #442924;
+    --display-blue-bgColor-emphasis: #9c6404;
+    --display-blue-bgColor-muted: #d2dcc3;
+    --display-blue-borderColor-emphasis: #9c6404;
+    --display-blue-borderColor-muted: #a8e5ef;
+    --display-blue-fgColor: #8b5904;
+    --display-blue-scale-0: #d2dcc3;
+    --display-blue-scale-1: #a8e5ef;
+    --display-blue-scale-2: #ecb169;
+    --display-blue-scale-3: #da9842;
+    --display-blue-scale-4: #bf7f23;
+    --display-blue-scale-5: #9c6404;
+    --display-blue-scale-6: #8b5904;
+    --display-blue-scale-7: #744b0b;
+    --display-blue-scale-8: #613c00;
+    --display-blue-scale-9: #472c03;
+    --display-brown-bgColor-emphasis: #8a6b48;
+    --display-brown-bgColor-muted: #f2e5bc;
+    --display-brown-borderColor-emphasis: #8a6b48;
+    --display-brown-borderColor-muted: #ebdbb2;
+    --display-brown-fgColor: #795d3e;
+    --display-brown-scale-0: #f2e5bc;
+    --display-brown-scale-1: #ebdbb2;
+    --display-brown-scale-2: #d6ba92;
+    --display-brown-scale-3: #c0a17a;
+    --display-brown-scale-4: #ab8960;
+    --display-brown-scale-5: #8a6b48;
+    --display-brown-scale-6: #795d3e;
+    --display-brown-scale-7: #675036;
+    --display-brown-scale-8: #53402c;
+    --display-brown-scale-9: #3b2e1f;
+    --display-coral-bgColor-emphasis: #cc4035;
+    --display-coral-bgColor-muted: #f8d0a6;
+    --display-coral-borderColor-emphasis: #cc4035;
+    --display-coral-borderColor-muted: #ffcfb6;
+    --display-coral-fgColor: #ba2d25;
+    --display-coral-scale-0: #f8d0a6;
+    --display-coral-scale-1: #ffcfb6;
+    --display-coral-scale-2: #fcab90;
+    --display-coral-scale-3: #f78863;
+    --display-coral-scale-4: #e56c42;
+    --display-coral-scale-5: #cc4035;
+    --display-coral-scale-6: #ba2d25;
+    --display-coral-scale-7: #9b251f;
+    --display-coral-scale-8: #7e1f19;
+    --display-coral-scale-9: #5d1712;
+    --display-cyan-bgColor-emphasis: #287a8c;
+    --display-cyan-bgColor-muted: #d1dcc3;
+    --display-cyan-borderColor-emphasis: #287a8c;
+    --display-cyan-borderColor-muted: #96e4f9;
+    --display-cyan-fgColor: #106a7c;
+    --display-cyan-scale-0: #d1dcc3;
+    --display-cyan-scale-1: #96e4f9;
+    --display-cyan-scale-2: #7bc9dd;
+    --display-cyan-scale-3: #64b2c5;
+    --display-cyan-scale-4: #4796a9;
+    --display-cyan-scale-5: #287a8c;
+    --display-cyan-scale-6: #106a7c;
+    --display-cyan-scale-7: #115968;
+    --display-cyan-scale-8: #014855;
+    --display-cyan-scale-9: #033741;
+    --display-gray-bgColor-emphasis: #826b53;
+    --display-gray-bgColor-muted: #fbf1c7;
+    --display-gray-borderColor-emphasis: #826b53;
+    --display-gray-borderColor-muted: #ebdbb2;
+    --display-gray-fgColor: #786b60;
+    --display-gray-scale-0: #fbf1c7;
+    --display-gray-scale-1: #ebdbb2;
+    --display-gray-scale-2: #d3bb96;
+    --display-gray-scale-3: #bca382;
+    --display-gray-scale-4: #a2896b;
+    --display-gray-scale-5: #826b53;
+    --display-gray-scale-6: #786b60;
+    --display-gray-scale-7: #3c3836;
+    --display-gray-scale-8: #3c3836;
+    --display-gray-scale-9: #3c3836;
+    --display-green-bgColor-emphasis: #437c59;
+    --display-green-bgColor-muted: #d5dcb3;
+    --display-green-borderColor-emphasis: #437c59;
+    --display-green-borderColor-muted: #aae6bf;
+    --display-green-fgColor: #336c4a;
+    --display-green-scale-0: #d5dcb3;
+    --display-green-scale-1: #aae6bf;
+    --display-green-scale-2: #8ec9a3;
+    --display-green-scale-3: #76b08a;
+    --display-green-scale-4: #5d9772;
+    --display-green-scale-5: #437c59;
+    --display-green-scale-6: #336c4a;
+    --display-green-scale-7: #265c3c;
+    --display-green-scale-8: #274b33;
+    --display-green-scale-9: #213425;
+    --display-indigo-bgColor-emphasis: #a0670d;
+    --display-indigo-bgColor-muted: #eed5a2;
+    --display-indigo-borderColor-emphasis: #a0670d;
+    --display-indigo-borderColor-muted: #f6d4a6;
+    --display-indigo-fgColor: #8d5b08;
+    --display-indigo-scale-0: #eed5a2;
+    --display-indigo-scale-1: #f6d4a6;
+    --display-indigo-scale-2: #e6b57b;
+    --display-indigo-scale-3: #da9943;
+    --display-indigo-scale-4: #c08025;
+    --display-indigo-scale-5: #a0670d;
+    --display-indigo-scale-6: #8d5b08;
+    --display-indigo-scale-7: #7c4f03;
+    --display-indigo-scale-8: #654006;
+    --display-indigo-scale-9: #492e06;
+    --display-lemon-bgColor-emphasis: #797411;
+    --display-lemon-bgColor-muted: #e2daa5;
+    --display-lemon-borderColor-emphasis: #797411;
+    --display-lemon-borderColor-muted: #e2dd84;
+    --display-lemon-fgColor: #6b660e;
+    --display-lemon-scale-0: #e2daa5;
+    --display-lemon-scale-1: #e2dd84;
+    --display-lemon-scale-2: #c6c168;
+    --display-lemon-scale-3: #b1ab52;
+    --display-lemon-scale-4: #979137;
+    --display-lemon-scale-5: #797411;
+    --display-lemon-scale-6: #6b660e;
+    --display-lemon-scale-7: #595409;
+    --display-lemon-scale-8: #484405;
+    --display-lemon-scale-9: #353202;
+    --display-lime-bgColor-emphasis: #417a58;
+    --display-lime-bgColor-muted: #e1d9a4;
+    --display-lime-borderColor-emphasis: #417a58;
+    --display-lime-borderColor-muted: #e0dc82;
+    --display-lime-fgColor: #346d4b;
+    --display-lime-scale-0: #e1d9a4;
+    --display-lime-scale-1: #e0dc82;
+    --display-lime-scale-2: #c4c067;
+    --display-lime-scale-3: #aaa64c;
+    --display-lime-scale-4: #949035;
+    --display-lime-scale-5: #417a58;
+    --display-lime-scale-6: #346d4b;
+    --display-lime-scale-7: #245e3c;
+    --display-lime-scale-8: #1b4d30;
+    --display-lime-scale-9: #183421;
+    --display-olive-bgColor-emphasis: #75711f;
+    --display-olive-bgColor-muted: #e2daa5;
+    --display-olive-borderColor-emphasis: #75711f;
+    --display-olive-borderColor-muted: #e1dd83;
+    --display-olive-fgColor: #66631f;
+    --display-olive-scale-0: #e2daa5;
+    --display-olive-scale-1: #e1dd83;
+    --display-olive-scale-2: #c5c168;
+    --display-olive-scale-3: #aba74d;
+    --display-olive-scale-4: #938e33;
+    --display-olive-scale-5: #75711f;
+    --display-olive-scale-6: #66631f;
+    --display-olive-scale-7: #58551f;
+    --display-olive-scale-8: #48451d;
+    --display-olive-scale-9: #333019;
+    --display-orange-bgColor-emphasis: #ba4d25;
+    --display-orange-bgColor-muted: #eed6a3;
+    --display-orange-borderColor-emphasis: #ba4d25;
+    --display-orange-borderColor-muted: #fad2a1;
+    --display-orange-fgColor: #a44321;
+    --display-orange-scale-0: #eed6a3;
+    --display-orange-scale-1: #fad2a1;
+    --display-orange-scale-2: #f2b56a;
+    --display-orange-scale-3: #fc855c;
+    --display-orange-scale-4: #e56b41;
+    --display-orange-scale-5: #ba4d25;
+    --display-orange-scale-6: #a44321;
+    --display-orange-scale-7: #8e3a1c;
+    --display-orange-scale-8: #712f17;
+    --display-orange-scale-9: #542211;
+    --display-pine-bgColor-emphasis: #407956;
+    --display-pine-bgColor-muted: #d5dcb3;
+    --display-pine-borderColor-emphasis: #407956;
+    --display-pine-borderColor-muted: #a9e5be;
+    --display-pine-fgColor: #336c4a;
+    --display-pine-scale-0: #d5dcb3;
+    --display-pine-scale-1: #a9e5be;
+    --display-pine-scale-2: #8bc69f;
+    --display-pine-scale-3: #77b18c;
+    --display-pine-scale-4: #5f9874;
+    --display-pine-scale-5: #407956;
+    --display-pine-scale-6: #336c4a;
+    --display-pine-scale-7: #225c3b;
+    --display-pine-scale-8: #1d4a2f;
+    --display-pine-scale-9: #163521;
+    --display-pink-bgColor-emphasis: #ac598b;
+    --display-pink-bgColor-muted: #f0d3c0;
+    --display-pink-borderColor-emphasis: #ac598b;
+    --display-pink-borderColor-muted: #fec9df;
+    --display-pink-fgColor: #9b4a7c;
+    --display-pink-scale-0: #f0d3c0;
+    --display-pink-scale-1: #fec9df;
+    --display-pink-scale-2: #f6a6d4;
+    --display-pink-scale-3: #e58dc0;
+    --display-pink-scale-4: #cb75a8;
+    --display-pink-scale-5: #ac598b;
+    --display-pink-scale-6: #9b4a7c;
+    --display-pink-scale-7: #863769;
+    --display-pink-scale-8: #6d2b55;
+    --display-pink-scale-9: #4d233d;
+    --display-plum-bgColor-emphasis: #ac598c;
+    --display-plum-bgColor-muted: #f0d2bf;
+    --display-plum-borderColor-emphasis: #ac598c;
+    --display-plum-borderColor-muted: #ffcae5;
+    --display-plum-fgColor: #9e4c7f;
+    --display-plum-scale-0: #f0d2bf;
+    --display-plum-scale-1: #ffcae5;
+    --display-plum-scale-2: #faa0d5;
+    --display-plum-scale-3: #e38bbf;
+    --display-plum-scale-4: #cb75a8;
+    --display-plum-scale-5: #ac598c;
+    --display-plum-scale-6: #9e4c7f;
+    --display-plum-scale-7: #8a3a6c;
+    --display-plum-scale-8: #76285b;
+    --display-plum-scale-9: #5c0d43;
+    --display-purple-bgColor-emphasis: #aa588a;
+    --display-purple-bgColor-muted: #efd1bf;
+    --display-purple-borderColor-emphasis: #aa588a;
+    --display-purple-borderColor-muted: #feccde;
+    --display-purple-fgColor: #9c4b7d;
+    --display-purple-scale-0: #efd1bf;
+    --display-purple-scale-1: #feccde;
+    --display-purple-scale-2: #f5a6d3;
+    --display-purple-scale-3: #e189bd;
+    --display-purple-scale-4: #c872a5;
+    --display-purple-scale-5: #aa588a;
+    --display-purple-scale-6: #9c4b7d;
+    --display-purple-scale-7: #7e5007;
+    --display-purple-scale-8: #664107;
+    --display-purple-scale-9: #4c2e00;
+    --display-red-bgColor-emphasis: #cc3f35;
+    --display-red-bgColor-muted: #fbcda8;
+    --display-red-borderColor-emphasis: #cc3f35;
+    --display-red-borderColor-muted: #ffcfbd;
+    --display-red-fgColor: #bb2e26;
+    --display-red-scale-0: #fbcda8;
+    --display-red-scale-1: #ffcfbd;
+    --display-red-scale-2: #fda79b;
+    --display-red-scale-3: #fb8577;
+    --display-red-scale-4: #f06153;
+    --display-red-scale-5: #cc3f35;
+    --display-red-scale-6: #bb2e26;
+    --display-red-scale-7: #a61311;
+    --display-red-scale-8: #88100e;
+    --display-red-scale-9: #620d0a;
+    --display-teal-bgColor-emphasis: #287a8d;
+    --display-teal-bgColor-muted: #d2dcc3;
+    --display-teal-borderColor-emphasis: #287a8d;
+    --display-teal-borderColor-muted: #96e5f9;
+    --display-teal-fgColor: #186c7e;
+    --display-teal-scale-0: #d2dcc3;
+    --display-teal-scale-1: #96e5f9;
+    --display-teal-scale-2: #78c6da;
+    --display-teal-scale-3: #61afc3;
+    --display-teal-scale-4: #4694a7;
+    --display-teal-scale-5: #287a8d;
+    --display-teal-scale-6: #186c7e;
+    --display-teal-scale-7: #165a68;
+    --display-teal-scale-8: #104753;
+    --display-teal-scale-9: #0c3740;
+    --display-yellow-bgColor-emphasis: #9c6510;
+    --display-yellow-bgColor-muted: #e2daa6;
+    --display-yellow-borderColor-emphasis: #9c6510;
+    --display-yellow-borderColor-muted: #e3df85;
+    --display-yellow-fgColor: #85550a;
+    --display-yellow-scale-0: #e2daa6;
+    --display-yellow-scale-1: #e3df85;
+    --display-yellow-scale-2: #f1ae59;
+    --display-yellow-scale-3: #d89741;
+    --display-yellow-scale-4: #c18126;
+    --display-yellow-scale-5: #9c6510;
+    --display-yellow-scale-6: #85550a;
+    --display-yellow-scale-7: #744a07;
+    --display-yellow-scale-8: #5f3b04;
+    --display-yellow-scale-9: #452901;
+    --fgColor-accent: #b57614; /** Accent text for links and interactive elements */
+    --fgColor-attention: #9d6509; /** Attention text for warnings and caution states */
+    --fgColor-closed: var(--fgColor-danger); /** Text color for closed state indicators (issues, PRs) */
+    --fgColor-disabled: #928374; /** Text color for disabled interactive elements */
+    --fgColor-done: #a75587; /** Text color for completed/done state indicators */
+    --fgColor-muted: #786b60; /** Muted text for secondary content and less important information */
+    --fgColor-neutral: #786b60; /** Neutral semantic text for icons and secondary elements */
+    --fgColor-severe: #be491c; /** Severe text for high-priority warnings */
+    --fgColor-sponsors: #a85588; /** Text color for GitHub Sponsors content */
+    --fgColor-success: #3f7855; /** Success text for positive feedback and completed states */
+    --header-bgColor: #3c3836;
+    --header-borderColor-divider: #928374;
+    --headerSearch-bgColor: #3c3836;
+    --headerSearch-borderColor: #928374;
+    --highlight-neutral-bgColor: #e7deac;
+    --label-auburn-bgColor-active: #dcb69f;
+    --label-auburn-bgColor-hover: #ebdbb2;
+    --label-auburn-bgColor-rest: #fbf1c7;
+    --label-auburn-borderColor: #ffffff00;
+    --label-auburn-fgColor-active: #5e3933;
+    --label-auburn-fgColor-hover: #75473f;
+    --label-auburn-fgColor-rest: #8b554d;
+    --label-blue-bgColor-active: #ecb169;
+    --label-blue-bgColor-hover: #a8e5ef;
+    --label-blue-bgColor-rest: #d2dcc3;
+    --label-blue-borderColor: #ffffff00;
+    --label-blue-fgColor-active: #613c00;
+    --label-blue-fgColor-hover: #744b0b;
+    --label-blue-fgColor-rest: #8b5904;
+    --label-brown-bgColor-active: #d6ba92;
+    --label-brown-bgColor-hover: #ebdbb2;
+    --label-brown-bgColor-rest: #f2e5bc;
+    --label-brown-borderColor: #ffffff00;
+    --label-brown-fgColor-active: #53402c;
+    --label-brown-fgColor-hover: #675036;
+    --label-brown-fgColor-rest: #795d3e;
+    --label-coral-bgColor-active: #fcab90;
+    --label-coral-bgColor-hover: #ffcfb6;
+    --label-coral-bgColor-rest: #f8d0a6;
+    --label-coral-borderColor: #ffffff00;
+    --label-coral-fgColor-active: #7e1f19;
+    --label-coral-fgColor-hover: #9b251f;
+    --label-coral-fgColor-rest: #ba2d25;
+    --label-cyan-bgColor-active: #7bc9dd;
+    --label-cyan-bgColor-hover: #96e4f9;
+    --label-cyan-bgColor-rest: #d1dcc3;
+    --label-cyan-borderColor: #ffffff00;
+    --label-cyan-fgColor-active: #014855;
+    --label-cyan-fgColor-hover: #115968;
+    --label-cyan-fgColor-rest: #106a7c;
+    --label-gray-bgColor-active: #d3bb96;
+    --label-gray-bgColor-hover: #ebdbb2;
+    --label-gray-bgColor-rest: #fbf1c7;
+    --label-gray-borderColor: #ffffff00;
+    --label-gray-fgColor-active: #3c3836;
+    --label-gray-fgColor-hover: #3c3836;
+    --label-gray-fgColor-rest: #786b60;
+    --label-green-bgColor-active: #8ec9a3;
+    --label-green-bgColor-hover: #aae6bf;
+    --label-green-bgColor-rest: #d5dcb3;
+    --label-green-borderColor: #ffffff00;
+    --label-green-fgColor-active: #274b33;
+    --label-green-fgColor-hover: #265c3c;
+    --label-green-fgColor-rest: #336c4a;
+    --label-indigo-bgColor-active: #e6b57b;
+    --label-indigo-bgColor-hover: #f6d4a6;
+    --label-indigo-bgColor-rest: #eed5a2;
+    --label-indigo-borderColor: #ffffff00;
+    --label-indigo-fgColor-active: #654006;
+    --label-indigo-fgColor-hover: #7c4f03;
+    --label-indigo-fgColor-rest: #8d5b08;
+    --label-lemon-bgColor-active: #c6c168;
+    --label-lemon-bgColor-hover: #e2dd84;
+    --label-lemon-bgColor-rest: #e2daa5;
+    --label-lemon-borderColor: #ffffff00;
+    --label-lemon-fgColor-active: #484405;
+    --label-lemon-fgColor-hover: #595409;
+    --label-lemon-fgColor-rest: #6b660e;
+    --label-lime-bgColor-active: #c4c067;
+    --label-lime-bgColor-hover: #e0dc82;
+    --label-lime-bgColor-rest: #e1d9a4;
+    --label-lime-borderColor: #ffffff00;
+    --label-lime-fgColor-active: #1b4d30;
+    --label-lime-fgColor-hover: #245e3c;
+    --label-lime-fgColor-rest: #346d4b;
+    --label-olive-bgColor-active: #c5c168;
+    --label-olive-bgColor-hover: #e1dd83;
+    --label-olive-bgColor-rest: #e2daa5;
+    --label-olive-borderColor: #ffffff00;
+    --label-olive-fgColor-active: #48451d;
+    --label-olive-fgColor-hover: #58551f;
+    --label-olive-fgColor-rest: #66631f;
+    --label-orange-bgColor-active: #f2b56a;
+    --label-orange-bgColor-hover: #fad2a1;
+    --label-orange-bgColor-rest: #eed6a3;
+    --label-orange-borderColor: #ffffff00;
+    --label-orange-fgColor-active: #712f17;
+    --label-orange-fgColor-hover: #8e3a1c;
+    --label-orange-fgColor-rest: #a44321;
+    --label-pine-bgColor-active: #8bc69f;
+    --label-pine-bgColor-hover: #a9e5be;
+    --label-pine-bgColor-rest: #d5dcb3;
+    --label-pine-borderColor: #ffffff00;
+    --label-pine-fgColor-active: #1d4a2f;
+    --label-pine-fgColor-hover: #225c3b;
+    --label-pine-fgColor-rest: #336c4a;
+    --label-pink-bgColor-active: #f6a6d4;
+    --label-pink-bgColor-hover: #fec9df;
+    --label-pink-bgColor-rest: #f0d3c0;
+    --label-pink-borderColor: #ffffff00;
+    --label-pink-fgColor-active: #6d2b55;
+    --label-pink-fgColor-hover: #863769;
+    --label-pink-fgColor-rest: #9b4a7c;
+    --label-plum-bgColor-active: #faa0d5;
+    --label-plum-bgColor-hover: #ffcae5;
+    --label-plum-bgColor-rest: #f0d2bf;
+    --label-plum-borderColor: #ffffff00;
+    --label-plum-fgColor-active: #76285b;
+    --label-plum-fgColor-hover: #8a3a6c;
+    --label-plum-fgColor-rest: #9e4c7f;
+    --label-purple-bgColor-active: #f5a6d3;
+    --label-purple-bgColor-hover: #feccde;
+    --label-purple-bgColor-rest: #efd1bf;
+    --label-purple-borderColor: #ffffff00;
+    --label-purple-fgColor-active: #664107;
+    --label-purple-fgColor-hover: #7e5007;
+    --label-purple-fgColor-rest: #9c4b7d;
+    --label-red-bgColor-active: #fda79b;
+    --label-red-bgColor-hover: #ffcfbd;
+    --label-red-bgColor-rest: #fbcda8;
+    --label-red-borderColor: #ffffff00;
+    --label-red-fgColor-active: #88100e;
+    --label-red-fgColor-hover: #a61311;
+    --label-red-fgColor-rest: #bb2e26;
+    --label-teal-bgColor-active: #78c6da;
+    --label-teal-bgColor-hover: #96e5f9;
+    --label-teal-bgColor-rest: #d2dcc3;
+    --label-teal-borderColor: #ffffff00;
+    --label-teal-fgColor-active: #104753;
+    --label-teal-fgColor-hover: #165a68;
+    --label-teal-fgColor-rest: #186c7e;
+    --label-yellow-bgColor-active: #f1ae59;
+    --label-yellow-bgColor-hover: #e3df85;
+    --label-yellow-bgColor-rest: #e2daa6;
+    --label-yellow-borderColor: #ffffff00;
+    --label-yellow-fgColor-active: #5f3b04;
+    --label-yellow-fgColor-hover: #744a07;
+    --label-yellow-fgColor-rest: #85550a;
+    --menu-bgColor-active: #ffffff00;
+    --overlay-backdrop-bgColor: #d5c4a166;
+    --prettylights-syntax-bracketHighlighterAngle: #786b60; /** Syntax highlighting color for angle brackets */
+    --prettylights-syntax-bracketHighlighterUnmatched: #820b0a; /** Syntax highlighting color for unmatched brackets */
+    --prettylights-syntax-carriageReturn-bg: #c5382f; /** Background color for carriage return characters in diffs */
+    --prettylights-syntax-carriageReturn-text: #f2e5bc; /** Text color for carriage return characters in diffs */
+    --prettylights-syntax-comment: #786b60; /** Syntax highlighting color for code comments */
+    --prettylights-syntax-constant: #754b0d; /** Syntax highlighting color for constants and literal values */
+    --prettylights-syntax-constantOtherReferenceLink: #482c04; /** Syntax highlighting color for reference links and URLs in code */
+    --prettylights-syntax-entity: #8a3b6d; /** Syntax highlighting color for class names, type definitions, and declarations */
+    --prettylights-syntax-entityTag: #754b0d; /** Syntax highlighting color for HTML/XML tags */
+    --prettylights-syntax-invalidIllegal-text: var(--fgColor-danger); /** Text color for invalid or illegal code syntax */
+    --prettylights-syntax-keyword: #c5382f; /** Syntax highlighting color for language keywords (if, else, return) */
+    --prettylights-syntax-markup-changed-bg: #ebd09b; /** Background color for changed lines in diff views */
+    --prettylights-syntax-markup-changed-text: #963610; /** Text color for changed lines in diff views */
+    --prettylights-syntax-markup-deleted-bg: #fbf1c7; /** Background color for deleted lines in diff views */
+    --prettylights-syntax-markup-deleted-text: #820b0a; /** Text color for deleted lines in diff views */
+    --prettylights-syntax-markup-heading: #754b0d; /** Syntax highlighting color for headings in markdown */
+    --prettylights-syntax-markup-ignored-bg: #754b0d; /** Background color for ignored content in diffs */
+    --prettylights-syntax-markup-ignored-text: #d5c4a1; /** Text color for ignored content in diffs */
+    --prettylights-syntax-markup-inserted-bg: #dbdfb6; /** Background color for inserted lines in diff views */
+    --prettylights-syntax-markup-inserted-text: #265f3e; /** Text color for inserted lines in diff views */
+    --prettylights-syntax-markup-list: #3a2303; /** Syntax highlighting color for list markers in markdown */
+    --prettylights-syntax-metaDiffRange: #a75587; /** Syntax highlighting color for diff range information (@@ lines) */
+    --prettylights-syntax-string: #482c04; /** Syntax highlighting color for string literals */
+    --prettylights-syntax-stringRegexp: #265f3e; /** Syntax highlighting color for regular expression literals */
+    --prettylights-syntax-sublimeLinterGutterMark: #928374; /** Color for linter gutter marks in code editors */
+    --prettylights-syntax-variable: #963610; /** Syntax highlighting color for variables and parameters */
+    --progressBar-bgColor-success: var(--bgColor-success-emphasis);
+    --progressBar-track-borderColor: #ffffff00;
+    --reactionButton-selected-bgColor-rest: #d6dec3;
+    --reactionButton-selected-fgColor-hover: #754b0d;
+    --selectMenu-bgColor-active: #b3e7ec;
+    --selectMenu-borderColor: #ffffff00;
+    --shadow-resting-medium: 0 1px 1px 0 #3c38361a, 0 3px 6px 0 #3c38361f; /** Medium resting shadow for cards and elevated surfaces */
+    --skeletonLoader-bgColor: #9283741a;
+    --topicTag-borderColor: #ffffff00;
+    --treeViewItem-leadingVisual-iconColor-rest: #da9943;
+    --underlineNav-borderColor-active: #fe8a7c;
+    --ansi-black: #3c3836; /** ANSI black for terminal text and backgrounds */
+    --avatar-bgColor: #fbf1c7;
+    --avatar-shadow: 0 0 0 2px #fbf1c7cc;
+    --bgColor-black: #3c3836; /** Pure black background */
+    --bgColor-closed-emphasis: var(--bgColor-danger-emphasis); /** Strong background for closed state badges and labels */
+    --bgColor-closed-muted: var(--bgColor-danger-muted); /** Subtle background for closed state indicators (issues, PRs) */
+    --bgColor-default: #fbf1c7; /** Default background color for pages and main content areas */
+    --bgColor-draft-emphasis: var(--bgColor-neutral-emphasis); /** Strong background for draft state badges and labels */
+    --bgColor-draft-muted: var(--bgColor-neutral-muted); /** Subtle background for draft state indicators */
+    --bgColor-inset: var(--bgColor-muted); /** Inset background for recessed content areas like wells or sunken panels */
+    --bgColor-open-muted: var(--bgColor-success-muted); /** Subtle background for open state indicators (issues, PRs) */
+    --bgColor-upsell-emphasis: var(--bgColor-done-emphasis); /** Strong background for prominent upsell elements */
+    --bgColor-upsell-muted: var(--bgColor-done-muted); /** Subtle background for upsell and promotional content */
+    --bgColor-white: #fbf1c7; /** Pure white background */
+    --border-accent-emphasis: var(--borderWidth-default) solid var(--borderColor-accent-emphasis);
+    --border-accent-muted: var(--borderWidth-default) solid var(--borderColor-accent-muted);
+    --border-attention-emphasis: var(--borderWidth-default) solid var(--borderColor-attention-emphasis);
+    --border-attention-muted: var(--borderWidth-default) solid var(--borderColor-attention-muted);
+    --border-danger-emphasis: var(--borderWidth-default) solid var(--borderColor-danger-emphasis);
+    --border-danger-muted: var(--borderWidth-default) solid var(--borderColor-danger-muted);
+    --border-default: var(--borderWidth-default) solid var(--borderColor-default);
+    --border-disabled: var(--borderWidth-default) solid var(--borderColor-disabled);
+    --border-done-emphasis: var(--borderWidth-default) solid var(--borderColor-done-emphasis);
+    --border-done-muted: var(--borderWidth-default) solid var(--borderColor-done-muted);
+    --border-emphasis: var(--borderWidth-default) solid var(--borderColor-emphasis);
+    --border-neutral-emphasis: var(--borderWidth-default) solid var(--borderColor-neutral-emphasis);
+    --border-severe-emphasis: var(--borderWidth-default) solid var(--borderColor-severe-emphasis);
+    --border-severe-muted: var(--borderWidth-default) solid var(--borderColor-severe-muted);
+    --border-sponsors-emphasis: var(--borderWidth-default) solid var(--borderColor-sponsors-emphasis);
+    --border-sponsors-muted: var(--borderWidth-default) solid var(--borderColor-sponsors-muted);
+    --border-success-emphasis: var(--borderWidth-default) solid var(--borderColor-success-emphasis);
+    --border-success-muted: var(--borderWidth-default) solid var(--borderColor-success-muted);
+    --border-transparent: var(--borderWidth-default) solid var(--borderColor-transparent);
+    --borderColor-closed-emphasis: var(--borderColor-danger-emphasis); /** Strong border for closed state badges */
+    --borderColor-closed-muted: var(--borderColor-danger-muted); /** Subtle border for closed state indicators */
+    --borderColor-draft-emphasis: var(--borderColor-neutral-emphasis); /** Strong border for draft state badges */
+    --borderColor-muted: #d5c4a1b3; /** Subtle border for secondary elements and light separators */
+    --borderColor-open-emphasis: var(--borderColor-success-emphasis); /** Strong border for open state badges */
+    --borderColor-open-muted: var(--borderColor-success-muted); /** Subtle border for open state indicators */
+    --borderColor-translucent: #3c383626; /** Semi-transparent border for overlays and layered elements. Border-specific token — no bgColor-translucent counterpart exists by design. */
+    --borderColor-upsell-emphasis: var(--borderColor-done-emphasis); /** Strong border for prominent upsell elements */
+    --borderColor-upsell-muted: var(--borderColor-done-muted); /** Subtle border for upsell and promotional content */
+    --button-danger-bgColor-hover: var(--bgColor-danger-emphasis);
+    --button-danger-bgColor-rest: var(--control-bgColor-rest);
+    --button-danger-fgColor-active: #fbf1c7;
+    --button-danger-fgColor-hover: #fbf1c7;
+    --button-danger-iconColor-disabled: var(--button-danger-fgColor-disabled);
+    --button-danger-iconColor-hover: #fbf1c7;
+    --button-danger-iconColor-rest: var(--button-danger-fgColor-rest);
+    --button-default-bgColor-active: var(--control-bgColor-active);
+    --button-default-bgColor-hover: var(--control-bgColor-hover);
+    --button-default-bgColor-rest: var(--control-bgColor-rest);
+    --button-default-bgColor-selected: var(--control-bgColor-active);
+    --button-default-fgColor-rest: var(--control-fgColor-rest);
+    --button-default-shadow-resting: 0 1px 0 0 #3c38360a;
+    --button-invisible-bgColor-active: var(--control-transparent-bgColor-active);
+    --button-invisible-bgColor-hover: var(--control-transparent-bgColor-hover);
+    --button-invisible-bgColor-rest: var(--control-transparent-bgColor-rest);
+    --button-invisible-borderColor-hover: var(--control-transparent-borderColor-hover);
+    --button-invisible-borderColor-rest: var(--control-transparent-borderColor-rest);
+    --button-invisible-fgColor-active: var(--control-fgColor-rest);
+    --button-invisible-fgColor-hover: var(--control-fgColor-rest);
+    --button-invisible-fgColor-rest: var(--control-fgColor-rest);
+    --button-invisible-iconColor-hover: var(--fgColor-muted);
+    --button-invisible-iconColor-rest: var(--fgColor-muted);
+    --button-outline-bgColor-hover: var(--bgColor-accent-emphasis);
+    --button-outline-bgColor-rest: var(--control-bgColor-rest);
+    --button-outline-fgColor-active: #fbf1c7;
+    --button-outline-fgColor-disabled: #b5761480;
+    --button-outline-fgColor-hover: #fbf1c7;
+    --button-outline-fgColor-rest: var(--fgColor-accent);
+    --button-primary-fgColor-disabled: #fbf1c799;
+    --buttonCounter-danger-bgColor-disabled: #c5382f0d;
+    --buttonCounter-danger-bgColor-hover: #fbf1c733;
+    --buttonCounter-danger-bgColor-rest: #c5382f1a;
+    --buttonCounter-danger-fgColor-hover: #fbf1c7;
+    --buttonCounter-default-bgColor-rest: var(--bgColor-neutral-muted);
+    --buttonCounter-invisible-bgColor-rest: var(--bgColor-neutral-muted);
+    --buttonCounter-outline-bgColor-disabled: #b576140d;
+    --buttonCounter-outline-bgColor-hover: #fbf1c733;
+    --buttonCounter-outline-bgColor-rest: #b576141a;
+    --buttonCounter-outline-fgColor-disabled: #b5761480;
+    --buttonCounter-outline-fgColor-hover: #fbf1c7;
+    --buttonKeybindingHint-danger-bgColor-rest: var(--buttonKeybindingHint-default-bgColor-rest);
+    --buttonKeybindingHint-default-bgColor-disabled: var(--buttonKeybindingHint-default-bgColor-rest);
+    --buttonKeybindingHint-default-fgColor-rest: var(--fgColor-muted);
+    --buttonKeybindingHint-inactive-fgColor: var(--button-inactive-fgColor);
+    --buttonKeybindingHint-invisible-bgColor-active: var(--control-transparent-bgColor-active);
+    --buttonKeybindingHint-invisible-bgColor-disabled: var(--button-invisible-bgColor-disabled);
+    --buttonKeybindingHint-invisible-bgColor-hover: var(--control-transparent-bgColor-hover);
+    --buttonKeybindingHint-invisible-bgColor-rest: var(--buttonKeybindingHint-default-bgColor-rest);
+    --buttonKeybindingHint-invisible-fgColor-rest: var(--fgColor-muted);
+    --buttonKeybindingHint-primary-bgColor-disabled: #fbf1c71a;
+    --buttonKeybindingHint-primary-bgColor-rest: var(--buttonCounter-primary-bgColor-rest);
+    --codeMirror-activeline-bgColor: var(--bgColor-neutral-muted);
+    --codeMirror-gutterMarker-fgColor-muted: var(--fgColor-muted);
+    --codeMirror-lineNumber-fgColor: var(--fgColor-muted);
+    --codeMirror-selection-bgColor: var(--borderColor-accent-muted);
+    --codeMirror-syntax-fgColor-comment: #3c3836;
+    --color-ansi-black-bright: var(--ansi-blackBright); /** Deprecated. Use ansi.blackBright instead. */
+    --color-ansi-blue: var(--ansi-blue); /** Deprecated. Use ansi.blue instead. */
+    --color-ansi-blue-bright: var(--ansi-blueBright); /** Deprecated. Use ansi.blueBright instead. */
+    --color-ansi-gray: var(--ansi-gray); /** Deprecated. Use ansi.gray instead. */
+    --color-ansi-green: var(--ansi-green); /** Deprecated. Use ansi.green instead. */
+    --color-ansi-green-bright: var(--ansi-greenBright); /** Deprecated. Use ansi.greenBright instead. */
+    --color-ansi-magenta: var(--ansi-magenta); /** Deprecated. Use ansi.magenta instead. */
+    --color-ansi-magenta-bright: var(--ansi-magentaBright); /** Deprecated. Use ansi.magentaBright instead. */
+    --color-ansi-red: var(--ansi-red); /** Deprecated. Use ansi.red instead. */
+    --color-ansi-red-bright: var(--ansi-redBright); /** Deprecated. Use ansi.redBright instead. */
+    --color-ansi-white: var(--ansi-white); /** Deprecated. Use ansi.white instead. */
+    --color-ansi-white-bright: var(--ansi-whiteBright); /** Deprecated. Use ansi.whiteBright instead. */
+    --color-ansi-yellow: var(--ansi-yellow); /** Deprecated. Use ansi.yellow instead. */
+    --color-ansi-yellow-bright: var(--ansi-yellowBright); /** Deprecated. Use ansi.yellowBright instead. */
+    --color-prettylights-syntax-brackethighlighter-angle: var(--prettylights-syntax-bracketHighlighterAngle); /** Deprecated. Use prettylights.syntax.bracketHighlighterAngle instead. */
+    --color-prettylights-syntax-brackethighlighter-unmatched: var(--prettylights-syntax-bracketHighlighterUnmatched); /** Deprecated. Use prettylights.syntax.bracketHighlighterUnmatched instead. */
+    --color-prettylights-syntax-carriage-return-bg: var(--prettylights-syntax-carriageReturn-bg); /** Deprecated. Use prettylights.syntax.carriageReturn.bg instead. */
+    --color-prettylights-syntax-carriage-return-text: var(--prettylights-syntax-carriageReturn-text); /** Deprecated. Use prettylights.syntax.carriageReturn.text instead. */
+    --color-prettylights-syntax-comment: var(--prettylights-syntax-comment); /** Deprecated. Use prettylights.syntax.comment instead. */
+    --color-prettylights-syntax-constant: var(--prettylights-syntax-constant); /** Deprecated. Use prettylights.syntax.constant instead. */
+    --color-prettylights-syntax-constant-other-reference-link: var(--prettylights-syntax-constantOtherReferenceLink); /** Deprecated. Use prettylights.syntax.constantOtherReferenceLink instead. */
+    --color-prettylights-syntax-entity: var(--prettylights-syntax-entity); /** Deprecated. Use prettylights.syntax.entity instead. */
+    --color-prettylights-syntax-entity-tag: var(--prettylights-syntax-entityTag); /** Deprecated. Use prettylights.syntax.entityTag instead. */
+    --color-prettylights-syntax-invalid-illegal-text: var(--prettylights-syntax-invalidIllegal-text); /** Deprecated. Use prettylights.syntax.invalidIllegal.text instead. */
+    --color-prettylights-syntax-keyword: var(--prettylights-syntax-keyword); /** Deprecated. Use prettylights.syntax.keyword instead. */
+    --color-prettylights-syntax-markup-changed-bg: var(--prettylights-syntax-markup-changed-bg); /** Deprecated. Use prettylights.syntax.markup.changed.bg instead. */
+    --color-prettylights-syntax-markup-changed-text: var(--prettylights-syntax-markup-changed-text); /** Deprecated. Use prettylights.syntax.markup.changed.text instead. */
+    --color-prettylights-syntax-markup-deleted-bg: var(--prettylights-syntax-markup-deleted-bg); /** Deprecated. Use prettylights.syntax.markup.deleted.bg instead. */
+    --color-prettylights-syntax-markup-deleted-text: var(--prettylights-syntax-markup-deleted-text); /** Deprecated. Use prettylights.syntax.markup.deleted.text instead. */
+    --color-prettylights-syntax-markup-heading: var(--prettylights-syntax-markup-heading); /** Deprecated. Use prettylights.syntax.markup.heading instead. */
+    --color-prettylights-syntax-markup-ignored-bg: var(--prettylights-syntax-markup-ignored-bg); /** Deprecated. Use prettylights.syntax.markup.ignored.bg instead. */
+    --color-prettylights-syntax-markup-ignored-text: var(--prettylights-syntax-markup-ignored-text); /** Deprecated. Use prettylights.syntax.markup.ignored.text instead. */
+    --color-prettylights-syntax-markup-inserted-bg: var(--prettylights-syntax-markup-inserted-bg); /** Deprecated. Use prettylights.syntax.markup.inserted.bg instead. */
+    --color-prettylights-syntax-markup-inserted-text: var(--prettylights-syntax-markup-inserted-text); /** Deprecated. Use prettylights.syntax.markup.inserted.text instead. */
+    --color-prettylights-syntax-markup-list: var(--prettylights-syntax-markup-list); /** Deprecated. Use prettylights.syntax.markup.list instead. */
+    --color-prettylights-syntax-meta-diff-range: var(--prettylights-syntax-metaDiffRange); /** Deprecated. Use prettylights.syntax.metaDiffRange instead. */
+    --color-prettylights-syntax-string: var(--prettylights-syntax-string); /** Deprecated. Use prettylights.syntax.string instead. */
+    --color-prettylights-syntax-string-regexp: var(--prettylights-syntax-stringRegexp); /** Deprecated. Use prettylights.syntax.stringRegexp instead. */
+    --color-prettylights-syntax-sublimelinter-gutter-mark: var(--prettylights-syntax-sublimeLinterGutterMark); /** Deprecated. Use prettylights.syntax.sublimeLinterGutterMark instead. */
+    --color-prettylights-syntax-variable: var(--prettylights-syntax-variable); /** Deprecated. Use prettylights.syntax.variable instead. */
+    --contribution-default-borderColor-1: var(--contribution-default-borderColor-0);
+    --contribution-default-borderColor-2: var(--contribution-default-borderColor-0);
+    --contribution-default-borderColor-3: var(--contribution-default-borderColor-0);
+    --contribution-default-borderColor-4: var(--contribution-default-borderColor-0);
+    --control-bgColor-disabled: var(--bgColor-disabled);
+    --control-bgColor-selected: var(--control-bgColor-rest);
+    --control-borderColor-danger: var(--borderColor-danger-emphasis);
+    --control-borderColor-disabled: var(--borderColor-disabled);
+    --control-borderColor-emphasis: var(--borderColor-emphasis);
+    --control-borderColor-rest: var(--borderColor-default);
+    --control-borderColor-success: var(--borderColor-success-emphasis);
+    --control-borderColor-warning: var(--borderColor-attention-emphasis);
+    --control-checked-bgColor-disabled: var(--fgColor-disabled);
+    --control-checked-bgColor-rest: var(--bgColor-accent-emphasis);
+    --control-danger-bgColor-active: #fbf1c766;
+    --control-danger-bgColor-hover: var(--bgColor-danger-muted);
+    --control-fgColor-disabled: var(--fgColor-disabled);
+    --control-fgColor-placeholder: var(--fgColor-muted);
+    --control-iconColor-rest: var(--fgColor-muted);
+    --control-transparent-bgColor-disabled: var(--bgColor-disabled);
+    --controlKnob-bgColor-checked: #fbf1c7;
+    --controlKnob-bgColor-rest: #fbf1c7;
+    --controlTrack-bgColor-disabled: var(--fgColor-disabled);
+    --controlTrack-borderColor-disabled: var(--fgColor-disabled);
+    --controlTrack-borderColor-rest: var(--borderColor-default);
+    --counter-bgColor-emphasis: var(--bgColor-neutral-emphasis);
+    --counter-bgColor-muted: var(--bgColor-neutral-muted);
+    --diffBlob-additionLine-bgColor: var(--bgColor-success-muted);
+    --diffBlob-deletionLine-bgColor: var(--bgColor-danger-muted);
+    --diffBlob-emptyLine-bgColor: var(--bgColor-muted);
+    --diffBlob-emptyNum-bgColor: var(--bgColor-muted);
+    --diffBlob-expander-iconColor: var(--fgColor-muted);
+    --diffBlob-hunkLine-bgColor: var(--bgColor-accent-muted);
+    --diffBlob-hunkLine-fgColor: var(--fgColor-muted);
+    --diffBlob-hunkNum-bgColor-hover: var(--bgColor-accent-emphasis);
+    --fgColor-black: #3c3836; /** Pure black text */
+    --fgColor-default: #3c3836; /** Default text color for primary content and headings */
+    --fgColor-draft: var(--fgColor-neutral); /** Text color for draft state indicators */
+    --fgColor-link: #076678; /** Text color for hyperlinks */
+    --fgColor-onEmphasis: #fbf1c7; /** Text color for use on emphasis backgrounds */
+    --fgColor-onInverse: #fbf1c7; /** Text color for use on inverse backgrounds */
+    --fgColor-open: var(--fgColor-success); /** Text color for open state indicators (issues, PRs) */
+    --fgColor-upsell: var(--fgColor-done); /** Text color for upsell and promotional content */
+    --fgColor-white: #fbf1c7; /** Pure white text */
+    --focus-outline-color: var(--borderColor-accent-emphasis); /** Outline color for focus states on interactive elements */
+    --header-fgColor-default: #fbf1c7b3;
+    --header-fgColor-logo: #fbf1c7;
+    --overlay-bgColor: #fbf1c7;
+    --page-header-bgColor: var(--bgColor-muted);
+    --prettylights-syntax-brackethighlighter-angle: var(--prettylights-syntax-bracketHighlighterAngle); /** Deprecated. Use prettylights.syntax.bracketHighlighterAngle instead. */
+    --prettylights-syntax-brackethighlighter-unmatched: var(--prettylights-syntax-bracketHighlighterUnmatched); /** Deprecated. Use prettylights.syntax.bracketHighlighterUnmatched instead. */
+    --prettylights-syntax-carriage-return-bg: var(--prettylights-syntax-carriageReturn-bg); /** Deprecated. Use prettylights.syntax.carriageReturn.bg instead. */
+    --prettylights-syntax-carriage-return-text: var(--prettylights-syntax-carriageReturn-text); /** Deprecated. Use prettylights.syntax.carriageReturn.text instead. */
+    --prettylights-syntax-constant-other-reference-link: var(--prettylights-syntax-constantOtherReferenceLink); /** Deprecated. Use prettylights.syntax.constantOtherReferenceLink instead. */
+    --prettylights-syntax-entity-tag: var(--prettylights-syntax-entityTag); /** Deprecated. Use prettylights.syntax.entityTag instead. */
+    --prettylights-syntax-invalid-illegal-text: var(--prettylights-syntax-invalidIllegal-text); /** Deprecated. Use prettylights.syntax.invalidIllegal.text instead. */
+    --prettylights-syntax-invalidIllegal-bg: var(--bgColor-danger-muted); /** Background color for invalid or illegal code syntax */
+    --prettylights-syntax-markup-bold: #3c3836; /** Syntax highlighting color for bold text in markdown */
+    --prettylights-syntax-markup-italic: #3c3836; /** Syntax highlighting color for italic text in markdown */
+    --prettylights-syntax-meta-diff-range: var(--prettylights-syntax-metaDiffRange); /** Deprecated. Use prettylights.syntax.metaDiffRange instead. */
+    --prettylights-syntax-storageModifierImport: #3c3836; /** Syntax highlighting color for import and require statements */
+    --prettylights-syntax-string-regexp: var(--prettylights-syntax-stringRegexp); /** Deprecated. Use prettylights.syntax.stringRegexp instead. */
+    --prettylights-syntax-sublimelinter-gutter-mark: var(--prettylights-syntax-sublimeLinterGutterMark); /** Deprecated. Use prettylights.syntax.sublimeLinterGutterMark instead. */
+    --progressBar-bgColor-accent: var(--bgColor-accent-emphasis);
+    --progressBar-bgColor-attention: var(--bgColor-attention-emphasis);
+    --progressBar-bgColor-danger: var(--bgColor-danger-emphasis);
+    --progressBar-bgColor-done: var(--bgColor-done-emphasis);
+    --progressBar-bgColor-neutral: var(--bgColor-neutral-emphasis);
+    --progressBar-bgColor-severe: var(--bgColor-severe-emphasis);
+    --progressBar-bgColor-sponsors: var(--bgColor-sponsors-emphasis);
+    --progressBar-track-bgColor: var(--borderColor-default);
+    --selection-bgColor: #b5761433; /** Background color for text selection highlights */
+    --shadow-inset: inset 0 1px 0 0 #3c38360a; /** Inset shadow for recessed elements */
+    --shadow-resting-small: 0 1px 1px 0 #3c38360a, 0 1px 2px 0 #3c383608; /** Small resting shadow for buttons and interactive elements */
+    --shadow-resting-xsmall: 0 1px 1px 0 #3c38360d; /** Extra small resting shadow for minimal elevation */
+    --sideNav-bgColor-selected: #fbf1c7;
+    --timelineBadge-bgColor: var(--bgColor-muted);
+    --tooltip-bgColor: var(--bgColor-emphasis);
+    --underlineNav-iconColor-rest: var(--fgColor-muted);
+    --avatar-borderColor: var(--borderColor-translucent);
+    --border-closed-emphasis: var(--border-danger-emphasis);
+    --border-closed-muted: var(--border-danger-muted);
+    --border-draft-emphasis: var(--borderWidth-default) solid var(--borderColor-draft-emphasis);
+    --border-muted: var(--borderWidth-default) solid var(--borderColor-muted);
+    --border-open-emphasis: var(--border-success-emphasis);
+    --border-open-muted: var(--border-success-muted);
+    --border-translucent: var(--borderWidth-default) solid var(--borderColor-translucent); /** Semi-transparent border shorthand for overlays and layered elements. Border-specific token — no bgColor-translucent counterpart exists by design. */
+    --border-upsell-emphasis: var(--borderWidth-default) solid var(--borderColor-upsell-emphasis);
+    --border-upsell-muted: var(--borderWidth-default) solid var(--borderColor-upsell-muted);
+    --borderColor-neutral-muted: var(--borderColor-muted); /** Subtle neutral semantic border */
+    --button-danger-bgColor-disabled: var(--control-bgColor-disabled);
+    --button-danger-borderColor-rest: var(--control-borderColor-rest);
+    --button-default-bgColor-disabled: var(--control-bgColor-disabled);
+    --button-default-borderColor-active: var(--control-borderColor-rest);
+    --button-default-borderColor-disabled: var(--control-borderColor-disabled);
+    --button-default-borderColor-rest: var(--control-borderColor-rest);
+    --button-default-fgColor-disabled: var(--control-fgColor-disabled);
+    --button-invisible-fgColor-disabled: var(--control-fgColor-disabled);
+    --button-invisible-iconColor-disabled: var(--control-fgColor-disabled);
+    --button-outline-bgColor-disabled: var(--control-bgColor-disabled);
+    --button-primary-borderColor-rest: var(--borderColor-translucent);
+    --button-primary-fgColor-rest: #fbf1c7;
+    --button-primary-iconColor-disabled: var(--button-primary-fgColor-disabled);
+    --button-primary-iconColor-rest: #fbf1c7;
+    --buttonKeybindingHint-danger-bgColor-disabled: var(--buttonKeybindingHint-default-bgColor-disabled);
+    --buttonKeybindingHint-danger-borderColor-hover: var(--borderColor-translucent);
+    --buttonKeybindingHint-danger-fgColor-active: var(--fgColor-onEmphasis);
+    --buttonKeybindingHint-danger-fgColor-hover: var(--fgColor-onEmphasis);
+    --buttonKeybindingHint-danger-fgColor-rest: var(--buttonKeybindingHint-default-fgColor-rest);
+    --buttonKeybindingHint-default-borderColor-disabled: var(--control-borderColor-disabled);
+    --buttonKeybindingHint-default-borderColor-rest: var(--borderColor-muted);
+    --buttonKeybindingHint-default-fgColor-disabled: var(--control-fgColor-disabled);
+    --buttonKeybindingHint-inactive-borderColor: var(--borderColor-muted);
+    --buttonKeybindingHint-invisible-borderColor-disabled: var(--control-borderColor-disabled);
+    --buttonKeybindingHint-invisible-fgColor-disabled: var(--control-fgColor-disabled);
+    --buttonKeybindingHint-primary-borderColor-disabled: var(--control-borderColor-disabled);
+    --buttonKeybindingHint-primary-borderColor-rest: #fbf1c71a;
+    --buttonKeybindingHint-primary-fgColor-disabled: var(--button-primary-fgColor-disabled);
+    --buttonKeybindingHint-primary-fgColor-rest: #fbf1c7;
+    --card-bgColor: var(--bgColor-default);
+    --codeMirror-bgColor: var(--bgColor-default);
+    --codeMirror-cursor-fgColor: var(--fgColor-default);
+    --codeMirror-fgColor: var(--fgColor-default);
+    --codeMirror-gutterMarker-fgColor-default: var(--bgColor-default);
+    --codeMirror-gutters-bgColor: var(--bgColor-default);
+    --codeMirror-lines-bgColor: var(--bgColor-default);
+    --codeMirror-matchingBracket-fgColor: var(--fgColor-default);
+    --color-ansi-black: var(--ansi-black); /** Deprecated. Use ansi.black instead. */
+    --color-prettylights-syntax-invalid-illegal-bg: var(--prettylights-syntax-invalidIllegal-bg); /** Deprecated. Use prettylights.syntax.invalidIllegal.bg instead. */
+    --color-prettylights-syntax-markup-bold: var(--prettylights-syntax-markup-bold); /** Deprecated. Use prettylights.syntax.markup.bold instead. */
+    --color-prettylights-syntax-markup-italic: var(--prettylights-syntax-markup-italic); /** Deprecated. Use prettylights.syntax.markup.italic instead. */
+    --color-prettylights-syntax-storage-modifier-import: var(--prettylights-syntax-storageModifierImport); /** Deprecated. Use prettylights.syntax.storageModifierImport instead. */
+    --control-borderColor-selected: var(--control-bgColor-selected);
+    --control-checked-borderColor-disabled: var(--control-checked-bgColor-disabled);
+    --control-checked-borderColor-rest: var(--control-checked-bgColor-rest);
+    --control-checked-fgColor-disabled: var(--fgColor-onEmphasis);
+    --control-checked-fgColor-rest: var(--fgColor-onEmphasis);
+    --controlKnob-bgColor-disabled: var(--control-bgColor-disabled);
+    --controlKnob-borderColor-checked: var(--control-checked-bgColor-rest);
+    --controlKnob-borderColor-disabled: var(--control-bgColor-disabled);
+    --controlKnob-borderColor-rest: var(--control-borderColor-rest);
+    --controlTrack-fgColor-disabled: var(--fgColor-onEmphasis);
+    --dashboard-bgColor: var(--bgColor-default);
+    --diffBlob-additionLine-fgColor: var(--fgColor-default);
+    --diffBlob-additionNum-fgColor: var(--fgColor-default);
+    --diffBlob-additionWord-fgColor: var(--fgColor-default);
+    --diffBlob-deletionLine-fgColor: var(--fgColor-default);
+    --diffBlob-deletionNum-fgColor: var(--fgColor-default);
+    --diffBlob-deletionWord-fgColor: var(--fgColor-default);
+    --diffBlob-hunkNum-fgColor-hover: var(--fgColor-onEmphasis);
+    --diffBlob-hunkNum-fgColor-rest: var(--fgColor-default);
+    --focus-outline: var(--focus-outline-width) solid var(--focus-outline-color); /** Focus ring outline for keyboard navigation and accessibility. */
+    --focus-outlineColor: var(--focus-outline-color); /** Deprecated. Use focus.outline-color instead. */
+    --overlay-borderColor: #d5c4a180;
+    --prettylights-syntax-invalid-illegal-bg: var(--prettylights-syntax-invalidIllegal-bg); /** Deprecated. Use prettylights.syntax.invalidIllegal.bg instead. */
+    --prettylights-syntax-storage-modifier-import: var(--prettylights-syntax-storageModifierImport); /** Deprecated. Use prettylights.syntax.storageModifierImport instead. */
+    --reactionButton-selected-fgColor-rest: var(--fgColor-link);
+    --tooltip-fgColor: var(--fgColor-onEmphasis);
+    --underlineNav-borderColor-hover: var(--borderColor-muted);
+    --border-neutral-muted: var(--borderWidth-default) solid var(--borderColor-neutral-muted);
+    --borderColor-draft-muted: var(--borderColor-neutral-muted); /** Subtle border for draft state indicators */
+    --button-danger-borderColor-hover: var(--button-primary-borderColor-rest);
+    --button-default-borderColor-hover: var(--button-default-borderColor-rest);
+    --button-primary-borderColor-active: var(--button-primary-borderColor-rest);
+    --button-primary-borderColor-hover: var(--button-primary-borderColor-rest);
+    --buttonKeybindingHint-danger-borderColor-active: var(--buttonKeybindingHint-danger-borderColor-hover);
+    --buttonKeybindingHint-danger-borderColor-disabled: var(--buttonKeybindingHint-default-borderColor-disabled);
+    --buttonKeybindingHint-danger-borderColor-rest: var(--buttonKeybindingHint-default-borderColor-rest);
+    --buttonKeybindingHint-danger-fgColor-disabled: var(--buttonKeybindingHint-default-fgColor-disabled);
+    --shadow-floating-large: 0 0 0 1px #d1d9e000, 0 40px 80px 0 #3c38363d; /** Large floating shadow for modals and dialogs */
+    --shadow-floating-medium: 0 0 0 1px #d1d9e000, 0 8px 16px -4px #3c383614, 0 4px 32px -4px #3c383614, 0 24px 48px -12px #3c383614, 0 48px 96px -24px #3c383614; /** Medium floating shadow for popovers and action menus */
+    --shadow-floating-small: 0 0 0 1px #d5c4a140, 0 6px 12px -3px #3c38360a, 0 6px 18px 0 #3c38361f; /** Small floating shadow for dropdowns, tooltips, and small overlays */
+    --shadow-floating-xlarge: 0 0 0 1px #d1d9e000, 0 56px 112px 0 #3c383652; /** Extra large floating shadow for full-screen overlays and sheets */
+    --border-draft-muted: var(--borderWidth-default) solid var(--borderColor-draft-muted);
+    --button-danger-borderColor-active: var(--button-danger-borderColor-hover);
+    --button-outline-borderColor-hover: var(--button-primary-borderColor-hover);
+    --button-outline-borderColor-active: var(--button-outline-borderColor-hover);
+  }
+}

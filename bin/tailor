@@ -38,8 +38,8 @@ import { listIconSets, iconsInstalled, iconsMissingMessage, loadIconSet, resolve
 const CONSUMERS_FILE = join(ROOT, "consumers.json");
 const WEB_UI_DESIGN_ASSETS = process.env.WEB_UI_DESIGN_ASSETS || "";
 const CORE_FILES = ["tokens.css", "base.css", "layout.css", "tailor.js"];
-// Icons Tailor.theme itself renders (sun/moon mode toggle): always part of the consumer sprite.
-const THEME_ICONS = ["bi:sun", "bi:moon-stars"];
+// Icons Tailor.theme / Tailor.toast / Tailor.confirm render themselves: always part of the consumer sprite.
+const THEME_ICONS = ["bi:sun", "bi:moon-stars", "bi:check-circle", "bi:exclamation-triangle", "bi:x-circle", "bi:info-circle", "bi:question-circle", "bi:chevron-down", "bi:clock", "bi:plus-lg", "bi:dash-lg"];
 const MARKER = "managed by tailor";
 const header = (what, comment = "css") =>
   comment === "html" || comment === "svg"

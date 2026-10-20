@@ -21,6 +21,7 @@ import {
 import { Blankslate, UnderlinePanels } from "@primer/react/experimental";
 import { createContext, useCallback, useContext, useState, type ReactElement, type ReactNode } from "react";
 import { Ui as Css } from "../../src/index.ts";
+import { ICON_SPRITE, IconSpriteContext, iconSlot } from "../../src/actions.tsx";
 import type { Tone } from "../../src/util.ts";
 
 /* ── prop translation helpers ────────────────────────────────────────────── */
@@ -34,7 +35,7 @@ const TONE_TO_LABEL: Partial<Record<Tone, LabelVariant>> = {
   cyan: "accent", purple: "done", pink: "sponsors",
 };
 
-const SIZE_TO_PRIMER = { sm: "small", md: "medium", lg: "large" } as const;
+const SIZE_TO_PRIMER = { xs: "small", sm: "small", md: "medium", lg: "large" } as const;
 
 /* ── actions ─────────────────────────────────────────────────────────────── */
 
@@ -173,7 +174,7 @@ function List({ label, multi, children }: React.ComponentProps<typeof Css.List>)
 List.Item = function ListItem({ selected, disabled, lead, name, desc, trail, onClick }: React.ComponentProps<typeof Css.List.Item>) {
   return (
     <ActionList.Item selected={selected} disabled={disabled} onSelect={() => onClick?.(undefined as never)}>
-      {lead !== undefined && <ActionList.LeadingVisual>{lead}</ActionList.LeadingVisual>}
+      {lead !== undefined && <ActionList.LeadingVisual>{iconSlot(lead)}</ActionList.LeadingVisual>}
       {name}
       {desc !== undefined && <ActionList.Description variant="block">{desc}</ActionList.Description>}
       {trail !== undefined && <ActionList.TrailingVisual>{trail}</ActionList.TrailingVisual>}
@@ -306,7 +307,7 @@ function RelativeTime({ datetime, children }: React.ComponentProps<typeof Css.Re
 function EmptyState({ icon, title, actions, children }: React.ComponentProps<typeof Css.EmptyState>) {
   return (
     <Blankslate>
-      {icon !== undefined && <Blankslate.Visual>{icon}</Blankslate.Visual>}
+      {icon !== undefined && <Blankslate.Visual>{iconSlot(icon)}</Blankslate.Visual>}
       <Blankslate.Heading>{title as string}</Blankslate.Heading>
       <Blankslate.Description>{children as string}</Blankslate.Description>
       {actions !== undefined && <Blankslate.PrimaryAction href="#">{textOf(actions) || "Action"}</Blankslate.PrimaryAction>}
@@ -324,18 +325,23 @@ function Tooltip({ tip, at, children }: React.ComponentProps<typeof Css.Tooltip>
   );
 }
 
-function Truncate({ expand, title, children }: React.ComponentProps<typeof Css.Truncate>) {
-  return <PrimerTruncate title={title ?? textOf(children)} expandable={expand} inline>{children}</PrimerTruncate>;
+function Truncate({ expand, tip, children }: React.ComponentProps<typeof Css.Truncate>) {
+  return <PrimerTruncate title={tip ?? textOf(children)} expandable={expand} inline>{children}</PrimerTruncate>;
 }
 
 const TONE_TO_BANNER = {
   neutral: "info", info: "info", success: "success", warning: "warning", danger: "critical",
 } as const;
+// Banner requires a title; Ui.Alert / toasts carry none, so the variant name is the (visually hidden) title.
+const BANNER_TITLE = { info: "Information", success: "Success", warning: "Warning", critical: "Error", upsell: "Upsell" } as const;
 
 function Alert({ tone, actions, onDismiss, children }: React.ComponentProps<typeof Css.Alert>) {
+  const variant = tone ? TONE_TO_BANNER[tone] ?? "info" : "info";
   return (
     <Banner
-      variant={tone ? TONE_TO_BANNER[tone] : "info"}
+      variant={variant}
+      title={BANNER_TITLE[variant]}
+      hideTitle
       onDismiss={onDismiss}
       description={children}
     >
@@ -405,7 +411,7 @@ export function useToasts(): ToastApi {
 
 let seq = 0;
 
-function UiProvider({ children }: { children: ReactNode }) {
+function UiProvider({ children, sprite }: { children: ReactNode; sprite?: string }) {
   const [toasts, setToasts] = useState<ToastEntry[]>([]);
   const toast = useCallback<ToastApi["toast"]>((tone, message, { timeout = 2500 } = {}) => {
     const id = ++seq;
@@ -413,14 +419,16 @@ function UiProvider({ children }: { children: ReactNode }) {
     if (timeout > 0) setTimeout(() => setToasts((ts) => ts.filter((t) => t.id !== id)), timeout);
   }, []);
   return (
+    <IconSpriteContext value={sprite ?? ICON_SPRITE}>
     <ToastContext value={{ toast }}>
       {children}
       <div style={{ position: "fixed", bottom: 16, right: 16, display: "grid", gap: 8, zIndex: 100, maxWidth: 420 }}>
         {toasts.map((t) => (
-          <Banner key={t.id} variant={TONE_TO_BANNER[t.tone]} description={t.message} onDismiss={() => setToasts((ts) => ts.filter((x) => x.id !== t.id))} />
+          <Banner key={t.id} variant={TONE_TO_BANNER[t.tone]} title={BANNER_TITLE[TONE_TO_BANNER[t.tone]]} hideTitle description={t.message} onDismiss={() => setToasts((ts) => ts.filter((x) => x.id !== t.id))} />
         ))}
       </div>
     </ToastContext>
+    </IconSpriteContext>
   );
 }
 
@@ -449,7 +457,7 @@ Navbar.Nav = function NavbarNav({ children }: { children?: ReactNode }) {
 Navbar.Link = function NavbarLink({ href, current, children }: React.ComponentProps<typeof Css.Navbar.Link>) {
   return <PrimerHeader.Item><PrimerHeader.Link href={href} aria-current={current ? "page" : undefined}>{children}</PrimerHeader.Link></PrimerHeader.Item>;
 };
-Navbar.Sep = function NavbarSep() { return null; };
+Navbar.Sep = function NavbarSep() { return <></>; };
 Navbar.End = function NavbarEnd({ children }: { children?: ReactNode }) {
   return <PrimerHeader.Item full>{children}</PrimerHeader.Item>;
 };

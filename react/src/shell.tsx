@@ -142,12 +142,22 @@ export function Footer({ className, children, ...rest }: HTMLAttributes<HTMLElem
   return <footer className={cx("t-footer", className)} {...rest}>{children}</footer>;
 }
 
-function FooterRepo({ className, children, ...rest }: AnchorHTMLAttributes<HTMLAnchorElement>) {
-  return <a className={cx("t-footer-repo", className)} {...rest}>{children}</a>;
+type FooterRepoProps = Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "title"> & {
+  /** Accessible name and tooltip (`aria-label` + `data-tip`; never `title=`). */
+  label?: string;
+};
+
+function FooterRepo({ label, className, children, ...rest }: FooterRepoProps) {
+  return <a className={cx("t-footer-repo", className)} data-tip={label} aria-label={label} {...rest}>{children}</a>;
 }
 
 function FooterEnd({ className, children, ...rest }: HTMLAttributes<HTMLDivElement>) {
   return <div className={cx("t-footer-end", className)} {...rest}>{children}</div>;
+}
+
+/** Mount point for the tailor.js skin/palette/mode pickers (`data-tailor-pickers`). */
+function FooterPickers({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={className} data-tailor-pickers="" {...rest}></div>;
 }
 
 function FooterVersion({ className, children, ...rest }: HTMLAttributes<HTMLSpanElement>) {
@@ -156,6 +166,7 @@ function FooterVersion({ className, children, ...rest }: HTMLAttributes<HTMLSpan
 
 Footer.Repo = FooterRepo;
 Footer.End = FooterEnd;
+Footer.Pickers = FooterPickers;
 Footer.Version = FooterVersion;
 
 /* ── page ────────────────────────────────────────────────────────────────── */
@@ -235,18 +246,21 @@ Toolbar.Spacer = ToolbarSpacer;
 /* ── grid / stack / cluster / split ──────────────────────────────────────── */
 
 type GridProps = HTMLAttributes<HTMLDivElement> & {
-  cols?: "auto" | "1" | "2" | "3" | "4" | "6";
+  /** `12` is the form grid: children carry `data-span`. */
+  cols?: "auto" | "1" | "2" | "3" | "4" | "6" | "12";
   min?: "xs" | "sm" | "md" | "lg";
   gap?: "1" | "2" | "3" | "4" | "5";
+  align?: "start" | "center" | "end";
 };
 
-export function Grid({ cols, min, gap, className, children, ...rest }: GridProps) {
+export function Grid({ cols, min, gap, align, className, children, ...rest }: GridProps) {
   return (
     <div
       className={cx("t-grid", className)}
       data-cols={dataAttr(cols)}
       data-min={dataAttr(min)}
       data-gap={dataAttr(gap)}
+      data-align={dataAttr(align)}
       {...rest}
     >
       {children}

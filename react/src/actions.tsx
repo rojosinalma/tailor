@@ -3,16 +3,54 @@
 // tailor.js behaviours (filters, tabs, menus, listbox) are reimplemented as
 // React state + the aria conventions from core/conventions.md §4.
 import {
-  useEffect, useId, useRef, useState,
-  type AnchorHTMLAttributes, type ButtonHTMLAttributes, type HTMLAttributes,
-  type KeyboardEvent, type ReactNode,
+  createContext, useContext, useEffect, useId, useRef, useState,
+  type AnchorHTMLAttributes, type AriaAttributes, type ButtonHTMLAttributes, type CSSProperties,
+  type HTMLAttributes, type KeyboardEvent, type ReactNode,
 } from "react";
 import { cx, dataAttr, type Size, type Tone } from "./util.ts";
 
 /* ── icon slot ───────────────────────────────────────────────────────────── */
 
-export function Icon({ className, children, ...rest }: HTMLAttributes<HTMLSpanElement>) {
-  return <span className={cx("t-icon", className)} {...rest}>{children}</span>;
+export type IconProps = AriaAttributes & {
+  className?: string;
+  style?: CSSProperties;
+  children?: ReactNode;
+  /** Sprite symbol id (`<set>-<name>`, e.g. `bi-grid`); renders the `<svg><use>` form of conventions §2. */
+  name?: string;
+  /** Sprite URL; defaults to the tailor apply output. */
+  sprite?: string;
+  /** Accessible name: renders `role="img"` + `<title>`; without it the icon is `aria-hidden`. */
+  label?: string;
+  size?: "xs" | "sm" | "lg" | "xl";
+};
+
+export const ICON_SPRITE = "/tailor/icons.svg";
+/** Sprite URL for every `<Icon name>` below it (set by `<UiProvider sprite>`); default = the `tailor apply` output. */
+export const IconSpriteContext = createContext(ICON_SPRITE);
+
+/**
+ * The `.t-icon` slot. `<Icon name="bi-grid" />` renders a sprite icon
+ * (`<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-grid"/></svg>`);
+ * children only (a Unicode glyph or inline svg) keeps the `<span class="t-icon">` form.
+ */
+export function Icon({ name, sprite, label, size, className, children, ...rest }: IconProps) {
+  const ctxSprite = useContext(IconSpriteContext);
+  sprite ??= ctxSprite;
+  if (name === undefined) {
+    return <span className={cx("t-icon", className)} data-size={dataAttr(size)} {...rest}>{children}</span>;
+  }
+  const a11y = label !== undefined ? { role: "img" } : { "aria-hidden": true as const };
+  return (
+    <svg className={cx("t-icon", className)} data-size={dataAttr(size)} {...a11y} {...rest}>
+      {label !== undefined && <title>{label}</title>}
+      <use href={`${sprite}#${name}`} />
+    </svg>
+  );
+}
+
+/** Icon slot content: a string is a sprite symbol id, a node renders as-is. */
+export function iconSlot(icon: ReactNode, className?: string): ReactNode {
+  return typeof icon === "string" ? <Icon name={icon} className={className} /> : icon;
 }
 
 /* ── button ──────────────────────────────────────────────────────────────── */
@@ -20,7 +58,7 @@ export function Icon({ className, children, ...rest }: HTMLAttributes<HTMLSpanEl
 export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "secondary" | "danger" | "warning" | "ghost" | "link";
   tone?: Tone;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   /** Icon-only button (`data-icon="only"`); pair with `aria-label`. */
   iconOnly?: boolean;
   /** `aria-busy` loading state (also disables the button). */
@@ -397,14 +435,13 @@ export function List({
   );
 }
 
-import { createContext, useContext } from "react";
 const ListContext = createContext<{ current: string[]; toggle: (v: string) => void } | null>(null);
 
 export type ListItemProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   /** Selection value; when given, selection state comes from the List. */
   value?: string;
   selected?: boolean;
-  /** Leading slot: a string renders as `t-icon t-list-lead`, a node as-is. */
+  /** Leading slot: a string is a sprite icon name rendered as `t-icon t-list-lead`, a node as-is. */
   lead?: ReactNode;
   name: ReactNode;
   desc?: ReactNode;
@@ -423,7 +460,7 @@ function ListItem({ value, selected, lead, name, desc, trail, className, onClick
       onClick={(e) => { if (value !== undefined) ctx?.toggle(value); onClick?.(e); }}
       {...rest}
     >
-      {typeof lead === "string" ? <span className="t-icon t-list-lead">{lead}</span> : lead}
+      {iconSlot(lead, "t-list-lead")}
       <span className="t-list-body">
         <span className="t-list-name">{name}</span>
         {desc !== undefined && <span className="t-list-desc">{desc}</span>}

@@ -152,7 +152,7 @@ functions are:
 | `Tailor.filters(root)` | `.t-btn-group[data-role=filter]` | single-select `aria-pressed`; emits `t:change` |
 | `Tailor.settingsAutoSave(root, save)` + `Tailor.duration.get/set` | `.t-setting`, `.t-duration` | `save(key, value)` → `Promise<{ok, message}>`; revert on error |
 | `Tailor.sortable(table)` | `.t-table th[data-sort]` | client-side sort by `data-<key>` on rows or cell text; sets `aria-sort` |
-| `Tailor.scrollspy(nav, sections)` | `.t-sidebar a[href^="#"]` | `aria-current="page"` on the link of the section in view |
+| `Tailor.scrollspy(nav, sections)` | `.t-sidebar a[href^="#"]` | `aria-current="page"` on the link of the last section whose top passed the header (the last section once the `.t-shell-main` scroller is at its end); keeps that link in view in the sidebar |
 
 Custom events are namespaced `t:` and bubble. tailor.js never reads a skin class and never injects
 colours; it toggles only the attributes in §4 plus `hidden`.
@@ -205,14 +205,31 @@ it; they should not need to undo it.
   tokens only.
 - The pre-paint snippet from `docs/SDD.md § Switcher` goes in `<head>` right after the three core `<link>`s (it writes the skin and palette links there, so they cascade over `tokens.css`).
 - Palette and skin are app settings (settings table); localStorage is only the flash cache.
-- **The switcher is one element**: `<div data-tailor-pickers></div>`. `Tailor.theme` renders into it a
-  **sun/moon mode toggle** (`.t-btn[data-icon=only]`, icons `bi:sun`/`bi:moon-stars` from the sprite, disabled
-  when the palette has one mode) plus the skin and palette `<select>`s (only when the project vendors more than
-  one), options **sorted alphabetically by name** from the vendored config — never hand-write option lists, and
-  no "Auto" option: `auto` exists only as the first-visit default (follows the OS until the user toggles).
-  `data-tailor-pickers="mode"` / `"skin palette"` renders a subset.
-  **Placement: the mode toggle is always the first (leftmost) item of `.t-footer-end`; the skin/palette selects
-  live on the settings page when the project has one, otherwise right after the toggle in `.t-footer-end`.**
-  A layout without a footer puts the same element last in `.t-navbar-end`.
-- **App shell**: `.t-shell` spans the full viewport width; the sidebar column exists only when a
-  `.t-shell-side` child is present — a shell without a sidebar needs no attribute.
+- **The switcher is one element**: `<div data-tailor-pickers></div>`. `Tailor.theme` renders into it, in this
+  order: the skin and palette `<select>`s (only when the project vendors more than one), [a kit select slot],
+  then the **sun/moon mode toggle** last (`.t-btn[data-icon=only]`, icons `bi:sun`/`bi:moon-stars` from the
+  sprite, disabled when the palette has one mode). Options are **sorted alphabetically by name** from the vendored
+  config — never hand-write option lists, and no "Auto" option: `auto` exists only as the first-visit default
+  (follows the OS until the user toggles). `data-tailor-pickers="mode"` / `"skin palette"` renders a subset.
+  Inside a `.t-footer` the controls render `data-size="xs"` (the footer is `--t-footer-h` tall), `sm` elsewhere.
+  **Placement: the pickers element is the first (leftmost) item of `.t-footer-end`, so the mode toggle sits
+  rightmost inside it; the skin/palette selects live on the settings page when the project has one, otherwise in
+  the same footer element.** A layout without a footer puts the same element last in `.t-navbar-end`.
+- **App shell**: `.t-shell` spans the full viewport width and is viewport-bound (`100dvh`, `overflow: hidden`):
+  header (`.t-shell-nav`) and footer (`.t-shell-foot`) stay put, `.t-shell-main` and `.t-shell-side` scroll
+  themselves, and the document never scrolls — no scrollbar ever runs beside the fixed bars. The sidebar column
+  exists only when a `.t-shell-side` child is present — a shell without a sidebar needs no attribute. Below 992px
+  the sidebar stacks above the main area, keeps its content height up to 40% of the viewport, then scrolls inside
+  itself. Anchor links (`href="#id"`) scroll `.t-shell-main` and land with the target title `--t-space-4` below the
+  header (`scroll-padding-top` on the scroller; no `scroll-margin` on targets, the two would add up). Code that reacts to
+  scrolling listens on `.t-shell-main` (or on `document` in the capture phase, which sees every scroller), not on
+  `window`; `Tailor.scrollspy` already does.
+- **Controls and tables are siblings inside a layout primitive**, never bare: a `.t-toolbar` above a `.t-table-wrap`
+  goes in a `.t-stack` (or the toolbar is a `.t-stack` child itself). The base still gives a bare `.t-toolbar` /
+  `.t-cluster` that is followed by a sibling a minimum bottom gap (`--t-space-3`) so the two never touch. Adjacent
+  `.t-btn` siblings have no implicit gap: group them in `.t-toolbar`, `.t-cluster` or `.t-btn-group`.
+- **Sidebar group titles are larger than their items**: `.t-sidebar-group` renders at `--t-text-base`, bold, the
+  items at `--t-text-md`; every skin keeps that order (uppercase/tracking is the skin's choice).
+- **Floating panels inside a clipping container** (`.t-card`, `.t-list`, `.t-table-wrap`, `.t-dialog-body`): while a
+  `.t-picker`, `.t-select-list`, `.t-help-box` or `.t-menu[open]` is open inside, the container turns
+  `overflow: visible` and lifts to `--t-z-overlay`, so the panel is never chopped or hidden under the next card.

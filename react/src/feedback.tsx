@@ -9,6 +9,7 @@ import {
   type MouseEvent, type ReactElement, type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+import { ICON_SPRITE, Icon, IconSpriteContext, iconSlot } from "./actions.tsx";
 import { cx, dataAttr, type Tone } from "./util.ts";
 
 /* ── tooltip ─────────────────────────────────────────────────────────────── */
@@ -196,21 +197,23 @@ Code.Tok = Tok;
 
 /* ── truncate ────────────────────────────────────────────────────────────── */
 
-type TruncateProps = HTMLAttributes<HTMLSpanElement> & {
+type TruncateProps = Omit<HTMLAttributes<HTMLSpanElement>, "title"> & {
   /** Click-to-expand (`data-expand` + aria-expanded toggle). */
   expand?: boolean;
+  /** Tooltip text (`data-tip`, the full value or "click to expand"); never `title=`. */
+  tip?: string;
 };
 
-export function Truncate({ expand, className, title, children, ...rest }: TruncateProps) {
+export function Truncate({ expand, tip, className, children, ...rest }: TruncateProps) {
   const [expanded, setExpanded] = useState(false);
   if (!expand) {
-    return <span className={cx("t-truncate", className)} title={title} {...rest}>{children}</span>;
+    return <span className={cx("t-truncate", className)} data-tip={tip} {...rest}>{children}</span>;
   }
   return (
     <span
       className={cx("t-truncate", className)}
       data-expand=""
-      title={title}
+      data-tip={tip}
       aria-expanded={expanded}
       onClick={() => setExpanded((v) => !v)}
       {...rest}
@@ -225,6 +228,7 @@ export function Truncate({ expand, className, title, children, ...rest }: Trunca
 type AlertProps = HTMLAttributes<HTMLDivElement> & {
   tone?: "neutral" | "info" | "success" | "warning" | "danger";
   size?: "sm";
+  /** A string is a sprite icon name; a node renders as-is. */
   icon?: ReactNode;
   actions?: ReactNode;
   /** Renders the dismiss button; called when the alert is dismissed. */
@@ -237,7 +241,7 @@ export function Alert({ tone, size, icon, actions, onDismiss, dismissLabel = "Di
   if (dismissed) return null;
   return (
     <div className={cx("t-alert", className)} data-tone={dataAttr(tone)} data-size={dataAttr(size)} role="alert" {...rest}>
-      {icon !== undefined && <span className="t-icon t-alert-icon">{icon}</span>}
+      {iconSlot(icon, "t-alert-icon")}
       <div className="t-alert-body">{children}</div>
       {actions !== undefined && <div className="t-alert-actions">{actions}</div>}
       {onDismiss && (
@@ -256,7 +260,9 @@ export function Alert({ tone, size, icon, actions, onDismiss, dismissLabel = "Di
 
 /* ── toast ───────────────────────────────────────────────────────────────── */
 
-const TOAST_ICONS: Record<string, string> = { success: "✓", warning: "▲", danger: "✕", info: "ⓘ" };
+const TOAST_ICONS: Record<string, string> = {
+  success: "bi-check-circle", warning: "bi-exclamation-triangle", danger: "bi-x-circle", info: "bi-info-circle",
+};
 
 export type ToastTone = "success" | "warning" | "danger" | "info";
 
@@ -269,7 +275,7 @@ type ToastProps = HTMLAttributes<HTMLDivElement> & {
 export function Toast({ tone, leaving, className, children, ...rest }: ToastProps) {
   return (
     <div className={cx("t-toast", className)} data-tone={tone} data-leaving={leaving ? "" : undefined} role="status" {...rest}>
-      <span className="t-icon t-toast-icon">{TOAST_ICONS[tone] ?? ""}</span>
+      <Icon name={TOAST_ICONS[tone] ?? "bi-info-circle"} className="t-toast-icon" />
       <span className="t-toast-body">{children}</span>
     </div>
   );
@@ -416,7 +422,7 @@ export function Confirm({
       onClick={(e) => { if (e.target === ref.current) close(false); }}
     >
       <div className="t-dialog-header">
-        <h2 className="t-dialog-title" id="t-confirm-title"><span className="t-icon">▲</span><span>{title}</span></h2>
+        <h2 className="t-dialog-title" id="t-confirm-title"><Icon name={danger ? "bi-exclamation-triangle" : "bi-question-circle"} /><span>{title}</span></h2>
         <button className="t-dialog-close" aria-label="Close" data-dialog-close="" onClick={() => close(false)}>×</button>
       </div>
       <div className="t-dialog-body" id="t-confirm-body">{children}</div>
@@ -510,7 +516,7 @@ let toastSeq = 0;
  * Mounts the shared layers (toast region, tooltip layer, confirm dialog) and
  * provides `useToasts()` / `useConfirm()`. Wrap the app once; no tailor.js.
  */
-export function UiProvider({ children }: { children: ReactNode }) {
+export function UiProvider({ children, sprite }: { children: ReactNode; /** Icon sprite URL for `<Ui.Icon name>` (default `/tailor/icons.svg`). */ sprite?: string }) {
   const [toasts, setToasts] = useState<ToastEntry[]>([]);
   const [confirmState, setConfirmState] = useState<ConfirmState>({
     open: false, title: "", body: "", label: "Confirm", danger: true,
@@ -534,6 +540,7 @@ export function UiProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
+    <IconSpriteContext value={sprite ?? ICON_SPRITE}>
     <ToastContext value={{ toast }}>
       <ConfirmContext value={{ confirm }}>
         {children}
@@ -564,6 +571,7 @@ export function UiProvider({ children }: { children: ReactNode }) {
         )}
       </ConfirmContext>
     </ToastContext>
+    </IconSpriteContext>
   );
 }
 

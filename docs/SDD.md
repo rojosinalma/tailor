@@ -77,11 +77,15 @@ A palette may carry an optional `primer` section (hand-tuned colour map, token o
 `bin/gen-primer-theme` (`tailor gen --target primer <id>`, `bin/lib/primer.js`) then derives a **Primer
 Primitives theme** from it: the stock `dark.css` of the `@primer/primitives` pinned in `react/package.json`
 is rewritten token by token (override → exact map → nearest palette hue with OKLCH lightness preserved,
-`var()`/`color-mix()` untouched) into `react/adapters/primer/themes/<mode>_<id>.css`, plus a generated
-`themes/index.ts` that imports them all and exports the theme list for `ThemeProvider`. Primer is the kit
-behind the React adapter, so these files are a tailor artefact like `palettes/<id>.css`: `bin/build`
-regenerates them (skipped with a note when `react/` has no `node_modules`), `bin/verify` fails on a stale
-or stray file, `manifest.json` lists each palette's `primer_theme`. Other frameworks' themes are not
+`var()`/`color-mix()` untouched) into `react/adapters/primer/themes/dark_<id>.css`, and — for every palette
+with a `light` block, i.e. all 21 — a `light_<id>.css` from the stock `light.css`: the light block's
+surfaces/text map exactly onto the stock surfaces/text, every `hue_ranges` target is swapped for the light
+counterpart of the same role, the link/primary-button tokens come from the block's `link`/`accent`
+(`counterpartPrimerPalette` in `bin/lib/primer.js`; hand-tuning stays in the palette's own mode). A generated
+`themes/index.ts` imports all 42 and exports the theme list for `ThemeProvider`. Primer is the kit behind
+the React adapter, so these files are a tailor artefact like `palettes/<id>.css`: `bin/build` regenerates
+them (skipped with a note when `react/` has no `node_modules`), `bin/verify` fails on a stale or stray file,
+`manifest.json` lists each palette's `primer_theme` (own mode) and `primer_themes` (per mode). Other frameworks' themes are not
 tailor's: `tailor gen <system> <palette>` without `--target` stays a passthrough to an external generator.
 
 ### 2.4 Switcher
@@ -99,8 +103,9 @@ disabled when the palette offers one mode) plus skin/palette selects (options so
 fills empty `[data-tailor-picker="skin|palette|mode"]` selects the same way, wires them, persists, emits
 `t:theme`. There is no "Auto" choice in the UI: `auto` is only a default (first visit follows
 `prefers-color-scheme` until the user toggles). Query params win for the first paint only.
-Placement convention: toggle first in `.t-footer-end`; selects on the settings page when there is one,
-else next to the toggle (conventions §8). `.t-shell` is single-column unless a `.t-shell-side` child exists
+Placement convention: the pickers element first in `.t-footer-end`, rendering skin, palette, [kit], then the mode
+toggle last (`xs` controls inside a footer); selects on the settings page when there is one,
+else in the footer element (conventions §8). `.t-shell` is single-column unless a `.t-shell-side` child exists
 (`:has()`).
 
 ### 2.5 Build & manifest (`bin/build`)
@@ -130,8 +135,17 @@ Exit 0 with zero skins (core-only mode), so the core can be verified before any 
 
 Generated static page (`bin/lib/showcase.js`): app shell, sidebar of groups → components (scrollspy),
 one `<section class="t-card sc-component" id="<component id>">` per tier-1 component with
-description, live `demo`, collapsible canonical markup. Pickers for skin/palette/mode; `?only=<id>`
-isolates one section; `?open=dialog|confirm`. Chrome classes are `sc-*`; demos use vocabulary
+description, live `demo`, collapsible canonical markup. Pickers for skin/palette/kit/mode; `?only=<id>`
+isolates one section; `?open=dialog|confirm`. **Kit picker** (`?kit=tailor|primer`, `Tailor.theme` `kits`):
+`primer` lazy-loads `showcase/kit/kit.js` + `kit.css` — a Vite bundle `bin/build` makes from
+`react/demo/src/kit.tsx` (`react/demo/vite.kit.config.ts`; kept as committed when `react/node_modules` is
+missing) — which mounts one React root and portals a Primer-kit island into every `.sc-demo[data-component-id]`
+that has one (`react/demo/src/islands.tsx`: the parity fixtures over the Primer `Ui` + stateful overrides, so
+both kits show the same content; tier-2 demos stay HTML). Under a kit the skin select is disabled and the
+skin `<link>` emptied (Primer carries its own look); palette × mode pick
+`../react/adapters/primer/themes/<mode>_<palette>.css` in a `<link id="t-kit-theme">` plus the `data-color-mode`
+/ `data-*-theme` attributes on `<html>`. Switching back unmounts, restores the saved demo HTML and re-runs
+`Tailor.upgrade` on it. Chrome classes are `sc-*`; demos use vocabulary
 classes only, so a skin is judged on the real vocabulary. All links are relative (`../core`,
 `../skins`, `../palettes`), so any static server at the repo root serves it at `/showcase/`.
 
@@ -154,7 +168,43 @@ classes only, so a skin is judged on the real vocabulary. All links are relative
 
 tailor ships as plain files: no runtime framework, no npm package, one canonical copy of each
 palette, one shared core (no per-project forks), skins that never change markup, and consumers
-that colour only through `--t-*` tokens.
+that colour only through `--t-*` tokens. The rule covers what `tailor apply`/`sync` vendor to consumers,
+not the build tooling (Bun, Vite) or the showcase: the showcase's kit bundle is demo content, and the
+React adapter + Primer kit are consumed as source from `react/` by React projects only.
+
+### Design decisions
+
+- **2026-10-20 — Viewport-bound shell, self-scrolling main/side.** What: `.t-shell` is `100dvh` + `overflow:
+  hidden`; `.t-shell-main` and `.t-shell-side` scroll themselves (`position: relative` so absolute descendants
+  never leak into the document), `scroll-padding-top` lands anchors below the header, `Tailor.scrollspy` reads
+  the main scroller (last section passed the header; the last link when the scroller is at its end). Why: a
+  document scrollbar ran beside the fixed header and footer and anchored titles hid under the header; the last
+  sidebar item was never highlighted. Supersedes the sticky nav/foot/side from 0.1.0.
+- **2026-10-20 — One floating panel at a time; panels escape clipping containers.** What: help popovers and
+  `details.t-menu` register with `T.popup` like selects and pickers; a container (`.t-card`, `.t-list`,
+  `.t-table-wrap`, `.t-dialog-body`) holding an open panel turns `overflow: visible` and lifts to
+  `--t-z-overlay`; `.t-select-list` is `max-content` wide (min = trigger, max 24rem) and panels right-align at
+  the viewport edge (`data-align="end"`). Why: two popups at once, chopped date pickers and truncated option
+  labels. Supersedes the per-component outside-click handlers.
+- **2026-10-20 — Footer pickers `xs`, order skin → palette → kit → mode; sidebar group titles larger than
+  items; sprite icons everywhere tailor.js draws one.** What: `renderPickers` emits `data-size="xs"` inside
+  `.t-footer`, the mode toggle is last; `.t-sidebar-group` is `--t-text-base` bold in core and every skin;
+  toasts, confirm, number steppers and picker buttons render sprite symbols (`bi-*`, always vendored by
+  `tailor apply`) with a text-glyph fallback when `Tailor.theme.icons` is unset; the showcase demos use sprite
+  icons, never glyphs. `cursor: help` is gone from `.t-help-btn` (every other cursor stays). Why: pickers as tall
+  as the footer, glyphs rendering as boxes, titles smaller than items. Supersedes the 2026-10-19 picker order
+  (mode first).
+- **2026-10-20 — Minimum gap between a bare `.t-toolbar`/`.t-cluster` and its next sibling.** What:
+  `margin-bottom: --t-space-3` unless the parent is a layout primitive with its own gap. Why: a filter toolbar
+  touched the table below it in a consumer. Supersedes nothing.
+- **2026-10-20 — Kit picker, build-time kit bundle, light Primer themes.** What: the showcase gains a Kit
+  picker (`tailor` | `primer`) backed by a Vite bundle built into `showcase/kit/` at `bin/build` time
+  (§2.7); `bin/gen-primer-theme` writes `light_<id>.css` next to `dark_<id>.css` for every palette (§2.3).
+  Why: the showcase shows everything tailor has, and the Primer kit rendering the very same demos is the
+  honest way to show the React adapter; the bundle is demo content, so "no runtime framework" in what tailor
+  ships stays intact; every tailor palette ships dark + light, so the Primer kit has to as well. The React
+  adapter and Primer kit never reach consumers through `tailor apply`/`sync` — only React projects take them
+  (as source from `react/`), chosen at scaffold time. Supersedes nothing.
 
 ## 5. Delivered (0.1.0)
 
@@ -164,7 +214,8 @@ that colour only through `--t-*` tokens.
 - `react/`: `Ui.*` components with markup parity (`react/bin/check-parity`, 43/43), Primer kit
   adapter (29 mapped, rest fall back to the CSS path).
 - `bin/tailor` CLI: `apply|sync|list|gen`, multi-skin vendoring, consumer registry, managed headers.
-- Primer themes per palette (`tailor gen --target primer`, `react/adapters/primer/themes/`), 21 generated.
+- Primer themes per palette (`tailor gen --target primer`, `react/adapters/primer/themes/`), 21 × dark + light.
+- Showcase Kit picker: the same demos through the Primer kit (`showcase/kit/`, built by `bin/build`).
 
 ## 6. Open
 

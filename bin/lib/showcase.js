@@ -6,16 +6,22 @@ import { join } from "node:path";
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const prettyMarkup = (m) => m.replace(/'/g, '"');
+// demos reference the consumer sprite path (/tailor/icons.svg, the form the markup snippets show); the showcase serves its own sprite next to index.html
+const SPRITE = "icons.svg";
+const demoMarkup = (m) => m.replace(/\/tailor\/icons\.svg#/g, `${SPRITE}#`);
 
-export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
+export function renderShowcase({ skins, palettes, modes, iconSets = [], kitBundle = false }) {
   const vocab = readJson(join(CORE, "components.json"));
   const groups = [...Object.entries(vocab.groups), ["tier2", "Tier 2 (drawn controls)"]];
   const tier1 = vocab.components.filter((c) => c.tier === 1);
   // tier-2 components with a live demo render in a "Tier 2" group after the tier-1 ones
   const tier2 = vocab.components.filter((c) => c.tier === 2 && c.demo);
   const byGroup = (g) => (g === "tier2" ? tier2 : tier1.filter((c) => c.group === g));
-  const labels = { skins: Object.fromEntries(skins.map((s) => [s.id, s.name])), palettes: Object.fromEntries(palettes.map((p) => [p.id, p.name + (p.license.startsWith("values-only") ? " \u00b7" : "")])) };
-  const config = { project: "tailor-showcase", icons: "icons.svg", skins: ["none", ...skins.map((s) => s.id)], palettes: palettes.map((p) => p.id), modes, labels, defaults: { skin: skins[0]?.id ?? "none", palette: "dracula", mode: "auto" } };
+  const labels = { skins: Object.fromEntries(skins.map((s) => [s.id, s.name])), palettes: Object.fromEntries(palettes.map((p) => [p.id, p.name + (p.license.startsWith("values-only") ? " \u00b7" : "")])), kits: { tailor: "tailor markup", primer: "Primer kit (React)" } };
+  // kits: "tailor" = the HTML demos; "primer" = the same demos through the React adapter's Primer kit, bundled by
+  // bin/build into showcase/kit/ (kit.js + kit.css) — offered only when that bundle exists.
+  const kits = ["tailor", ...(kitBundle ? ["primer"] : [])];
+  const config = { project: "tailor-showcase", icons: SPRITE, skins: ["none", ...skins.map((s) => s.id)], palettes: palettes.map((p) => p.id), modes, kits, kit: kitBundle ? { js: "kit/kit.js", css: "kit/kit.css", themes: "../react/adapters/primer/themes/" } : null, labels, defaults: { skin: skins[0]?.id ?? "none", palette: "dracula", mode: "auto", kit: "tailor" } };
 
   const sideNav = groups.map(([g, title]) => `
         <li class="t-sidebar-group">${esc(title)}</li>
@@ -28,7 +34,7 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
         <div class="t-card-header"><h3 class="t-card-title">${esc(c.name)} <code class="sc-id">${c.root}</code></h3>${c.behaviour !== "none" ? `<span class="t-badge" data-tone="accent" data-size="xs">${esc(c.behaviour)}</span>` : ""}<a class="sc-only" href="?only=${c.id}" data-only-link data-tip="Show only this section" aria-label="Show only this section">⤢</a></div>
         <div class="t-card-body">
           <p class="t-muted t-small sc-desc">${esc(c.description)}</p>
-          <div class="sc-demo">${c.demo ?? c.markup}</div>
+          <div class="sc-demo" data-component-id="${c.id}">${demoMarkup(c.demo ?? c.markup)}</div>
           <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>${esc(prettyMarkup(c.markup))}</code></pre>${c.notes ? `<p class="t-muted t-small">${esc(c.notes)}</p>` : ""}</details>
         </div>
       </section>`).join("")}`).join("");
@@ -44,7 +50,7 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
           <p class="t-muted t-small sc-desc">The adopted sets, a sample of each through the sprite built from them (<code>showcase/icons.svg</code>). Icons inherit <code>currentColor</code>; <code>data-size</code> scales the slot.</p>
           <div class="sc-demo">${iconSets.map((s) => `
             <div class="sc-iconset"><p class="t-small"><b>${esc(s.name)}</b> <span class="t-muted">${esc(s.version)} · ${s.count} icons · ${esc(s.license)} · <code>${esc(s.prefix)}:*</code></span></p>
-              <div class="sc-icons">${(s.samples ?? []).map((ref) => { const id = ref.replace(":", "-"); return `<span class="sc-icon" data-tip="${esc(ref)}"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="icons.svg#${id}"/></svg><code>${esc(ref.split(":")[1])}</code></span>`; }).join("")}</div>
+              <div class="sc-icons">${(s.samples ?? []).map((ref) => { const id = ref.replace(":", "-"); return `<span class="sc-icon" data-tip="${esc(ref)}"><svg class="t-icon" data-size="xl" aria-hidden="true"><use href="${SPRITE}#${id}"/></svg><code>${esc(ref.split(":")[1])}</code></span>`; }).join("")}</div>
             </div>`).join("")}
           </div>
           <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>${esc(`<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"/></svg>
@@ -66,12 +72,12 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
     /* Pre-paint (after the core links so skin + palette cascade over tokens.css): ?skin= ?palette= ?mode= → localStorage → defaults; sets data-* on <html> and the two <link>s before first paint. */
     (function(){var C=${JSON.stringify(config)};var P=C.project,q=new URLSearchParams(location.search);
     function g(k){var v=q.get(k);try{return v||localStorage.getItem(P+'.'+k)||C.defaults[k]}catch(e){return v||C.defaults[k]}}
-    var h=document.documentElement,s=g('skin'),p=g('palette'),m=g('mode');
-    if(C.skins.indexOf(s)<0)s=C.defaults.skin;if(C.palettes.indexOf(p)<0)p=C.defaults.palette;
+    var h=document.documentElement,s=g('skin'),p=g('palette'),m=g('mode'),k=g('kit');
+    if(C.skins.indexOf(s)<0)s=C.defaults.skin;if(C.palettes.indexOf(p)<0)p=C.defaults.palette;if(C.kits.indexOf(k)<0)k=C.defaults.kit;h.dataset.kit=k;
     if(m==='auto')m=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
     var modes=C.modes[p]||['dark'];if(modes.indexOf(m)<0)m=modes[0];
     h.dataset.skin=s;h.dataset.palette=p;h.dataset.mode=m;window.TAILOR_SHOWCASE=C;
-    document.write('<link id="t-skin" rel="stylesheet" data-base="../skins/" href="'+(s==='none'?'':'../skins/'+s+'/skin.css')+'"'+(s==='none'?' disabled':'')+'>');
+    var ns=(s==='none'||k==='primer');document.write('<link id="t-skin" rel="stylesheet" data-base="../skins/" href="'+(ns?'':'../skins/'+s+'/skin.css')+'"'+(ns?' disabled':'')+'>');
     document.write('<link id="t-palette" rel="stylesheet" data-base="../palettes/" href="../palettes/'+p+'.css">');})();
   </script>
   <link rel="stylesheet" href="showcase.css">
@@ -79,7 +85,7 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
 <body>
 <div class="t-shell">
   <header class="t-navbar t-shell-nav">
-    <a class="t-navbar-brand" href="./"><span class="t-icon">✂</span>tailor</a>
+    <a class="t-navbar-brand" href="./"><svg class="t-icon" aria-hidden="true"><use href="${SPRITE}#bi-scissors"/></svg>tailor</a>
     <span class="t-badge" data-tone="accent">v${VERSION}</span>
     <span class="t-badge" data-tone="info">${tier1.length} tier-1 · ${vocab.components.length - tier1.length} tier-2</span>
     <span class="sc-only-bar t-small t-muted" hidden>Showing one section · <a href="./">all sections</a></span>
@@ -93,10 +99,10 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [] }) {
   <main class="t-shell-main t-page">
     <header class="t-page-header">
       <h1 class="t-page-title">tailor showcase</h1>
-      <span class="t-page-lead">every tier-1 component once, in tailor markup · skin and palette swap underneath</span>
+      <span class="t-page-lead">every tier-1 component once, in tailor markup · skin and palette swap underneath${kitBundle ? " · the Kit picker renders the same demos through the React Primer kit" : ""}</span>
       <div class="t-page-actions"><span class="t-small t-muted" id="sc-state"></span></div>
     </header>
-    <div class="t-alert" data-tone="info" role="status" id="sc-core-note"><span class="t-icon t-alert-icon">ⓘ</span><div class="t-alert-body"><b>Core only.</b> No skin is applied: what you see is <code>core/base.css</code> — the functional baseline every skin builds on. Pick a skin above once one exists.</div></div>
+    <div class="t-alert" data-tone="info" role="status" id="sc-core-note"><svg class="t-icon t-alert-icon" aria-hidden="true"><use href="${SPRITE}#bi-info-circle"/></svg><div class="t-alert-body"><b>Core only.</b> No skin is applied: what you see is <code>core/base.css</code> — the functional baseline every skin builds on. Pick a skin above once one exists.</div></div>
     <div id="sections">${sections}${iconsSection}
     </div>
   </main>

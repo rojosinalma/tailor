@@ -2,7 +2,47 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
-## [Unreleased]
+## [0.8.0] — 2026-10-20
+
+### Changed
+- **App shell is viewport-bound**: header and footer stay put, `.t-shell-main` and `.t-shell-side` scroll
+  themselves, the document never scrolls (no scrollbar beside the fixed bars). Anchors land below the header
+  (`scroll-padding-top`); `Tailor.scrollspy` reads the main scroller and highlights the last link once the
+  scroller is at its end. Below 992px the sidebar stacks above main (up to 40dvh, then scrolls).
+- **One floating panel at a time**: help popovers and `details.t-menu` go through `T.popup` like selects and
+  pickers; Escape / outside click close whichever is open.
+- `.t-select-list` grows to its longest option (`max-content`, min = trigger width, max 24rem); every panel
+  right-aligns at the viewport edge (`data-align="end"`) and flips up (`data-at="top"`).
+- Containers that clip (`.t-card`, `.t-list`, `.t-table-wrap`, `.t-dialog-body`) turn `overflow: visible` and
+  lift above their siblings while a picker, select list, help box or menu is open inside — no more chopped
+  date pickers.
+- Footer pickers are `data-size="xs"` (new `xs` size for `.t-input`/`.t-select`/`.t-textarea`); order is skin,
+  palette, kit, then the sun/moon toggle last.
+- `.t-sidebar-group` titles are `--t-text-base` bold, larger than the items, in core and every skin.
+- `.t-help` sits centred on its text line; `.t-help-btn` is smaller (0.9em circle, 0.7em glyph, 1px border) and
+  no longer sets `cursor: help`.
+- Bare `.t-toolbar`/`.t-cluster` followed by a sibling get a `--t-space-3` bottom gap (not inside `.t-stack`,
+  `.t-cluster`, `.t-grid`, `.t-toolbar`).
+- tailor.js draws sprite icons (toasts, confirm, number steppers, picker buttons) when `Tailor.theme.icons` is
+  set, text glyphs otherwise; `tailor apply` always vendors those symbols. Showcase demos use sprite icons
+  instead of text glyphs (which rendered as boxes).
+- React: `Ui.Icon name="bi-…"` sprite form, `UiProvider sprite=` overrides the sprite URL, `tip` replaces
+  `title` on `Truncate`/`Dot`/`Footer.Repo`, `Card.Tools`, `Footer.Pickers`, `Button size="xs"`; parity 43/43.
+
+### Added
+- Showcase **Kit picker** (`tailor` | `primer`, `?kit=`): the Primer kit renders the same demos as the HTML
+  through React islands from `showcase/kit/kit.js` + `kit.css`, a Vite bundle `bin/build` makes from
+  `react/demo/src/kit.tsx` (kept as committed when `react/node_modules` is missing; `--no-kit` skips it).
+  `Tailor.theme` gains `kits`/`kit` (get/set/store/`?kit=`/`html[data-kit]`/`t:theme`) and a kit select in
+  `renderPickers` when there is a choice. `.sc-demo` carries `data-component-id`.
+- **Light Primer themes**: `tailor gen --target primer` writes `light_<id>.css` next to `dark_<id>.css` for
+  every palette with a light block (21 × 2 = 42), derived from the dark mapping; `themes/index.ts` lists both;
+  `manifest.json` palettes gain `primer_themes` per mode; `bin/verify` checks both.
+- `react/parity/fixtures.tsx` exports `makeFixtures(Ui)` so the same fixtures render over any Ui surface.
+
+### Fixed
+- Primer adapter: `Ui.Alert` and toasts give Banner the required (hidden) title instead of throwing;
+  `Navbar.Sep` returns a fragment.
 
 ## [0.7.1] — 2026-10-19
 

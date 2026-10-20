@@ -5,6 +5,7 @@ import {
   type HTMLAttributes, type ImgHTMLAttributes,
   type ReactNode, type TdHTMLAttributes, type ThHTMLAttributes, type TimeHTMLAttributes,
 } from "react";
+import { iconSlot } from "./actions.tsx";
 import { cx, dataAttr, type Size, type Tone } from "./util.ts";
 
 /* ── badge / counter / chip ──────────────────────────────────────────────── */
@@ -59,6 +60,7 @@ type StateLabelProps = HTMLAttributes<HTMLSpanElement> & {
   state: "open" | "closed" | "done" | "draft" | "warning" | "info";
   variant?: "solid";
   size?: "sm";
+  /** A string is a sprite icon name; a node renders as-is. */
   icon?: ReactNode;
 };
 
@@ -71,18 +73,20 @@ export function StateLabel({ state, variant, size, icon, className, children, ..
       data-size={dataAttr(size)}
       {...rest}
     >
-      {icon !== undefined && <span className="t-icon" aria-hidden="true">{icon}</span>}
+      {iconSlot(icon)}
       {children}
     </span>
   );
 }
 
-type DotProps = HTMLAttributes<HTMLSpanElement> & {
+type DotProps = Omit<HTMLAttributes<HTMLSpanElement>, "title"> & {
   status: "running" | "degraded" | "stopped" | "muted";
+  /** Tooltip text (`data-tip`; never `title=`). */
+  tip?: string;
 };
 
-export function Dot({ status, className, ...rest }: DotProps) {
-  return <span className={cx("t-dot", className)} data-status={status} {...rest}></span>;
+export function Dot({ status, tip, className, ...rest }: DotProps) {
+  return <span className={cx("t-dot", className)} data-status={status} data-tip={tip} {...rest}></span>;
 }
 
 /* ── avatar ──────────────────────────────────────────────────────────────── */
@@ -256,6 +260,11 @@ function CardTitle({ className, children, ...rest }: HTMLAttributes<HTMLHeadingE
   return <h3 className={cx("t-card-title", className)} {...rest}>{children}</h3>;
 }
 
+/** End slot of the header: actions/hints right of the title. */
+function CardTools({ className, children, ...rest }: HTMLAttributes<HTMLDivElement>) {
+  return <div className={cx("t-card-tools", className)} {...rest}>{children}</div>;
+}
+
 function CardBody({ className, children, ...rest }: HTMLAttributes<HTMLDivElement>) {
   return <div className={cx("t-card-body", className)} {...rest}>{children}</div>;
 }
@@ -282,6 +291,7 @@ function CardMeta({ className, children, ...rest }: HTMLAttributes<HTMLDivElemen
 
 Card.Header = CardHeader;
 Card.Title = CardTitle;
+Card.Tools = CardTools;
 Card.Body = CardBody;
 Card.Footer = CardFooter;
 Card.Actions = CardActions;
@@ -311,6 +321,7 @@ export function StatBox({ empty, className, children, ...rest }: StatBoxProps) {
 /* ── empty state ─────────────────────────────────────────────────────────── */
 
 type EmptyStateProps = HTMLAttributes<HTMLDivElement> & {
+  /** A string is a sprite icon name; a node renders as-is. */
   icon?: ReactNode;
   title: ReactNode;
   actions?: ReactNode;
@@ -320,7 +331,7 @@ type EmptyStateProps = HTMLAttributes<HTMLDivElement> & {
 export function EmptyState({ icon, title, actions, size, className, children, ...rest }: EmptyStateProps) {
   return (
     <div className={cx("t-empty", className)} data-size={dataAttr(size)} {...rest}>
-      {icon !== undefined && <span className="t-icon t-empty-icon">{icon}</span>}
+      {iconSlot(icon, "t-empty-icon")}
       <h3 className="t-empty-title">{title}</h3>
       {children}
       {actions !== undefined && <div className="t-empty-actions">{actions}</div>}

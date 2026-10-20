@@ -32,7 +32,7 @@ Vendors into `<project-dir>/public/tailor/`:
 | `tokens.css` `base.css` `layout.css` `tailor.js` | core (contract load order) |
 | `skins/<id>/skin.css` | each chosen skin (default `all` = every skin; first listed = default, `webtui,all` = all with webtui default) |
 | `palettes/<id>.css` | each chosen palette (default `all`; first listed = default, `gruvbox,all`), generated from `palettes/src/<id>.json` |
-| `icons.svg` | sprite of the icons named in `--icons` plus the sun/moon toggle icons (`bi:sun`, `bi:moon-stars`), one `<symbol id="<set>-<name>">` each, from the adopted sets (`icons/`) |
+| `icons.svg` | sprite of the icons named in `--icons` plus the icons tailor.js renders itself: sun/moon toggle (`bi:sun`, `bi:moon-stars`) and the toast/confirm tone icons (`bi:check-circle`, `bi:exclamation-triangle`, `bi:x-circle`, `bi:info-circle`, `bi:question-circle`) and the drawn-control glyphs (`bi:chevron-down`, `bi:clock`, `bi:plus-lg`, `bi:dash-lg`), one `<symbol id="<set>-<name>">` each, from the adopted sets (`icons/`) |
 | `tailor-head.html` | ready-made `<head>` snippet — see below |
 
 The snippet carries the three core `<link>`s in contract order, the pre-paint IIFE (configured with
@@ -45,7 +45,9 @@ layout's `<head>`; app CSS loads after it. Asset URLs assume `public/` is served
 `--icons` takes `<set>:<name>` references (`tailor icons search` finds them); every one must exist in an
 adopted set or apply exits non-zero. It needs the icon data installed (`bun install` in `icons/`). On a
 re-apply, omitting `--icons` keeps the consumer's recorded list; passing it replaces the list.
-`--react` skips `tailor.js` and points at the `react/` adapter workspace instead.
+`--react` skips `tailor.js` and points at the `react/` adapter workspace instead; the React adapter and the
+Primer kit are consumed as source from `react/`, never vendored — `apply`/`sync` copy nothing from `react/`
+or `showcase/`.
 The first skin/palette listed becomes the default; `all` expands in place to every id tailor ships, so
 `--palettes gruvbox,all` = every palette with gruvbox as default. Adopting means taking everything tailor
 ships at that moment; later additions arrive through `tailor sync`. `--mode` (default `auto`) sets the
@@ -76,11 +78,12 @@ hit. `list` prints the adopted sets with count, licence, version and upstream. S
 
 ### `tailor gen --target primer <palette> | --all`
 
-Emits the palette as a **Primer Primitives colour theme**: `react/adapters/primer/themes/<mode>_<id>.css`
-(`dark_dracula.css`), derived from the stock `dark.css` of the `@primer/primitives` version pinned in
-`react/package.json` (run `bun install` in `react/` once; `TAILOR_PRIMER_PRIMITIVES` points at another
-directory of Primer functional theme CSS). Every token of the stock theme is kept and recoloured through the
-palette's `primer` section (`palettes/src/<id>.json`), in this order:
+Emits the palette as **Primer Primitives colour themes**: `react/adapters/primer/themes/dark_<id>.css`
+from the stock `dark.css` and, when the palette has a `light` block (all 21 do), `light_<id>.css` from the
+stock `light.css` of the `@primer/primitives` version pinned in `react/package.json` (run `bun install` in
+`react/` once; `TAILOR_PRIMER_PRIMITIVES` points at another directory of Primer functional theme CSS). Every
+token of the stock theme is kept and recoloured through the palette's `primer` section
+(`palettes/src/<id>.json`), in this order:
 
 1. `primer.tokens` — whole-value override for a named token (`--fgColor-link`, the primary button family).
 2. `primer.map` — exact source hex → target hex (alpha on 8-digit hex and `rgba()` is kept, RGB remapped).
@@ -91,7 +94,10 @@ palette's `primer` section (`palettes/src/<id>.json`), in this order:
    inside `*shadow*` tokens become `primer.shadow_color`, so shadows stay deep.
 
 The theme is named `<mode>_<id>` because Primer React derives the colour mode from the name (`dark_*` is
-dark, anything else light). `--all` regenerates every palette that has a `primer` section plus
+dark, anything else light). The light theme needs no hand-tuning of its own: it is derived from the dark
+mapping — the light block's surfaces/text replace the stock light surfaces/text exactly, each `hue_ranges`
+target becomes the light counterpart of the same role, and the link/primary-button tokens come from the
+block's `link`/`accent`. `--base dark|light` with `--out` writes a single file. `--all` regenerates every palette that has a `primer` section plus
 `themes/index.ts` (the module a React consumer imports — see `react/README.md`); `bin/build` does the same,
 and `bin/verify` fails when a committed theme no longer matches its palette. The command prints a summary
 per palette (tokens, overrides, exact and nearest hits, pass-throughs); `bin/gen-primer-theme <id>` adds the

@@ -1,8 +1,8 @@
 {
   "$schema": "manifest.schema.json",
   "name": "tailor",
-  "version": "0.7.1",
-  "generated": "2026-10-19T16:28:06.067Z",
+  "version": "0.8.0",
+  "generated": "2026-10-20T01:14:18.756Z",
   "contract": {
     "prefix": "t-",
     "token_prefix": "--t-",
@@ -167,7 +167,7 @@
         ],
         "behaviour": "none",
         "a11y": "<header> or <nav aria-label>; active page via aria-current=page, never a class.",
-        "markup": "<header class='t-navbar'>\n  <a class='t-navbar-brand' href='/'><span class='t-icon'>◆</span>console</a>\n  <ul class='t-navbar-nav'>\n    <li><a class='t-navbar-link' href='/services' aria-current='page'>Services</a></li>\n    <li><a class='t-navbar-link' href='/hosts'>Hosts</a></li>\n  </ul>\n  <span class='t-navbar-sep'></span>\n  <div class='t-navbar-end'>…picker…</div>\n</header>",
+        "markup": "<header class='t-navbar'>\n  <a class='t-navbar-brand' href='/'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-terminal'/></svg>console</a>\n  <ul class='t-navbar-nav'>\n    <li><a class='t-navbar-link' href='/services' aria-current='page'>Services</a></li>\n    <li><a class='t-navbar-link' href='/hosts'>Hosts</a></li>\n  </ul>\n  <span class='t-navbar-sep'></span>\n  <div class='t-navbar-end'>…picker…</div>\n</header>",
         "source": "navigation.css, dracula.css .navbar"
       },
       {
@@ -193,7 +193,7 @@
         ],
         "behaviour": "js:Tailor.scrollspy (optional)",
         "a11y": "<nav aria-label> > <ul>; nested groups are <details><summary class='t-sidebar-item'> so they work without JS.",
-        "markup": "<nav class='t-sidebar' aria-label='Sections'>\n  <ul>\n    <li class='t-sidebar-group'>Overview</li>\n    <li><a class='t-sidebar-item' href='#dash' aria-current='page'><span class='t-icon'>▣</span><span class='t-sidebar-item-name'>Dashboard</span></a></li>\n    <li><a class='t-sidebar-item' href='#alerts'><span class='t-icon'>▲</span><span class='t-sidebar-item-name'>Alerts</span><span class='t-counter' data-tone='danger'>3</span></a></li>\n    <li><details open><summary class='t-sidebar-item'><span class='t-icon'>▤</span><span class='t-sidebar-item-name'>Devices</span><span class='t-counter'>12</span><span class='t-sidebar-chevron'></span></summary>\n      <ul class='t-sidebar-nested'><li><a class='t-sidebar-item' href='#d1'><span class='t-dot' data-status='running'></span><span class='t-sidebar-item-name'>epaper-display</span></a></li></ul></details></li>\n    <li class='t-sidebar-divider'></li>\n    <li><a class='t-sidebar-item' href='#settings'><span class='t-icon'>⚙</span><span class='t-sidebar-item-name'>Settings</span></a></li>\n  </ul>\n</nav>",
+        "markup": "<nav class='t-sidebar' aria-label='Sections'>\n  <ul>\n    <li class='t-sidebar-group'>Overview</li>\n    <li><a class='t-sidebar-item' href='#dash' aria-current='page'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-grid'/></svg><span class='t-sidebar-item-name'>Dashboard</span></a></li>\n    <li><a class='t-sidebar-item' href='#alerts'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-exclamation-triangle'/></svg><span class='t-sidebar-item-name'>Alerts</span><span class='t-counter' data-tone='danger'>3</span></a></li>\n    <li><details open><summary class='t-sidebar-item'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-list'/></svg><span class='t-sidebar-item-name'>Devices</span><span class='t-counter'>12</span><span class='t-sidebar-chevron'></span></summary>\n      <ul class='t-sidebar-nested'><li><a class='t-sidebar-item' href='#d1'><span class='t-dot' data-status='running'></span><span class='t-sidebar-item-name'>epaper-display</span></a></li></ul></details></li>\n    <li class='t-sidebar-divider'></li>\n    <li><a class='t-sidebar-item' href='#settings'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-gear'/></svg><span class='t-sidebar-item-name'>Settings</span></a></li>\n  </ul>\n</nav>",
         "source": "sidebar.css"
       },
       {
@@ -210,7 +210,7 @@
           "t-footer-version": "monospace version string"
         },
         "behaviour": "none",
-        "markup": "<footer class='t-footer'>\n  <a class='t-footer-repo' href='https://github.com/…' data-tip='Repository' aria-label='Repository'><span class='t-icon'>⌥</span></a>\n  <div class='t-footer-end'><div data-tailor-pickers></div><span class='t-footer-version'>v0.9.2</span></div>\n</footer>",
+        "markup": "<footer class='t-footer'>\n  <a class='t-footer-repo' href='https://github.com/…' data-tip='Repository' aria-label='Repository'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-github'/></svg></a>\n  <div class='t-footer-end'><div data-tailor-pickers></div><span class='t-footer-version'>v0.9.2</span></div>\n</footer>",
         "source": "footer.css"
       },
       {
@@ -422,7 +422,7 @@
         ],
         "behaviour": "none",
         "a11y": "data-icon=only needs aria-label or data-tip. aria-busy=true = loading: the skin shows a spinner and the control is non-interactive (also set disabled). Toggle buttons carry aria-pressed.",
-        "markup": "<button class='t-btn' data-variant='primary'>Save</button>\n<button class='t-btn'>Cancel</button>\n<button class='t-btn' data-variant='ghost' data-tone='danger'>Delete</button>\n<button class='t-btn' data-icon='only' aria-label='Edit'><span class='t-icon'>✎</span></button>",
+        "markup": "<button class='t-btn' data-variant='primary'>Save</button>\n<button class='t-btn'>Cancel</button>\n<button class='t-btn' data-variant='ghost' data-tone='danger'>Delete</button>\n<button class='t-btn' data-icon='only' aria-label='Edit'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-pencil'/></svg></button>",
         "notes": "Loading = disabled + aria-busy, never a second click. No per-tone solid buttons beyond primary/danger/warning: colour is the outcome, not decoration.",
         "source": "dracula.css .btn-*, cards-forms.css .btn-icon/.btn-ghost/.btn-link"
       },
@@ -618,7 +618,7 @@
         ],
         "behaviour": "js:Tailor.listbox",
         "a11y": "role=listbox + aria-label; items role=option + aria-selected; multi via aria-multiselectable=true (skin draws a checkbox in .t-list-lead).",
-        "markup": "<div class='t-list' role='listbox' aria-label='Host'>\n  <div class='t-list-group'>Hosts</div>\n  <button class='t-list-item' role='option' aria-selected='true'><span class='t-icon t-list-lead'>▤</span><span class='t-list-body'><span class='t-list-name'>web-1</span><span class='t-list-desc'>192.168.1.20 · 24 services</span></span><span class='t-list-trail'>primary</span></button>\n  <button class='t-list-item' role='option' aria-selected='false'><span class='t-icon t-list-lead'>▤</span><span class='t-list-body'><span class='t-list-name'>nas</span></span><span class='t-badge t-list-trail' data-tone='success'>online</span></button>\n  <div class='t-list-divider'></div>\n  <button class='t-list-item' role='option' aria-selected='false' disabled><span class='t-icon t-list-lead'>＋</span><span class='t-list-body'><span class='t-list-name'>Add a host</span><span class='t-list-desc'>needs the admin role</span></span></button>\n</div>",
+        "markup": "<div class='t-list' role='listbox' aria-label='Host'>\n  <div class='t-list-group'>Hosts</div>\n  <button class='t-list-item' role='option' aria-selected='true'><svg class='t-icon t-list-lead' aria-hidden='true'><use href='/tailor/icons.svg#bi-list'/></svg><span class='t-list-body'><span class='t-list-name'>web-1</span><span class='t-list-desc'>192.168.1.20 · 24 services</span></span><span class='t-list-trail'>primary</span></button>\n  <button class='t-list-item' role='option' aria-selected='false'><svg class='t-icon t-list-lead' aria-hidden='true'><use href='/tailor/icons.svg#bi-list'/></svg><span class='t-list-body'><span class='t-list-name'>nas</span></span><span class='t-badge t-list-trail' data-tone='success'>online</span></button>\n  <div class='t-list-divider'></div>\n  <button class='t-list-item' role='option' aria-selected='false' disabled><svg class='t-icon t-list-lead' aria-hidden='true'><use href='/tailor/icons.svg#bi-plus-lg'/></svg><span class='t-list-body'><span class='t-list-name'>Add a host</span><span class='t-list-desc'>needs the admin role</span></span></button>\n</div>",
         "source": "lists.css .select-list"
       },
       {
@@ -809,7 +809,7 @@
         },
         "behaviour": "none",
         "a11y": "The remove button carries aria-label='Remove <text>'.",
-        "markup": "<span class='t-chip' data-tone='success'><span class='t-icon'>▤</span>web-1</span>\n<span class='t-chip' data-tone='info'>host:web-1 <button class='t-chip-remove' aria-label='Remove host:web-1'>×</button></span>",
+        "markup": "<span class='t-chip' data-tone='success'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-list'/></svg>web-1</span>\n<span class='t-chip' data-tone='info'>host:web-1 <button class='t-chip-remove' aria-label='Remove host:web-1'>×</button></span>",
         "source": "badges.css .label-chip"
       },
       {
@@ -837,7 +837,7 @@
         },
         "behaviour": "none",
         "a11y": "Text carries the state; the icon is decorative (aria-hidden).",
-        "markup": "<span class='t-state' data-state='open'><span class='t-icon' aria-hidden='true'>◉</span>Open</span>\n<span class='t-state' data-state='done' data-variant='solid'><span class='t-icon' aria-hidden='true'>✓</span>Deployed</span>",
+        "markup": "<span class='t-state' data-state='open'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-record-circle'/></svg>Open</span>\n<span class='t-state' data-state='done' data-variant='solid'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-check-lg'/></svg>Deployed</span>",
         "notes": "State → tone: open=success, closed=danger, done=accent, draft=neutral, warning=warning, info=info. tokens.css does not map data-state; skins (and base.css) do.",
         "source": "status.css .state-label"
       },
@@ -987,7 +987,7 @@
         ],
         "behaviour": "none",
         "a11y": "Clickable cards: role=link or button + tabindex=0 + Enter/Space handled by the project; inner buttons stopPropagation. Collapsible: <details class='t-card' data-variant='collapsible'><summary class='t-card-header'>.",
-        "markup": "<div class='t-card'>\n  <div class='t-card-header'><h3 class='t-card-title'><span class='t-icon'>▣</span>render</h3><div class='t-card-tools'><span class='t-muted t-small'>2 min ago</span><button class='t-btn' data-size='xs' data-variant='ghost'>Refresh</button><span class='t-dot' data-status='running'></span></div></div>\n  <div class='t-card-body'>…</div>\n  <div class='t-card-footer t-card-actions'><button class='t-btn' data-size='sm'>Reboot</button></div>\n</div>\n<details class='t-card' data-variant='collapsible' open>\n  <summary class='t-card-header'><h3 class='t-card-title'>Self-hosted <span class='t-counter'>3</span></h3></summary>\n  <div class='t-card-body'>…</div>\n</details>",
+        "markup": "<div class='t-card'>\n  <div class='t-card-header'><h3 class='t-card-title'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-grid'/></svg>render</h3><div class='t-card-tools'><span class='t-muted t-small'>2 min ago</span><button class='t-btn' data-size='xs' data-variant='ghost'>Refresh</button><span class='t-dot' data-status='running'></span></div></div>\n  <div class='t-card-body'>…</div>\n  <div class='t-card-footer t-card-actions'><button class='t-btn' data-size='sm'>Reboot</button></div>\n</div>\n<details class='t-card' data-variant='collapsible' open>\n  <summary class='t-card-header'><h3 class='t-card-title'>Self-hosted <span class='t-counter'>3</span></h3></summary>\n  <div class='t-card-body'>…</div>\n</details>",
         "source": "dracula.css .card, cards-forms.css",
         "notes": "Header end slot: one trailing element after the title is pushed right by itself; a cluster goes in .t-card-tools."
       },
@@ -1009,7 +1009,7 @@
           ]
         },
         "behaviour": "none",
-        "markup": "<div class='t-empty'>\n  <span class='t-icon t-empty-icon'>▭</span>\n  <h3 class='t-empty-title'>No services yet</h3>\n  <p>Register the first one and it shows up here with its health.</p>\n  <div class='t-empty-actions'><button class='t-btn' data-variant='primary'>New service</button></div>\n</div>",
+        "markup": "<div class='t-empty'>\n  <svg class='t-icon t-empty-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-inbox'/></svg>\n  <h3 class='t-empty-title'>No services yet</h3>\n  <p>Register the first one and it shows up here with its health.</p>\n  <div class='t-empty-actions'><button class='t-btn' data-variant='primary'>New service</button></div>\n</div>",
         "source": "cards-forms.css .empty-state"
       },
       {
@@ -1083,7 +1083,7 @@
         },
         "behaviour": "js:Tailor.tooltips",
         "a11y": "Tailor.tooltips renders one shared <div class='t-tooltip' role='tooltip'> and links it with aria-describedby while visible. Icon-only controls need data-tip or aria-label.",
-        "markup": "<button class='t-btn' data-icon='only' data-tip='Edit' data-tip-at='bottom'><span class='t-icon'>✎</span></button>",
+        "markup": "<button class='t-btn' data-icon='only' data-tip='Edit' data-tip-at='bottom'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-pencil'/></svg></button>",
         "source": "tooltips.js/.css"
       },
       {
@@ -1198,7 +1198,7 @@
         },
         "behaviour": "js:Tailor.dismiss",
         "a11y": "role=status (info/success) or role=alert (warning/danger); close button aria-label='Dismiss'.",
-        "markup": "<div class='t-alert' data-tone='warning' role='alert'>\n  <span class='t-icon t-alert-icon'>▲</span>\n  <div class='t-alert-body'><b>Health check answered slowly</b> (2.4 s). Probes keep running.</div>\n  <div class='t-alert-actions'><button class='t-btn' data-size='sm'>Open health checks</button></div>\n  <button class='t-alert-close' aria-label='Dismiss' data-dismiss>×</button>\n</div>",
+        "markup": "<div class='t-alert' data-tone='warning' role='alert'>\n  <svg class='t-icon t-alert-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-exclamation-triangle'/></svg>\n  <div class='t-alert-body'><b>Health check answered slowly</b> (2.4 s). Probes keep running.</div>\n  <div class='t-alert-actions'><button class='t-btn' data-size='sm'>Open health checks</button></div>\n  <button class='t-alert-close' aria-label='Dismiss' data-dismiss>×</button>\n</div>",
         "source": "dracula.css .alert-*"
       },
       {
@@ -1229,7 +1229,7 @@
         ],
         "behaviour": "js:Tailor.toast",
         "a11y": "Region aria-live=polite aria-atomic=false; each toast role=status; pointer-events only on the toasts, never on the region.",
-        "markup": "<div class='t-toasts' id='t-toasts' aria-live='polite' aria-atomic='false'></div>\n<!-- Tailor.toast('success', 'Saved and synced to health checks') appends: -->\n<div class='t-toast' data-tone='success' role='status'><span class='t-icon t-toast-icon'>✓</span><span class='t-toast-body'>Saved and synced to health checks</span></div>",
+        "markup": "<div class='t-toasts' id='t-toasts' aria-live='polite' aria-atomic='false'></div>\n<!-- Tailor.toast('success', 'Saved and synced to health checks') appends: -->\n<div class='t-toast' data-tone='success' role='status'><svg class='t-icon t-toast-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-check-circle'/></svg><span class='t-toast-body'>Saved and synced to health checks</span></div>",
         "notes": "Tailor.toast(tone, message, {timeout = 2500}) → the element. Tone 'error' is accepted as an alias of 'danger'.",
         "source": "toasts.css"
       },
@@ -1296,7 +1296,7 @@
         },
         "behaviour": "js:Tailor.confirm",
         "a11y": "Same as dialog; danger=true sets data-tone=danger on the dialog and the OK button becomes data-variant=danger, else primary.",
-        "markup": "<dialog class='t-dialog' id='t-confirm' data-variant='confirm' data-tone='danger' aria-labelledby='t-confirm-title'>\n  <div class='t-dialog-header'><h2 class='t-dialog-title' id='t-confirm-title'><span class='t-icon'>▲</span><span>Are you sure?</span></h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div>\n  <div class='t-dialog-body' id='t-confirm-body'></div>\n  <div class='t-dialog-footer'><button class='t-btn' data-dialog-close>Cancel</button><button class='t-btn' data-variant='danger' id='t-confirm-ok'>Confirm</button></div>\n</dialog>",
+        "markup": "<dialog class='t-dialog' id='t-confirm' data-variant='confirm' data-tone='danger' aria-labelledby='t-confirm-title'>\n  <div class='t-dialog-header'><h2 class='t-dialog-title' id='t-confirm-title'><svg class='t-icon' aria-hidden='true'><use href='/tailor/icons.svg#bi-exclamation-triangle'/></svg><span>Are you sure?</span></h2><button class='t-dialog-close' aria-label='Close' data-dialog-close>×</button></div>\n  <div class='t-dialog-body' id='t-confirm-body'></div>\n  <div class='t-dialog-footer'><button class='t-btn' data-dialog-close>Cancel</button><button class='t-btn' data-variant='danger' id='t-confirm-ok'>Confirm</button></div>\n</dialog>",
         "notes": "bodyHtml is HTML: escape anything from the user or the API. Resolves true on OK, false on Cancel / × / Esc / backdrop.",
         "source": "confirm.js"
       },
@@ -2414,7 +2414,11 @@
       "license": "MIT",
       "docs": "https://github.com/ayu-theme/ayu-colors",
       "file": "palettes/ayu.css",
-      "primer_theme": "react/adapters/primer/themes/dark_ayu.css"
+      "primer_theme": "react/adapters/primer/themes/dark_ayu.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_ayu.css",
+        "light": "react/adapters/primer/themes/light_ayu.css"
+      }
     },
     {
       "id": "catppuccin",
@@ -2427,7 +2431,11 @@
       "license": "MIT",
       "docs": "https://catppuccin.com/palette",
       "file": "palettes/catppuccin.css",
-      "primer_theme": "react/adapters/primer/themes/dark_catppuccin.css"
+      "primer_theme": "react/adapters/primer/themes/dark_catppuccin.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_catppuccin.css",
+        "light": "react/adapters/primer/themes/light_catppuccin.css"
+      }
     },
     {
       "id": "dracula",
@@ -2440,7 +2448,11 @@
       "license": "MIT",
       "docs": "https://draculatheme.com/spec",
       "file": "palettes/dracula.css",
-      "primer_theme": "react/adapters/primer/themes/dark_dracula.css"
+      "primer_theme": "react/adapters/primer/themes/dark_dracula.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_dracula.css",
+        "light": "react/adapters/primer/themes/light_dracula.css"
+      }
     },
     {
       "id": "everforest",
@@ -2453,7 +2465,11 @@
       "license": "MIT",
       "docs": "https://github.com/sainnhe/everforest/blob/master/palette.md",
       "file": "palettes/everforest.css",
-      "primer_theme": "react/adapters/primer/themes/dark_everforest.css"
+      "primer_theme": "react/adapters/primer/themes/dark_everforest.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_everforest.css",
+        "light": "react/adapters/primer/themes/light_everforest.css"
+      }
     },
     {
       "id": "flexoki",
@@ -2466,7 +2482,11 @@
       "license": "MIT",
       "docs": "https://stephango.com/flexoki",
       "file": "palettes/flexoki.css",
-      "primer_theme": "react/adapters/primer/themes/dark_flexoki.css"
+      "primer_theme": "react/adapters/primer/themes/dark_flexoki.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_flexoki.css",
+        "light": "react/adapters/primer/themes/light_flexoki.css"
+      }
     },
     {
       "id": "gruvbox",
@@ -2479,7 +2499,11 @@
       "license": "values-only (no LICENSE file in the repo)",
       "docs": "https://github.com/morhetz/gruvbox",
       "file": "palettes/gruvbox.css",
-      "primer_theme": "react/adapters/primer/themes/dark_gruvbox.css"
+      "primer_theme": "react/adapters/primer/themes/dark_gruvbox.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_gruvbox.css",
+        "light": "react/adapters/primer/themes/light_gruvbox.css"
+      }
     },
     {
       "id": "kanagawa",
@@ -2492,7 +2516,11 @@
       "license": "MIT",
       "docs": "https://github.com/rebelot/kanagawa.nvim",
       "file": "palettes/kanagawa.css",
-      "primer_theme": "react/adapters/primer/themes/dark_kanagawa.css"
+      "primer_theme": "react/adapters/primer/themes/dark_kanagawa.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_kanagawa.css",
+        "light": "react/adapters/primer/themes/light_kanagawa.css"
+      }
     },
     {
       "id": "modusvivendi",
@@ -2505,7 +2533,11 @@
       "license": "values-only (GPL-3.0-or-later)",
       "docs": "https://protesilaos.com/emacs/modus-themes",
       "file": "palettes/modusvivendi.css",
-      "primer_theme": "react/adapters/primer/themes/dark_modusvivendi.css"
+      "primer_theme": "react/adapters/primer/themes/dark_modusvivendi.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_modusvivendi.css",
+        "light": "react/adapters/primer/themes/light_modusvivendi.css"
+      }
     },
     {
       "id": "nightfox",
@@ -2518,7 +2550,11 @@
       "license": "MIT",
       "docs": "https://github.com/EdenEast/nightfox.nvim",
       "file": "palettes/nightfox.css",
-      "primer_theme": "react/adapters/primer/themes/dark_nightfox.css"
+      "primer_theme": "react/adapters/primer/themes/dark_nightfox.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_nightfox.css",
+        "light": "react/adapters/primer/themes/light_nightfox.css"
+      }
     },
     {
       "id": "nightowl",
@@ -2531,7 +2567,11 @@
       "license": "MIT",
       "docs": "https://github.com/sdras/night-owl-vscode-theme",
       "file": "palettes/nightowl.css",
-      "primer_theme": "react/adapters/primer/themes/dark_nightowl.css"
+      "primer_theme": "react/adapters/primer/themes/dark_nightowl.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_nightowl.css",
+        "light": "react/adapters/primer/themes/light_nightowl.css"
+      }
     },
     {
       "id": "nord",
@@ -2544,7 +2584,11 @@
       "license": "MIT",
       "docs": "https://www.nordtheme.com/docs/colors-and-palettes",
       "file": "palettes/nord.css",
-      "primer_theme": "react/adapters/primer/themes/dark_nord.css"
+      "primer_theme": "react/adapters/primer/themes/dark_nord.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_nord.css",
+        "light": "react/adapters/primer/themes/light_nord.css"
+      }
     },
     {
       "id": "onedark",
@@ -2557,7 +2601,11 @@
       "license": "MIT",
       "docs": "https://github.com/joshdick/onedark.vim",
       "file": "palettes/onedark.css",
-      "primer_theme": "react/adapters/primer/themes/dark_onedark.css"
+      "primer_theme": "react/adapters/primer/themes/dark_onedark.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_onedark.css",
+        "light": "react/adapters/primer/themes/light_onedark.css"
+      }
     },
     {
       "id": "oxocarbon",
@@ -2570,7 +2618,11 @@
       "license": "MIT",
       "docs": "https://github.com/nyoom-engineering/oxocarbon.nvim",
       "file": "palettes/oxocarbon.css",
-      "primer_theme": "react/adapters/primer/themes/dark_oxocarbon.css"
+      "primer_theme": "react/adapters/primer/themes/dark_oxocarbon.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_oxocarbon.css",
+        "light": "react/adapters/primer/themes/light_oxocarbon.css"
+      }
     },
     {
       "id": "poimandres",
@@ -2583,7 +2635,11 @@
       "license": "MIT",
       "docs": "https://github.com/drcmda/poimandres-theme",
       "file": "palettes/poimandres.css",
-      "primer_theme": "react/adapters/primer/themes/dark_poimandres.css"
+      "primer_theme": "react/adapters/primer/themes/dark_poimandres.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_poimandres.css",
+        "light": "react/adapters/primer/themes/light_poimandres.css"
+      }
     },
     {
       "id": "rosepine",
@@ -2596,7 +2652,11 @@
       "license": "MIT",
       "docs": "https://rosepinetheme.com/palette",
       "file": "palettes/rosepine.css",
-      "primer_theme": "react/adapters/primer/themes/dark_rosepine.css"
+      "primer_theme": "react/adapters/primer/themes/dark_rosepine.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_rosepine.css",
+        "light": "react/adapters/primer/themes/light_rosepine.css"
+      }
     },
     {
       "id": "selenized",
@@ -2609,7 +2669,11 @@
       "license": "MIT",
       "docs": "https://github.com/jan-warchol/selenized",
       "file": "palettes/selenized.css",
-      "primer_theme": "react/adapters/primer/themes/dark_selenized.css"
+      "primer_theme": "react/adapters/primer/themes/dark_selenized.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_selenized.css",
+        "light": "react/adapters/primer/themes/light_selenized.css"
+      }
     },
     {
       "id": "solarized",
@@ -2622,7 +2686,11 @@
       "license": "MIT",
       "docs": "https://ethanschoonover.com/solarized",
       "file": "palettes/solarized.css",
-      "primer_theme": "react/adapters/primer/themes/dark_solarized.css"
+      "primer_theme": "react/adapters/primer/themes/dark_solarized.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_solarized.css",
+        "light": "react/adapters/primer/themes/light_solarized.css"
+      }
     },
     {
       "id": "synthwave84",
@@ -2635,7 +2703,11 @@
       "license": "MIT",
       "docs": "https://github.com/robb0wen/synthwave-vscode",
       "file": "palettes/synthwave84.css",
-      "primer_theme": "react/adapters/primer/themes/dark_synthwave84.css"
+      "primer_theme": "react/adapters/primer/themes/dark_synthwave84.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_synthwave84.css",
+        "light": "react/adapters/primer/themes/light_synthwave84.css"
+      }
     },
     {
       "id": "tokyonight",
@@ -2648,7 +2720,11 @@
       "license": "Apache-2.0",
       "docs": "https://github.com/folke/tokyonight.nvim",
       "file": "palettes/tokyonight.css",
-      "primer_theme": "react/adapters/primer/themes/dark_tokyonight.css"
+      "primer_theme": "react/adapters/primer/themes/dark_tokyonight.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_tokyonight.css",
+        "light": "react/adapters/primer/themes/light_tokyonight.css"
+      }
     },
     {
       "id": "vitesse",
@@ -2661,7 +2737,11 @@
       "license": "MIT",
       "docs": "https://github.com/antfu/vscode-theme-vitesse",
       "file": "palettes/vitesse.css",
-      "primer_theme": "react/adapters/primer/themes/dark_vitesse.css"
+      "primer_theme": "react/adapters/primer/themes/dark_vitesse.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_vitesse.css",
+        "light": "react/adapters/primer/themes/light_vitesse.css"
+      }
     },
     {
       "id": "zenburn",
@@ -2674,7 +2754,11 @@
       "license": "values-only (GPL header, no LICENSE file)",
       "docs": "https://github.com/jnurmine/Zenburn",
       "file": "palettes/zenburn.css",
-      "primer_theme": "react/adapters/primer/themes/dark_zenburn.css"
+      "primer_theme": "react/adapters/primer/themes/dark_zenburn.css",
+      "primer_themes": {
+        "dark": "react/adapters/primer/themes/dark_zenburn.css",
+        "light": "react/adapters/primer/themes/light_zenburn.css"
+      }
     }
   ],
   "icon_sets": [

@@ -13,9 +13,7 @@
 .sc-markup summary { color: var(--t-muted); cursor: pointer; }
 .sc-markup pre { margin-top: var(--t-space-2); white-space: pre-wrap; word-break: break-word; }
 .sc-markup p { margin: var(--t-space-2) 0 0; }
-.t-demo-shell { min-height: 0; height: 220px; border: var(--t-border-w) solid var(--t-border); border-radius: var(--t-radius-lg); overflow: hidden; --t-nav-h: 40px; --t-footer-h: 26px; --t-sidebar-w: 160px; }
-.t-demo-shell .t-shell-nav, .t-demo-shell .t-shell-foot { position: static; }
-.t-demo-shell .t-shell-side { position: static; max-height: none; }
+.t-demo-shell { height: 220px; border: var(--t-border-w) solid var(--t-border); border-radius: var(--t-radius-lg); overflow: hidden; --t-nav-h: 40px; --t-footer-h: 26px; --t-sidebar-w: 160px; }
 .t-demo-shell .t-page { padding: var(--t-space-3); }
 .t-demo-shell .t-page-header { margin-bottom: var(--t-space-2); }
 .t-demo-shell .t-page-title { font-size: var(--t-text-lg); }

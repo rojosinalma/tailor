@@ -25,7 +25,7 @@ function Demo() {
           <Ui.Button variant="primary">Save</Ui.Button>
           <Ui.Button>Cancel</Ui.Button>
           <Ui.Button variant="ghost" tone="danger">Delete</Ui.Button>
-          <Ui.Button iconOnly aria-label="Edit" tip="Edit"><Ui.Icon>✎</Ui.Icon></Ui.Button>
+          <Ui.Button iconOnly aria-label="Edit" tip="Edit"><Ui.Icon name="bi-pencil" /></Ui.Button>
           <Ui.ButtonGroup
             label="State"
             filter
@@ -57,9 +57,9 @@ function Demo() {
           <Ui.Badge tone="neutral">stopped</Ui.Badge>
           <Ui.Badge tone="warning" variant="solid">Update</Ui.Badge>
           <Ui.Chip tone="info" onRemove={() => {}} removeLabel="Remove host:web-1">host:web-1</Ui.Chip>
-          <Ui.StateLabel state="open" icon="◉">Open</Ui.StateLabel>
-          <Ui.StateLabel state="done" variant="solid" icon="✓">Deployed</Ui.StateLabel>
-          <Ui.Dot status="running" title="running" />
+          <Ui.StateLabel state="open" icon="bi-record-circle">Open</Ui.StateLabel>
+          <Ui.StateLabel state="done" variant="solid" icon="bi-check-lg">Deployed</Ui.StateLabel>
+          <Ui.Dot status="running" tip="running" />
           <Ui.Avatar tone="purple">AL</Ui.Avatar>
           <Ui.Spinner size="sm" />
           <Ui.RelativeTime datetime={new Date(Date.now() - 3600_000).toISOString()} />
@@ -114,7 +114,7 @@ function Demo() {
                 </Ui.Table>
               </Ui.Table.Wrap>
             ),
-            closed: <Ui.EmptyState icon="▭" title="Nothing closed yet"><p>Closed items show up here.</p></Ui.EmptyState>,
+            closed: <Ui.EmptyState icon="bi-inbox" title="Nothing closed yet"><p>Closed items show up here.</p></Ui.EmptyState>,
           }}
         />
       </Ui.Section>
@@ -146,12 +146,12 @@ function Demo() {
                 <Ui.Input size="sm" id="s-name" defaultValue="epaper-display" />
               </Ui.SettingsRow>
             </Ui.Settings>
-            <Ui.Alert tone="warning" icon="▲" onDismiss={() => {}}>
+            <Ui.Alert tone="warning" icon="bi-exclamation-triangle" onDismiss={() => {}}>
               <b>Health check answered slowly</b> (2.4 s). Probes keep running.
             </Ui.Alert>
             <Ui.Card>
               <Ui.Card.Header>
-                <Ui.Card.Title><Ui.Icon>▣</Ui.Icon>render</Ui.Card.Title>
+                <Ui.Card.Title><Ui.Icon name="bi-grid" />render</Ui.Card.Title>
                 <Ui.Dot status="running" />
               </Ui.Card.Header>
               <Ui.Card.Body>Renders 3D models on demand.</Ui.Card.Body>
