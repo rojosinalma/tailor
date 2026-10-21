@@ -183,6 +183,27 @@ function report(results) {
   return results.some(([s]) => s === "refused");
 }
 
+// A consumer's git repo should keep an untracked .git/info/leak-patterns (one extended regex per line) that
+// its commits are checked against; a vendored-file commit from sync is one of them. Returns a warning line
+// for a public repo (or one whose visibility cannot be told) that has none, else null. Never fatal.
+const git = (dir, ...args) => {
+  const p = Bun.spawnSync(["git", "-C", dir, ...args], { stdout: "pipe", stderr: "ignore" });
+  return p.exitCode === 0 ? p.stdout.toString().trim() : null;
+};
+function leakPatternsWarning(dir) {
+  const commonDir = git(dir, "rev-parse", "--path-format=absolute", "--git-common-dir");
+  if (!commonDir || existsSync(join(commonDir, "info", "leak-patterns"))) return null;
+  const origin = git(dir, "remote", "get-url", "origin");
+  if (!origin) return null; // never published
+  const missing = `no ${tilde(join(commonDir, "info", "leak-patterns"))}`;
+  const m = origin.match(/github\.com[:/]([^/]+\/[^/]+?)(?:\.git)?$/);
+  if (!m) return `${missing} (origin ${origin}, visibility unknown) \u2014 add one before committing the sync`;
+  const p = Bun.spawnSync(["gh", "repo", "view", m[1], "--json", "visibility", "-q", ".visibility"], { stdout: "pipe", stderr: "ignore", timeout: 10000 });
+  const visibility = p.exitCode === 0 ? p.stdout.toString().trim().toLowerCase() : "";
+  if (visibility === "private" || visibility === "internal") return null;
+  return `${missing} in ${visibility === "public" ? "public" : "possibly public (gh could not tell)"} repo ${m[1]} \u2014 add one before committing the sync`;
+}
+
 // ---------- commands ----------
 function cmdApply() {
   const skins = resolveSkins(takeFlag("--skin") ?? "all");
@@ -244,6 +265,8 @@ function cmdSync() {
     } catch (e) { console.log(`  skipped      ${e.message}`); continue; }
     const results = writeFiles(destRoot, files).map(([s, f]) => [s === "written" ? "missing" : s, f]);
     if (report(results)) anyRefused = true;
+    const leak = leakPatternsWarning(c.path);
+    if (leak) console.log(`  warning      ${leak}`);
     if (!DRY && results.some(([s]) => s !== "unchanged" && s !== "refused")) {
       c.version = VERSION;
       c.applied = new Date().toISOString().slice(0, 10);
@@ -384,6 +407,7 @@ usage:
   tailor sync [<project-dir> | --all] [-n]
       Re-vendor current versions into recorded consumers. Only files carrying the
       "${MARKER}" header are overwritten; anything else is refused.
+      Warns (never fails) when a public consumer repo keeps no .git/info/leak-patterns.
   tailor list
       Skins (coverage/mode from manifests), canonical palettes, adopted icon sets, recorded consumers.
   tailor move <old-dir> <new-dir> [-n]

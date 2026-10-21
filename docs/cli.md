@@ -67,6 +67,11 @@ and sync exits 1. A consumer whose skin or palette no longer exists is skipped w
 (so a half-built skin never breaks `--all`). A consumer whose directory is gone is skipped with a hint:
 `tailor move <old> <new>` if the project moved, `tailor forget <dir>` if it is retired.
 
+Sync also checks the consumer's git repo for an untracked `.git/info/leak-patterns` (one extended regex per
+line that each commit is checked against). When a public repo has none, or its visibility cannot be told
+(no GitHub `origin`, no `gh`, no network), sync prints a `warning` line for that consumer. The warning never
+changes the exit code; private repos and repos without a remote get no warning.
+
 ### `tailor move <old-dir> <new-dir> [-n]`
 
 Repoints the consumer recorded at `<old-dir>` to `<new-dir>` in `consumers.json`; skins, palettes, icons,

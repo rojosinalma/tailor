@@ -222,6 +222,14 @@ React adapter + Primer kit are consumed as source from `react/` by React project
   rule at zero specificity, so a consumer that wants a child to fill and scroll sets `flex` on it and wins; an
   audit of every consumer found none that relied on the old shrink. `!important` utilities were rejected: they
   would stop consumers from overriding them. Supersedes nothing.
+- **2026-10-21 — `sync` warns when a public consumer repo keeps no leak-pattern list.** What: per consumer,
+  `tailor sync` looks for `info/leak-patterns` in the repo's git common dir (one extended regex per line, never
+  tracked, checked against every commit). When it is missing and the repo has an `origin`, sync asks
+  `gh repo view --json visibility`; a public repo, or one whose visibility it cannot tell (no GitHub remote, no
+  `gh`, no network), gets one `warning` line. Private repos and repos without a remote stay quiet. The warning
+  never changes the exit code and also shows with `-n`. Why: a sync is followed by a commit of the vendored
+  files, and a vendored file once carried a name that had no place in a public repo. The visibility call only
+  runs for repos without the list, so a fully set-up `--all` makes no network call. Supersedes nothing.
 
 ## 5. Delivered (0.1.0)
 
