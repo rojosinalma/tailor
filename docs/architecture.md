@@ -29,9 +29,9 @@ core/        tokens.css · base.css · layout.css · tailor.js · components.jso
 skins/       SKIN-CONTRACT.md · manifest.schema.json · _template/ · <id>/ (skin.css + manifest.json + README.md)
 palettes/    src/<id>.json + palette.schema.json (canonical) · <id>.css (generated, do not edit)
 icons/       package.json (pinned @iconify-json/* packages) · sets.json (adopted sets) — data only, read at build time
-react/       tailor-react: Ui.* components + theme switcher + adapters/primer/themes/<mode>_<id>.css (generated, for Primer React apps) + bin/check-parity
+react/       tailor-react: Ui.* components + theme switcher + bin/check-parity
 showcase/    index.html + icons.svg (generated) · showcase.css · showcase.js
-bin/         build · verify · gen-palette · gen-primer-theme · tailor (CLI) · lib/
+bin/         build · verify · gen-palette · tailor (CLI) · lib/
 docs/        SDD.md · architecture.md · usage.md · cli.md · configuration.md · icons.md · palette-licenses.md
 manifest.json  generated index (vocabulary × skins × palettes × icon sets × compatibility)
 ```

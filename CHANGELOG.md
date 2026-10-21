@@ -2,6 +2,37 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
+## [0.11.0] — 2026-10-22
+
+### Added
+- **`tailor apply --react` and `tailor sync` vendor tailor-react** into `vendor/tailor-react/` at the project's
+  workspace root (the nearest `package.json` with `workspaces`, within its git repo; else the project dir):
+  `package.json` pinned to the release (with `@types/react` / `@types/react-dom` devDependencies for isolated
+  installs), `src/`, `LICENSE`, `README.md`, every file with the managed header. A React app builds from its
+  own repo on any machine: wire it as a workspace member and `"tailor-react": "workspace:*"`. Sync removes
+  managed files a release drops (`removed`) and takes over a hand-made copy once (`taken over`).
+- New skins and palettes reach consumers that adopted everything: `apply` records `skins_all` /
+  `palettes_all` for `all`, and `sync` appends what the release added (`adopts …`). Rows from before 0.11.0
+  that hold every palette count as adopting everything.
+- `bin/verify` typechecks `react/` under `strict` + `noUncheckedIndexedAccess`.
+
+### Fixed
+- tailor-react compiles under `noUncheckedIndexedAccess` (the tabs arrow-key handler).
+
+### Removed
+- The Primer Primitives theme generator: `tailor gen --target primer <palette> | --all`, `bin/gen-primer-theme`
+  and `bin/lib/primer.js`. `tailor gen --target primer` now exits with a message that names the removal; any
+  other `--target` also exits non-zero. `tailor gen <system> <palette>` stays a passthrough.
+- The generated themes in `react/adapters/primer/themes/` (42 CSS files + `index.ts`) and the
+  `tailor-react/primer/themes` export.
+- The `@primer/primitives` dev dependency in `react/`.
+- The optional `primer` section in every `palettes/src/<id>.json` and in `palette.schema.json`.
+- The `primer_theme` and `primer_themes` fields of each palette in `manifest.json`.
+- The `TAILOR_PRIMER_PRIMITIVES` setting.
+- The Primer theme checks in `bin/verify` and the Primer theme step in `bin/build`.
+
+Use the `primer` skin for the Primer look in tailor markup.
+
 ## [0.10.0] — 2026-10-21
 
 ### Added

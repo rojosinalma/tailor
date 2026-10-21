@@ -326,9 +326,10 @@ export function Tabs({ variant, tabs, value, defaultValue, onChange, panels, pan
     const enabled = tabs.filter((t) => !t.disabled);
     const i = enabled.findIndex((t) => t.value === active);
     const next: Record<string, number> = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: enabled.length - 1 };
-    if (!(e.key in next)) return;
+    const step = next[e.key];
+    if (step === undefined) return;
     e.preventDefault();
-    const t = enabled[(next[e.key] + enabled.length) % enabled.length];
+    const t = enabled[(step + enabled.length) % enabled.length];
     if (t) select(t.value, true);
   };
 

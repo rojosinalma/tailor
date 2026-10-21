@@ -73,21 +73,9 @@ and a `[data-palette="<id>"][data-mode="light"]` block when the palette has `lig
 each header cites the upstream source and licence (`license` field: SPDX id or `values-only (<reason>)`
 — see `docs/palette-licenses.md`). 21 palettes at 0.1.0.
 
-A palette may carry an optional `primer` section (hand-tuned colour map, token overrides, hue bands).
-`bin/gen-primer-theme` (`tailor gen --target primer <id>`, `bin/lib/primer.js`) then derives a **Primer
-Primitives theme** from it: the stock `dark.css` of the `@primer/primitives` pinned in `react/package.json`
-is rewritten token by token (override → exact map → nearest palette hue with OKLCH lightness preserved,
-`var()`/`color-mix()` untouched) into `react/adapters/primer/themes/dark_<id>.css`, and — for every palette
-with a `light` block, i.e. all 21 — a `light_<id>.css` from the stock `light.css`: the light block's
-surfaces/text map exactly onto the stock surfaces/text, every `hue_ranges` target is swapped for the light
-counterpart of the same role, the link/primary-button tokens come from the block's `link`/`accent`
-(`counterpartPrimerPalette` in `bin/lib/primer.js`; hand-tuning stays in the palette's own mode). A generated
-`themes/index.ts` imports all 42 and exports the theme list for `ThemeProvider`. They serve apps built on
-Primer React (tailor-react itself does not use Primer since 0.10.0) and are a tailor artefact like
-`palettes/<id>.css`: `bin/build` regenerates
-them (skipped with a note when `react/` has no `node_modules`), `bin/verify` fails on a stale or stray file,
-`manifest.json` lists each palette's `primer_theme` (own mode) and `primer_themes` (per mode). Other frameworks' themes are not
-tailor's: `tailor gen <system> <palette>` without `--target` stays a passthrough to an external generator.
+Other frameworks' themes are not tailor's: `tailor gen <system> <palette>` is a passthrough to an external
+generator. The built-in Primer Primitives theme generator (`tailor gen --target primer`) was removed in 0.11.0;
+the `primer` skin gives the Primer look in tailor markup.
 
 ### 2.4 Switcher
 
@@ -167,7 +155,8 @@ classes only, so a skin is judged on the real vocabulary. All links are relative
 3. `skins/manifest.schema.json`.
 4. `manifest.json` shape (§2.5).
 5. Load order and the switcher protocol (§2.4).
-6. Vendored-file header `/* managed by tailor v<version> — … — do not edit, run `tailor sync` */`;
+6. Vendored-file header `/* managed by tailor v<version> — … — do not edit, run `tailor sync` */` (HTML/SVG/Markdown:
+   `<!-- … -->`; the vendored `package.json`: its `"//"` field; `LICENSE`: the first line);
    `tailor apply --skin <id[,id…]|all>` vendors multiple skins (first = default) and the head-snippet
    config lists them, which is what makes a consumer's runtime skin switcher work.
 7. Icon delivery: `tailor apply --icons <set:name,…>` → `public/tailor/icons.svg`, one
@@ -180,7 +169,7 @@ tailor ships as plain files: no runtime framework, no npm package, one canonical
 palette, one shared core (no per-project forks), skins that never change markup, and consumers
 that colour only through `--t-*` tokens. The rule covers what `tailor apply`/`sync` vendor to consumers,
 not the build tooling (Bun, Vite) or the showcase: the showcase's kit bundle is demo content, and the
-React adapter is consumed as source from `react/` by React projects only.
+React adapter is vendored only into React projects (`tailor apply --react` → `vendor/tailor-react/`).
 
 ### Design decisions
 
@@ -252,6 +241,16 @@ React adapter is consumed as source from `react/` by React projects only.
   its own look split the React path and could never take the skins. Rejected: per-skin overlays on the Primer
   kit (Primer would carry sub-themes) and a manifest field for them. Supersedes the 2026-10-20 Kit picker
   (`tailor` | `primer`) and the 2026-10-20 footer order (skin → palette → kit → mode).
+- **2026-10-22 — tailor-react is vendored into React projects; the Primer theme generator is removed; "all"
+  adopts later additions.** What: `apply --react` / `sync` write `vendor/tailor-react/` (package.json + src +
+  LICENSE + README, managed header, pinned version) at the project's workspace root, so a React app builds on
+  a fresh clone (CI, Docker); `tailor gen --target primer`, the 42 generated Primer themes, the palettes'
+  `primer` sections and the manifest `primer_theme(s)` fields are gone (the `primer` skin and tailor-react cover
+  the need); consumers recorded with `all` get new skins and palettes on `sync`. Why: public React apps built
+  on GitHub where the local tailor checkout does not exist; no consumer used the generated themes; the 0.10.0 sync
+  kept every consumer on its recorded skin list, so no one received the new `primer` skin. Supersedes the
+  2026-10-20 "the React adapter never reaches consumers through apply/sync" and the 2026-10-16 Primer theme
+  emitter.
 
 ## 5. Delivered (0.1.0)
 
@@ -261,10 +260,11 @@ React adapter is consumed as source from `react/` by React projects only.
 - `react/`: `Ui.*` components with markup parity (`react/bin/check-parity`, 43/43); the Primer kit
   adapter shipped up to 0.9.x and was removed in 0.10.0.
 - `bin/tailor` CLI: `apply|sync|list|gen`, multi-skin vendoring, consumer registry, managed headers.
-- Primer themes per palette (`tailor gen --target primer`, `react/adapters/primer/themes/`), 21 × dark + light.
 - Showcase Kit picker: the same demos in HTML or React (`showcase/kit/`, built by `bin/build`).
 - 0.10.0: React theme switcher (`tailor-react/theme`: `useTailorTheme`, `Ui.Pickers`), `tailor apply --react`
   head snippet without `tailor.js`, showcase `react` kit, `skins/primer`; Primer kit adapter removed.
+- 0.11.0: Primer Primitives theme generator removed (`tailor gen --target primer`, `react/adapters/primer/`,
+  the palettes' `primer` sections); the `primer` skin is the Primer look.
 
 ## 6. Open
 

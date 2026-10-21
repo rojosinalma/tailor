@@ -11,7 +11,6 @@ tailor list                            # skins · palettes · icon sets · consu
 tailor move <old-dir> <new-dir> [-n]   # repoint a recorded consumer after its project moved
 tailor forget <dir> [-n]               # drop a recorded consumer (project files untouched)
 tailor icons search <term>             # find <set>:<name> refs across the adopted icon sets (icons list: the sets)
-tailor gen --target primer <palette>   # Primer Primitives theme for one palette (--all: every palette)
 tailor gen <system> <palette>          # optional: passthrough to an external theme generator
 ```
 
@@ -47,9 +46,16 @@ layout's `<head>`; app CSS loads after it. Asset URLs assume `public/` is served
 `--icons` takes `<set>:<name>` references (`tailor icons search` finds them); every one must exist in an
 adopted set or apply exits non-zero. It needs the icon data installed (`bun install` in `icons/`). On a
 re-apply, omitting `--icons` keeps the consumer's recorded list; passing it replaces the list.
-`--react` skips `tailor.js` and points at the `react/` adapter workspace instead; the React adapter is
-consumed as source from `react/`, never vendored — `apply`/`sync` copy nothing from `react/`
-or `showcase/`. Under `--react` the head snippet keeps the core links, the pre-paint IIFE and
+`--react` skips `tailor.js` and vendors tailor-react instead: `package.json`, `src/`, `LICENSE` and `README.md`
+go to `vendor/tailor-react/` under the project's **workspace root** — the nearest directory at or above
+`<project-dir>` whose `package.json` declares `workspaces`, never above the project's git repo — or under
+`<project-dir>` when there is none. Every file carries the managed header (in `package.json` it is the `"//"`
+field); the version is pinned to the tailor release, and `@types/react` / `@types/react-dom` are listed as
+devDependencies so isolated installs resolve the React types. Wire it as a workspace member
+(`"workspaces": ["vendor/tailor-react", …]` + `"tailor-react": "workspace:*"`) or a `file:` dependency; the app
+then builds from its own repo on any machine. A hand-made copy (a `vendor/tailor-react/package.json` named
+`tailor-react` without the header) is taken over once (`taken over`), its `src/` pruned to the release. Nothing
+from `showcase/` is ever vendored. Under `--react` the head snippet keeps the core links, the pre-paint IIFE and
 `window.TAILOR_CONFIG`, but leaves out the `tailor.js` `<script>` and the `Tailor.theme.init` call (the file is
 not vendored); `useTailorTheme()` / `<Ui.Pickers>` from `tailor-react` read `window.TAILOR_CONFIG` and take
 over the switcher (`react/README.md` → Theme switcher). HTML consumers never receive React code.
@@ -58,13 +64,17 @@ The first skin/palette listed becomes the default; `all` expands in place to eve
 ships at that moment; later additions arrive through `tailor sync`. `--mode` (default `auto`) sets the
 first-visit mode: `auto` follows `prefers-color-scheme` until the user clicks the sun/moon toggle.
 
-Every apply upserts the consumer into `consumers.json` (path, skins, palettes, icons, mode, react,
-version, date).
+Every apply upserts the consumer into `consumers.json` (path, skins, `skins_all`, palettes, `palettes_all`, icons,
+mode, react, version, date). `skins_all` / `palettes_all` are true when the list was given as `all` (the
+default, also `gruvbox,all`): such a consumer also adopts what later releases add, on `sync`.
 
 ### `tailor sync [<project-dir> | --all] [-n]`
 
-Re-vendors current versions into recorded consumers. Per file it reports
-`unchanged` / `changed` / `missing` (recreated) / `refused`. A file whose first line lost the
+Re-vendors current versions into recorded consumers, `vendor/tailor-react/` included for `react` ones. Per file it
+reports `unchanged` / `changed` / `missing` (recreated) / `refused` / `removed` (a managed file the release no
+longer ships). A consumer with `skins_all` / `palettes_all` gets new skins and palettes appended after its list
+(`adopts …`, the default stays first); rows recorded before 0.11.0 have no flags and count as adopting
+everything when they hold every palette tailor ships. A file whose first line lost the
 `managed by tailor` header is **never overwritten** — it is reported as refused with instructions,
 and sync exits 1. A consumer whose skin or palette no longer exists is skipped with a note
 (so a half-built skin never breaks `--all`). A consumer whose directory is gone is skipped with a hint:
@@ -102,48 +112,19 @@ manifests are shown, not fatal), the canonical palettes (mode(s) + name), the ad
 adopted sets — exact and prefix matches first, 50 by default — in the form `--icons` takes; exits 1 on no
 hit. `list` prints the adopted sets with count, licence, version and upstream. See [icons.md](icons.md).
 
-### `tailor gen --target primer <palette> | --all`
-
-For apps built on Primer React (tailor-react does not use Primer; the `primer` skin is the Primer look in
-tailor markup).
-
-Emits the palette as **Primer Primitives colour themes**: `react/adapters/primer/themes/dark_<id>.css`
-from the stock `dark.css` and, when the palette has a `light` block (all 21 do), `light_<id>.css` from the
-stock `light.css` of the `@primer/primitives` version pinned in `react/package.json` (run `bun install` in
-`react/` once; `TAILOR_PRIMER_PRIMITIVES` points at another directory of Primer functional theme CSS). Every
-token of the stock theme is kept and recoloured through the palette's `primer` section
-(`palettes/src/<id>.json`), in this order:
-
-1. `primer.tokens` — whole-value override for a named token (`--fgColor-link`, the primary button family).
-2. `primer.map` — exact source hex → target hex (alpha on 8-digit hex and `rgba()` is kept, RGB remapped).
-3. nearest — anything else: low-chroma colours land on the palette's `neutrals` ramp by lightness; chromatic
-   colours take the nearest `roles` hue (or a forced `primer.hue_ranges` band, e.g. GitHub blue → the accent)
-   at the source's lightness; very dark chromatic tints (label backgrounds) are mixed over `canvas`.
-4. `var(...)`, `color-mix(...)`, fully transparent colours and non-colour values pass through. Dark colours
-   inside `*shadow*` tokens become `primer.shadow_color`, so shadows stay deep.
-
-The theme is named `<mode>_<id>` because Primer React derives the colour mode from the name (`dark_*` is
-dark, anything else light). The light theme needs no hand-tuning of its own: it is derived from the dark
-mapping — the light block's surfaces/text replace the stock light surfaces/text exactly, each `hue_ranges`
-target becomes the light counterpart of the same role, and the link/primary-button tokens come from the
-block's `link`/`accent`. `--base dark|light` with `--out` writes a single file. `--all` regenerates every palette that has a `primer` section plus
-`themes/index.ts` (the module a React consumer imports — see `react/README.md`); `bin/build` does the same,
-and `bin/verify` fails when a committed theme no longer matches its palette. The command prints a summary
-per palette (tokens, overrides, exact and nearest hits, pass-throughs); `bin/gen-primer-theme <id>` adds the
-most frequent source colours and where they landed — the list to read when tuning a mapping. A palette
-without a `primer` section has no Primer theme; add the section (start from `dracula.json`'s) to get one.
-
 ### `tailor gen <system> <palette>` (optional)
 
-Without `--target`, `gen` is a passthrough to an external theme generator found via `WEB_UI_DESIGN_ASSETS`,
+`gen` is a passthrough to an external theme generator found via `WEB_UI_DESIGN_ASSETS`,
 for emitting other frameworks' themes from the same palette JSON. When the variable is unset or the
 generator is absent, `gen` exits non-zero with a message and nothing else in tailor is affected. Output
-goes to stdout exactly as the generator prints it.
+goes to stdout exactly as the generator prints it. The built-in `--target primer` (Primer Primitives themes)
+was removed in 0.11.0; passing `--target` exits non-zero with that message. The `primer` skin is the Primer
+look in tailor markup.
 
 ## Configuration
 
-See [configuration.md](configuration.md) for `TAILOR_PALETTES`, `TAILOR_PRIMER_PRIMITIVES`,
-`WEB_UI_DESIGN_ASSETS` and `consumers.json`.
+See [configuration.md](configuration.md) for `TAILOR_PALETTES`, `WEB_UI_DESIGN_ASSETS` and
+`consumers.json`.
 
 ## Flags & behaviour
 
@@ -176,6 +157,5 @@ tailor icons search gear
 tailor sync --all
 tailor move ~/code/myapp ~/code/apps/myapp -n                               # preview a repoint after a move
 tailor forget ~/code/oldapp                                                 # retired project, files untouched
-tailor gen --target primer dracula
 tailor gen daisyui nord
 ```

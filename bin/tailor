@@ -8,7 +8,6 @@
 //   tailor move <old-dir> <new-dir> [-n]
 //   tailor forget <project-dir> [-n]
 //   tailor icons search <term> | tailor icons list
-//   tailor gen --target primer <palette> | --all
 //   tailor gen <system> <palette>
 //
 // Vendors into <project-dir>/public/tailor/:
@@ -17,18 +16,18 @@
 //   palettes/<id>.css                               generated from the canonical palettes (palettes/src/)
 //   icons.svg                                       sprite of the consumer's icons (--icons), subsetted from the adopted sets
 //   tailor-head.html                                <head> snippet: links in contract load order + pre-paint
+// --react consumers also get the tailor-react source in <workspace root>/vendor/tailor-react/ (package.json, src/,
+// LICENSE, README.md; the workspace root is the nearest package.json with `workspaces`, within the project's git
+// repo, else <project-dir>), so the app builds from its own repo on any machine.
 // Consumers are recorded in <tailor repo>/consumers.json (git-ignored local state, created on the first
 // `apply`; shape in consumers.example.json); `sync` re-vendors current versions into them, touching only
 // files that carry the managed header.
 //
-// `tailor gen --target primer <palette>` emits the palette's Primer Primitives theme
-// (react/adapters/primer/themes/<mode>_<id>.css, from the pinned @primer/primitives in react/ + the palette's
-// `primer` section); `--all` regenerates every one plus themes/index.ts. Without --target, `tailor gen` is an
-// optional passthrough to an external theme generator (other design systems' theme artefacts from the same
-// palettes): set WEB_UI_DESIGN_ASSETS to its root (it runs <root>/bin/gen-theme <system> <palette>); unset,
-// the command explains what is missing.
+// `tailor gen` is an optional passthrough to an external theme generator (other design systems' theme
+// artefacts from the same palettes): set WEB_UI_DESIGN_ASSETS to its root (it runs
+// <root>/bin/gen-theme <system> <palette>); unset, the command explains what is missing.
 
-import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync, readdirSync, rmSync } from "node:fs";
 import { join, resolve, basename, dirname, relative } from "node:path";
 import { homedir } from "node:os";
 import {
@@ -158,14 +157,85 @@ function fileSet({ project, skins, skin, palettes, icons = [], mode, react }) {
   return files;
 }
 
-function writeFiles(destRoot, files) {
+// tailor-react, vendored for --react consumers: every react/src file with the managed header, a package.json
+// pinned to this release (the marker in its "//" field), the licence and a short README.
+const REACT_DIR = join(ROOT, "react");
+const VENDOR_REACT = join("vendor", "tailor-react");
+function reactFileSet() {
+  const files = {};
+  const src = join(REACT_DIR, "src");
+  for (const f of readdirSync(src).filter((f) => /\.(tsx?|css)$/.test(f)).sort())
+    files[join("src", f)] = header(`tailor-react src/${f}`) + readFileSync(join(src, f), "utf8");
+  const pkg = readJson(join(REACT_DIR, "package.json"));
+  const dev = pkg.devDependencies ?? {};
+  files["package.json"] = JSON.stringify({
+    "//": `${MARKER} v${VERSION} \u2014 tailor-react \u2014 do not edit, run \`tailor sync\``,
+    name: pkg.name, version: VERSION, description: pkg.description, license: pkg.license, private: true, type: "module",
+    main: pkg.main, exports: pkg.exports, peerDependencies: pkg.peerDependencies,
+    devDependencies: { "@types/react": dev["@types/react"], "@types/react-dom": dev["@types/react-dom"] },
+  }, null, 2) + "\n";
+  files["LICENSE"] = `${MARKER} v${VERSION} \u2014 LICENSE \u2014 do not edit, run \`tailor sync\`\n\n` + readFileSync(join(ROOT, "LICENSE"), "utf8");
+  files["README.md"] = header("tailor-react", "html") + `# tailor-react ${VERSION}
+
+Vendored copy of tailor-react (the \`Ui.*\` components, \`useTailorTheme\`, \`<Ui.Pickers>\`), written by
+\`tailor apply --react\` and kept current by \`tailor sync\`. Do not edit these files. Wire it as a workspace
+member (\`"workspaces": ["vendor/tailor-react", …]\` + \`"tailor-react": "workspace:*"\`) or a \`file:\` dependency.
+The sources are TypeScript with \`.ts\`/\`.tsx\` import extensions: compile them with your app's bundler
+(\`moduleResolution: "bundler"\`, \`allowImportingTsExtensions\`). Docs: https://github.com/rojosinalma/tailor/tree/v${VERSION}/react
+`;
+  return files;
+}
+
+// Where a --react consumer's tailor-react goes: the nearest directory at or above <project-dir> whose package.json
+// declares `workspaces` (a monorepo root), never above the project's git repo; <project-dir> when there is none.
+function reactVendorRoot(projectDir) {
+  for (let d = projectDir; ; d = dirname(d)) {
+    const pj = join(d, "package.json");
+    if (existsSync(pj)) { try { if (readJson(pj).workspaces) return d; } catch (_) {} }
+    if (existsSync(join(d, ".git")) || dirname(d) === d) return projectDir;
+  }
+}
+
+// Managed files under <root> that the current release no longer ships (a removed source file): deleted, so a
+// vendored tree never keeps stale modules. Files without the header are left alone.
+function staleManaged(root, keep) {
+  if (!existsSync(root)) return [];
+  return readdirSync(root, { recursive: true, withFileTypes: true })
+    .filter((e) => e.isFile() && !(e.parentPath ?? e.path).includes("node_modules"))
+    .map((e) => join(e.parentPath ?? e.path, e.name))
+    .filter((f) => !keep.has(relative(root, f)) && readFileSync(f, "utf8").includes(MARKER));
+}
+
+// A hand-made copy (package.json named tailor-react without the managed marker, e.g. a plain copy of react/ made
+// before vendoring existed) is taken over once: its files are overwritten and its src/ pruned to this release.
+function isBootstrapCopy(root) {
+  const pj = join(root, "package.json");
+  if (!existsSync(pj)) return false;
+  const text = readFileSync(pj, "utf8");
+  try { return !text.includes(MARKER) && JSON.parse(text).name === "tailor-react"; } catch (_) { return false; }
+}
+
+function writeReact(projectDir) {
+  const root = join(reactVendorRoot(projectDir), VENDOR_REACT);
+  const files = reactFileSet();
+  const takeover = isBootstrapCopy(root);
+  const results = writeFiles(root, files, { force: takeover }).map(([s, f]) => [takeover && s === "changed" ? "taken over" : s, f]);
+  const keep = new Set(Object.keys(files));
+  const stale = takeover
+    ? readdirSync(join(root, "src"), { recursive: true, withFileTypes: true }).filter((e) => e.isFile()).map((e) => join(e.parentPath ?? e.path, e.name)).filter((f) => !keep.has(relative(root, f)))
+    : staleManaged(root, keep);
+  for (const f of stale) { if (!DRY) rmSync(f); results.push(["removed", f]); }
+  return { root, results };
+}
+
+function writeFiles(destRoot, files, { force = false } = {}) {
   const results = [];
   for (const [rel, content] of Object.entries(files)) {
     const dest = join(destRoot, rel);
     const exists = existsSync(dest);
     const current = exists ? readFileSync(dest, "utf8") : null;
     if (exists && current === content) { results.push(["unchanged", dest]); continue; }
-    if (exists && !current.includes(MARKER)) { results.push(["refused", dest]); continue; }
+    if (exists && !force && !current.includes(MARKER)) { results.push(["refused", dest]); continue; }
     const state = exists ? "changed" : "written";
     if (!DRY) { mkdirSync(dirname(dest), { recursive: true }); writeFileSync(dest, content); }
     results.push([state, dest]);
@@ -175,7 +245,7 @@ function writeFiles(destRoot, files) {
 
 function report(results) {
   for (const [state, f] of results) {
-    const label = DRY && (state === "changed" || state === "written") ? `would ${state === "written" ? "write" : "change"}` : state;
+    const label = DRY && (state === "changed" || state === "written" || state === "removed") ? `would ${state === "written" ? "write" : state === "removed" ? "remove" : "change"}` : state;
     console.log(`${label.padEnd(12)} ${tilde(f)}`);
     if (state === "refused")
       console.log(`             ^ no "${MARKER}" header \u2014 hand-edited or foreign file; sync never overwrites it.`);
@@ -208,8 +278,11 @@ function leakPatternsWarning(dir) {
 
 // ---------- commands ----------
 function cmdApply() {
-  const skins = resolveSkins(takeFlag("--skin") ?? "all");
-  const palettes = resolvePalettes(takeFlag("--palettes") ?? "all");
+  const skinSpec = takeFlag("--skin") ?? "all", paletteSpec = takeFlag("--palettes") ?? "all";
+  const skins = resolveSkins(skinSpec);
+  const palettes = resolvePalettes(paletteSpec);
+  // "all" (alone or after a default: "webtui,all") = adopt everything, also what later releases add (sync)
+  const adoptsAll = (spec) => spec.split(",").map((s) => s.trim()).includes("all");
   const mode = takeFlag("--mode") ?? "auto";
   if (!["dark", "light", "auto"].includes(mode)) die(`--mode must be dark|light|auto, got "${mode}"`);
   const react = takeBool("--react");
@@ -226,20 +299,39 @@ function cmdApply() {
 
   const spec = { project, skins, palettes, icons, mode, react };
   const destRoot = join(projectDir, "public", "tailor");
-  const refused = report(writeFiles(destRoot, fileSet(spec)));
-  if (react) console.log(`react mode: tailor.js not vendored \u2014 use the adapter workspace at ${tilde(join(ROOT, "react"))}`);
+  let refused = report(writeFiles(destRoot, fileSet(spec)));
+  if (react) {
+    const r = writeReact(projectDir);
+    if (report(r.results)) refused = true;
+    console.log(`react mode: tailor.js not vendored; tailor-react v${VERSION} in ${tilde(r.root)} \u2014 add it as a workspace member and depend on "tailor-react": "workspace:*" (or a file: dependency)`);
+  }
   if (icons.length) console.log(`icons: ${icons.length} symbol${icons.length === 1 ? "" : "s"} in ${tilde(join(destRoot, "icons.svg"))} \u2014 <svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#${icons[0].replace(":", "-")}"/></svg>`);
   console.log(`${DRY ? "would paste" : "paste"} ${tilde(join(destRoot, "tailor-head.html"))} into your layout's <head>.`);
 
   if (!DRY) {
     const reg = loadConsumers();
-    const entry = { path: projectDir, skins, palettes, icons, mode, react, version: VERSION, applied: new Date().toISOString().slice(0, 10) };
+    const entry = { path: projectDir, skins, skins_all: adoptsAll(skinSpec), palettes, palettes_all: adoptsAll(paletteSpec), icons, mode, react, version: VERSION, applied: new Date().toISOString().slice(0, 10) };
     const i = findConsumer(reg, projectDir).index;
     if (i === -1) reg.consumers.push(entry); else reg.consumers[i] = entry;
     saveConsumers(reg);
     console.log(`recorded consumer in ${tilde(CONSUMERS_FILE)} (tailor v${VERSION})`);
   }
   process.exit(refused ? 1 : 0);
+}
+
+// A consumer that adopted everything (skins_all / palettes_all, set by `apply` for "all") gets what this release
+// added, appended after its recorded list (the first entry stays the default). Rows recorded before 0.11.0 carry
+// no flag: one that holds every current palette took the `apply` defaults, so it is marked as adopting both.
+function adoptNew(c) {
+  const skinIds = listSkins().map((s) => s.id ?? s), paletteIds = listSourcePalettes();
+  c.skins = c.skins ?? [c.skin];
+  if (c.skins_all === undefined && c.palettes_all === undefined) {
+    const took = paletteIds.every((p) => c.palettes.includes(p));
+    c.skins_all = took; c.palettes_all = took;
+  }
+  const add = (list, ids, label) => { const fresh = ids.filter((id) => !list.includes(id)); if (fresh.length) console.log(`  adopts      ${label} ${fresh.join(", ")} (new in v${VERSION})`); return [...list, ...fresh]; };
+  if (c.skins_all) c.skins = add(c.skins, skinIds, "skin");
+  if (c.palettes_all) c.palettes = add(c.palettes, paletteIds, "palette");
 }
 
 function cmdSync() {
@@ -261,11 +353,13 @@ function cmdSync() {
     console.log(`\n${tilde(c.path)} (skins ${(c.skins ?? [c.skin]).join(",")}, palettes ${c.palettes.join(",")}, icons ${(c.icons ?? []).length}, applied v${c.version})`);
     if (!existsSync(c.path)) { console.log("  missing      project directory gone \u2014 `tailor move <old> <new>` if relocated, `tailor forget <dir>` if retired"); continue; }
     const destRoot = join(c.path, "public", "tailor");
+    adoptNew(c);
     let files;
     try {
       files = fileSet({ project: basename(c.path), skins: c.skins ?? [c.skin], palettes: c.palettes, icons: c.icons ?? [], mode: c.mode ?? "dark", react: c.react });
     } catch (e) { console.log(`  skipped      ${e.message}`); continue; }
     const results = writeFiles(destRoot, files).map(([s, f]) => [s === "written" ? "missing" : s, f]);
+    if (c.react) results.push(...writeReact(c.path).results);
     if (report(results)) anyRefused = true;
     const leak = leakPatternsWarning(c.path);
     if (leak) console.log(`  warning      ${leak}`);
@@ -364,29 +458,13 @@ function cmdIcons() {
   if (total > hits.length) console.log(`\u2026 ${total - hits.length} more (--limit ${total})`);
 }
 
-async function cmdGenPrimer() {
-  const all = takeBool("--all");
-  rejectUnknownFlags();
-  const { writePrimerTheme, writePrimerIndex } = await import("./gen-primer-theme");
-  const { listPrimerPalettes } = await import("./lib/primer.js");
-  const [palette] = argv;
-  if (all === !!palette) die("usage: tailor gen --target primer <palette> | tailor gen --target primer --all", 2);
-  try {
-    const ids = all ? listPrimerPalettes() : [palette];
-    if (all && !ids.length) die("no palette has a `primer` section");
-    const todo = all ? ids : (listPrimerPalettes().includes(palette) ? ids : die(`palette "${palette}" has no Primer mapping \u2014 palettes with one: ${listPrimerPalettes().join(" ")}`));
-    for (const id of todo) { const r = writePrimerTheme(id); console.log(`wrote ${tilde(r.file)}  (${r.stats.tokens} tokens: ${r.stats.overridden} overridden, ${r.stats.exact} exact, ${r.stats.nearest} nearest, ${r.stats.passthrough} pass-through)`); }
-    if (all) console.log(`wrote ${tilde(writePrimerIndex(todo))}`);
-  } catch (e) { die(e.message); }
-}
-
 async function cmdGen() {
   const target = takeFlag("--target");
-  if (target === "primer") return cmdGenPrimer();
-  if (target) die(`unknown --target "${target}" \u2014 built-in targets: primer (other systems go through the WEB_UI_DESIGN_ASSETS passthrough)`, 2);
+  if (target === "primer") die("`tailor gen --target primer` was removed in 0.11.0 \u2014 use the primer skin (skins/primer) for the Primer look; other systems go through `tailor gen <system> <palette>`", 2);
+  if (target) die(`unknown --target "${target}" \u2014 tailor gen has no built-in targets (the primer target was removed in 0.11.0); use \`tailor gen <system> <palette>\``, 2);
   rejectUnknownFlags();
   const [system, palette] = argv;
-  if (!system || !palette) die("usage: tailor gen --target primer <palette>|--all  |  tailor gen <system> <palette>  (passthrough to an external theme generator; set WEB_UI_DESIGN_ASSETS to its root)", 2);
+  if (!system || !palette) die("usage: tailor gen <system> <palette>  (passthrough to an external theme generator; set WEB_UI_DESIGN_ASSETS to its root)", 2);
   if (!WEB_UI_DESIGN_ASSETS)
     die("`tailor gen` is an optional passthrough to an external theme generator: set WEB_UI_DESIGN_ASSETS to its root (it runs <root>/bin/gen-theme <system> <palette>)");
   const genTheme = join(WEB_UI_DESIGN_ASSETS, "bin", "gen-theme");
@@ -432,7 +510,6 @@ examples:
   tailor sync --all
   tailor move ~/code/myapp ~/work/myapp
   tailor forget ~/code/oldapp
-  tailor gen --target primer dracula
   tailor gen daisyui nord
 
 Vendored files carry: ${header("<what>").trim()}`;

@@ -1,6 +1,6 @@
 {
   "name": "tailor-react",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "React adapter for the tailor design system: the Ui.* API over the tailor markup vocabulary, every skin and palette, plus a theme switcher.",
   "license": "MIT",
   "private": true,
@@ -8,8 +8,7 @@
   "main": "src/index.ts",
   "exports": {
     ".": "./src/index.ts",
-    "./theme": "./src/theme.tsx",
-    "./primer/themes": "./adapters/primer/themes/index.ts"
+    "./theme": "./src/theme.tsx"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -20,7 +19,6 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
-    "@primer/primitives": "11.10.0",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.1.2",

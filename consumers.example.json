@@ -5,9 +5,11 @@
       "skins": [
         "bootstrap"
       ],
+      "skins_all": false,
       "palettes": [
         "dracula"
       ],
+      "palettes_all": false,
       "icons": [
         "bi:house",
         "lucide:settings"

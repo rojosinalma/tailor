@@ -6,6 +6,7 @@
     "moduleResolution": "bundler",
     "jsx": "react-jsx",
     "strict": true,
+    "noUncheckedIndexedAccess": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
@@ -15,5 +16,5 @@
     "noEmit": true,
     "types": ["react", "react-dom"]
   },
-  "include": ["src", "adapters", "parity", "demo/src"]
+  "include": ["src", "parity", "demo/src"]
 }

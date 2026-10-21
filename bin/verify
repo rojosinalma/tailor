@@ -6,10 +6,6 @@
 //             behaviour "js:Tailor.x" exists in tailor.js
 //   palettes  every palettes/<id>.css parses and its [data-palette] block defines the full token set;
 //             contrast spot-check per block: text/canvas ≥ 4.5, muted/canvas ≥ 4.5, on-accent/accent-solid ≥ 3
-//   primer    every palette with a `primer` section has react/adapters/primer/themes/dark_<id>.css (+ light_<id>.css
-//             when it has a light block), each file
-//             parses, every theme selector carries that name and no stock one; with @primer/primitives
-//             installed the files (+ index.ts) are regenerated in memory and must match byte for byte
 //   icons     icons/sets.json valid, every set pinned in icons/package.json; with the @iconify-json packages installed
 //             manifest.json icon_sets and showcase/icons.svg are recomputed and must match (stale = FAIL); without them
 //             a WARN; sets.json licence must equal the installed data's SPDX id
@@ -17,6 +13,8 @@
 //             skin.css parses, no palette token set / no colour literal, listed assets exist
 //   kit       showcase/kit/kit.js exists (FAIL when react/node_modules is there and they are missing, WARN
 //             otherwise) and define TailorKit; with vite installed, WARN when older than react/ sources
+//   react     with react/node_modules: tsc --noEmit over react/ (strict + noUncheckedIndexedAccess, the settings
+//             consumers compile the vendored tailor-react with); without them a WARN
 //   showcase  bin/build's showcase renders, every tier-1 id has a section, no duplicate ids
 //
 //   bin/verify            full run (rebuilds manifest + showcase in a temp check, does not write)
@@ -26,8 +24,6 @@ import { readFileSync, existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { ROOT, CORE, SKINS, PALETTES_OUT, readJson, validate, cssBraceCheck, contrast, listSkins } from "./lib/common.js";
 import { renderShowcase } from "./lib/showcase.js";
-import { PRIMER_THEMES_OUT, primerThemesDir, primerMissingMessage, listPrimerPalettes, listPrimerThemeFiles, generatePrimerTheme, primerThemeModes, primerThemesIndexTs } from "./lib/primer.js";
-import { loadPalette } from "./lib/common.js";
 import { listIconSets, iconsInstalled, iconsMissingMessage, pinnedVersion, loadIconSet, manifestIconSets, showcaseSprite, sampleIcons } from "./lib/icons.js";
 
 const quiet = process.argv.includes("--quiet");
@@ -122,34 +118,6 @@ for (const f of paletteFiles) {
   for (const b of bs) checkBlock(`palettes/${f} ${b.selector}`, b.vars);
 }
 
-/* ── primer themes ─────────────────────────────────────────────────────────── */
-{
-  const ids = listPrimerPalettes();
-  const files = listPrimerThemeFiles();
-  const wanted = ids.flatMap((id) => { const p = loadPalette(id); return primerThemeModes(p).map((mode) => ({ p, mode, name: `${mode}_${p.id}` })); });
-  const expected = wanted.map((w) => `${w.name}.css`);
-  const stray = files.filter((f) => !expected.includes(f));
-  if (stray.length) fail(`primer themes: ${stray.join(", ")} have no palette with a primer section (or that mode) — delete or add the mapping`);
-  const dir = primerThemesDir();
-  if (!dir) warn(`primer themes: currency not checked — ${primerMissingMessage()}`);
-  for (const { p, mode, name } of wanted) {
-    const file = join(PRIMER_THEMES_OUT, `${name}.css`);
-    if (!existsSync(file)) { fail(`primer themes: ${name}.css missing — run bin/build (or tailor gen --target primer ${p.id})`); continue; }
-    const css = read(file);
-    const e = cssParse(`${name}.css`, css); if (e) { fail(`primer themes: ${name}.css: ${e}`); continue; }
-    const selectors = [...css.matchAll(/data-(?:dark|light)-theme="([^"]+)"/g)].map((m) => m[1]);
-    const wrong = [...new Set(selectors.filter((s) => s !== name))];
-    if (!selectors.length) fail(`primer themes: ${name}.css has no [data-*-theme] selector`);
-    else if (wrong.length) fail(`primer themes: ${name}.css names ${wrong.join(", ")} in its selectors, expected only ${name}`);
-    if (dir && generatePrimerTheme(p, { mode }).css !== css) fail(`primer themes: ${name}.css is stale — run bin/build`);
-    else if (!wrong.length && selectors.length) ok(`primer themes: ${name}.css — ${selectors.length} theme selectors, ${dir ? "current" : "present"}`);
-  }
-  const indexFile = join(PRIMER_THEMES_OUT, "index.ts");
-  if (ids.length && !existsSync(indexFile)) fail("primer themes: index.ts missing — run bin/build");
-  else if (ids.length && read(indexFile) !== primerThemesIndexTs(ids.map(loadPalette))) fail("primer themes: index.ts is stale — run bin/build");
-  else if (ids.length) ok(`primer themes: index.ts lists ${wanted.length} themes (${ids.length} palettes)`);
-}
-
 /* ── icon sets ─────────────────────────────────────────────────────────────── */
 let iconSetsForShowcase = [];
 {
@@ -232,13 +200,24 @@ const kitBundle = existsSync(join(KIT_DIR, "kit.js"));
     /window\.TailorKit\s*=/.test(js) || /TailorKit/.test(js) ? ok(`showcase/kit: kit.js (${(js.length / 1024).toFixed(0)} KB) exposes TailorKit`) : fail("showcase/kit/kit.js does not define TailorKit — run bin/build");
     if (!viteInstalled) warn("showcase/kit: currency not checked — react/node_modules missing (bun install in react/)");
     else {
-      // newer than every source it is built from (react/src, adapters, parity, demo/src, core/components.json)
+      // newer than every source it is built from (react/src, parity, demo/src, core/components.json)
       const built = statSync(join(KIT_DIR, "kit.js")).mtimeMs;
       const newest = (dir) => readdirSync(dir, { recursive: true, withFileTypes: true }).filter((d) => d.isFile() && !d.name.endsWith(".css")).reduce((m, d) => Math.max(m, statSync(join(d.parentPath ?? d.path, d.name)).mtimeMs), 0);
-      const srcs = ["react/src", "react/adapters", "react/parity", "react/demo/src"].map((d) => newest(join(ROOT, d)));
+      const srcs = ["react/src", "react/parity", "react/demo/src"].map((d) => newest(join(ROOT, d)));
       const stale = Math.max(...srcs, statSync(join(CORE, "components.json")).mtimeMs) > built;
       stale ? warn("showcase/kit is older than react/ sources or core/components.json — run bin/build") : ok("showcase/kit newer than react/ sources");
     }
+  }
+}
+
+/* ── react typecheck ───────────────────────────────────────────────────────── */
+{
+  const tsc = join(ROOT, "react", "node_modules", "typescript", "bin", "tsc");
+  if (!existsSync(tsc)) warn("react: typecheck skipped — react/node_modules missing (bun install in react/)");
+  else {
+    const p = Bun.spawnSync(["bun", tsc, "--noEmit", "-p", join(ROOT, "react")], { stdout: "pipe", stderr: "pipe" });
+    const errors = (p.stdout.toString() + p.stderr.toString()).split("\n").filter((l) => l.includes("error TS"));
+    p.exitCode === 0 ? ok("react: tsc --noEmit clean (strict, noUncheckedIndexedAccess)") : fail(`react: tsc found ${errors.length} error(s): ${errors.slice(0, 3).join(" | ")}`);
   }
 }
 

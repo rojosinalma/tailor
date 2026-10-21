@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "palette.schema.json",
   "title": "Palette (system-neutral)",
-  "description": "One colour palette, independent of any design system. bin/gen-palette maps it onto the tailor tokens; the optional `primer` section carries the per-token mapping bin/gen-primer-theme uses to derive a Primer Primitives theme. Every value is a 6-digit lowercase #rrggbb. Dark palettes: inset is darker than canvas, surface/selection lighter; neutrals run darkest → lightest.",
+  "description": "One colour palette, independent of any design system. bin/gen-palette maps it onto the tailor tokens. Every value is a 6-digit lowercase #rrggbb. Dark palettes: inset is darker than canvas, surface/selection lighter; neutrals run darkest → lightest.",
   "type": "object",
   "required": ["id", "name", "docs", "license", "mode", "canvas", "inset", "surface", "selection", "border", "text", "muted", "disabled", "accent", "on_accent", "link", "success", "warning", "danger", "info", "extra", "neutrals", "roles"],
   "additionalProperties": false,
@@ -54,11 +54,11 @@
     },
     "neutrals": {
       "type": "array", "minItems": 5, "items": { "$ref": "#/$defs/hex" },
-      "description": "Grey ramp darkest → lightest. Emitters pick extra steps from it (e.g. WebTUI background3 = first step lighter than selection); the Primer emitter lands low-chroma colours on it by lightness."
+      "description": "Grey ramp darkest → lightest. Emitters pick extra steps from it (e.g. WebTUI background3 = first step lighter than selection)."
     },
     "roles": {
       "type": "array", "minItems": 4, "items": { "$ref": "#/$defs/hex" },
-      "description": "Chromatic hues in the palette's own order; used for chart / series colours and as the nearest-hue targets of the Primer emitter."
+      "description": "Chromatic hues in the palette's own order; used for chart / series colours."
     },
 
     "light": {
@@ -74,26 +74,6 @@
         "success": { "$ref": "#/$defs/hex" }, "warning": { "$ref": "#/$defs/hex" }, "danger": { "$ref": "#/$defs/hex" }, "info": { "$ref": "#/$defs/hex" },
         "extra": { "type": "object", "required": ["red", "orange", "yellow", "green", "cyan", "purple", "pink"], "additionalProperties": { "$ref": "#/$defs/hex" } },
         "neutrals": { "type": "array", "items": { "$ref": "#/$defs/hex" } }
-      }
-    },
-
-    "primer": {
-      "type": "object",
-      "description": "Optional hand-tuned mapping for `tailor gen --target primer`: how the @primer/primitives dark theme colours become this palette (roles, neutrals and canvas above are the targets). Absent: the palette has no Primer theme. Keys starting with $comment are ignored.",
-      "additionalProperties": false,
-      "properties": {
-        "$comment": { "type": "string" },
-        "neutral_chroma_max": { "type": "number", "description": "OKLCH chroma below which a source colour counts as neutral (default 0.035)." },
-        "chroma_boost": { "type": "number", "description": "Multiplier on the source chroma for chromatic hits (default 1.25)." },
-        "dark_tint_max_L": { "type": "number", "description": "OKLab L below which a chromatic colour is a tint mixed over canvas (default 0.4)." },
-        "shadow_color": { "$ref": "#/$defs/hex", "description": "Dark colours inside *shadow* tokens become this, so shadows stay deep." },
-        "hue_ranges": {
-          "type": "array", "description": "Force a source hue band (degrees, wrapping past 360) onto one role colour, e.g. GitHub blue → the palette accent.",
-          "items": { "type": "object", "required": ["min", "max", "color"], "additionalProperties": false,
-            "properties": { "$comment": { "type": "string" }, "min": { "type": "number" }, "max": { "type": "number" }, "color": { "$ref": "#/$defs/hex" } } }
-        },
-        "map": { "type": "object", "description": "Exact source colour → target colour (#rrggbb keys; alpha on 8-digit hex and rgba() is kept).", "additionalProperties": { "type": "string" } },
-        "tokens": { "type": "object", "description": "Whole-value override per Primer token name (--fgColor-link, the primary button family, …).", "additionalProperties": { "type": "string" } }
       }
     }
   },

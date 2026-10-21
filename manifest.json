@@ -1,8 +1,8 @@
 {
   "$schema": "manifest.schema.json",
   "name": "tailor",
-  "version": "0.10.0",
-  "generated": "2026-10-21T20:52:20.707Z",
+  "version": "0.11.0",
+  "generated": "2026-10-21T21:37:40.434Z",
   "contract": {
     "prefix": "t-",
     "token_prefix": "--t-",
@@ -2510,12 +2510,7 @@
       ],
       "license": "MIT",
       "docs": "https://github.com/ayu-theme/ayu-colors",
-      "file": "palettes/ayu.css",
-      "primer_theme": "react/adapters/primer/themes/dark_ayu.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_ayu.css",
-        "light": "react/adapters/primer/themes/light_ayu.css"
-      }
+      "file": "palettes/ayu.css"
     },
     {
       "id": "catppuccin",
@@ -2527,12 +2522,7 @@
       ],
       "license": "MIT",
       "docs": "https://catppuccin.com/palette",
-      "file": "palettes/catppuccin.css",
-      "primer_theme": "react/adapters/primer/themes/dark_catppuccin.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_catppuccin.css",
-        "light": "react/adapters/primer/themes/light_catppuccin.css"
-      }
+      "file": "palettes/catppuccin.css"
     },
     {
       "id": "dracula",
@@ -2544,12 +2534,7 @@
       ],
       "license": "MIT",
       "docs": "https://draculatheme.com/spec",
-      "file": "palettes/dracula.css",
-      "primer_theme": "react/adapters/primer/themes/dark_dracula.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_dracula.css",
-        "light": "react/adapters/primer/themes/light_dracula.css"
-      }
+      "file": "palettes/dracula.css"
     },
     {
       "id": "everforest",
@@ -2561,12 +2546,7 @@
       ],
       "license": "MIT",
       "docs": "https://github.com/sainnhe/everforest/blob/master/palette.md",
-      "file": "palettes/everforest.css",
-      "primer_theme": "react/adapters/primer/themes/dark_everforest.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_everforest.css",
-        "light": "react/adapters/primer/themes/light_everforest.css"
-      }
+      "file": "palettes/everforest.css"
     },
     {
       "id": "flexoki",
@@ -2578,12 +2558,7 @@
       ],
       "license": "MIT",
       "docs": "https://stephango.com/flexoki",
-      "file": "palettes/flexoki.css",
-      "primer_theme": "react/adapters/primer/themes/dark_flexoki.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_flexoki.css",
-        "light": "react/adapters/primer/themes/light_flexoki.css"
-      }
+      "file": "palettes/flexoki.css"
     },
     {
       "id": "gruvbox",
@@ -2595,12 +2570,7 @@
       ],
       "license": "values-only (no LICENSE file in the repo)",
       "docs": "https://github.com/morhetz/gruvbox",
-      "file": "palettes/gruvbox.css",
-      "primer_theme": "react/adapters/primer/themes/dark_gruvbox.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_gruvbox.css",
-        "light": "react/adapters/primer/themes/light_gruvbox.css"
-      }
+      "file": "palettes/gruvbox.css"
     },
     {
       "id": "kanagawa",
@@ -2612,12 +2582,7 @@
       ],
       "license": "MIT",
       "docs": "https://github.com/rebelot/kanagawa.nvim",
-      "file": "palettes/kanagawa.css",
-      "primer_theme": "react/adapters/primer/themes/dark_kanagawa.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_kanagawa.css",
-        "light": "react/adapters/primer/themes/light_kanagawa.css"
-      }
+      "file": "palettes/kanagawa.css"
     },
     {
       "id": "modusvivendi",
@@ -2629,12 +2594,7 @@
       ],
       "license": "values-only (GPL-3.0-or-later)",
       "docs": "https://protesilaos.com/emacs/modus-themes",
-      "file": "palettes/modusvivendi.css",
-      "primer_theme": "react/adapters/primer/themes/dark_modusvivendi.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_modusvivendi.css",
-        "light": "react/adapters/primer/themes/light_modusvivendi.css"
-      }
+      "file": "palettes/modusvivendi.css"
     },
     {
       "id": "nightfox",
@@ -2646,12 +2606,7 @@
       ],
       "license": "MIT",
       "docs": "https://github.com/EdenEast/nightfox.nvim",
-      "file": "palettes/nightfox.css",
-      "primer_theme": "react/adapters/primer/themes/dark_nightfox.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_nightfox.css",
-        "light": "react/adapters/primer/themes/light_nightfox.css"
-      }
+      "file": "palettes/nightfox.css"
     },
     {
       "id": "nightowl",
@@ -2663,12 +2618,7 @@
       ],
       "license": "MIT",
       "docs": "https://github.com/sdras/night-owl-vscode-theme",
-      "file": "palettes/nightowl.css",
-      "primer_theme": "react/adapters/primer/themes/dark_nightowl.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_nightowl.css",
-        "light": "react/adapters/primer/themes/light_nightowl.css"
-      }
+      "file": "palettes/nightowl.css"
     },
     {
       "id": "nord",
@@ -2680,12 +2630,7 @@
       ],
       "license": "MIT",
       "docs": "https://www.nordtheme.com/docs/colors-and-palettes",
-      "file": "palettes/nord.css",
-      "primer_theme": "react/adapters/primer/themes/dark_nord.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_nord.css",
-        "light": "react/adapters/primer/themes/light_nord.css"
-      }
+      "file": "palettes/nord.css"
     },
     {
       "id": "onedark",
@@ -2697,12 +2642,7 @@
       ],
       "license": "MIT",
       "docs": "https://github.com/joshdick/onedark.vim",
-      "file": "palettes/onedark.css",
-      "primer_theme": "react/adapters/primer/themes/dark_onedark.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_onedark.css",
-        "light": "react/adapters/primer/themes/light_onedark.css"
-      }
+      "file": "palettes/onedark.css"
     },
     {
       "id": "oxocarbon",
@@ -2714,12 +2654,7 @@
       ],
       "license": "MIT",
       "docs": "https://github.com/nyoom-engineering/oxocarbon.nvim",
-      "file": "palettes/oxocarbon.css",
-      "primer_theme": "react/adapters/primer/themes/dark_oxocarbon.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_oxocarbon.css",
-        "light": "react/adapters/primer/themes/light_oxocarbon.css"
-      }
+      "file": "palettes/oxocarbon.css"
     },
     {
       "id": "poimandres",
@@ -2731,12 +2666,7 @@
       ],
       "license": "MIT",
       "docs": "https://github.com/drcmda/poimandres-theme",
-      "file": "palettes/poimandres.css",
-      "primer_theme": "react/adapters/primer/themes/dark_poimandres.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_poimandres.css",
-        "light": "react/adapters/primer/themes/light_poimandres.css"
-      }
+      "file": "palettes/poimandres.css"
     },
     {
       "id": "rosepine",
@@ -2748,12 +2678,7 @@
       ],
       "license": "MIT",
       "docs": "https://rosepinetheme.com/palette",
-      "file": "palettes/rosepine.css",
-      "primer_theme": "react/adapters/primer/themes/dark_rosepine.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_rosepine.css",
-        "light": "react/adapters/primer/themes/light_rosepine.css"
-      }
+      "file": "palettes/rosepine.css"
     },
     {
       "id": "selenized",
@@ -2765,12 +2690,7 @@
       ],
       "license": "MIT",
       "docs": "https://github.com/jan-warchol/selenized",
-      "file": "palettes/selenized.css",
-      "primer_theme": "react/adapters/primer/themes/dark_selenized.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_selenized.css",
-        "light": "react/adapters/primer/themes/light_selenized.css"
-      }
+      "file": "palettes/selenized.css"
     },
     {
       "id": "solarized",
@@ -2782,12 +2702,7 @@
       ],
       "license": "MIT",
       "docs": "https://ethanschoonover.com/solarized",
-      "file": "palettes/solarized.css",
-      "primer_theme": "react/adapters/primer/themes/dark_solarized.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_solarized.css",
-        "light": "react/adapters/primer/themes/light_solarized.css"
-      }
+      "file": "palettes/solarized.css"
     },
     {
       "id": "synthwave84",
@@ -2799,12 +2714,7 @@
       ],
       "license": "MIT",
       "docs": "https://github.com/robb0wen/synthwave-vscode",
-      "file": "palettes/synthwave84.css",
-      "primer_theme": "react/adapters/primer/themes/dark_synthwave84.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_synthwave84.css",
-        "light": "react/adapters/primer/themes/light_synthwave84.css"
-      }
+      "file": "palettes/synthwave84.css"
     },
     {
       "id": "tokyonight",
@@ -2816,12 +2726,7 @@
       ],
       "license": "Apache-2.0",
       "docs": "https://github.com/folke/tokyonight.nvim",
-      "file": "palettes/tokyonight.css",
-      "primer_theme": "react/adapters/primer/themes/dark_tokyonight.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_tokyonight.css",
-        "light": "react/adapters/primer/themes/light_tokyonight.css"
-      }
+      "file": "palettes/tokyonight.css"
     },
     {
       "id": "vitesse",
@@ -2833,12 +2738,7 @@
       ],
       "license": "MIT",
       "docs": "https://github.com/antfu/vscode-theme-vitesse",
-      "file": "palettes/vitesse.css",
-      "primer_theme": "react/adapters/primer/themes/dark_vitesse.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_vitesse.css",
-        "light": "react/adapters/primer/themes/light_vitesse.css"
-      }
+      "file": "palettes/vitesse.css"
     },
     {
       "id": "zenburn",
@@ -2850,12 +2750,7 @@
       ],
       "license": "values-only (GPL header, no LICENSE file)",
       "docs": "https://github.com/jnurmine/Zenburn",
-      "file": "palettes/zenburn.css",
-      "primer_theme": "react/adapters/primer/themes/dark_zenburn.css",
-      "primer_themes": {
-        "dark": "react/adapters/primer/themes/dark_zenburn.css",
-        "light": "react/adapters/primer/themes/light_zenburn.css"
-      }
+      "file": "palettes/zenburn.css"
     }
   ],
   "icon_sets": [

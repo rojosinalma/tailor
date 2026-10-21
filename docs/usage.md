@@ -49,6 +49,7 @@ Tailor.theme.init({
 so every skin and palette applies. HTML projects never get it. See `react/README.md`.
 
 A React app gets every skin and palette the same way an HTML app does: `tailor apply <dir> --react`
-vendors the CSS (no `tailor.js`), you paste `public/tailor/tailor-head.html` into `index.html`, and
+vendors the CSS (no `tailor.js`) to `public/tailor/` and tailor-react to `vendor/tailor-react/` (at the
+workspace root; wire it as `"tailor-react": "workspace:*"`, see `react/README.md` → Consuming), you paste `public/tailor/tailor-head.html` into `index.html`, and
 `<Ui.Pickers size="xs" />` in the footer draws the skin and palette selects and the sun/moon toggle
 (`useTailorTheme()` gives the same state to your own code). For the Primer look, pick the `primer` skin.
