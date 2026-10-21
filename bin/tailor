@@ -5,6 +5,8 @@
 //   tailor apply <project-dir> [--skin <id[,id...]|all>] [--palettes <id,...>] [--icons <set:name,...>] [--mode dark|light|auto] [--react] [-n]
 //   tailor sync  [<project-dir> | --all] [-n]
 //   tailor list
+//   tailor move <old-dir> <new-dir> [-n]
+//   tailor forget <project-dir> [-n]
 //   tailor icons search <term> | tailor icons list
 //   tailor gen --target primer <palette> | --all
 //   tailor gen <system> <palette>
@@ -74,6 +76,12 @@ function rejectUnknownFlags() {
 // ---------- consumers registry ----------
 const loadConsumers = () => (existsSync(CONSUMERS_FILE) ? readJson(CONSUMERS_FILE) : { consumers: [] });
 const saveConsumers = (reg) => writeFileSync(CONSUMERS_FILE, JSON.stringify(reg, null, 2) + "\n");
+const findConsumer = (reg, dir) => {
+  const path = resolve(dir);
+  const index = reg.consumers.findIndex((c) => c.path === path);
+  return { path, index, entry: index === -1 ? null : reg.consumers[index] };
+};
+const knownConsumers = (reg) => reg.consumers.map((c) => tilde(c.path)).join(", ") || "none";
 
 // ---------- vendored file set for one consumer ----------
 function skinIds() { return listSkins(); }
@@ -190,7 +198,7 @@ function cmdApply() {
   if (!existsSync(projectDir) || !statSync(projectDir).isDirectory()) die(`not a directory: ${projectDir}`);
   const project = basename(projectDir);
   // --icons replaces the consumer's icon list; without it a re-apply keeps the recorded one
-  const recorded = loadConsumers().consumers.find((c) => c.path === projectDir);
+  const recorded = findConsumer(loadConsumers(), projectDir).entry;
   const icons = iconSpec !== null ? resolveIcons(iconSpec) : recorded?.icons ?? [];
 
   const spec = { project, skins, palettes, icons, mode, react };
@@ -203,7 +211,7 @@ function cmdApply() {
   if (!DRY) {
     const reg = loadConsumers();
     const entry = { path: projectDir, skins, palettes, icons, mode, react, version: VERSION, applied: new Date().toISOString().slice(0, 10) };
-    const i = reg.consumers.findIndex((c) => c.path === projectDir);
+    const i = findConsumer(reg, projectDir).index;
     if (i === -1) reg.consumers.push(entry); else reg.consumers[i] = entry;
     saveConsumers(reg);
     console.log(`recorded consumer in ${tilde(CONSUMERS_FILE)} (tailor v${VERSION})`);
@@ -219,16 +227,16 @@ function cmdSync() {
   if (!all) {
     const dir = argv.shift();
     if (!dir) die("usage: tailor sync <project-dir> | tailor sync --all", 2);
-    const projectDir = resolve(dir);
-    targets = reg.consumers.filter((c) => c.path === projectDir);
-    if (!targets.length) die(`${projectDir} is not a recorded consumer \u2014 run \`tailor apply\` first (known: ${reg.consumers.map((c) => tilde(c.path)).join(", ") || "none"})`);
+    const { path: projectDir, entry } = findConsumer(reg, dir);
+    targets = entry ? [entry] : [];
+    if (!targets.length) die(`${projectDir} is not a recorded consumer \u2014 run \`tailor apply\` first (known: ${knownConsumers(reg)})`);
   }
   if (!targets.length) { console.log("no consumers recorded yet \u2014 run `tailor apply <project-dir>` (see consumers.example.json)"); return; }
 
   let anyRefused = false;
   for (const c of targets) {
     console.log(`\n${tilde(c.path)} (skins ${(c.skins ?? [c.skin]).join(",")}, palettes ${c.palettes.join(",")}, icons ${(c.icons ?? []).length}, applied v${c.version})`);
-    if (!existsSync(c.path)) { console.log("  missing      project directory gone \u2014 remove it from consumers.json if retired"); continue; }
+    if (!existsSync(c.path)) { console.log("  missing      project directory gone \u2014 `tailor move <old> <new>` if relocated, `tailor forget <dir>` if retired"); continue; }
     const destRoot = join(c.path, "public", "tailor");
     let files;
     try {
@@ -243,6 +251,39 @@ function cmdSync() {
   }
   if (!DRY) saveConsumers(reg);
   process.exit(anyRefused ? 1 : 0);
+}
+
+function cmdMove() {
+  rejectUnknownFlags();
+  const [from, to] = argv;
+  if (!from || !to) die("usage: tailor move <old-dir> <new-dir> [-n]", 2);
+  const reg = loadConsumers();
+  const old = findConsumer(reg, from);
+  const next = findConsumer(reg, to);
+  if (!old.entry) die(`${old.path} is not a recorded consumer (known: ${knownConsumers(reg)})`);
+  if (old.path === next.path) die(`old and new path are the same: ${tilde(old.path)}`);
+  if (!existsSync(next.path) || !statSync(next.path).isDirectory()) die(`not a directory: ${next.path}`);
+  if (next.entry) die(`${tilde(next.path)} is already a recorded consumer \u2014 run \`tailor forget ${tilde(next.path)}\` first (known: ${knownConsumers(reg)})`);
+  console.log(`${(DRY ? "would move" : "moved").padEnd(12)} ${tilde(old.path)} -> ${tilde(next.path)}`);
+  if (DRY) return;
+  old.entry.path = next.path;
+  saveConsumers(reg);
+  console.log(`recorded in ${tilde(CONSUMERS_FILE)}`);
+  console.log(`run \`tailor sync ${tilde(next.path)}\` if its vendored files need refreshing`);
+}
+
+function cmdForget() {
+  rejectUnknownFlags();
+  const dir = argv.shift();
+  if (!dir) die("usage: tailor forget <project-dir> [-n]", 2);
+  const reg = loadConsumers();
+  const { path, index } = findConsumer(reg, dir);
+  if (index === -1) die(`${path} is not a recorded consumer (known: ${knownConsumers(reg)})`);
+  console.log(`${(DRY ? "would forget" : "forgot").padEnd(12)} ${tilde(path)}`);
+  if (DRY) return;
+  reg.consumers.splice(index, 1);
+  saveConsumers(reg);
+  console.log(`recorded in ${tilde(CONSUMERS_FILE)}`);
 }
 
 function cmdList() {
@@ -345,6 +386,10 @@ usage:
       "${MARKER}" header are overwritten; anything else is refused.
   tailor list
       Skins (coverage/mode from manifests), canonical palettes, adopted icon sets, recorded consumers.
+  tailor move <old-dir> <new-dir> [-n]
+      Repoint a recorded consumer at its new location (relocated project); every other field stays.
+  tailor forget <project-dir> [-n]
+      Remove a recorded consumer from the registry; files in the project are never touched.
   tailor icons search <term> [--limit N]   |   tailor icons list
       Find an icon by name across the adopted sets (prints <set>:<name> refs for --icons); list the sets.
   tailor gen <system> <palette>
@@ -359,6 +404,8 @@ examples:
   tailor apply ~/code/myapp --icons bi:house,lucide:settings,simple-icons:github
   tailor icons search gear
   tailor sync --all
+  tailor move ~/code/myapp ~/work/myapp
+  tailor forget ~/code/oldapp
   tailor gen --target primer dracula
   tailor gen daisyui nord
 
@@ -368,8 +415,10 @@ switch (cmd) {
   case "apply": cmdApply(); break;
   case "sync": cmdSync(); break;
   case "list": cmdList(); break;
+  case "move": cmdMove(); break;
+  case "forget": cmdForget(); break;
   case "icons": cmdIcons(); break;
   case "gen": await cmdGen(); break;
   case undefined: case "-h": case "--help": case "help": console.log(HELP); process.exit(cmd ? 0 : 2); break;
-  default: die(`unknown command "${cmd}" (apply|sync|list|icons|gen, see tailor --help)`, 2);
+  default: die(`unknown command "${cmd}" (apply|sync|list|move|forget|icons|gen, see tailor --help)`, 2);
 }

@@ -8,6 +8,8 @@ manager, managed-header files, a consumer registry.
 tailor apply <project-dir> [--skin all|bootstrap,webtui,...] [--palettes all|gruvbox,all|dracula,nord] [--icons bi:house,...] [--mode auto|dark|light] [--react] [-n]
 tailor sync [<project-dir>|--all]      # re-vendor managed files (header-guarded, idempotent)
 tailor list                            # skins · palettes · icon sets · consumers
+tailor move <old-dir> <new-dir> [-n]   # repoint a recorded consumer after its project moved
+tailor forget <dir> [-n]               # drop a recorded consumer (project files untouched)
 tailor icons search <term>             # find <set>:<name> refs across the adopted icon sets (icons list: the sets)
 tailor gen --target primer <palette>   # Primer Primitives theme for one palette (--all: every palette)
 tailor gen <system> <palette>          # optional: passthrough to an external theme generator
@@ -62,7 +64,23 @@ Re-vendors current versions into recorded consumers. Per file it reports
 `unchanged` / `changed` / `missing` (recreated) / `refused`. A file whose first line lost the
 `managed by tailor` header is **never overwritten** — it is reported as refused with instructions,
 and sync exits 1. A consumer whose skin or palette no longer exists is skipped with a note
-(so a half-built skin never breaks `--all`).
+(so a half-built skin never breaks `--all`). A consumer whose directory is gone is skipped with a hint:
+`tailor move <old> <new>` if the project moved, `tailor forget <dir>` if it is retired.
+
+### `tailor move <old-dir> <new-dir> [-n]`
+
+Repoints the consumer recorded at `<old-dir>` to `<new-dir>` in `consumers.json`; skins, palettes, icons,
+mode, react, version and date are kept. Use it after a project moves, instead of a re-apply at the new path
+(which records a second consumer and keeps the stale one). `<old-dir>` may no longer exist. Both paths are
+resolved like `apply`/`sync` and matched exactly. Exits 1 with the reason when `<old-dir>` is not recorded,
+`<new-dir>` is missing or not a directory, `<new-dir>` is already recorded, or both paths are the same.
+Nothing is vendored; run `tailor sync <new-dir>` afterwards if the vendored files need refreshing.
+
+### `tailor forget <dir> [-n]`
+
+Removes the consumer recorded at `<dir>` from `consumers.json`, for a retired project. The project's files
+are never touched: vendored files under `public/tailor/` stay until the project deletes them. The path is
+resolved and matched like `move`; exits 1 when `<dir>` is not recorded.
 
 ### `tailor list`
 
@@ -132,7 +150,9 @@ See [configuration.md](configuration.md) for `TAILOR_PALETTES`, `TAILOR_PRIMER_P
   `managed by tailor` marker alone and refuses to touch files without it.
 
 - Consumers are recorded in `consumers.json` (local state, not committed;
-  `consumers.example.json` is the template).
+  `consumers.example.json` is the template). `apply` adds or updates an entry, `move` repoints one,
+  `forget` removes one; consumers are matched by exact resolved path, so a moved project needs `move`, not a
+  re-apply.
 
 ## Examples
 
@@ -143,6 +163,8 @@ tailor apply ~/code/myapp --skin pico --palettes dracula --mode dark -n     # a 
 tailor apply ~/code/myapp --icons bi:house,bi:gear,lucide:settings,simple-icons:github
 tailor icons search gear
 tailor sync --all
+tailor move ~/code/myapp ~/code/apps/myapp -n                               # preview a repoint after a move
+tailor forget ~/code/oldapp                                                 # retired project, files untouched
 tailor gen --target primer dracula
 tailor gen daisyui nord
 ```

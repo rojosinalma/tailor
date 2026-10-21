@@ -2,6 +2,20 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
+## [Unreleased]
+
+### Added
+- **`tailor move <old-dir> <new-dir> [-n]`** repoints a recorded consumer after its project moved: only `path`
+  changes in `consumers.json`, every other field is kept, and `<old-dir>` may already be gone. Refuses (exit 1,
+  with the reason) when `<old-dir>` is not recorded, `<new-dir>` is not a directory or already recorded, or both
+  paths are the same. A re-apply at the new path used to record a second consumer and keep the stale one.
+- **`tailor forget <dir> [-n]`** removes a recorded consumer for a retired project; the project's files are
+  never touched. Refuses when `<dir>` is not recorded.
+
+### Changed
+- `tailor sync` on a consumer whose directory is gone now hints `tailor move <old> <new>` (moved) or
+  `tailor forget <dir>` (retired) instead of asking for a hand edit of `consumers.json`.
+
 ## [0.8.1] — 2026-10-20
 
 ### Fixed

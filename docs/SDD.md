@@ -205,6 +205,13 @@ React adapter + Primer kit are consumed as source from `react/` by React project
   ships stays intact; every tailor palette ships dark + light, so the Primer kit has to as well. The React
   adapter and Primer kit never reach consumers through `tailor apply`/`sync` — only React projects take them
   (as source from `react/`), chosen at scaffold time. Supersedes nothing.
+- **2026-10-21 — `tailor move` and `tailor forget` manage the consumer registry.** What: `move <old> <new>`
+  rewrites a recorded consumer's `path` and keeps every other field; `forget <dir>` removes a consumer and
+  never touches the project's files; both match by exact resolved path, refuse with a reason, and honour `-n`.
+  `sync` points at them when a consumer's directory is gone. Why: `apply`/`sync` match consumers by exact
+  path, so a moved project re-applied at its new path got a second entry beside the stale one, and both a move
+  and a retirement needed a hand edit of the git-ignored `consumers.json`. Supersedes hand edits of
+  `consumers.json` for relocation and retirement.
 
 ## 5. Delivered (0.1.0)
 
