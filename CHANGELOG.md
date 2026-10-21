@@ -2,6 +2,12 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
+## [0.9.1] — 2026-10-21
+
+### Fixed
+- `.t-icon` sets `max-width: none`, so an icon in a shrink-to-fit cell (`.t-col-icon`, `.t-col-shrink`) keeps its
+  1em size. The `svg { max-width: 100% }` reset let the cell collapse and drew the icon at 0 width in every skin.
+
 ## [0.9.0] — 2026-10-21
 
 ### Added
