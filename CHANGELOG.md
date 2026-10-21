@@ -2,7 +2,7 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
-## [Unreleased]
+## [0.9.0] — 2026-10-21
 
 ### Added
 - **`tailor move <old-dir> <new-dir> [-n]`** repoints a recorded consumer after its project moved: only `path`
