@@ -11,6 +11,7 @@ import {
 import { createPortal } from "react-dom";
 import { ICON_SPRITE, Icon, IconSpriteContext, iconSlot } from "./actions.tsx";
 import { cx, dataAttr, type Tone } from "./util.ts";
+import { mark, popup, randomId, useMounted } from "./popup.ts";
 
 /* ── tooltip ─────────────────────────────────────────────────────────────── */
 
@@ -31,12 +32,19 @@ function TooltipLayer() {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const tipEl = ref.current;
-    if (!tipEl) return;
+    // tailor.js on the same page (mixed pages, the showcase) already draws every [data-tip]: stand down
+    if (!tipEl || (window as { Tailor?: { tooltips?: unknown } }).Tailor?.tooltips) return;
     let anchor: HTMLElement | null = null;
+    // a re-labelled anchor (the theme toggle after a click) repaints the open tooltip, like tailor.js refreshTip
+    const relabel = new MutationObserver(() => { if (anchor) place(anchor); });
     const show = (e: Event) => {
       const t = (e.target as HTMLElement).closest?.("[data-tip]") as HTMLElement | null;
       if (!t || t === anchor) return;
       anchor = t;
+      relabel.disconnect(); relabel.observe(t, { attributes: true, attributeFilter: ["data-tip"] });
+      place(t);
+    };
+    const place = (t: HTMLElement) => {
       tipEl.textContent = t.getAttribute("data-tip");
       tipEl.dataset.at = t.getAttribute("data-tip-at") ?? "top";
       const r = t.getBoundingClientRect();
@@ -54,6 +62,7 @@ function TooltipLayer() {
       if (!anchor) return;
       if (e.type === "mouseout" && anchor.contains((e as unknown as { relatedTarget: Node }).relatedTarget)) return;
       anchor = null;
+      relabel.disconnect();
       tipEl.hidden = true;
     };
     document.addEventListener("mouseover", show);
@@ -65,6 +74,7 @@ function TooltipLayer() {
       document.removeEventListener("focusin", show);
       document.removeEventListener("mouseout", hide);
       document.removeEventListener("focusout", hide);
+      relabel.disconnect();
     };
   }, []);
   return <div ref={ref} className="t-tooltip" role="tooltip" hidden style={{ position: "absolute" }}></div>;
@@ -80,43 +90,60 @@ export type HelpProps = HTMLAttributes<HTMLSpanElement> & {
   glyph?: ReactNode;
 };
 
+/**
+ * `<Ui.Help>` — the React Tailor.help: hovering the trigger 1 s shows the box (it closes when the pointer leaves
+ * both); a click pins it as the current popup (one open at a time, Escape or a pointerdown outside close it,
+ * `data-at`/`data-align` flip and align it like every tailor popup); a second click unpins it.
+ */
 export function Help({ tone, label, glyph = "i", className, children, ...rest }: HelpProps) {
   const [open, setOpen] = useState(false);
   const [pinned, setPinned] = useState(false);
-  const ref = useRef<HTMLSpanElement>(null);
-  const hoverTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const [boxId] = useState(() => randomId("t-help"));
+  const mounted = useMounted();
+  const btn = useRef<HTMLButtonElement>(null), box = useRef<HTMLDivElement>(null);
+  const st = useRef({ open, pinned }); st.current = { open, pinned };
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const close = () => {
+    setOpen(false); setPinned(false); st.current = { open: false, pinned: false };
+    const b = box.current; if (b) { b.hidden = true; delete b.dataset.at; delete b.dataset.align; }
+  };
+  const closeHover = () => { if (!st.current.pinned) close(); };
+  const pin = () => {
+    setPinned(true); setOpen(true); st.current = { open: true, pinned: true };
+    if (box.current && btn.current) popup.open(box.current, btn.current, close);
+  };
+  const unpin = () => (popup.current()?.panel === box.current ? popup.close() : close());
   useEffect(() => {
-    if (!open) return;
-    const close = (e: Event) => {
-      if (e instanceof window.KeyboardEvent) {
-        if (e.key === "Escape") { setOpen(false); setPinned(false); }
-      } else if (e.target instanceof Node && !ref.current?.contains(e.target)) {
-        setOpen(false); setPinned(false);
-      }
-    };
-    document.addEventListener("click", close);
-    document.addEventListener("keydown", close);
-    return () => { document.removeEventListener("click", close); document.removeEventListener("keydown", close); };
-  }, [open]);
+    const esc = (e: globalThis.KeyboardEvent) => { if (e.key === "Escape") closeHover(); }; // hover-shown boxes; pinned ones close via the popup
+    document.addEventListener("keydown", esc);
+    return () => { document.removeEventListener("keydown", esc); clearTimeout(timer.current); if (popup.current()?.panel === box.current) popup.close(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
-    <span
-      ref={ref}
-      className={cx("t-help", className)}
-      data-tone={dataAttr(tone)}
-      onMouseEnter={() => { hoverTimer.current = setTimeout(() => setOpen(true), 1000); }}
-      onMouseLeave={() => { clearTimeout(hoverTimer.current); if (!pinned) setOpen(false); }}
-      {...rest}
-    >
+    <span className={cx("t-help", className)} data-tone={dataAttr(tone)} {...mark(mounted, "help")} {...rest}>
       <button
+        ref={btn}
         className="t-help-btn"
         type="button"
         aria-expanded={open}
         aria-label={label}
-        onClick={() => { setPinned(!pinned || !open); setOpen(!pinned || !open); }}
+        aria-controls={mounted ? boxId : undefined}
+        onClick={() => { clearTimeout(timer.current); if (st.current.pinned) unpin(); else pin(); }}
+        onMouseEnter={() => { timer.current = setTimeout(() => { if (!st.current.open) { setOpen(true); st.current.open = true; } }, 1000); }}
+        onMouseLeave={() => { clearTimeout(timer.current); setTimeout(() => { if (!st.current.pinned && !box.current?.matches(":hover")) closeHover(); }, 200); }}
       >
         {glyph}
       </button>
-      <div className="t-help-box" hidden={!open} data-pinned={pinned && open ? "" : undefined}>{children}</div>
+      <div
+        ref={box}
+        className="t-help-box"
+        hidden={!open}
+        id={mounted ? boxId : undefined}
+        data-pinned={pinned ? "" : undefined}
+        onMouseLeave={closeHover}
+      >
+        {children}
+      </div>
     </span>
   );
 }
@@ -124,24 +151,27 @@ export function Help({ tone, label, glyph = "i", className, children, ...rest }:
 /* ── code block ──────────────────────────────────────────────────────────── */
 
 type CodeProps = HTMLAttributes<HTMLDivElement> & {
-  /** Tab labels; shows one `Code.Pre` child per tab. */
+  /** Tab labels (`.t-code-tabs`). With one `Code.Pre` child per tab the shown block follows the tab; with a single
+   * child it stays, and `onTabChange` updates it (what tailor.js's `t:change` is for). */
   tabs?: ReactNode[];
   defaultTab?: number;
+  onTabChange?: (index: number) => void;
 };
 
-export function Code({ tabs, defaultTab = 0, className, children, ...rest }: CodeProps) {
+export function Code({ tabs, defaultTab = 0, onTabChange, className, children, ...rest }: CodeProps) {
   const [active, setActive] = useState(defaultTab);
+  const mounted = useMounted();
   const kids = Array.isArray(children) ? children : [children];
   return (
     <div className={cx("t-code", className)} {...rest}>
       {tabs && (
-        <div className="t-code-tabs" role="tablist">
+        <div className="t-code-tabs" role="tablist" {...mark(mounted, "code-tabs")}>
           {tabs.map((t, i) => (
-            <button key={i} role="tab" aria-selected={i === active} onClick={() => setActive(i)}>{t}</button>
+            <button key={i} type="button" role="tab" aria-selected={i === active} onClick={() => { setActive(i); onTabChange?.(i); }}>{t}</button>
           ))}
         </div>
       )}
-      {tabs ? kids[active] : children}
+      {tabs && kids.length > 1 ? kids[active] : children}
     </div>
   );
 }
@@ -156,16 +186,19 @@ type CodePreProps = HTMLAttributes<HTMLPreElement> & {
 function CodePre({ variant, copy, copyLabel = "Copy", className, children, ...rest }: CodePreProps) {
   const ref = useRef<HTMLPreElement>(null);
   const [copied, setCopied] = useState(false);
+  const mounted = useMounted();
+  const toasts = useOptionalToasts();
   const doCopy = () => {
     const pre = ref.current;
     if (!pre) return;
+    // same text as Tailor.copy: no copy button, no prompt, no leading blank, shell line continuations joined
     const clone = pre.cloneNode(true) as HTMLElement;
     clone.querySelectorAll(".t-code-copy, .t-tok-prompt").forEach((n) => n.remove());
-    const txt = (clone.textContent ?? "").replace(/\\\n\s*/g, " ").trim();
-    navigator.clipboard?.writeText(txt).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1200);
-    });
+    const txt = clone.innerText.replace(/^\s*/, "").replace(/\\\n\s*/g, "");
+    (navigator.clipboard ? navigator.clipboard.writeText(txt) : Promise.reject(new Error("no clipboard"))).then(
+      () => { setCopied(true); setTimeout(() => setCopied(false), 1200); },
+      () => toasts?.toast("warning", "clipboard unavailable"),
+    );
   };
   return (
     <pre ref={ref} className={cx("t-code-pre", className)} data-variant={dataAttr(variant)} {...rest}>
@@ -176,6 +209,7 @@ function CodePre({ variant, copy, copyLabel = "Copy", className, children, ...re
           aria-label={copyLabel}
           data-copied={copied ? "" : undefined}
           onClick={doCopy}
+          {...mark(mounted, "copy")}
         >
           ⧉
         </button>
@@ -204,18 +238,22 @@ type TruncateProps = Omit<HTMLAttributes<HTMLSpanElement>, "title"> & {
   tip?: string;
 };
 
-export function Truncate({ expand, tip, className, children, ...rest }: TruncateProps) {
+export function Truncate({ expand, tip, className, children, onClick, onKeyDown, ...rest }: TruncateProps) {
   const [expanded, setExpanded] = useState(false);
+  const mounted = useMounted();
   if (!expand) {
-    return <span className={cx("t-truncate", className)} data-tip={tip} {...rest}>{children}</span>;
+    return <span className={cx("t-truncate", className)} data-tip={tip} onClick={onClick} onKeyDown={onKeyDown} {...rest}>{children}</span>;
   }
+  // keyboard reach (tabindex + role=button, Enter / Space) comes with the behaviour, after mount
   return (
     <span
       className={cx("t-truncate", className)}
       data-expand=""
       data-tip={tip}
       aria-expanded={expanded}
-      onClick={() => setExpanded((v) => !v)}
+      {...(mounted ? { tabIndex: 0, role: "button", "data-t-trunc": "" } : {})}
+      onClick={(e) => { setExpanded((v) => !v); onClick?.(e); }}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setExpanded((v) => !v); } onKeyDown?.(e); }}
       {...rest}
     >
       {children}
@@ -233,23 +271,28 @@ type AlertProps = HTMLAttributes<HTMLDivElement> & {
   actions?: ReactNode;
   /** Renders the dismiss button; called when the alert is dismissed. */
   onDismiss?: () => void;
+  /** Renders the dismiss button without a callback (the alert removes itself, like `data-dismiss`). */
+  dismissible?: boolean;
   dismissLabel?: string;
 };
 
-export function Alert({ tone, size, icon, actions, onDismiss, dismissLabel = "Dismiss", className, children, ...rest }: AlertProps) {
+/** `role` defaults to `alert`; pass `role="status"` for info/success, `role={undefined}` for a neutral flash. */
+export function Alert({ tone, size, icon, actions, onDismiss, dismissible, dismissLabel = "Dismiss", className, children, ...rest }: AlertProps) {
   const [dismissed, setDismissed] = useState(false);
+  const mounted = useMounted();
   if (dismissed) return null;
   return (
     <div className={cx("t-alert", className)} data-tone={dataAttr(tone)} data-size={dataAttr(size)} role="alert" {...rest}>
       {iconSlot(icon, "t-alert-icon")}
       <div className="t-alert-body">{children}</div>
       {actions !== undefined && <div className="t-alert-actions">{actions}</div>}
-      {onDismiss && (
+      {(onDismiss || dismissible) && (
         <button
           className="t-alert-close"
           aria-label={dismissLabel}
           data-dismiss=""
-          onClick={() => { setDismissed(true); onDismiss(); }}
+          {...mark(mounted, "dismiss")}
+          onClick={() => { setDismissed(true); onDismiss?.(); }}
         >
           ×
         </button>
@@ -301,6 +344,11 @@ type ToastApi = {
 
 const ToastContext = createContext<ToastApi | null>(null);
 
+/** `useToasts()` without the provider requirement: null outside a `<UiProvider>` (components that toast optionally). */
+export function useOptionalToasts(): ToastApi | null {
+  return useContext(ToastContext);
+}
+
 export function useToasts(): ToastApi {
   const ctx = useContext(ToastContext);
   if (!ctx) throw new Error("useToasts() needs a <UiProvider> ancestor");
@@ -313,7 +361,7 @@ export type DialogProps = Omit<DialogHTMLAttributes<HTMLDialogElement>, "title">
   open?: boolean;
   onClose?: (returnValue: string) => void;
   title?: ReactNode;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "md" | "lg" | "xl";
   tone?: "danger";
   footer?: ReactNode;
   /** Render as a drawer (`.t-drawer`) instead of a dialog. */
@@ -324,13 +372,15 @@ export type DialogProps = Omit<DialogHTMLAttributes<HTMLDialogElement>, "title">
 /**
  * Modal dialog over `<dialog class="t-dialog">`: `open` drives
  * showModal()/close(), backdrop click and Esc call `onClose` — the React
- * Tailor.dialogs. Footer buttons close by calling `onClose` themselves.
+ * Tailor.dialogs. Any button with `data-dialog-close="<value>"` inside closes it with that return value
+ * (`onClose(value)`); footer buttons may also close by calling `onClose` themselves.
  */
 export function Dialog({
   open, onClose, title, size, tone, footer, drawer, closeLabel = "Close",
   className, children, id, ...rest
 }: DialogProps) {
   const ref = useRef<HTMLDialogElement>(null);
+  const mounted = useMounted();
   const titleId = id ? `${id}-title` : undefined;
   useEffect(() => {
     const el = ref.current;
@@ -340,7 +390,10 @@ export function Dialog({
   }, [open]);
   const onNativeClose = () => { if (open) onClose?.(ref.current?.returnValue ?? ""); };
   const onBackdrop = (e: MouseEvent<HTMLDialogElement>) => {
-    if (e.target === ref.current) { ref.current?.close(); }
+    const el = ref.current; if (!el) return;
+    if (e.target === el) { el.close(""); return; }
+    const c = (e.target as Element).closest<HTMLElement>("[data-dialog-close]");
+    if (c && el.contains(c)) el.close(c.dataset.dialogClose || "");
   };
   return (
     <dialog
@@ -352,12 +405,13 @@ export function Dialog({
       aria-labelledby={titleId}
       onClose={onNativeClose}
       onClick={onBackdrop}
+      {...mark(mounted, "dlg")}
       {...rest}
     >
       {title !== undefined && (
         <div className="t-dialog-header">
           <h2 className="t-dialog-title" id={titleId}>{title}</h2>
-          <button className="t-dialog-close" aria-label={closeLabel} data-dialog-close="" onClick={() => ref.current?.close()}>×</button>
+          <button className="t-dialog-close" aria-label={closeLabel} data-dialog-close="">×</button>
         </div>
       )}
       <div className="t-dialog-body">{children}</div>
@@ -403,6 +457,7 @@ export function Confirm({
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const result = useRef(false);
+  const mounted = useMounted();
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
@@ -418,6 +473,7 @@ export function Confirm({
       data-variant="confirm"
       data-tone={danger ? "danger" : "neutral"}
       aria-labelledby="t-confirm-title"
+      {...mark(mounted, "dlg")}
       onClose={() => { if (open) onResult?.(result.current); }}
       onClick={(e) => { if (e.target === ref.current) close(false); }}
     >
@@ -446,9 +502,11 @@ type ProgressProps = HTMLAttributes<HTMLDivElement> & {
   size?: "sm" | "md" | "lg";
   stacked?: boolean;
   tone?: Tone;
+  /** Text inside the single bar (`data-size="lg"` bars have room for "38 %"). */
+  label?: ReactNode;
 };
 
-export function Progress({ value, min = 0, max = 100, size, stacked, tone, className, children, ...rest }: ProgressProps) {
+export function Progress({ value, min = 0, max = 100, size, stacked, tone, label, className, children, ...rest }: ProgressProps) {
   return (
     <div
       className={cx("t-progress", className)}
@@ -461,7 +519,7 @@ export function Progress({ value, min = 0, max = 100, size, stacked, tone, class
       {...rest}
     >
       {value !== undefined && (
-        <div className="t-progress-bar" data-tone={dataAttr(tone)} style={{ "--t-value": `${value}%` } as never}></div>
+        <div className="t-progress-bar" data-tone={dataAttr(tone)} style={{ "--t-value": `${value}%` } as never}>{label}</div>
       )}
       {children}
     </div>
@@ -533,6 +591,16 @@ export function UiProvider({ children, sprite }: { children: ReactNode; /** Icon
     if (timeout > 0) setTimeout(() => leave(id), timeout);
   }, [leave]);
 
+  // like Tailor.toast: a page that already has the region (`#t-toasts`, e.g. from its HTML) gets the toasts in it;
+  // otherwise the provider renders its own (one region per page, one id)
+  const [region, setRegion] = useState<HTMLElement | null | undefined>(undefined);
+  useEffect(() => { setRegion(document.getElementById("t-toasts")); }, []);
+  const toastList = toasts.map((t) => (
+    <Toast key={t.id} tone={t.tone} leaving={t.leaving} onClick={() => leave(t.id)}>
+      {t.message}
+    </Toast>
+  ));
+
   const confirm = useCallback<ConfirmApi["confirm"]>((title, body, { label = "Confirm", danger = true } = {}) => {
     return new Promise<boolean>((resolve) => {
       setConfirmState({ open: true, title, body, label, danger, resolve });
@@ -546,15 +614,9 @@ export function UiProvider({ children, sprite }: { children: ReactNode; /** Icon
         {children}
         {typeof document !== "undefined" && createPortal(
           <>
-            <ToastRegion>
-              {toasts.map((t) => (
-                <Toast key={t.id} tone={t.tone} leaving={t.leaving} onClick={() => leave(t.id)}>
-                  {t.message}
-                </Toast>
-              ))}
-            </ToastRegion>
+            {region === null && <ToastRegion>{toastList}</ToastRegion>}
             <TooltipLayer />
-            <Confirm
+            {confirmState.open && <Confirm
               open={confirmState.open}
               title={confirmState.title}
               label={confirmState.label}
@@ -565,10 +627,11 @@ export function UiProvider({ children, sprite }: { children: ReactNode; /** Icon
               }}
             >
               {confirmState.body}
-            </Confirm>
+            </Confirm>}
           </>,
           document.body,
         )}
+        {region && createPortal(toastList, region)}
       </ConfirmContext>
     </ToastContext>
     </IconSpriteContext>

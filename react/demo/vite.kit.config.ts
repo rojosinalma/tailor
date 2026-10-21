@@ -2,9 +2,9 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath } from "node:url";
 
-// Showcase kit bundle: react/demo/src/kit.tsx → showcase/kit/kit.js + kit.css (stable names, no hash), run by
+// Showcase kit bundle: react/demo/src/kit.tsx → showcase/kit/kit.js (stable name, no hash; no CSS — the skin and palette style the islands), run by
 // bin/build (`bun x vite build --config vite.kit.config.ts` in react/demo). The showcase lazy-loads it when the
-// Kit picker says "primer". Demo content only — nothing here is vendored to consumers (see docs/SDD.md §4).
+// Kit picker says "react". Demo content only — nothing here is vendored to consumers (see docs/SDD.md §4).
 const here = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 
 export default defineConfig({

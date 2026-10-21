@@ -47,9 +47,12 @@ layout's `<head>`; app CSS loads after it. Asset URLs assume `public/` is served
 `--icons` takes `<set>:<name>` references (`tailor icons search` finds them); every one must exist in an
 adopted set or apply exits non-zero. It needs the icon data installed (`bun install` in `icons/`). On a
 re-apply, omitting `--icons` keeps the consumer's recorded list; passing it replaces the list.
-`--react` skips `tailor.js` and points at the `react/` adapter workspace instead; the React adapter and the
-Primer kit are consumed as source from `react/`, never vendored — `apply`/`sync` copy nothing from `react/`
-or `showcase/`.
+`--react` skips `tailor.js` and points at the `react/` adapter workspace instead; the React adapter is
+consumed as source from `react/`, never vendored — `apply`/`sync` copy nothing from `react/`
+or `showcase/`. Under `--react` the head snippet keeps the core links, the pre-paint IIFE and
+`window.TAILOR_CONFIG`, but leaves out the `tailor.js` `<script>` and the `Tailor.theme.init` call (the file is
+not vendored); `useTailorTheme()` / `<Ui.Pickers>` from `tailor-react` read `window.TAILOR_CONFIG` and take
+over the switcher (`react/README.md` → Theme switcher). HTML consumers never receive React code.
 The first skin/palette listed becomes the default; `all` expands in place to every id tailor ships, so
 `--palettes gruvbox,all` = every palette with gruvbox as default. Adopting means taking everything tailor
 ships at that moment; later additions arrive through `tailor sync`. `--mode` (default `auto`) sets the
@@ -100,6 +103,9 @@ adopted sets — exact and prefix matches first, 50 by default — in the form `
 hit. `list` prints the adopted sets with count, licence, version and upstream. See [icons.md](icons.md).
 
 ### `tailor gen --target primer <palette> | --all`
+
+For apps built on Primer React (tailor-react does not use Primer; the `primer` skin is the Primer look in
+tailor markup).
 
 Emits the palette as **Primer Primitives colour themes**: `react/adapters/primer/themes/dark_<id>.css`
 from the stock `dark.css` and, when the palette has a `light` block (all 21 do), `light_<id>.css` from the

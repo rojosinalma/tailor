@@ -1,16 +1,23 @@
 // App shell & layout: app-shell, navbar, sidebar, footer, page, section,
 // toolbar, grid, stack, split — markup per core/components.json.
-import type { AnchorHTMLAttributes, HTMLAttributes, LiHTMLAttributes, ReactNode } from "react";
+import {
+  cloneElement, isValidElement,
+  type AnchorHTMLAttributes, type HTMLAttributes, type LiHTMLAttributes, type ReactElement, type ReactNode,
+} from "react";
 import { cx, dataAttr } from "./util.ts";
+import { mark, useMounted } from "./popup.ts";
+import { PickerControls, type PickerPart, type TailorThemeConfig } from "./theme.tsx";
 
 /* ── app-shell ───────────────────────────────────────────────────────────── */
 
 export type AppShellProps = HTMLAttributes<HTMLDivElement> & {
-  /** Navbar content; rendered inside `<header class="t-navbar t-shell-nav">`. */
+  /** Navbar content, rendered inside `<header class="t-navbar t-shell-nav">`; a `<Ui.Navbar>` element is used as
+   * that header itself (it gets `t-shell-nav`). */
   nav?: ReactNode;
   /** Sidebar slot content (usually a `<Sidebar>`); rendered inside `<aside class="t-shell-side">`. */
   side?: ReactNode;
-  /** Footer content; rendered inside `<footer class="t-footer t-shell-foot">`. */
+  /** Footer content, rendered inside `<footer class="t-footer t-shell-foot">`; a `<Ui.Footer>` element is used as
+   * that footer itself (it gets `t-shell-foot`). */
   foot?: ReactNode;
   /** `data-sidebar` state. */
   sidebar?: "none" | "collapsed";
@@ -19,12 +26,19 @@ export type AppShellProps = HTMLAttributes<HTMLDivElement> & {
 export function AppShell({ nav, side, foot, sidebar, className, children, ...rest }: AppShellProps) {
   return (
     <div className={cx("t-shell", className)} data-sidebar={dataAttr(sidebar)} {...rest}>
-      {nav !== undefined && <header className="t-navbar t-shell-nav">{nav}</header>}
+      {nav !== undefined && (slotOf(nav, Navbar, "t-shell-nav") ?? <header className="t-navbar t-shell-nav">{nav}</header>)}
       {side !== undefined && <aside className="t-shell-side">{side}</aside>}
       <main className="t-shell-main t-page">{children}</main>
-      {foot !== undefined && <footer className="t-footer t-shell-foot">{foot}</footer>}
+      {foot !== undefined && (slotOf(foot, Footer, "t-shell-foot") ?? <footer className="t-footer t-shell-foot">{foot}</footer>)}
     </div>
   );
+}
+
+/** A slot given as the component's own element (`<Ui.Navbar>` for `nav`): that element with the slot class added. */
+function slotOf(node: ReactNode, type: unknown, cls: string): ReactNode | null {
+  if (!isValidElement(node) || node.type !== type) return null;
+  const el = node as ReactElement<{ className?: string }>;
+  return cloneElement(el, { className: cx(el.props.className, cls) });
 }
 
 /* ── navbar ──────────────────────────────────────────────────────────────── */
@@ -155,9 +169,31 @@ function FooterEnd({ className, children, ...rest }: HTMLAttributes<HTMLDivEleme
   return <div className={cx("t-footer-end", className)} {...rest}>{children}</div>;
 }
 
-/** Mount point for the tailor.js skin/palette/mode pickers (`data-tailor-pickers`). */
-function FooterPickers({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={className} data-tailor-pickers="" {...rest}></div>;
+type FooterPickersProps = Omit<HTMLAttributes<HTMLDivElement>, "children"> & {
+  /** Which controls (`data-tailor-pickers="mode"` …); default skin, palette and the mode toggle. */
+  parts?: PickerPart[];
+  /** Control size; `xs` in a footer (default), like Tailor.theme.renderPickers. */
+  size?: "xs" | "sm";
+  config?: Partial<TailorThemeConfig>;
+};
+
+/**
+ * The footer switcher: renders the canonical `<div data-tailor-pickers>` host, and after mount fills it the way
+ * Tailor.theme.renderPickers does (`.t-pickers`: skin and palette selects, the sun/moon toggle last) through the
+ * React theme store (`Ui.Pickers`), without tailor.js.
+ */
+function FooterPickers({ parts, size = "xs", config, className, ...rest }: FooterPickersProps) {
+  const mounted = useMounted();
+  return (
+    <div
+      className={cx(mounted && "t-pickers", className) || undefined}
+      data-tailor-pickers={parts ? parts.join(" ") : ""}
+      {...mark(mounted, "pickers")}
+      {...rest}
+    >
+      {mounted && <PickerControls parts={parts} size={size} config={config} />}
+    </div>
+  );
 }
 
 function FooterVersion({ className, children, ...rest }: HTMLAttributes<HTMLSpanElement>) {
@@ -171,8 +207,9 @@ Footer.Version = FooterVersion;
 
 /* ── page ────────────────────────────────────────────────────────────────── */
 
-export function Page({ className, children, ...rest }: HTMLAttributes<HTMLElement>) {
-  return <main className={cx("t-page", className)} {...rest}>{children}</main>;
+/** `<main class="t-page">`; `as="div"` for a page block that is not the document's main landmark. */
+export function Page({ as: Tag = "main", className, children, ...rest }: HTMLAttributes<HTMLElement> & { as?: "main" | "div" }) {
+  return <Tag className={cx("t-page", className)} {...rest}>{children}</Tag>;
 }
 
 function PageHeader({ className, children, ...rest }: HTMLAttributes<HTMLElement>) {
@@ -203,13 +240,13 @@ Page.Actions = PageActions;
 
 /* ── section ─────────────────────────────────────────────────────────────── */
 
-type SectionProps = HTMLAttributes<HTMLElement> & { title: ReactNode };
+type SectionProps = HTMLAttributes<HTMLElement> & { title: ReactNode; /** Extra class on `.t-section-body`. */ bodyClassName?: string };
 
-export function Section({ title, className, children, ...rest }: SectionProps) {
+export function Section({ title, bodyClassName, className, children, ...rest }: SectionProps) {
   return (
     <section className={cx("t-section", className)} {...rest}>
       <h2 className="t-section-title">{title}</h2>
-      <div className="t-section-body">{children}</div>
+      <div className={cx("t-section-body", bodyClassName)}>{children}</div>
     </section>
   );
 }

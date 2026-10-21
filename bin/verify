@@ -15,7 +15,7 @@
 //             a WARN; sets.json licence must equal the installed data's SPDX id
 //   skins     (skipped with a note when skins/ has no skin) every manifest valid, coverage ⊇ tier-1,
 //             skin.css parses, no palette token set / no colour literal, listed assets exist
-//   kit       showcase/kit/kit.js + kit.css exist (FAIL when react/node_modules is there and they are missing, WARN
+//   kit       showcase/kit/kit.js exists (FAIL when react/node_modules is there and they are missing, WARN
 //             otherwise) and define TailorKit; with vite installed, WARN when older than react/ sources
 //   showcase  bin/build's showcase renders, every tier-1 id has a section, no duplicate ids
 //
@@ -223,13 +223,13 @@ for (const id of skins) {
 
 /* ── showcase kit bundle ───────────────────────────────────────────────────── */
 const KIT_DIR = join(ROOT, "showcase", "kit");
-const kitBundle = existsSync(join(KIT_DIR, "kit.js")) && existsSync(join(KIT_DIR, "kit.css"));
+const kitBundle = existsSync(join(KIT_DIR, "kit.js"));
 {
   const viteInstalled = existsSync(join(ROOT, "react", "node_modules", "vite"));
-  if (!kitBundle) (viteInstalled ? fail : warn)("showcase/kit/kit.js + kit.css missing — run bin/build" + (viteInstalled ? "" : " after `bun install` in react/"));
+  if (!kitBundle) (viteInstalled ? fail : warn)("showcase/kit/kit.js missing — run bin/build" + (viteInstalled ? "" : " after `bun install` in react/"));
   else {
     const js = read(join(KIT_DIR, "kit.js"));
-    /window\.TailorKit\s*=/.test(js) || /TailorKit/.test(js) ? ok(`showcase/kit: kit.js (${(js.length / 1024).toFixed(0)} KB) exposes TailorKit, kit.css present`) : fail("showcase/kit/kit.js does not define TailorKit — run bin/build");
+    /window\.TailorKit\s*=/.test(js) || /TailorKit/.test(js) ? ok(`showcase/kit: kit.js (${(js.length / 1024).toFixed(0)} KB) exposes TailorKit`) : fail("showcase/kit/kit.js does not define TailorKit — run bin/build");
     if (!viteInstalled) warn("showcase/kit: currency not checked — react/node_modules missing (bun install in react/)");
     else {
       // newer than every source it is built from (react/src, adapters, parity, demo/src, core/components.json)

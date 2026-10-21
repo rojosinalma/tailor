@@ -9,48 +9,29 @@
   const state = () => { const t = Tailor.theme.get(); const kit = t.kit !== "tailor" ? ` · kit ${t.kit}` : ""; $("#sc-state").textContent = `skin ${t.skin} · palette ${t.palette} · ${t.mode}${kit}`; $("#sc-core-note").hidden = t.skin !== "none" || t.kit !== "tailor"; };
   state(); document.documentElement.addEventListener("t:theme", state);
 
-  // Kit: "primer" lazy-loads showcase/kit/kit.js (+ kit.css, built by bin/build from react/demo) once and mounts the
-  // React islands over every .sc-demo that has one; the skin is off meanwhile (Primer carries its own look) and the
-  // palette × mode pick the generated Primer theme (react/adapters/primer/themes/<mode>_<palette>.css).
+  // Kit "react" lazy-loads showcase/kit/kit.js (built by bin/build from react/demo) once and mounts the
+  // React islands over every .sc-demo that has one, plus Ui.Pickers in the footer (the HTML skin/palette/mode
+  // controls are hidden meanwhile, the Kit select stays). Same markup, so the skin and palette stay in charge.
   const kit = {
     loading: null, mounted: false,
     load() {
       if (this.loading) return this.loading;
-      const css = document.createElement("link"); css.rel = "stylesheet"; css.href = C.kit.css; css.id = "t-kit-css"; document.head.appendChild(css);
       this.loading = new Promise((res, rej) => { const js = document.createElement("script"); js.src = C.kit.js; js.onload = res; js.onerror = () => rej(new Error(`${C.kit.js} failed to load`)); document.head.appendChild(js); });
       return this.loading;
     },
     theme() { const t = Tailor.theme.get(); return { palette: t.palette, mode: t.mode, sprite: Tailor.theme.icons }; },
-    themeHref(t) { return `${C.kit.themes}${t.mode}_${t.palette}.css`; },
-    applyTheme() {
-      const t = this.theme(), h = document.documentElement;
-      let link = $("#t-kit-theme");
-      if (!link) { link = document.createElement("link"); link.rel = "stylesheet"; link.id = "t-kit-theme"; document.head.appendChild(link); }
-      const href = this.themeHref(t); if (link.getAttribute("href") !== href) link.href = href;
-      h.setAttribute("data-color-mode", t.mode); h.setAttribute("data-light-theme", t.mode === "light" ? `light_${t.palette}` : "light"); h.setAttribute("data-dark-theme", t.mode === "dark" ? `dark_${t.palette}` : "dark");
-      if (this.mounted) window.TailorKit.update(t);
-    },
     async sync() {
-      const on = Tailor.theme.get().kit === "primer" && C.kit;
-      const skinLink = $("#t-skin"), skinSel = $("[data-tailor-picker=skin]");
-      if (skinSel) skinSel.disabled = !!on;
+      const on = C.kit && Tailor.theme.get().kit === "react";
       if (on) {
-        if (skinLink) { skinLink.href = ""; skinLink.disabled = true; }
         try { await this.load(); } catch (e) { Tailor.toast("danger", e.message); Tailor.theme.set({ kit: "tailor" }); return; }
-        if (Tailor.theme.get().kit !== "primer") return; // changed back while loading
-        this.applyTheme();
-        if (!this.mounted) { window.TailorKit.mount(document, this.theme()); this.mounted = true; }
-      } else if (this.mounted) {
-        window.TailorKit.unmount(); this.mounted = false;
-        $("#t-kit-theme")?.remove();
-        for (const a of ["data-color-mode", "data-light-theme", "data-dark-theme"]) document.documentElement.removeAttribute(a);
-        $$(".sc-demo[data-component-id]").forEach((el) => Tailor.upgrade(el));
-        Tailor.theme.set({}); // re-applies the skin link for the current skin
-      }
+        if (Tailor.theme.get().kit !== "react") return; // changed again while loading
+        if (!this.mounted) { window.TailorKit.mount(document, this.theme(), "react"); this.mounted = true; }
+        else window.TailorKit.update(this.theme());
+      } else if (this.mounted) { window.TailorKit.unmount(); this.mounted = false; }
     },
   };
   if (C.kit) {
-    // theme.set() always re-points the skin <link>; wrap it so a kit keeps the skin off even when no t:theme fires
+    // follow every theme.set(), also the ones that fire no t:theme
     const set = Tailor.theme.set.bind(Tailor.theme);
     Tailor.theme.set = (...a) => { set(...a); void kit.sync(); };
     void kit.sync();

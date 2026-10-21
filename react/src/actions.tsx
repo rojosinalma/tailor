@@ -8,6 +8,7 @@ import {
   type HTMLAttributes, type KeyboardEvent, type ReactNode,
 } from "react";
 import { cx, dataAttr, type Size, type Tone } from "./util.ts";
+import { mark, popup, useMounted } from "./popup.ts";
 
 /* ── icon slot ───────────────────────────────────────────────────────────── */
 
@@ -112,12 +113,14 @@ export function ButtonGroup({
 }: ButtonGroupProps) {
   const [internal, setInternal] = useState(defaultValue ?? options?.[0]?.value);
   const selected = value !== undefined ? value : internal;
+  const mounted = useMounted();
   return (
     <div
       className={cx("t-btn-group", className)}
       role="group"
       data-role={filter ? "filter" : undefined}
       aria-label={label}
+      {...mark(mounted && !!filter, "filter")}
       {...rest}
     >
       {options
@@ -143,7 +146,8 @@ export type SegmentedProps = Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "
   /** Radio group name; defaults to a generated id. */
   name?: string;
   size?: "sm" | "md";
-  options: Array<{ value: string; label: ReactNode; disabled?: boolean }>;
+  /** `tip` puts a `data-tip` on the item (icon-only segments). */
+  options: Array<{ value: string; label: ReactNode; disabled?: boolean; tip?: string }>;
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
@@ -164,7 +168,7 @@ export function Segmented({
       {...rest}
     >
       {options.map((o) => (
-        <label key={o.value} className="t-segmented-item">
+        <label key={o.value} className="t-segmented-item" data-tip={o.tip}>
           <input
             className="t-segmented-input"
             type="radio"
@@ -189,49 +193,77 @@ export type MenuProps = HTMLAttributes<HTMLDetailsElement> & {
   align?: "start" | "end";
   open?: boolean;
   summaryClassName?: string;
+  /** Button variant of the trigger (`data-variant` on the summary). */
+  variant?: "primary" | "secondary" | "danger" | "warning" | "ghost";
 };
 
-export function Menu({ trigger, align, open, summaryClassName, className, children, ...rest }: MenuProps) {
+/**
+ * `<Ui.Menu>` over `<details class="t-menu">` — the React Tailor.menus: the open list is the current popup (one at
+ * a time; Escape or a pointerdown outside closes it; `data-at` flips it above the trigger near the bottom edge,
+ * `data-align="end"` hangs it off the right edge near it); a plain item click closes the menu, a checkbox item
+ * toggles and keeps it open.
+ */
+export function Menu({ trigger, align, open, summaryClassName, variant, className, children, onToggle, onClick, ...rest }: MenuProps) {
   const ref = useRef<HTMLDetailsElement>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const close = (e: Event) => {
-      if (!el.open) return;
-      if (e instanceof window.KeyboardEvent) {
-        if (e.key === "Escape") el.open = false;
-      } else if (e.target instanceof Node && !el.contains(e.target)) {
-        el.open = false;
-      }
-    };
-    document.addEventListener("click", close);
-    document.addEventListener("keydown", close);
-    return () => { document.removeEventListener("click", close); document.removeEventListener("keydown", close); };
-  }, []);
+  const mounted = useMounted();
+  useEffect(() => () => { const l = ref.current?.querySelector<HTMLElement>(".t-menu-list"); if (l && popup.current()?.panel === l) popup.close(); }, []);
+  const sync = (m: HTMLDetailsElement) => {
+    const list = m.querySelector<HTMLElement>(".t-menu-list"), summary = m.querySelector<HTMLElement>("summary");
+    if (!list || !summary) return;
+    const mine = popup.current()?.panel === list;
+    if (m.open) { if (!mine) popup.open(list, summary, () => { m.open = false; }); }
+    else { delete list.dataset.at; delete list.dataset.align; if (mine) popup.close(); }
+  };
   return (
-    <details ref={ref} className={cx("t-menu", className)} data-align={dataAttr(align)} open={open} {...rest}>
-      <summary className={cx("t-btn", summaryClassName)}>{trigger}</summary>
+    <details
+      ref={ref}
+      className={cx("t-menu", className)}
+      data-align={dataAttr(align)}
+      open={open}
+      {...mark(mounted, "menu")}
+      onToggle={(e) => { sync(e.currentTarget); onToggle?.(e); }}
+      onClick={(e) => {
+        const m = e.currentTarget, t = e.target as Element;
+        const it = t.closest(".t-menu-item");
+        if (it && it.getAttribute("role") !== "menuitemcheckbox" && m.contains(it)) m.removeAttribute("open");
+        // the summary toggles `open` right after this click, the toggle event comes a task later: register the
+        // popup as soon as the state is known, so an immediate outside pointerdown already closes it
+        else if (t.closest("summary")?.parentElement === m) queueMicrotask(() => sync(m));
+        onClick?.(e);
+      }}
+      {...rest}
+    >
+      <summary className={cx("t-btn", summaryClassName)} data-variant={dataAttr(variant)}>{trigger}</summary>
       <ul className="t-menu-list" role="menu">{children}</ul>
     </details>
   );
 }
 
-export type MenuItemProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  /** Render as `role="menuitemcheckbox"` with this checked state. */
+export type MenuItemProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "defaultChecked"> & {
+  /** Render as `role="menuitemcheckbox"` with this checked state (controlled; pair with `onCheckedChange`). */
   checked?: boolean;
+  /** Checkbox item, uncontrolled: starts with this state and toggles on click (like tailor.js). */
+  defaultChecked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
   tone?: Tone;
   onSelect?: () => void;
 };
 
-function MenuItem({ checked, tone, onSelect, className, children, onClick, ...rest }: MenuItemProps) {
+function MenuItem({ checked, defaultChecked, onCheckedChange, tone, onSelect, className, children, onClick, ...rest }: MenuItemProps) {
+  const [internal, setInternal] = useState(defaultChecked ?? false);
+  const isCheck = checked !== undefined || defaultChecked !== undefined;
+  const on = checked ?? internal;
   return (
     <li>
       <button
         className={cx("t-menu-item", className)}
-        role={checked !== undefined ? "menuitemcheckbox" : "menuitem"}
-        aria-checked={checked}
+        role={isCheck ? "menuitemcheckbox" : "menuitem"}
+        aria-checked={isCheck ? on : undefined}
         data-tone={dataAttr(tone)}
-        onClick={(e) => { onSelect?.(); onClick?.(e); }}
+        onClick={(e) => {
+          if (isCheck) { if (checked === undefined) setInternal(!on); onCheckedChange?.(!on); }
+          onSelect?.(); onClick?.(e);
+        }}
         {...rest}
       >
         {children}
@@ -252,8 +284,9 @@ function MenuDesc({ className, children, ...rest }: HTMLAttributes<HTMLSpanEleme
   return <span className={cx("t-menu-desc", className)} {...rest}>{children}</span>;
 }
 
+/** Trailing shortcut (`span.t-menu-kbd`, as in the showcase demo). */
 function MenuKbd({ className, children, ...rest }: HTMLAttributes<HTMLElement>) {
-  return <kbd className={cx("t-menu-kbd", className)} {...rest}>{children}</kbd>;
+  return <span className={cx("t-menu-kbd", className)} {...rest}>{children}</span>;
 }
 
 Menu.Item = MenuItem;
@@ -271,19 +304,22 @@ export type TabsProps = Omit<HTMLAttributes<HTMLDivElement>, "onChange" | "defau
   value?: string;
   defaultValue?: string;
   onChange?: (value: string) => void;
-  /** One panel per tab, keyed by tab value. */
+  /** One panel per tab, keyed by tab value; a tab without a panel (a disabled one) gets no `aria-controls`/id. */
   panels: Record<string, ReactNode>;
+  /** Extra class on every panel (e.g. `t-muted`). */
+  panelClassName?: string;
 };
 
-export function Tabs({ variant, tabs, value, defaultValue, onChange, panels, className, ...rest }: TabsProps) {
+export function Tabs({ variant, tabs, value, defaultValue, onChange, panels, panelClassName, className, ...rest }: TabsProps) {
   const [internal, setInternal] = useState(defaultValue ?? tabs[0]?.value);
+  const mounted = useMounted();
   const active = value !== undefined ? value : internal;
   const listRef = useRef<HTMLDivElement>(null);
 
   const select = (v: string, focus = false) => {
     setInternal(v);
     onChange?.(v);
-    if (focus) listRef.current?.querySelector<HTMLButtonElement>(`#t-${CSS.escape(v)}`)?.focus();
+    if (focus) listRef.current?.querySelectorAll<HTMLButtonElement>("[role=tab]")[tabs.findIndex((t) => t.value === v)]?.focus();
   };
 
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -297,18 +333,18 @@ export function Tabs({ variant, tabs, value, defaultValue, onChange, panels, cla
   };
 
   return (
-    <div className={cx("t-tabs", className)} data-variant={dataAttr(variant)} {...rest}>
+    <div className={cx("t-tabs", className)} data-variant={dataAttr(variant)} {...mark(mounted, "tabs")} {...rest}>
       <div className="t-tabs-list" role="tablist" ref={listRef} onKeyDown={onKeyDown}>
         {tabs.map((t) => {
-          const selected = t.value === active;
+          const selected = t.value === active, panel = panels[t.value] !== undefined;
           return (
             <button
               key={t.value}
               className="t-tab"
               role="tab"
               aria-selected={selected}
-              aria-controls={`p-${t.value}`}
-              id={`t-${t.value}`}
+              aria-controls={panel ? `p-${t.value}` : undefined}
+              id={panel ? `t-${t.value}` : undefined}
               tabIndex={selected ? undefined : -1}
               disabled={t.disabled}
               onClick={() => select(t.value)}
@@ -318,10 +354,10 @@ export function Tabs({ variant, tabs, value, defaultValue, onChange, panels, cla
           );
         })}
       </div>
-      {tabs.map((t) => (
+      {tabs.filter((t) => panels[t.value] !== undefined).map((t) => (
         <div
           key={t.value}
-          className="t-tab-panel"
+          className={cx("t-tab-panel", panelClassName)}
           role="tabpanel"
           id={`p-${t.value}`}
           aria-labelledby={`t-${t.value}`}
@@ -409,6 +445,7 @@ export function List({
     onChange?.(next);
   };
   const ref = useRef<HTMLDivElement>(null);
+  const mounted = useMounted();
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
     const items = Array.from(ref.current?.querySelectorAll<HTMLButtonElement>("[role=option]:not(:disabled)") ?? []);
@@ -427,6 +464,7 @@ export function List({
         aria-multiselectable={multi ? "true" : undefined}
         data-size={dataAttr(size, "md")}
         onKeyDown={onKeyDown}
+        {...mark(mounted, "list")}
         {...rest}
       >
         {children}
@@ -437,7 +475,7 @@ export function List({
 
 const ListContext = createContext<{ current: string[]; toggle: (v: string) => void } | null>(null);
 
-export type ListItemProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+export type ListItemProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "name"> & {
   /** Selection value; when given, selection state comes from the List. */
   value?: string;
   selected?: boolean;

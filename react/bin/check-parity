@@ -11,6 +11,11 @@
 //   - the rendered side may carry the form-state attributes `value`, `checked`
 //     and `selected` where the canonical snippet omits them (React controlled /
 //     default values make them explicit; tailor.js sets them at runtime)
+//   - the rendered side may carry `type="button"` on a <button> where the canonical snippet omits the type
+//     (controls that never submit a form: chip remove, code tabs, sort headers — tailor.js draws the same)
+//   - what the fixture renders is the server pass: the parts tailor.js draws at upgrade (drawn select, number
+//     steppers, data-t-* markers, ids/aria links, keyboard reach) come after mount and are not compared here
+//     (README "Drawn controls"); the showcase comparison checks the mounted DOM against the upgraded HTML
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { createElement } from "react";
@@ -91,6 +96,7 @@ function diff(canon: Norm[], got: Norm[], path: string, errors: string[]): void 
         const gv = g.attrs[k];
         if (cv === gv) continue;
         if (cv === undefined && FORM_STATE_ATTRS.has(k)) continue; // rendered-side form state
+        if (cv === undefined && k === "type" && gv === "button" && c.tag === "button") continue; // never-submit button
         if (cv === undefined) errors.push(`${p}: extra attribute ${k}="${gv}"`);
         else if (gv === undefined) errors.push(`${p}: missing attribute ${k}="${cv}"`);
         else errors.push(`${p}: ${k}="${gv}" ≠ canonical ${k}="${cv}"`);

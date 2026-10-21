@@ -17,11 +17,11 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [], kitBundl
   // tier-2 components with a live demo render in a "Tier 2" group after the tier-1 ones
   const tier2 = vocab.components.filter((c) => c.tier === 2 && c.demo);
   const byGroup = (g) => (g === "tier2" ? tier2 : tier1.filter((c) => c.group === g));
-  const labels = { skins: Object.fromEntries(skins.map((s) => [s.id, s.name])), palettes: Object.fromEntries(palettes.map((p) => [p.id, p.name + (p.license.startsWith("values-only") ? " \u00b7" : "")])), kits: { tailor: "tailor markup", primer: "Primer kit (React)" } };
-  // kits: "tailor" = the HTML demos; "primer" = the same demos through the React adapter's Primer kit, bundled by
-  // bin/build into showcase/kit/ (kit.js + kit.css) — offered only when that bundle exists.
-  const kits = ["tailor", ...(kitBundle ? ["primer"] : [])];
-  const config = { project: "tailor-showcase", icons: SPRITE, skins: ["none", ...skins.map((s) => s.id)], palettes: palettes.map((p) => p.id), modes, kits, kit: kitBundle ? { js: "kit/kit.js", css: "kit/kit.css", themes: "../react/adapters/primer/themes/" } : null, labels, defaults: { skin: skins[0]?.id ?? "none", palette: "dracula", mode: "auto", kit: "tailor" } };
+  const labels = { skins: Object.fromEntries(skins.map((s) => [s.id, s.name])), palettes: Object.fromEntries(palettes.map((p) => [p.id, p.name + (p.license.startsWith("values-only") ? " \u00b7" : "")])), kits: { tailor: "HTML", react: "React" } };
+  // kits: "tailor" = the HTML demos (tailor.js); "react" = the same demos through tailor-react (tailor markup, every
+  // skin), from the bundle bin/build makes into showcase/kit/kit.js — offered only when it exists.
+  const kits = ["tailor", ...(kitBundle ? ["react"] : [])];
+  const config = { project: "tailor-showcase", icons: SPRITE, skins: ["none", ...skins.map((s) => s.id)], palettes: palettes.map((p) => p.id), modes, kits, kit: kitBundle ? { js: "kit/kit.js" } : null, labels, defaults: { skin: skins[0]?.id ?? "none", palette: "dracula", mode: "auto", kit: "tailor" } };
 
   const sideNav = groups.map(([g, title]) => `
         <li class="t-sidebar-group">${esc(title)}</li>
@@ -77,7 +77,7 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [], kitBundl
     if(m==='auto')m=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
     var modes=C.modes[p]||['dark'];if(modes.indexOf(m)<0)m=modes[0];
     h.dataset.skin=s;h.dataset.palette=p;h.dataset.mode=m;window.TAILOR_SHOWCASE=C;
-    var ns=(s==='none'||k==='primer');document.write('<link id="t-skin" rel="stylesheet" data-base="../skins/" href="'+(ns?'':'../skins/'+s+'/skin.css')+'"'+(ns?' disabled':'')+'>');
+    var ns=s==='none';document.write('<link id="t-skin" rel="stylesheet" data-base="../skins/" href="'+(ns?'':'../skins/'+s+'/skin.css')+'"'+(ns?' disabled':'')+'>');
     document.write('<link id="t-palette" rel="stylesheet" data-base="../palettes/" href="../palettes/'+p+'.css">');})();
   </script>
   <link rel="stylesheet" href="showcase.css">
@@ -99,7 +99,7 @@ export function renderShowcase({ skins, palettes, modes, iconSets = [], kitBundl
   <main class="t-shell-main t-page">
     <header class="t-page-header">
       <h1 class="t-page-title">tailor showcase</h1>
-      <span class="t-page-lead">every tier-1 component once, in tailor markup · skin and palette swap underneath${kitBundle ? " · the Kit picker renders the same demos through the React Primer kit" : ""}</span>
+      <span class="t-page-lead">every tier-1 component once, in tailor markup · skin and palette swap underneath${kitBundle ? " · the Kit picker renders the same demos in HTML or in React" : ""}</span>
       <div class="t-page-actions"><span class="t-small t-muted" id="sc-state"></span></div>
     </header>
     <div class="t-alert" data-tone="info" role="status" id="sc-core-note"><svg class="t-icon t-alert-icon" aria-hidden="true"><use href="${SPRITE}#bi-info-circle"/></svg><div class="t-alert-body"><b>Core only.</b> No skin is applied: what you see is <code>core/base.css</code> — the functional baseline every skin builds on. Pick a skin above once one exists.</div></div>

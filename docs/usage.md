@@ -45,5 +45,10 @@ Tailor.theme.init({
 
 ## React
 
-`react/` ("tailor-react") renders the same vocabulary as `Ui.*` components, with a kit adapter
-seam (first kit: Primer; every palette is also a generated Primer theme). See `react/README.md`.
+`react/` ("tailor-react") renders the same vocabulary as `Ui.*` components: the same tailor markup,
+so every skin and palette applies. HTML projects never get it. See `react/README.md`.
+
+A React app gets every skin and palette the same way an HTML app does: `tailor apply <dir> --react`
+vendors the CSS (no `tailor.js`), you paste `public/tailor/tailor-head.html` into `index.html`, and
+`<Ui.Pickers size="xs" />` in the footer draws the skin and palette selects and the sun/moon toggle
+(`useTailorTheme()` gives the same state to your own code). For the Primer look, pick the `primer` skin.

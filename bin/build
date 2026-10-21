@@ -107,19 +107,19 @@ const manifest = {
 writeFileSync(join(ROOT, "manifest.json"), JSON.stringify(manifest, null, 2) + "\n");
 log(`manifest.json: ${manifest.vocabulary.tier1.length} tier-1, ${manifest.vocabulary.tier2.length} tier-2, ${skins.length} skins, ${palettes.length} palettes, ${iconSets.length} icon sets`);
 
-// 4b. showcase kit bundle: react/demo/src/kit.tsx → showcase/kit/kit.js + kit.css (the Primer kit rendering of the
-// demos behind the showcase's Kit picker). Needs react/node_modules (bun install in react/); otherwise the committed
+// 4b. showcase kit bundle: react/demo/src/kit.tsx → showcase/kit/kit.js (the tailor-react rendering of the demos
+// behind the showcase's Kit picker; no CSS of its own, the skin and palette style it). Needs react/node_modules (bun install in react/); otherwise the committed
 // bundle is kept. Demo content only — never vendored by `tailor apply`.
 const KIT_DIR = join(SHOWCASE, "kit");
 if (!argv.includes("--no-kit") && existsSync(join(ROOT, "react", "node_modules", "vite"))) {
   const p = Bun.spawnSync(["bun", "x", "vite", "build", "--config", "vite.kit.config.ts"], { cwd: join(ROOT, "react", "demo"), stdout: "pipe", stderr: "pipe" });
   if (p.exitCode !== 0) { console.error(p.stdout.toString() + p.stderr.toString()); throw new Error("showcase kit: vite build failed"); }
   const size = (f) => `${(statSync(join(KIT_DIR, f)).size / 1024).toFixed(0)} KB`;
-  log(`showcase kit: wrote showcase/kit/kit.js (${size("kit.js")}) + kit.css (${size("kit.css")})`);
+  log(`showcase kit: wrote showcase/kit/kit.js (${size("kit.js")})`);
 } else {
   log(`showcase kit: skipped — ${argv.includes("--no-kit") ? "--no-kit" : "react/node_modules missing (run bun install in react/)"}; kept the committed showcase/kit/`);
 }
-const kitBundle = existsSync(join(KIT_DIR, "kit.js")) && existsSync(join(KIT_DIR, "kit.css"));
+const kitBundle = existsSync(join(KIT_DIR, "kit.js"));
 
 // 5. showcase + its sprite: set samples, the mode-toggle icons and every symbol the rendered HTML references
 mkdirSync(SHOWCASE, { recursive: true });

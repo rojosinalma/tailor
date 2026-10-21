@@ -1,24 +1,29 @@
 // Data display: badge, counter, chip, state-label, status-dot, avatar, table,
 // card, empty-state, timeline, relative-time — markup per core/components.json.
 import {
-  createContext, useContext, useEffect, useState,
-  type HTMLAttributes, type ImgHTMLAttributes,
+  Children, createContext, isValidElement, useContext, useEffect, useRef, useState,
+  type ButtonHTMLAttributes, type HTMLAttributes, type ImgHTMLAttributes, type ReactElement,
   type ReactNode, type TdHTMLAttributes, type ThHTMLAttributes, type TimeHTMLAttributes,
 } from "react";
 import { iconSlot } from "./actions.tsx";
 import { cx, dataAttr, type Size, type Tone } from "./util.ts";
+import { mark, useMounted } from "./popup.ts";
 
 /* ── badge / counter / chip ──────────────────────────────────────────────── */
 
-type BadgeProps = HTMLAttributes<HTMLSpanElement> & {
+type BadgeProps = HTMLAttributes<HTMLElement> & {
   tone?: Tone;
   variant?: "tint" | "solid" | "outline";
   size?: "xs" | "sm" | "lg";
+  /** `"button"` renders `<button class="t-badge">` (a clickable badge, e.g. a toggle). */
+  as?: "span" | "button";
+  type?: ButtonHTMLAttributes<HTMLButtonElement>["type"];
 };
 
-export function Badge({ tone, variant, size, className, children, ...rest }: BadgeProps) {
+export function Badge({ tone, variant, size, as = "span", className, children, ...rest }: BadgeProps) {
+  const Tag = as;
   return (
-    <span
+    <Tag
       className={cx("t-badge", className)}
       data-tone={dataAttr(tone)}
       data-variant={dataAttr(variant)}
@@ -26,7 +31,7 @@ export function Badge({ tone, variant, size, className, children, ...rest }: Bad
       {...rest}
     >
       {children}
-    </span>
+    </Tag>
   );
 }
 
@@ -48,7 +53,7 @@ export function Chip({ tone, onRemove, removeLabel, className, children, ...rest
     <span className={cx("t-chip", className)} data-tone={dataAttr(tone)} {...rest}>
       {children}
       {onRemove && (
-        <button className="t-chip-remove" aria-label={removeLabel} onClick={onRemove}>×</button>
+        <button type="button" className="t-chip-remove" aria-label={removeLabel} onClick={onRemove}>×</button>
       )}
     </span>
   );
@@ -131,16 +136,19 @@ function AvatarStack({ className, children, ...rest }: HTMLAttributes<HTMLSpanEl
   return <span className={cx("t-avatar-stack", className)} {...rest}>{children}</span>;
 }
 
-type AvatarRowProps = HTMLAttributes<HTMLSpanElement> & { name: ReactNode; desc?: ReactNode };
+/** Without `name` and `desc` the row is just its children (an avatar + a plain label, as in a table cell). */
+type AvatarRowProps = HTMLAttributes<HTMLSpanElement> & { name?: ReactNode; desc?: ReactNode };
 
 function AvatarRow({ name, desc, className, children, ...rest }: AvatarRowProps) {
   return (
     <span className={cx("t-avatar-row", className)} {...rest}>
       {children}
-      <span>
-        <span className="t-avatar-name">{name}</span>
-        {desc !== undefined && <span className="t-avatar-desc">{desc}</span>}
-      </span>
+      {(name !== undefined || desc !== undefined) && (
+        <span>
+          {name !== undefined && <span className="t-avatar-name">{name}</span>}
+          {desc !== undefined && <span className="t-avatar-desc">{desc}</span>}
+        </span>
+      )}
     </span>
   );
 }
@@ -150,16 +158,44 @@ Avatar.Row = AvatarRow;
 
 /* ── table ───────────────────────────────────────────────────────────────── */
 
+export type SortDir = "ascending" | "descending" | "none";
+type SortState = { key: string; dir: Exclude<SortDir, "none"> };
+type TableCtx = { sort: SortState | null; toggle: (key: string, current: SortDir | undefined) => void; cols: Map<string, number>; sorts: boolean };
+const TableContext = createContext<TableCtx | null>(null);
+
 type TableProps = HTMLAttributes<HTMLTableElement> & {
   variant?: "data" | "log";
   density?: "compact";
+  /**
+   * Client-side sorting (the React Tailor.sortable): a click on a `Table.Th sort` header flips its `aria-sort`
+   * (others go to "none") and `Table.Body` re-orders its rows within each `Table.Group`, by the row's
+   * `data-<key>`, else the cell's `data-sort-value`, else the cell text (numbers numerically).
+   */
+  sortable?: boolean;
+  /** Called after every header click with the new sort (also without `sortable`, to sort data yourself). */
+  onSortChange?: (key: string, dir: Exclude<SortDir, "none">) => void;
 };
 
-export function Table({ variant, density, className, children, ...rest }: TableProps) {
+export function Table({ variant, density, sortable, onSortChange, className, children, ...rest }: TableProps) {
+  const [sort, setSort] = useState<SortState | null>(null);
+  const cols = useRef(new Map<string, number>()).current;
+  const mounted = useMounted();
+  const toggle = (key: string, current: SortDir | undefined) => {
+    const dir = current === "ascending" ? "descending" : "ascending";
+    setSort({ key, dir }); onSortChange?.(key, dir);
+  };
   return (
-    <table className={cx("t-table", className)} data-variant={dataAttr(variant)} data-density={dataAttr(density)} {...rest}>
-      {children}
-    </table>
+    <TableContext value={sortable || onSortChange ? { sort, toggle, cols, sorts: !!sortable } : null}>
+      <table
+        className={cx("t-table", className)}
+        data-variant={dataAttr(variant)}
+        data-density={dataAttr(density)}
+        {...mark(mounted && !!sortable, "sort")}
+        {...rest}
+      >
+        {children}
+      </table>
+    </TableContext>
   );
 }
 
@@ -167,41 +203,98 @@ function TableWrap({ className, children, ...rest }: HTMLAttributes<HTMLDivEleme
   return <div className={cx("t-table-wrap", className)} {...rest}>{children}</div>;
 }
 
-export type SortDir = "ascending" | "descending" | "none";
-
 type ThProps = ThHTMLAttributes<HTMLTableCellElement> & {
   /** Sort key (`data-sort`); renders the header as a sort button. */
   sort?: string;
+  /** Sort state; inside a `<Table sortable>` only the initial one (the table tracks it after a click). */
   dir?: SortDir;
   onSort?: (key: string, dir: Exclude<SortDir, "none">) => void;
   /** Right-aligned numeric column. */
   num?: boolean;
-  /** Icon-only / actions columns. */
+  /** Icon-only / actions / shrink-to-fit columns. */
   icon?: boolean;
   actions?: boolean;
+  shrink?: boolean;
 };
 
-function Th({ sort, dir, onSort, num, icon, actions, className, children, ...rest }: ThProps) {
-  const cls = cx(num && "t-col-num", icon && "t-col-icon", actions && "t-col-actions", className) || undefined;
+function Th({ sort, dir, onSort, num, icon, actions, shrink, className, children, ...rest }: ThProps) {
+  const ctx = useContext(TableContext);
+  const ref = useRef<HTMLTableCellElement>(null);
+  useEffect(() => { if (ctx && sort !== undefined && ref.current) ctx.cols.set(sort, ref.current.cellIndex); });
+  const cls = cx(num && "t-col-num", icon && "t-col-icon", actions && "t-col-actions", shrink && "t-col-shrink", className) || undefined;
   if (sort === undefined) return <th className={cls} {...rest}>{children}</th>;
-  const next: Exclude<SortDir, "none"> = dir === "ascending" ? "descending" : "ascending";
+  const shown: SortDir | undefined = ctx?.sort ? (ctx.sort.key === sort ? ctx.sort.dir : "none") : dir;
+  const next: Exclude<SortDir, "none"> = shown === "ascending" ? "descending" : "ascending";
   return (
-    <th className={cls} aria-sort={dir} data-sort={sort} {...rest}>
-      <button onClick={() => onSort?.(sort, next)}>
+    // the whole header cell sorts (tailor.js listens on the thead), the button gives it keyboard reach
+    <th ref={ref} className={cls} aria-sort={shown} data-sort={sort} onClick={(e) => { ctx?.toggle(sort, shown); onSort?.(sort, next); rest.onClick?.(e); }} {...omit(rest, "onClick")}>
+      <button type="button">
         {children} <span className="t-sort-icon"></span>
       </button>
     </th>
   );
 }
 
+const omit = <T extends object, K extends keyof T>(o: T, k: K): Omit<T, K> => { const c = { ...o }; delete c[k]; return c; };
+
+/** Plain text of a React subtree (strings and numbers), like textContent. */
+function textOf(node: ReactNode): string {
+  if (node === null || node === undefined || typeof node === "boolean") return "";
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(textOf).join("");
+  if (isValidElement(node)) return textOf((node.props as { children?: ReactNode }).children);
+  return "";
+}
+
+/** `<tbody>`; inside a `<Table sortable>` it renders its rows in the current sort order. */
+function TableBody({ children, ...rest }: HTMLAttributes<HTMLTableSectionElement>) {
+  const ctx = useContext(TableContext);
+  // rows keep their current order on ties (tailor.js sorts the rows as they stand in the DOM): remember the order
+  const shown = useRef<Map<unknown, number>>(new Map());
+  let rows: ReactNode = children;
+  if (ctx?.sorts && ctx.sort) {
+    const { key, dir } = ctx.sort, idx = ctx.cols.get(key) ?? -1;
+    type G = { head: ReactNode | null; rows: ReactElement[] };
+    const groups: G[] = []; let cur: G | null = null;
+    for (const r of Children.toArray(children)) {
+      if (isValidElement(r) && r.type === TableGroup) { cur = { head: r, rows: [] }; groups.push(cur); continue; }
+      if (!cur) { cur = { head: null, rows: [] }; groups.push(cur); }
+      if (isValidElement(r)) cur.rows.push(r);
+    }
+    const val = (r: ReactElement): string => {
+      const p = r.props as Record<string, unknown>;
+      if (p[`data-${key}`] !== undefined) return String(p[`data-${key}`]);
+      const cells = Children.toArray(p.children as ReactNode).filter(isValidElement);
+      const c = cells[idx] as ReactElement<Record<string, unknown>> | undefined;
+      if (!c) return "";
+      return c.props["data-sort-value"] !== undefined ? String(c.props["data-sort-value"]) : textOf(c.props.children as ReactNode).trim();
+    };
+    const cmp = (a: ReactElement, b: ReactElement) => {
+      const x = val(a), y = val(b), nx = parseFloat(x), ny = parseFloat(y);
+      const c = !isNaN(nx) && !isNaN(ny) ? nx - ny : x.localeCompare(y, undefined, { numeric: true });
+      return dir === "ascending" ? c : -c;
+    };
+    const prev = shown.current, at = (r: ReactElement) => prev.get(r.key) ?? Infinity;
+    rows = groups.flatMap((g) => [g.head, ...[...g.rows].sort((a, b) => at(a) - at(b)).sort(cmp)]);
+  }
+  // keys as Children.toArray gives them (the sort works on that form; rows without a sort are mapped the same way)
+  const next = new Map<unknown, number>();
+  (Array.isArray(rows) && ctx?.sort ? rows : Children.toArray(children)).forEach((r, i) => { if (isValidElement(r)) next.set(r.key, i); });
+  useEffect(() => { shown.current = next; });
+  return <tbody {...rest}>{rows}</tbody>;
+}
+
 type TdProps = TdHTMLAttributes<HTMLTableCellElement> & {
   num?: boolean;
   icon?: boolean;
   actions?: boolean;
+  shrink?: boolean;
+  /** Sort value of the cell (`data-sort-value`) when its text does not sort right. */
+  "data-sort-value"?: string | number;
 };
 
-function Td({ num, icon, actions, className, children, ...rest }: TdProps) {
-  const cls = cx(num && "t-col-num", icon && "t-col-icon", actions && "t-col-actions", className) || undefined;
+function Td({ num, icon, actions, shrink, className, children, ...rest }: TdProps) {
+  const cls = cx(num && "t-col-num", icon && "t-col-icon", actions && "t-col-actions", shrink && "t-col-shrink", className) || undefined;
   return <td className={cls} {...rest}>{children}</td>;
 }
 
@@ -216,6 +309,7 @@ function TableGroup({ colSpan, className, children, ...rest }: TableGroupProps) 
 }
 
 Table.Wrap = TableWrap;
+Table.Body = TableBody;
 Table.Th = Th;
 Table.Td = Td;
 Table.Group = TableGroup;
@@ -303,15 +397,16 @@ export function Facts({ className, children, ...rest }: HTMLAttributes<HTMLDList
   return <dl className={cx("t-facts", className)} {...rest}>{children}</dl>;
 }
 
-/** Stat-card parts (card `data-variant="stat"`). */
-export function StatLabel({ className, children, ...rest }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cx("t-stat-label", className)} {...rest}>{children}</div>;
+/** Stat-card parts (card `data-variant="stat"`); `as="span"` for the inline label/value row. */
+type StatPartProps = HTMLAttributes<HTMLElement> & { as?: "div" | "span" };
+export function StatLabel({ as: Tag = "div", className, children, ...rest }: StatPartProps) {
+  return <Tag className={cx("t-stat-label", className)} {...rest}>{children}</Tag>;
 }
-export function StatValue({ className, children, ...rest }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cx("t-stat-value", className)} {...rest}>{children}</div>;
+export function StatValue({ as: Tag = "div", className, children, ...rest }: StatPartProps) {
+  return <Tag className={cx("t-stat-value", className)} {...rest}>{children}</Tag>;
 }
-export function StatSub({ className, children, ...rest }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cx("t-stat-sub", className)} {...rest}>{children}</div>;
+export function StatSub({ as: Tag = "div", className, children, ...rest }: StatPartProps) {
+  return <Tag className={cx("t-stat-sub", className)} {...rest}>{children}</Tag>;
 }
 type StatBoxProps = HTMLAttributes<HTMLDivElement> & { empty?: boolean };
 export function StatBox({ empty, className, children, ...rest }: StatBoxProps) {
@@ -323,7 +418,8 @@ export function StatBox({ empty, className, children, ...rest }: StatBoxProps) {
 type EmptyStateProps = HTMLAttributes<HTMLDivElement> & {
   /** A string is a sprite icon name; a node renders as-is. */
   icon?: ReactNode;
-  title: ReactNode;
+  /** Heading (`.t-empty-title`); a compact (`size="sm"`) state often has none. */
+  title?: ReactNode;
   actions?: ReactNode;
   size?: "sm";
 };
@@ -332,7 +428,7 @@ export function EmptyState({ icon, title, actions, size, className, children, ..
   return (
     <div className={cx("t-empty", className)} data-size={dataAttr(size)} {...rest}>
       {iconSlot(icon, "t-empty-icon")}
-      <h3 className="t-empty-title">{title}</h3>
+      {title !== undefined && <h3 className="t-empty-title">{title}</h3>}
       {children}
       {actions !== undefined && <div className="t-empty-actions">{actions}</div>}
     </div>
@@ -378,41 +474,62 @@ Timeline.Card = TimelineCard;
 
 /* ── relative time ───────────────────────────────────────────────────────── */
 
-export function relativeTime(date: Date, now = new Date()): string {
-  const s = Math.round((now.getTime() - date.getTime()) / 1000);
-  const abs = Math.abs(s);
-  const fmt = (n: number, unit: string) => (s >= 0 ? `${n} ${unit}${n === 1 ? "" : "s"} ago` : `in ${n} ${unit}${n === 1 ? "" : "s"}`);
+/**
+ * The text Tailor.relativeTime writes: "just now", "3 min ago", "2 h ago", "yesterday", "4 d ago", "in 1 h",
+ * "tomorrow", then a short date ("Sep 21", with the year when it differs). Same strings as tailor.js.
+ */
+export function relativeTime(date: Date | string | number, now: Date | number = Date.now()): string {
+  const d = date instanceof Date ? date : new Date(date);
+  if (isNaN(d.getTime())) return "";
+  const nowMs = typeof now === "number" ? now : now.getTime();
+  const diff = (d.getTime() - nowMs) / 1000, abs = Math.abs(diff), past = diff < 0;
+  const fmt = (n: number, u: string) => (past ? `${n} ${u} ago` : `in ${n} ${u}`);
   if (abs < 45) return "just now";
   if (abs < 3600) return fmt(Math.round(abs / 60), "min");
-  if (abs < 86400) return fmt(Math.round(abs / 3600), "hour");
-  if (abs < 30 * 86400) return fmt(Math.round(abs / 86400), "day");
-  return date.toLocaleDateString();
+  if (abs < 86400) return fmt(Math.round(abs / 3600), "h");
+  const days = Math.round(abs / 86400);
+  if (days === 1) return past ? "yesterday" : "tomorrow";
+  if (days < 7) return fmt(days, "d");
+  const sameYear = d.getFullYear() === new Date(nowMs).getFullYear();
+  return d.toLocaleDateString(undefined, sameYear ? { day: "numeric", month: "short" } : { day: "numeric", month: "short", year: "numeric" });
 }
 
-type RelativeTimeProps = TimeHTMLAttributes<HTMLTimeElement> & {
+type RelativeTimeProps = Omit<TimeHTMLAttributes<HTMLTimeElement>, "dateTime"> & {
   /** ISO 8601 string or Date. */
-  datetime: string | Date;
+  datetime?: string | Date;
+  /** Seconds before now (`data-ago`; negative = in the future); the time is fixed when the component mounts. */
+  ago?: number;
+  /** Tooltip; default the absolute local time (`toLocaleString()`), as tailor.js sets it. */
+  tip?: string;
 };
 
 /**
- * `<time class="t-time" data-relative>` — children are the SSR/static fallback
- * text (an absolute date); the relative text is computed after mount and
- * refreshed every minute (the React reimplementation of Tailor.times).
+ * `<time class="t-time" data-relative>` — the React Tailor.times. Children are the server/static fallback text
+ * (an absolute date); after mount the text becomes `relativeTime()` (refreshed every minute) and `data-tip`
+ * the absolute local time. With `ago` the `datetime` is filled in at mount, like tailor.js does for `data-ago`.
  */
-export function RelativeTime({ datetime, className, children, ...rest }: RelativeTimeProps) {
-  const date = typeof datetime === "string" ? new Date(datetime) : datetime;
-  const iso = typeof datetime === "string" ? datetime : datetime.toISOString();
-  const [text, setText] = useState<string | null>(null);
+export function RelativeTime({ datetime, ago, tip, className, children, ...rest }: RelativeTimeProps) {
+  const [now, setNow] = useState<number | null>(null);
+  const [base, setBase] = useState<Date | null>(null);
   useEffect(() => {
-    const update = () => setText(relativeTime(date));
-    update();
-    const t = setInterval(update, 60_000);
+    setBase(ago !== undefined && datetime === undefined ? new Date(Date.now() - ago * 1000) : null);
+    setNow(Date.now());
+    const t = setInterval(() => setNow(Date.now()), 60_000);
     return () => clearInterval(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [iso]);
+  }, [ago, datetime instanceof Date ? datetime.getTime() : datetime]);
+  const date = base ?? (datetime === undefined ? null : typeof datetime === "string" ? new Date(datetime) : datetime);
+  const iso = datetime === undefined ? (base ? base.toISOString() : "") : typeof datetime === "string" ? datetime : datetime.toISOString();
+  const live = now !== null && date !== null && !isNaN(date.getTime());
   return (
-    <time className={cx("t-time", className)} data-relative="" dateTime={iso} {...rest}>
-      {text ?? children}
+    <time
+      className={cx("t-time", className)}
+      data-relative=""
+      dateTime={iso}
+      data-ago={ago !== undefined ? String(ago) : undefined}
+      data-tip={live ? tip ?? date.toLocaleString() : tip}
+      {...rest}
+    >
+      {live ? relativeTime(date, now) : children}
     </time>
   );
 }

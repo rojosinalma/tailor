@@ -10,14 +10,14 @@
   <link rel="stylesheet" href="../core/layout.css">
   <script>
     /* Pre-paint (after the core links so skin + palette cascade over tokens.css): ?skin= ?palette= ?mode= → localStorage → defaults; sets data-* on <html> and the two <link>s before first paint. */
-    (function(){var C={"project":"tailor-showcase","icons":"icons.svg","skins":["none","bootstrap","daisyui","govuk","luz","pico","simple","tufte","webtui"],"palettes":["ayu","catppuccin","dracula","everforest","flexoki","gruvbox","kanagawa","modusvivendi","nightfox","nightowl","nord","onedark","oxocarbon","poimandres","rosepine","selenized","solarized","synthwave84","tokyonight","vitesse","zenburn"],"modes":{"ayu":["dark","light"],"catppuccin":["dark","light"],"dracula":["dark","light"],"everforest":["dark","light"],"flexoki":["dark","light"],"gruvbox":["dark","light"],"kanagawa":["dark","light"],"modusvivendi":["dark","light"],"nightfox":["dark","light"],"nightowl":["dark","light"],"nord":["dark","light"],"onedark":["dark","light"],"oxocarbon":["dark","light"],"poimandres":["dark","light"],"rosepine":["dark","light"],"selenized":["dark","light"],"solarized":["dark","light"],"synthwave84":["dark","light"],"tokyonight":["dark","light"],"vitesse":["dark","light"],"zenburn":["dark","light"]},"kits":["tailor","primer"],"kit":{"js":"kit/kit.js","css":"kit/kit.css","themes":"../react/adapters/primer/themes/"},"labels":{"skins":{"bootstrap":"Bootstrap 5 (Dracula look)","daisyui":"daisyUI 5","govuk":"GOV.UK Frontend (translated)","luz":"luz (d00m-gui)","pico":"Pico CSS","simple":"Simple.css (translated)","tufte":"Tufte CSS (translated)","webtui":"WebTUI (terminal look)"},"palettes":{"ayu":"Ayu","catppuccin":"Catppuccin","dracula":"Dracula","everforest":"Everforest","flexoki":"Flexoki","gruvbox":"Gruvbox ·","kanagawa":"Kanagawa","modusvivendi":"Modus ·","nightfox":"Nightfox","nightowl":"Night Owl","nord":"Nord","onedark":"Atom One","oxocarbon":"Oxocarbon","poimandres":"Poimandres","rosepine":"Rosé Pine","selenized":"Selenized","solarized":"Solarized","synthwave84":"SynthWave '84","tokyonight":"Tokyo Night","vitesse":"Vitesse","zenburn":"Zenburn ·"},"kits":{"tailor":"tailor markup","primer":"Primer kit (React)"}},"defaults":{"skin":"bootstrap","palette":"dracula","mode":"auto","kit":"tailor"}};var P=C.project,q=new URLSearchParams(location.search);
+    (function(){var C={"project":"tailor-showcase","icons":"icons.svg","skins":["none","bootstrap","daisyui","govuk","luz","pico","primer","simple","tufte","webtui"],"palettes":["ayu","catppuccin","dracula","everforest","flexoki","gruvbox","kanagawa","modusvivendi","nightfox","nightowl","nord","onedark","oxocarbon","poimandres","rosepine","selenized","solarized","synthwave84","tokyonight","vitesse","zenburn"],"modes":{"ayu":["dark","light"],"catppuccin":["dark","light"],"dracula":["dark","light"],"everforest":["dark","light"],"flexoki":["dark","light"],"gruvbox":["dark","light"],"kanagawa":["dark","light"],"modusvivendi":["dark","light"],"nightfox":["dark","light"],"nightowl":["dark","light"],"nord":["dark","light"],"onedark":["dark","light"],"oxocarbon":["dark","light"],"poimandres":["dark","light"],"rosepine":["dark","light"],"selenized":["dark","light"],"solarized":["dark","light"],"synthwave84":["dark","light"],"tokyonight":["dark","light"],"vitesse":["dark","light"],"zenburn":["dark","light"]},"kits":["tailor","react"],"kit":{"js":"kit/kit.js"},"labels":{"skins":{"bootstrap":"Bootstrap 5 (Dracula look)","daisyui":"daisyUI 5","govuk":"GOV.UK Frontend (translated)","luz":"luz (d00m-gui)","pico":"Pico CSS","primer":"Primer","simple":"Simple.css (translated)","tufte":"Tufte CSS (translated)","webtui":"WebTUI (terminal look)"},"palettes":{"ayu":"Ayu","catppuccin":"Catppuccin","dracula":"Dracula","everforest":"Everforest","flexoki":"Flexoki","gruvbox":"Gruvbox ·","kanagawa":"Kanagawa","modusvivendi":"Modus ·","nightfox":"Nightfox","nightowl":"Night Owl","nord":"Nord","onedark":"Atom One","oxocarbon":"Oxocarbon","poimandres":"Poimandres","rosepine":"Rosé Pine","selenized":"Selenized","solarized":"Solarized","synthwave84":"SynthWave '84","tokyonight":"Tokyo Night","vitesse":"Vitesse","zenburn":"Zenburn ·"},"kits":{"tailor":"HTML","react":"React"}},"defaults":{"skin":"bootstrap","palette":"dracula","mode":"auto","kit":"tailor"}};var P=C.project,q=new URLSearchParams(location.search);
     function g(k){var v=q.get(k);try{return v||localStorage.getItem(P+'.'+k)||C.defaults[k]}catch(e){return v||C.defaults[k]}}
     var h=document.documentElement,s=g('skin'),p=g('palette'),m=g('mode'),k=g('kit');
     if(C.skins.indexOf(s)<0)s=C.defaults.skin;if(C.palettes.indexOf(p)<0)p=C.defaults.palette;if(C.kits.indexOf(k)<0)k=C.defaults.kit;h.dataset.kit=k;
     if(m==='auto')m=matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';
     var modes=C.modes[p]||['dark'];if(modes.indexOf(m)<0)m=modes[0];
     h.dataset.skin=s;h.dataset.palette=p;h.dataset.mode=m;window.TAILOR_SHOWCASE=C;
-    var ns=(s==='none'||k==='primer');document.write('<link id="t-skin" rel="stylesheet" data-base="../skins/" href="'+(ns?'':'../skins/'+s+'/skin.css')+'"'+(ns?' disabled':'')+'>');
+    var ns=s==='none';document.write('<link id="t-skin" rel="stylesheet" data-base="../skins/" href="'+(ns?'':'../skins/'+s+'/skin.css')+'"'+(ns?' disabled':'')+'>');
     document.write('<link id="t-palette" rel="stylesheet" data-base="../palettes/" href="../palettes/'+p+'.css">');})();
   </script>
   <link rel="stylesheet" href="showcase.css">
@@ -26,7 +26,7 @@
 <div class="t-shell">
   <header class="t-navbar t-shell-nav">
     <a class="t-navbar-brand" href="./"><svg class="t-icon" aria-hidden="true"><use href="icons.svg#bi-scissors"/></svg>tailor</a>
-    <span class="t-badge" data-tone="accent">v0.9.2</span>
+    <span class="t-badge" data-tone="accent">v0.10.0</span>
     <span class="t-badge" data-tone="info">43 tier-1 · 16 tier-2</span>
     <span class="sc-only-bar t-small t-muted" hidden>Showing one section · <a href="./">all sections</a></span>
   </header>
@@ -97,7 +97,7 @@
   <main class="t-shell-main t-page">
     <header class="t-page-header">
       <h1 class="t-page-title">tailor showcase</h1>
-      <span class="t-page-lead">every tier-1 component once, in tailor markup · skin and palette swap underneath · the Kit picker renders the same demos through the React Primer kit</span>
+      <span class="t-page-lead">every tier-1 component once, in tailor markup · skin and palette swap underneath · the Kit picker renders the same demos in HTML or in React</span>
       <div class="t-page-actions"><span class="t-small t-muted" id="sc-state"></span></div>
     </header>
     <div class="t-alert" data-tone="info" role="status" id="sc-core-note"><svg class="t-icon t-alert-icon" aria-hidden="true"><use href="icons.svg#bi-info-circle"/></svg><div class="t-alert-body"><b>Core only.</b> No skin is applied: what you see is <code>core/base.css</code> — the functional baseline every skin builds on. Pick a skin above once one exists.</div></div>
@@ -180,7 +180,7 @@
           <p class="t-muted t-small sc-desc">32px fixed footer: repo icon centred, version + theme/palette toggle right.</p>
           <div class="sc-demo" data-component-id="footer"><footer class='t-footer'>
   <a class='t-footer-repo' href='#' data-tip='Repository' aria-label='Repository'><svg class='t-icon' aria-hidden='true'><use href='icons.svg#bi-github'/></svg></a>
-  <div class='t-footer-end'><div class='t-pickers'><button type='button' class='t-btn' data-variant='ghost' data-size='sm' data-icon='only' aria-label='Switch to light mode' data-demo='static'><svg class='t-icon' aria-hidden='true'><use href='icons.svg#bi-sun'/></svg></button></div><span class='t-footer-version'>tailor 0.1.0</span></div>
+  <div class='t-footer-end'><div data-tailor-pickers='mode'></div><span class='t-footer-version'>v0.9.2</span></div>
 </footer></div>
           <details class="sc-markup"><summary class="t-small">Markup</summary><pre class="t-code-pre"><code>&lt;footer class=&quot;t-footer&quot;&gt;
   &lt;a class=&quot;t-footer-repo&quot; href=&quot;https://github.com/…&quot; data-tip=&quot;Repository&quot; aria-label=&quot;Repository&quot;&gt;&lt;svg class=&quot;t-icon&quot; aria-hidden=&quot;true&quot;&gt;&lt;use href=&quot;/tailor/icons.svg#bi-github&quot;/&gt;&lt;/svg&gt;&lt;/a&gt;
@@ -796,7 +796,7 @@
     </div>
   </main>
   <footer class="t-footer t-shell-foot">
-    <div class="t-footer-end"><div data-tailor-pickers></div><span class="t-footer-version">tailor 0.9.2 · 8 skins · 21 palettes</span></div>
+    <div class="t-footer-end"><div data-tailor-pickers></div><span class="t-footer-version">tailor 0.10.0 · 9 skins · 21 palettes</span></div>
   </footer>
 </div>
 <div class="t-toasts" id="t-toasts" aria-live="polite" aria-atomic="false"></div>

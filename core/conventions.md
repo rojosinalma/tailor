@@ -208,11 +208,12 @@ it; they should not need to undo it.
 - The pre-paint snippet from `docs/SDD.md § Switcher` goes in `<head>` right after the three core `<link>`s (it writes the skin and palette links there, so they cascade over `tokens.css`).
 - Palette and skin are app settings (settings table); localStorage is only the flash cache.
 - **The switcher is one element**: `<div data-tailor-pickers></div>`. `Tailor.theme` renders into it, in this
-  order: the skin and palette `<select>`s (only when the project vendors more than one), [a kit select slot],
-  then the **sun/moon mode toggle** last (`.t-btn[data-icon=only]`, icons `bi:sun`/`bi:moon-stars` from the
+  order: [a kit select slot first, when there is a kit choice], the skin and palette `<select>`s (only when the
+  project vendors more than one), then the **sun/moon mode toggle** last (`.t-btn[data-icon=only]`, icons `bi:sun`/`bi:moon-stars` from the
   sprite, disabled when the palette has one mode). Options are **sorted alphabetically by name** from the vendored
   config — never hand-write option lists, and no "Auto" option: `auto` exists only as the first-visit default
   (follows the OS until the user toggles). `data-tailor-pickers="mode"` / `"skin palette"` renders a subset.
+  React pages render the same markup with `<Ui.Pickers>` from tailor-react (no `tailor.js`).
   Inside a `.t-footer` the controls render `data-size="xs"` (the footer is `--t-footer-h` tall), `sm` elsewhere.
   **Placement: the pickers element is the first (leftmost) item of `.t-footer-end`, so the mode toggle sits
   rightmost inside it; the skin/palette selects live on the settings page when the project has one, otherwise in

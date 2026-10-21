@@ -103,7 +103,9 @@ function resolveIcons(spec) {
   return refs;
 }
 
-function headSnippet(project, cfg) {
+// `react`: the consumer renders with tailor-react (no tailor.js vendored) — the snippet sets window.TAILOR_CONFIG and
+// writes the links before first paint; useTailorTheme / <Ui.Pickers> take over from there.
+function headSnippet(project, cfg, react = false) {
   const base = "/tailor/";
   const C = JSON.stringify({ project, base, ...cfg });
   return `${header("head snippet", "html")}<!-- Paste into <head>. Load order (core/conventions.md \u00a71): tokens \u2192 base \u2192 layout \u2192 pre-paint
@@ -122,8 +124,8 @@ h.dataset.skin=s;h.dataset.palette=p;h.dataset.mode=m;window.TAILOR_CONFIG=C;
 document.write('<link id="t-skin" rel="stylesheet" data-base="'+C.base+'skins/" href="'+(s==='none'?'':C.base+'skins/'+s+'/skin.css')+'"'+(s==='none'?' disabled':'')+'>');
 document.write('<link id="t-palette" rel="stylesheet" data-base="'+C.base+'palettes/" href="'+C.base+'palettes/'+p+'.css">');})();
 </script>
-<script src="${base}tailor.js" defer></script>
-<script>document.addEventListener('DOMContentLoaded',function(){if(window.Tailor)Tailor.theme.init(window.TAILOR_CONFIG)});</script>
+${react ? `<!-- React consumer: no tailor.js \u2014 useTailorTheme() / <Ui.Pickers> from tailor-react read window.TAILOR_CONFIG. -->` : `<script src="${base}tailor.js" defer></script>
+<script>document.addEventListener('DOMContentLoaded',function(){if(window.Tailor)Tailor.theme.init(window.TAILOR_CONFIG)});</script>`}
 `;
 }
 
@@ -152,7 +154,7 @@ function fileSet({ project, skins, skin, palettes, icons = [], mode, react }) {
   if (!iconsInstalled()) die(iconsMissingMessage());
   files["icons.svg"] = renderSprite(sprite, { header: header(`icons (${sprite.length})`, "svg") });
   const cfg = { skins: [...list, "none"], palettes, modes, labels, defaults: { skin: list[0], palette: palettes[0], mode } };
-  files["tailor-head.html"] = headSnippet(project, cfg);
+  files["tailor-head.html"] = headSnippet(project, cfg, react);
   return files;
 }
 

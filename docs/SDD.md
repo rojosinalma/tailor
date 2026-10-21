@@ -1,7 +1,7 @@
 # tailor — software design document
 
-Status: 0.1.0 — core + 8 skins (bootstrap, pico, simple, webtui, daisyui, luz, tufte, govuk;
-all 43/43 tier-1) × 21 palettes, React adapter (`react/`, CSS path + Primer kit), `tailor` CLI,
+Status: 0.1.0 — core + 9 skins (bootstrap, pico, simple, webtui, daisyui, luz, tufte, govuk, primer;
+all 43/43 tier-1) × 21 palettes, React adapter (`react/`, tailor markup + theme switcher), `tailor` CLI,
 static showcase. Contract changes are recorded in `CHANGELOG.md` and §3 of this document.
 
 ## 1. Purpose
@@ -82,8 +82,9 @@ with a `light` block, i.e. all 21 — a `light_<id>.css` from the stock `light.c
 surfaces/text map exactly onto the stock surfaces/text, every `hue_ranges` target is swapped for the light
 counterpart of the same role, the link/primary-button tokens come from the block's `link`/`accent`
 (`counterpartPrimerPalette` in `bin/lib/primer.js`; hand-tuning stays in the palette's own mode). A generated
-`themes/index.ts` imports all 42 and exports the theme list for `ThemeProvider`. Primer is the kit behind
-the React adapter, so these files are a tailor artefact like `palettes/<id>.css`: `bin/build` regenerates
+`themes/index.ts` imports all 42 and exports the theme list for `ThemeProvider`. They serve apps built on
+Primer React (tailor-react itself does not use Primer since 0.10.0) and are a tailor artefact like
+`palettes/<id>.css`: `bin/build` regenerates
 them (skipped with a note when `react/` has no `node_modules`), `bin/verify` fails on a stale or stray file,
 `manifest.json` lists each palette's `primer_theme` (own mode) and `primer_themes` (per mode). Other frameworks' themes are not
 tailor's: `tailor gen <system> <palette>` without `--target` stays a passthrough to an external generator.
@@ -103,10 +104,17 @@ disabled when the palette offers one mode) plus skin/palette selects (options so
 fills empty `[data-tailor-picker="skin|palette|mode"]` selects the same way, wires them, persists, emits
 `t:theme`. There is no "Auto" choice in the UI: `auto` is only a default (first visit follows
 `prefers-color-scheme` until the user toggles). Query params win for the first paint only.
-Placement convention: the pickers element first in `.t-footer-end`, rendering skin, palette, [kit], then the mode
+Placement convention: the pickers element first in `.t-footer-end`, rendering [kit,] skin, palette, then the mode
 toggle last (`xs` controls inside a footer); selects on the settings page when there is one,
 else in the footer element (conventions §8). `.t-shell` is single-column unless a `.t-shell-side` child exists
 (`:has()`).
+React pages (`tailor apply --react`: no `tailor.js`; the head snippet keeps the pre-paint IIFE and
+`window.TAILOR_CONFIG` but drops the `tailor.js` script and the `init` call) use the React twin in
+`react/src/theme.tsx`: `useTailorTheme(config = window.TAILOR_CONFIG)` with the same resolution, whitelists,
+`auto` handling, mode clamp, `<html>` attributes, link re-pointing, localStorage keys and `t:theme` event, one
+state per page (module store + `useSyncExternalStore`, SSR-safe). `<Ui.Pickers parts size>` renders the same
+markup as `renderPickers` + `paintPickers`, selects drawn like `Tailor.selects`. When `window.Tailor.theme`
+exists on the page, the hook delegates `set()` to it and follows its `t:theme`, so mixed pages keep one state.
 
 ### 2.5 Build & manifest (`bin/build`)
 
@@ -136,16 +144,18 @@ Exit 0 with zero skins (core-only mode), so the core can be verified before any 
 Generated static page (`bin/lib/showcase.js`): app shell, sidebar of groups → components (scrollspy),
 one `<section class="t-card sc-component" id="<component id>">` per tier-1 component with
 description, live `demo`, collapsible canonical markup. Pickers for skin/palette/kit/mode; `?only=<id>`
-isolates one section; `?open=dialog|confirm`. **Kit picker** (`?kit=tailor|primer`, `Tailor.theme` `kits`):
-`primer` lazy-loads `showcase/kit/kit.js` + `kit.css` — a Vite bundle `bin/build` makes from
-`react/demo/src/kit.tsx` (`react/demo/vite.kit.config.ts`; kept as committed when `react/node_modules` is
-missing) — which mounts one React root and portals a Primer-kit island into every `.sc-demo[data-component-id]`
-that has one (`react/demo/src/islands.tsx`: the parity fixtures over the Primer `Ui` + stateful overrides, so
-both kits show the same content; tier-2 demos stay HTML). Under a kit the skin select is disabled and the
-skin `<link>` emptied (Primer carries its own look); palette × mode pick
-`../react/adapters/primer/themes/<mode>_<palette>.css` in a `<link id="t-kit-theme">` plus the `data-color-mode`
-/ `data-*-theme` attributes on `<html>`. Switching back unmounts, restores the saved demo HTML and re-runs
-`Tailor.upgrade` on it. Chrome classes are `sc-*`; demos use vocabulary
+isolates one section; `?open=dialog|confirm`. **Kit picker** (`?kit=tailor|react`, `Tailor.theme` `kits`,
+first in the footer): `tailor` = "HTML" (the demos wired by `tailor.js`), `react` = "React". `react` lazy-loads
+`showcase/kit/kit.js` — a Vite bundle `bin/build` makes from `react/demo/src/kit.tsx`
+(`react/demo/vite.kit.config.ts`; kept as committed when `react/node_modules` is missing; no CSS of its own) —
+which mounts one React root and portals an island into every `.sc-demo[data-component-id]` that has one
+(`react/demo/src/islands.tsx`: each tier-1 `demo` of `core/components.json` rebuilt through `Ui.*` only, with the
+same variants, texts and `data-demo` interactions; after mount the DOM equals the upgraded HTML; tier-2 demos
+stay HTML). Same markup, so the skin and palette stay on and every skin is selectable. The footer pickers
+become `Ui.Pickers`: the HTML skin/palette/mode controls are hidden and the React ones portalled after the Kit
+select, which stays HTML (kit, skin, palette, mode order). The bundle's theme store delegates to
+`Tailor.theme`, so both pickers stay in one state. Switching back unmounts and moves the original demo and
+picker nodes back (not re-parsed), so their `tailor.js` listeners survive. Chrome classes are `sc-*`; demos use vocabulary
 classes only, so a skin is judged on the real vocabulary. All links are relative (`../core`,
 `../skins`, `../palettes`), so any static server at the repo root serves it at `/showcase/`.
 
@@ -170,7 +180,7 @@ tailor ships as plain files: no runtime framework, no npm package, one canonical
 palette, one shared core (no per-project forks), skins that never change markup, and consumers
 that colour only through `--t-*` tokens. The rule covers what `tailor apply`/`sync` vendor to consumers,
 not the build tooling (Bun, Vite) or the showcase: the showcase's kit bundle is demo content, and the
-React adapter + Primer kit are consumed as source from `react/` by React projects only.
+React adapter is consumed as source from `react/` by React projects only.
 
 ### Design decisions
 
@@ -230,21 +240,36 @@ React adapter + Primer kit are consumed as source from `react/` by React project
   never changes the exit code and also shows with `-n`. Why: a sync is followed by a commit of the vendored
   files, and a vendored file once carried a name that had no place in a public repo. The visibility call only
   runs for repos without the list, so a fully set-up `--all` makes no network call. Supersedes nothing.
+- **2026-10-21 — Skins are design systems; React is an optional layer; Primer is a skin.** What: every
+  project, React or not, switches every skin × palette × mode. A skin is one whole design system, never a
+  sub-theme of another. HTML projects get no React code; React projects vendor the same CSS with
+  `tailor apply --react` (no `tailor.js`, head snippet without it) and switch with `useTailorTheme` /
+  `Ui.Pickers` from `tailor-react/theme` (§2.4). The Primer kit adapter (`tailor-react/primer`, `@primer/react`)
+  is removed: tailor-react is the one React kit. `skins/primer` renders the Primer look in tailor markup, so
+  Primer is one design system among the others. The Primer Primitives themes per palette stay for apps built
+  on Primer React. The showcase Kit picker is `tailor` (HTML) | `react`, first in the footer (kit, skin,
+  palette, mode). Why: React apps had every skin and palette in CSS but no switcher; a second React kit with
+  its own look split the React path and could never take the skins. Rejected: per-skin overlays on the Primer
+  kit (Primer would carry sub-themes) and a manifest field for them. Supersedes the 2026-10-20 Kit picker
+  (`tailor` | `primer`) and the 2026-10-20 footer order (skin → palette → kit → mode).
 
 ## 5. Delivered (0.1.0)
 
 - Skins: bootstrap, pico, simple, webtui, daisyui,
-  luz, tufte, govuk — each 43/43 tier-1, translate-not-vendor, `--t-*` only, verified by
+  luz, tufte, govuk, primer (0.10.0) — each 43/43 tier-1, translate-not-vendor, `--t-*` only, verified by
   `bin/verify` + showcase screenshots.
-- `react/`: `Ui.*` components with markup parity (`react/bin/check-parity`, 43/43), Primer kit
-  adapter (29 mapped, rest fall back to the CSS path).
+- `react/`: `Ui.*` components with markup parity (`react/bin/check-parity`, 43/43); the Primer kit
+  adapter shipped up to 0.9.x and was removed in 0.10.0.
 - `bin/tailor` CLI: `apply|sync|list|gen`, multi-skin vendoring, consumer registry, managed headers.
 - Primer themes per palette (`tailor gen --target primer`, `react/adapters/primer/themes/`), 21 × dark + light.
-- Showcase Kit picker: the same demos through the Primer kit (`showcase/kit/`, built by `bin/build`).
+- Showcase Kit picker: the same demos in HTML or React (`showcase/kit/`, built by `bin/build`).
+- 0.10.0: React theme switcher (`tailor-react/theme`: `useTailorTheme`, `Ui.Pickers`), `tailor apply --react`
+  head snippet without `tailor.js`, showcase `react` kit, `skins/primer`; Primer kit adapter removed.
 
 ## 6. Open
 
 - CI: `.github/workflows/run-tests.yml` runs `bin/build` + `bin/verify` and the React typecheck on
   every push and pull request.
-- More kit adapters in `react/` (only Primer so far); more skins, palettes and icon sets per
-  `CONTRIBUTING.md`.
+- More skins, palettes and icon sets per `CONTRIBUTING.md`.
+- Astro as the bridge between the HTML and React paths (one component source rendering static tailor markup and
+  React islands); the showcase would be the first candidate. Parked 2026-10-21, not evaluated yet.

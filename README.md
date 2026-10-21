@@ -7,10 +7,10 @@
 *Same markup, four skins. Full page: [docs/showcase-full.png](docs/showcase-full.png).*
 
 Write your UI once, in semantic HTML with `t-*` classes and `data-*` attributes. Which design
-system it looks like (Bootstrap, Pico, daisyUI, WebTUI, …) is a **skin** — one CSS file. Which
+system it looks like (Bootstrap, Primer, Pico, daisyUI, WebTUI, …) is a **skin** — one CSS file. Which
 colours it wears is a **palette** — one generated CSS file. Both swap at runtime; the markup never
 changes. No framework, no build step, no npm for consumers: plain CSS plus ~300 lines of vanilla
-JS, 8 skins × 21 palettes, every combination verified for coverage and contrast, three adopted
+JS, 9 skins × 21 palettes, every combination verified for coverage and contrast, three adopted
 icon sets delivered as a per-project SVG sprite, and a machine-readable `manifest.json` describing
 the whole system.
 
@@ -35,9 +35,9 @@ bin/build                        # palettes/*.css, manifest.json, showcase/index
 bunx serve .                     # or: python3 -m http.server
 ```
 
-Open `/showcase/`: every component, with the skin/palette switcher, the Kit picker (tailor markup or the
-same demos through the React Primer kit) and the sun/moon toggle in the footer;
-`?skin=pico&palette=nord&mode=dark` (`&kit=primer`) deep-links a combination. `bin/verify` runs the checks.
+Open `/showcase/`: every component, with the Kit picker (the same demos in HTML or in React), the
+skin/palette switcher and the sun/moon toggle in the footer;
+`?skin=pico&palette=nord&mode=dark` (`&kit=react`) deep-links a combination. `bin/verify` runs the checks.
 
 To use tailor in your own project, let `bin/tailor apply <project-dir>` vendor the core, every skin and every
 palette (all 21 come in dark and light) into your static assets. Load order, the head snippet and

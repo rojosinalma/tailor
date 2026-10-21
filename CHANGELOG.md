@@ -2,6 +2,66 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
+## [0.10.0] — 2026-10-21
+
+### Added
+- **React theme switcher** (`tailor-react/theme`, also exported from `tailor-react`): `useTailorTheme()` and
+  `<Ui.Pickers>` switch every skin, palette and mode in a React app without `tailor.js`. Same query params,
+  `localStorage` keys, mode clamp, `<html>` attributes, link re-pointing and `t:theme` event as `Tailor.theme`;
+  one state per page, SSR-safe; on a page that also loads `tailor.js` both stay in one state. The pickers render
+  the `renderPickers` markup with drawn selects.
+- **`primer` skin**: the Primer look (system font, 14px text, 6px radius, 32px controls, UnderlineNav tabs,
+  Label/Counter pills, Box cards, ActionList menus) in tailor markup, 43/43 tier-1, every palette in both modes.
+- Showcase Kit picker: **HTML** | **React**. React renders the demos through tailor-react with every skin
+  selectable, and the footer pickers become `Ui.Pickers`.
+- `tailor sync` prints a `warning` line for a consumer whose repo is public (or of unknown visibility) and keeps
+  no `.git/info/leak-patterns`. Private repos and repos without a remote stay quiet; the exit code never changes.
+
+- **tailor-react matches the upgraded HTML**: after mount every `Ui.*` component has the DOM, strings and
+  interactions `Tailor.upgrade` gives the same HTML. New React behaviours: drawn select (`Ui.Select`), number
+  steppers (`Ui.Input type="number"`, `Ui.DurationInput`), form validation (**`Ui.Form`**), settings autosave with
+  toast and revert on failure (`Ui.Settings save`), sortable rows (`Ui.Table sortable` + `Ui.Table.Body`), one
+  popup at a time with flip/align for menus and pinned help (shared with `Tailor.popup` when both are loaded).
+  The server render stays the canonical markup (no hydration mismatch, check-parity 43/43); see react/README.md
+  "Drawn controls".
+- New props: `Menu variant`, `Menu.Item defaultChecked/onCheckedChange`, `Tabs panelClassName`, `Segmented`
+  option `tip`, `Badge as="button"`, `Alert dismissible`, `Dialog size="xl"` + `data-dialog-close` values,
+  `Progress label`, `Code onTabChange`, `RelativeTime ago/tip`, `Table.Th/Td shrink`, `Page as`, `Section
+  bodyClassName`, `Input htmlSize`, `Footer.Pickers parts/size`; `useOptionalToasts()`, `popup`, exported prop types.
+- The showcase's React kit renders every tier-1 demo with the content of its HTML demo (all variants, texts and
+  demo interactions: settings save mock with a failing row, dialog Save toast, confirm results, chip remove,
+  password reveal, live range output).
+
+### Changed
+- The Kit select comes first in the pickers (kit, skin, palette, mode), in `Tailor.theme.renderPickers` and the
+  showcase footer.
+- The showcase kit bundle is `showcase/kit/kit.js` only (314 KB, was 952 KB + 226 KB CSS).
+
+### Removed
+- **The Primer kit adapter** (`tailor-react/primer`: the Primer `Ui`, its pickers) and the `@primer/react`
+  dependency; the showcase's Primer kit goes with it. tailor-react is the one React kit; use the `primer` skin
+  for the Primer look. The Primer Primitives themes per palette (`tailor-react/primer/themes`,
+  `tailor gen --target primer`) stay for apps built on Primer React.
+
+### Fixed
+- `tailor apply --react` no longer writes the `tailor.js` `<script>` and the `Tailor.theme.init` call into
+  `tailor-head.html`: the file is not vendored under `--react`, so the snippet loaded a missing script.
+- A `.t-duration` with `data-value` outside a settings form now shows its value on load (`Tailor.durations`,
+  run by `Tailor.upgrade`); the showcase demo showed an empty field and the wrong unit.
+- The React tooltip layer stays off when `tailor.js` is also on the page (no double tooltips) and follows a
+  changed `data-tip` while it is open.
+- tailor-react: `relativeTime()` returns the `Tailor.relativeTime` strings ("2 h ago", "yesterday", "4 d ago",
+  "Sep 21") and `Ui.RelativeTime` sets the absolute time as `data-tip`; it said "2 hours ago" and had no tip.
+- tailor-react: `Ui.DurationInput` with `value` and no `onChange` no longer reverts what is typed.
+- tailor-react: a plain menu item click closes the menu; checkbox items toggle without a controlling parent.
+- tailor-react: `Ui.SettingsRow` toasts the save result and reverts the control when the save fails.
+- tailor-react: `Ui.AppShell` no longer nests a `<Ui.Navbar>`/`<Ui.Footer>` passed as `nav`/`foot` in a second
+  navbar/footer; `Ui.Footer.Pickers` renders the switcher instead of an empty host.
+- tailor-react: `Ui.Truncate expand` is keyboard-reachable (`tabindex`, `role="button"`, Enter / Space); chip
+  remove, code tabs and sort-header buttons carry `type="button"`; toasts go into an existing `#t-toasts`.
+- Showcase footer demo: the stale "tailor 0.1.0" version string is "v0.9.2" like the other demos, and the mode
+  toggle is a live `data-tailor-pickers="mode"` switcher in both kits.
+
 ## [0.9.2] — 2026-10-21
 
 ### Fixed

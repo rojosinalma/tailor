@@ -1,8 +1,8 @@
 {
   "$schema": "manifest.schema.json",
   "name": "tailor",
-  "version": "0.9.2",
-  "generated": "2026-10-21T18:12:58.539Z",
+  "version": "0.10.0",
+  "generated": "2026-10-21T20:52:20.707Z",
   "contract": {
     "prefix": "t-",
     "token_prefix": "--t-",
@@ -2155,6 +2155,103 @@
       "path": "skins/pico/"
     },
     {
+      "id": "primer",
+      "name": "Primer",
+      "system": "primer",
+      "version": "0.1.0",
+      "description": "GitHub's Primer design system on the t-* vocabulary: system font stack at 14px/1.5, 6px corners (3px checkboxes, 12px overlays and dialogs, pill Labels and Counters), 32/28/40px controls with 1px borders, bordered secondary Buttons on a subtle fill with a solid accent primary, danger text that fills on hover, invisible buttons, outline pill Labels, tinted Counters, solid StateLabels, UnderlineNav tabs, Box cards, DataTable tables, Flash banners, ActionMenu/ActionList overlays, a NavList sidebar with the accent bar, SegmentedControl, ProgressBar, Timeline and Blankslate.",
+      "coverage": [
+        "app-shell",
+        "navbar",
+        "sidebar",
+        "footer",
+        "page",
+        "section",
+        "toolbar",
+        "grid",
+        "stack",
+        "split",
+        "button",
+        "button-group",
+        "segmented",
+        "menu",
+        "tabs",
+        "breadcrumb",
+        "pagination",
+        "list",
+        "field",
+        "check",
+        "duration-input",
+        "settings-row",
+        "badge",
+        "counter",
+        "chip",
+        "state-label",
+        "status-dot",
+        "avatar",
+        "table",
+        "card",
+        "empty-state",
+        "timeline",
+        "relative-time",
+        "tooltip",
+        "help-popover",
+        "code-block",
+        "truncate",
+        "alert",
+        "toast",
+        "dialog",
+        "confirm",
+        "progress",
+        "spinner"
+      ],
+      "tier2": [
+        "drawer",
+        "number",
+        "file",
+        "date",
+        "time",
+        "color",
+        "select"
+      ],
+      "palette_constraints": {
+        "mode": "both"
+      },
+      "vendor": {
+        "package": "none",
+        "version": "0",
+        "license": "MIT",
+        "url": "https://primer.style",
+        "vendored": false
+      },
+      "files": {
+        "css": "skin.css"
+      },
+      "tokens_overridden": [
+        "--t-font-sans",
+        "--t-font-mono",
+        "--t-text-xs",
+        "--t-text-sm",
+        "--t-text-md",
+        "--t-text-base",
+        "--t-text-lg",
+        "--t-text-xl",
+        "--t-leading",
+        "--t-radius-sm",
+        "--t-radius-md",
+        "--t-radius-lg",
+        "--t-radius-xl",
+        "--t-radius-full",
+        "--t-control-h",
+        "--t-control-h-xs",
+        "--t-control-h-sm",
+        "--t-control-h-lg",
+        "--t-duration"
+      ],
+      "notes": "Translated, not vendored: Primer CSS and Primer React style their own class names (.btn, .Box, .Label, ActionList parts) with Primer's own colour variables, so the declarations are re-expressed on t-* selectors (SKIN-CONTRACT rule 5). Primer's functional colour roles map onto palette tokens (bgColor-default → canvas, muted/inset → inset, overlay → surface, borderColor-default → border, fg default/muted/disabled → text/muted/disabled, accent-emphasis → accent-solid with on-accent text); text on other solid tone fills uses --t-canvas. Shadows are skin-private (palettes reset --t-shadow-* in light mode). Primer's primary button is green on github.com; here it follows the palette accent like every other skin. StateLabel has only a solid look in Primer, so .t-state and data-variant=solid render alike. NavList group titles render larger than their items (tailor convention) instead of Primer's 12px muted heading. No Primer assets, Octicons or Mona Sans are shipped.",
+      "path": "skins/primer/"
+    },
+    {
       "id": "simple",
       "name": "Simple.css (translated)",
       "system": "simple",
@@ -3175,6 +3272,92 @@
       ]
     },
     "pico": {
+      "ayu": [
+        "dark",
+        "light"
+      ],
+      "catppuccin": [
+        "dark",
+        "light"
+      ],
+      "dracula": [
+        "dark",
+        "light"
+      ],
+      "everforest": [
+        "dark",
+        "light"
+      ],
+      "flexoki": [
+        "dark",
+        "light"
+      ],
+      "gruvbox": [
+        "dark",
+        "light"
+      ],
+      "kanagawa": [
+        "dark",
+        "light"
+      ],
+      "modusvivendi": [
+        "dark",
+        "light"
+      ],
+      "nightfox": [
+        "dark",
+        "light"
+      ],
+      "nightowl": [
+        "dark",
+        "light"
+      ],
+      "nord": [
+        "dark",
+        "light"
+      ],
+      "onedark": [
+        "dark",
+        "light"
+      ],
+      "oxocarbon": [
+        "dark",
+        "light"
+      ],
+      "poimandres": [
+        "dark",
+        "light"
+      ],
+      "rosepine": [
+        "dark",
+        "light"
+      ],
+      "selenized": [
+        "dark",
+        "light"
+      ],
+      "solarized": [
+        "dark",
+        "light"
+      ],
+      "synthwave84": [
+        "dark",
+        "light"
+      ],
+      "tokyonight": [
+        "dark",
+        "light"
+      ],
+      "vitesse": [
+        "dark",
+        "light"
+      ],
+      "zenburn": [
+        "dark",
+        "light"
+      ]
+    },
+    "primer": {
       "ayu": [
         "dark",
         "light"
