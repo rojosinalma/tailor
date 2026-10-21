@@ -72,6 +72,8 @@ Rules:
 - The utility list is fixed: `t-muted` `t-small` `t-mono` `t-tone-text` `t-truncate` `t-nowrap` `t-hide`
   `t-visually-hidden` `t-plain-list` `t-icon`. `t-hide` is the responsive hide: gone below the breakpoint in
   `data-hide="xs|sm|md"` (<576 / <768 / <992; `sm` when omitted); `[hidden]` is the unconditional one.
+  Utilities have plain class specificity: a project rule that also colours the element (`.kv strong`) wins over
+  `.t-tone-text`, so combine it (`.kv strong.t-tone-text`) or leave the colour to the utility.
   Layout attributes that sit on **children** are documented on the parent in components.json
   (`t-grid > [data-span="1…12"]`); attributes that change a control's box are on the control
   (`t-input[data-width="auto"]`). Nothing else in a project's markup carries a `data-*` tailor reads.
@@ -224,6 +226,10 @@ it; they should not need to undo it.
   header (`scroll-padding-top` on the scroller; no `scroll-margin` on targets, the two would add up). Code that reacts to
   scrolling listens on `.t-shell-main` (or on `document` in the capture phase, which sees every scroller), not on
   `window`; `Tailor.scrollspy` already does.
+- **Stack and split-pane children keep their content height** (`flex-shrink: 0`): a `.t-stack` of cards in
+  `.t-shell-main` grows and main scrolls, no card is squeezed and clipped. A child that must fill the rest of a
+  fixed-height pane and scroll inside sets it with a class rule (`.log { flex: 1 1 auto; min-height: 0;
+  overflow: auto; }`); the base rule has zero specificity, so that wins. `.t-cluster` children still shrink.
 - **Controls and tables are siblings inside a layout primitive**, never bare: a `.t-toolbar` above a `.t-table-wrap`
   goes in a `.t-stack` (or the toolbar is a `.t-stack` child itself). The base still gives a bare `.t-toolbar` /
   `.t-cluster` that is followed by a sibling a minimum bottom gap (`--t-space-3`) so the two never touch. Adjacent

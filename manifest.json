@@ -2,7 +2,7 @@
   "$schema": "manifest.schema.json",
   "name": "tailor",
   "version": "0.9.1",
-  "generated": "2026-10-21T12:54:16.106Z",
+  "generated": "2026-10-21T17:15:40.616Z",
   "contract": {
     "prefix": "t-",
     "token_prefix": "--t-",
@@ -333,7 +333,7 @@
         "name": "Stack & cluster",
         "tier": 1,
         "group": "shell",
-        "description": "Vertical stack (column, gap) and horizontal cluster (row, wraps, gap) — the two spacing primitives.",
+        "description": "Vertical stack (column, gap; children keep their content height) and horizontal cluster (row, wraps, gap) — the two spacing primitives.",
         "root": "t-stack",
         "parts": {
           "t-cluster": "horizontal wrapping row"

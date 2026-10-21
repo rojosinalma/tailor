@@ -212,6 +212,16 @@ React adapter + Primer kit are consumed as source from `react/` by React project
   path, so a moved project re-applied at its new path got a second entry beside the stale one, and both a move
   and a retirement needed a hand edit of the git-ignored `consumers.json`. Supersedes hand edits of
   `consumers.json` for relocation and retirement.
+- **2026-10-21 — Stack and split-pane children keep their content height.** What:
+  `:where(.t-stack, .t-split-pane) > * { flex-shrink: 0; }` in `core/layout.css`; `.t-cluster` (a row, where
+  shrinking lets text truncate), `.t-grid` (no flex) and `.t-dialog` (its body must shrink to scroll) stay as
+  they are. Utilities keep class specificity: a component colour rule that a utility must beat gets a combined
+  rule (`.t-stat-value.t-tone-text`), and consumers combine theirs the same way. Why: since the viewport-bound
+  shell (0.8.0), a `.t-stack` in `.t-shell-main` squeezed `overflow: hidden` cards (automatic min-height 0) to
+  fit a short screen, so every card clipped and main never scrolled (found in a consumer). `:where()` keeps the
+  rule at zero specificity, so a consumer that wants a child to fill and scroll sets `flex` on it and wins; an
+  audit of every consumer found none that relied on the old shrink. `!important` utilities were rejected: they
+  would stop consumers from overriding them. Supersedes nothing.
 
 ## 5. Delivered (0.1.0)
 

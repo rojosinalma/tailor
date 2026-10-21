@@ -2,6 +2,16 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
+## [Unreleased]
+
+### Fixed
+- Children of `.t-stack` and `.t-split-pane` no longer shrink (`flex-shrink: 0`, zero specificity). In a
+  height-bound scroller such as `.t-shell-main` on a short screen, cards (and any other clipping child) shrank
+  to fit, cut their body, and the scroller had nothing to scroll. A class rule that sets `flex` on a child still
+  wins, so a pane that fills and scrolls keeps working.
+- `.t-tone-text` keeps its tone colour on a stat value, a facts `dd` (bootstrap), a table cell (pico) and a
+  hovered table row (bootstrap); the component's own colour rule used to win over the utility.
+
 ## [0.9.1] — 2026-10-21
 
 ### Fixed

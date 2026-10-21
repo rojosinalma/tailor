@@ -335,6 +335,7 @@ button.t-badge:hover { background: color-mix(in srgb, var(--t-tone) 26%, transpa
 .t-card-thumb { background: var(--t-canvas); border-bottom-color: var(--luz-border); }
 .t-stat-label { color: color-mix(in srgb, var(--t-text) 65%, transparent); text-transform: uppercase; font-size: var(--t-text-xs); letter-spacing: 0.08em; }
 .t-stat-value { font-size: 1.1rem; font-weight: 700; color: var(--t-text); }
+.t-stat-value.t-tone-text { color: var(--t-tone); }
 .t-stat-sub { color: color-mix(in srgb, var(--t-text) 55%, transparent); }
 .t-facts dt { color: color-mix(in srgb, var(--t-text) 60%, transparent); }
 
