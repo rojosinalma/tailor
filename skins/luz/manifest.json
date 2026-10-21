@@ -4,7 +4,7 @@
   "name": "luz (d00m-gui)",
   "system": "luz",
   "version": "0.1.0",
-  "description": "@d00m-gui/luz 0.5.0 translated onto the t-* vocabulary: scheme-tinted soft fills over outlines, depth-shifted nested surfaces, pill badges, boxed field groups, segmented tabs, notice-style toasts — troopy's feel. luz's OKLCH ramp maths cannot run per-palette, so depth is approximated with decaying color-mix() steps of --t-text into --t-canvas, enumerated over three nesting levels like luz's own _depth.css.",
+  "description": "@d00m-gui/luz 0.5.0 translated onto the t-* vocabulary: scheme-tinted soft fills over outlines, depth-shifted nested surfaces, pill badges, boxed field groups, segmented tabs, notice-style toasts. luz's OKLCH ramp maths cannot run per-palette, so depth is approximated with decaying color-mix() steps of --t-text into --t-canvas, enumerated over three nesting levels like luz's own _depth.css.",
   "coverage": [
     "app-shell", "navbar", "sidebar", "footer", "page", "section", "toolbar", "grid", "stack", "split",
     "button", "button-group", "segmented", "menu",

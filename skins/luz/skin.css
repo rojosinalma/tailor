@@ -9,7 +9,7 @@
  *   --element-background → the depth chain below (luz's OKLCH l-shift ≈ color-mix with text)
  *   state hover delta 8% → color-mix(in srgb, <bg> 92%, var(--t-text))
  *   pressed shift        → transform: translateY(0.1ch)
- * Depth nesting (luz _depth.css, depthSign 1 like troopy/Dracula): three enumerated
+ * Depth nesting (luz _depth.css, depthSign 1, as in the Dracula palette): three enumerated
  * :where() levels set --luz-el / --luz-field (one step deeper, for inputs & table heads);
  * the shifts decay (5.5% → +3.5% → +2.5% text into canvas), capped at 3 like luz's cap of 4.
  * Light palettes invert the shift direction (surfaces go slightly darker) — accepted

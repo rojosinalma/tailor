@@ -1,7 +1,7 @@
 # luz skin
 
 Renders the tailor vocabulary in the look of **@d00m-gui/luz 0.5.0** (MIT, release tarball
-`github.com/d00m-gui/luz` v0.5.0) — the system troopy uses. Nothing is vendored: luz's component
+`github.com/d00m-gui/luz` v0.5.0). Nothing is vendored: luz's component
 CSS reads generated OKLCH ramp tokens (`--primary-50…950`, `--scheme-*`, `--element-background`)
 that a tailor palette does not provide, so every look was re-expressed on `t-*` selectors with
 `--t-*` tokens, following `dist/luz-components.css` and the per-component sources in
@@ -29,7 +29,7 @@ that a tailor palette does not provide, so every look was re-expressed on `t-*` 
 - **14** — the `.list-row` last-child end-alignment is deliberately **not** copied.
 - **25** — warning (and every tone's) ink is the 55% text mix, so orange/yellow shades stay
   readable on their tinted fills.
-- **19/depthSign** — depth lightens like troopy/Dracula (`depthSign: 1`); on light palettes the
+- **19/depthSign** — depth lightens, as in the Dracula palette (`depthSign: 1`); on light palettes the
   same mix darkens slightly instead, an accepted approximation (`mode: both`).
 
 ## Known gaps

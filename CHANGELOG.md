@@ -2,7 +2,7 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
-## [Unreleased]
+## [0.9.2] — 2026-10-21
 
 ### Fixed
 - Children of `.t-stack` and `.t-split-pane` no longer shrink (`flex-shrink: 0`, zero specificity). In a
