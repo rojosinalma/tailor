@@ -2,7 +2,7 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
-## [Unreleased]
+## [0.11.1] — 2026-10-22
 
 ### Fixed
 - Pages vendored with `tailor apply` no longer get `<html data-kit="undefined">`. The head snippet's config
