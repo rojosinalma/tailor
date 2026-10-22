@@ -2,6 +2,15 @@
 
 All notable changes to tailor. Semver; the `version` in `package.json` is the source.
 
+## [Unreleased]
+
+### Fixed
+- Pages vendored with `tailor apply` no longer get `<html data-kit="undefined">`. The head snippet's config
+  carries no kit, and `Tailor.theme` then wrote the missing value as a string. `Tailor.theme.init` now falls
+  back to the first kit it knows (`tailor`) and never writes an empty kit. Consumers get the fix on the next
+  `tailor sync`. tailor-react was not affected.
+- `bin/verify` runs `Tailor.theme.init` with an apply-shaped config and fails on a missing or `"undefined"` kit.
+
 ## [0.11.0] — 2026-10-22
 
 ### Added

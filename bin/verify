@@ -3,7 +3,8 @@
 //
 //   core      components.json valid (schema, unique ids, tier-1 groups, every demo/markup uses only t-* classes and
 //             declared attributes), tokens.css + base.css + layout.css parse, tailor.js parses, every
-//             behaviour "js:Tailor.x" exists in tailor.js
+//             behaviour "js:Tailor.x" exists in tailor.js, Tailor.theme.init with an apply-shaped config (no kit)
+//             sets a real data-kit
 //   palettes  every palettes/<id>.css parses and its [data-palette] block defines the full token set;
 //             contrast spot-check per block: text/canvas ≥ 4.5, muted/canvas ≥ 4.5, on-accent/accent-solid ≥ 3
 //   icons     icons/sets.json valid, every set pinned in icons/package.json; with the @iconify-json packages installed
@@ -44,6 +45,23 @@ function cssParse(file, text) {
   return null;
 }
 
+// Tailor.theme.init with the config shape `tailor apply` writes (no kit, no kits) must set a real
+// <html data-kit>, never "undefined". Runs tailor.js against a minimal DOM stub.
+function themeInitCheck(js) {
+  const dataset = {};
+  const el = { dataset, addEventListener() {}, querySelector: () => null, querySelectorAll: () => [] };
+  const document = { ...el, documentElement: el, currentScript: null, getElementById: () => null };
+  const window = {};
+  const cfg = { project: "acme", skins: ["none"], palettes: ["dracula"], modes: { dracula: ["dark"] }, defaults: { skin: "none", palette: "dracula", mode: "dark" } };
+  try {
+    new Function("window", "document", "localStorage", "matchMedia", "location", "CustomEvent", js)(
+      window, document, { getItem: () => null, setItem() {} }, () => ({ matches: false, addEventListener() {} }),
+      { search: "" }, class { constructor(n, o) { this.type = n; this.detail = o?.detail; } });
+    window.Tailor.theme.init(cfg);
+    dataset.kit === "tailor" ? ok("core/tailor.js: theme.init without kit/kits sets data-kit=\"tailor\"") : fail(`core/tailor.js: theme.init without kit/kits sets data-kit="${dataset.kit}" (want "tailor")`);
+  } catch (e) { fail(`core/tailor.js: theme.init check threw: ${e.message}`); }
+}
+
 /* ── core ──────────────────────────────────────────────────────────────────── */
 const schema = readJson(join(CORE, "components.schema.json"));
 const vocab = readJson(join(CORE, "components.json"));
@@ -78,6 +96,7 @@ const vocab = readJson(join(CORE, "components.json"));
   for (const f of ["tokens.css", "base.css", "layout.css"]) { const e = cssParse(f, read(join(CORE, f))); e ? fail(`core/${f}: ${e}`) : ok(`core/${f} parses${lcss ? " (lightningcss)" : ""}`); }
   const p = Bun.spawnSync(["node", "--check", join(CORE, "tailor.js")]);
   p.exitCode === 0 ? ok("core/tailor.js parses") : fail(`core/tailor.js: ${p.stderr.toString().trim()}`);
+  if (p.exitCode === 0) themeInitCheck(js);
   // tokens.css defines the full set; palette files must define the same palette subset
 }
 
