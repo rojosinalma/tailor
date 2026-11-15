@@ -44,4 +44,15 @@ export default behaviour("check", {
     await body.getByText("SSH").click();
     await expect(body.getByRole("checkbox", { name: "SSH" })).toBeChecked();
   },
+  "in a field, the field names and describes the group": async ({ example, expect }) => {
+    const body = example("field");
+    const group = body.getByRole("group", { name: "Notify by" });
+    await expect(group).toHaveAccessibleDescription("Pick one or more. Pick at least one way.");
+    await expect(group).toHaveAttribute("aria-invalid", "true");
+    await expect(body.locator("legend")).toHaveCount(0);
+    const box = body.getByRole("checkbox", { name: "Email" });
+    await expect(box).not.toHaveAttribute("aria-describedby", /.+/);
+    await body.getByText("Text message").click();
+    await expect(body.locator('input[name="notify"][value="sms"]')).toBeChecked();
+  },
 });

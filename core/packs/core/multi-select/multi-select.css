@@ -1,0 +1,97 @@
+/* The box grows in height as the chips wrap; it never grows sideways. */
+.t-multi-select {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: var(--t-measure-2xs);
+  height: auto;
+  padding-block: var(--t-space-1);
+  cursor: text;
+}
+
+.t-multi-select-chips {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-1);
+  min-width: 0;
+}
+
+.t-multi-select .t-chip {
+  min-height: calc(var(--t-skin-control-h-sm) - var(--t-space-1));
+  min-width: 0;
+}
+
+.t-multi-select .t-chip-remove {
+  width: calc(var(--t-skin-control-h-sm) - var(--t-space-1));
+}
+
+.t-multi-select .t-chip:focus-visible {
+  outline-offset: 0;
+}
+
+.t-multi-select-input {
+  flex: 1 1 6em;
+  min-width: 0;
+  min-height: calc(var(--t-skin-control-h-sm) - var(--t-space-1));
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.t-multi-select-input::placeholder {
+  color: var(--t-muted);
+}
+
+.t-control.t-multi-select:focus-within {
+  border-color: var(--t-accent);
+}
+
+.t-multi-select:has(.t-multi-select-input:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: var(--t-focus-offset);
+}
+
+.t-multi-select-trigger {
+  align-self: stretch;
+}
+
+.t-multi-select-popup .t-option {
+  align-items: flex-start;
+}
+
+.t-multi-select-popup .t-option-check {
+  height: 1lh;
+  align-items: center;
+}
+
+.t-multi-select-description {
+  display: block;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-multi-select-empty:empty,
+.t-multi-select-status:empty {
+  display: none;
+}
+
+.t-multi-select-empty,
+.t-multi-select-status {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-height: var(--t-control-h-sm);
+  padding: var(--t-space-1) var(--t-space-2);
+  color: var(--t-muted);
+}
+
+@media (pointer: coarse) {
+  .t-multi-select-input {
+    font-size: max(var(--t-text-touch), var(--t-text-base));
+  }
+}

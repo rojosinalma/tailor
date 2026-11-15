@@ -1,4 +1,5 @@
 import { defineExamples } from "../../examples";
+import { Field } from "../field/field";
 import { RadioGroup } from "./radio";
 
 const plans = [
@@ -30,6 +31,16 @@ export default defineExamples("radio", [
           { value: "error", label: "Error" },
         ]}
       />
+    ),
+  },
+  {
+    id: "field",
+    title: "In a field, with an error",
+    note: "The field's label names the group; its help and error describe it.",
+    render: () => (
+      <Field label="Plan" help="You can change it later." error="Pick a plan." required>
+        <RadioGroup name="plan-field" options={plans} />
+      </Field>
     ),
   },
   {

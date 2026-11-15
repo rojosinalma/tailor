@@ -70,6 +70,7 @@ export function NumberField({
     <Base.Root
       className="t-control t-number"
       data-size={dataSize}
+      data-invalid={field["aria-invalid"] ? "" : undefined}
       id={field.id}
       name={field.name}
       value={value}

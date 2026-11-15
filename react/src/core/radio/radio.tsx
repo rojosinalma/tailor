@@ -3,6 +3,7 @@ import { RadioGroup as Base } from "@base-ui/react/radio-group";
 import type spec from "@tailor/packs/core/radio/spec";
 import { type ReactNode, useId } from "react";
 import { useIsStatic } from "../../kit";
+import { useFieldGroup } from "../field/field";
 
 export interface RadioOption {
   readonly value: string;
@@ -13,8 +14,8 @@ export interface RadioOption {
 }
 
 export interface RadioGroupProps {
-  /** The legend of the group. */
-  label: ReactNode;
+  /** The legend of the group. Inside a Field, the field's label names the group instead. */
+  label?: ReactNode;
   name?: string;
   options: readonly RadioOption[];
   value?: string;
@@ -39,12 +40,25 @@ export function RadioGroup({
 }: RadioGroupProps) {
   const isStatic = useIsStatic();
   const ids = useId();
+  // In a field, the field's label names the group and its help and error describe it.
+  const field = useFieldGroup();
+  const groupName = name ?? field?.name;
+  const groupDisabled = disabled || field?.disabled;
+  const groupRequired = required || field?.required;
   const dataOrientation = orientation === "vertical" ? undefined : orientation;
-  const legend = (
+  const legend = field ? null : (
     <legend className="t-radio-group-label" id={`${ids}-legend`}>
       {label}
     </legend>
   );
+  const groupProps = {
+    className: "t-radio-group",
+    id: field?.id,
+    "aria-labelledby": field ? field["aria-labelledby"] : `${ids}-legend`,
+    "aria-describedby": field?.["aria-describedby"],
+    "aria-invalid": field?.["aria-invalid"],
+    "data-orientation": dataOrientation,
+  };
   const items = options.map((option, index) => {
     const labelId = `${ids}-${index}`;
     const descriptionId = option.description ? `${ids}-${index}-description` : undefined;
@@ -52,7 +66,7 @@ export function RadioGroup({
       className: "t-radio-input",
       value: option.value,
       disabled: option.disabled,
-      "aria-labelledby": descriptionId ? labelId : undefined,
+      "aria-labelledby": labelId,
       "aria-describedby": descriptionId,
     };
     return (
@@ -62,8 +76,8 @@ export function RadioGroup({
           <input
             {...props}
             type="radio"
-            name={name}
-            required={required}
+            name={groupName}
+            required={groupRequired}
             defaultChecked={(value ?? defaultValue) === option.value}
           />
         ) : (
@@ -83,12 +97,8 @@ export function RadioGroup({
 
   if (isStatic) {
     return (
-      <fieldset
-        className="t-radio-group"
-        aria-labelledby={`${ids}-legend`}
-        data-orientation={dataOrientation}
-        disabled={disabled}
-      >
+      // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: the same role as the Base UI group in the React kit.
+      <fieldset {...groupProps} role="radiogroup" disabled={groupDisabled}>
         {legend}
         {items}
       </fieldset>
@@ -97,15 +107,13 @@ export function RadioGroup({
   return (
     <Base
       render={<fieldset />}
-      className="t-radio-group"
-      aria-labelledby={`${ids}-legend`}
-      data-orientation={dataOrientation}
-      name={name}
+      {...groupProps}
+      name={groupName}
       value={value}
       defaultValue={defaultValue}
       onValueChange={onValueChange ? (next: unknown) => onValueChange(String(next)) : undefined}
-      disabled={disabled}
-      required={required}
+      disabled={groupDisabled}
+      required={groupRequired}
     >
       {legend}
       {items}

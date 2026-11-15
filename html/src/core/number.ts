@@ -72,6 +72,7 @@ register("number", (element) => {
     class: "t-control t-number",
     "data-size": input.dataset.size,
     "data-disabled": input.disabled,
+    "data-invalid": input.getAttribute("aria-invalid") === "true",
   });
   input.after(box);
   input.classList.remove("t-control", "t-input");

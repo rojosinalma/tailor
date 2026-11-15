@@ -72,6 +72,8 @@ export function Secret({
         className="t-control t-input-group t-secret"
         data-t="secret"
         data-size={dataSize}
+        data-invalid={field["aria-invalid"] ? "" : undefined}
+        data-disabled={field.disabled ? "" : undefined}
         data-copyable={copyable ? "" : undefined}
       >
         <input {...props} type="password" defaultValue={value ?? defaultValue} />
@@ -80,7 +82,12 @@ export function Secret({
   }
 
   return (
-    <div className="t-control t-input-group t-secret" data-size={dataSize}>
+    <div
+      className="t-control t-input-group t-secret"
+      data-size={dataSize}
+      data-invalid={field["aria-invalid"] ? "" : undefined}
+      data-disabled={field.disabled ? "" : undefined}
+    >
       <Base
         {...props}
         ref={input}

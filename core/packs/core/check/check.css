@@ -117,3 +117,8 @@
     border-color: var(--t-accent);
   }
 }
+
+/* In an invalid field the field marks the group; every box shows it. */
+.t-check-group[aria-invalid="true"] .t-check-input:not(:checked, :disabled, [data-checked], [data-disabled]) {
+  border-color: var(--t-danger);
+}

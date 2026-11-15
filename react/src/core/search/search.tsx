@@ -95,6 +95,8 @@ export function Search({
         className="t-control t-input-group t-search"
         data-t="search"
         data-size={dataSize}
+        data-invalid={field["aria-invalid"] ? "" : undefined}
+        data-disabled={field.disabled ? "" : undefined}
         data-shortcut={shortcut ? undefined : "off"}
       >
         {icon}
@@ -104,7 +106,12 @@ export function Search({
   }
 
   return (
-    <div className="t-control t-input-group t-search" data-size={dataSize}>
+    <div
+      className="t-control t-input-group t-search"
+      data-size={dataSize}
+      data-invalid={field["aria-invalid"] ? "" : undefined}
+      data-disabled={field.disabled ? "" : undefined}
+    >
       {icon}
       <Base {...props} ref={input} value={current} onValueChange={set} onKeyDown={onKeyDown} />
       <button

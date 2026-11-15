@@ -2,7 +2,7 @@ import { Checkbox } from "@base-ui/react/checkbox";
 import { CheckboxGroup } from "@base-ui/react/checkbox-group";
 import { createContext, type ReactNode, use, useId } from "react";
 import { useIsStatic } from "../../kit";
-import { useFieldControl } from "../field/field";
+import { useFieldControl, useFieldGroup } from "../field/field";
 
 export interface CheckProps {
   label: ReactNode;
@@ -21,8 +21,8 @@ export interface CheckProps {
   required?: boolean;
 }
 
-// In static mode the group's value decides which boxes start ticked.
-const GroupValue = createContext<readonly string[] | undefined>(undefined);
+// Set inside a CheckGroup. In static mode the group's value decides which boxes start ticked.
+const Group = createContext<{ values?: readonly string[] } | null>(null);
 
 /** A checkbox with its label. The whole label is the hit area. */
 export function Check({
@@ -39,17 +39,20 @@ export function Check({
   required,
 }: CheckProps) {
   const isStatic = useIsStatic();
-  const group = use(GroupValue);
+  const group = use(Group);
   const ids = useId();
   const labelId = `${ids}-label`;
   const descriptionId = description ? `${ids}-description` : undefined;
-  const field = useFieldControl({ name, disabled, required, "aria-describedby": descriptionId });
+  const own = { name, disabled, required, "aria-describedby": descriptionId };
+  const fromField = useFieldControl(own);
+  // In a group, the field describes the group, not each box.
+  const field = group ? own : fromField;
   const props = {
     ...field,
     id,
     value,
     className: "t-check-input",
-    "aria-labelledby": description ? labelId : undefined,
+    "aria-labelledby": labelId,
   };
   return (
     // biome-ignore lint/a11y/noLabelWithoutControl: the checkbox is inside the label, native or from Base UI.
@@ -58,7 +61,9 @@ export function Check({
         <input
           {...props}
           type="checkbox"
-          defaultChecked={checked ?? defaultChecked ?? (value !== undefined && group?.includes(value))}
+          defaultChecked={
+            checked ?? defaultChecked ?? (value !== undefined && group?.values?.includes(value))
+          }
           data-t={indeterminate ? "check" : undefined}
           data-indeterminate={indeterminate ? "" : undefined}
         />
@@ -84,8 +89,8 @@ export function Check({
 }
 
 export interface CheckGroupProps {
-  /** The legend of the group. */
-  label: ReactNode;
+  /** The legend of the group. Inside a Field, the field's label names the group instead. */
+  label?: ReactNode;
   /** The values of the ticked boxes. */
   value?: string[];
   defaultValue?: string[];
@@ -106,31 +111,41 @@ export function CheckGroup({
 }: CheckGroupProps) {
   const isStatic = useIsStatic();
   const legendId = useId();
-  const legend = (
+  // In a field, the field's label names the group and its help and error describe it.
+  const field = useFieldGroup();
+  const groupDisabled = disabled || field?.disabled;
+  const legend = field ? null : (
     <legend className="t-check-group-label" id={legendId}>
       {label}
     </legend>
   );
+  const groupProps = {
+    className: "t-check-group",
+    id: field?.id,
+    "aria-labelledby": field ? field["aria-labelledby"] : legendId,
+    "aria-describedby": field?.["aria-describedby"],
+    "aria-invalid": field?.["aria-invalid"],
+  };
+  const boxes = <Group value={{ values: value ?? defaultValue }}>{children}</Group>;
   if (isStatic) {
     return (
-      <fieldset className="t-check-group" disabled={disabled}>
+      <fieldset {...groupProps} disabled={groupDisabled}>
         {legend}
-        <GroupValue value={value ?? defaultValue}>{children}</GroupValue>
+        {boxes}
       </fieldset>
     );
   }
   return (
     <CheckboxGroup
       render={<fieldset />}
-      className="t-check-group"
-      aria-labelledby={legendId}
+      {...groupProps}
       value={value}
       defaultValue={defaultValue}
       onValueChange={onValueChange ? (next: string[]) => onValueChange(next) : undefined}
-      disabled={disabled}
+      disabled={groupDisabled}
     >
       {legend}
-      {children}
+      {boxes}
     </CheckboxGroup>
   );
 }

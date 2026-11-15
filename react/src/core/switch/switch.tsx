@@ -40,7 +40,7 @@ export function Switch({
     ...field,
     id,
     className: "t-switch-input",
-    "aria-labelledby": description ? labelId : undefined,
+    "aria-labelledby": labelId,
   };
   return (
     // biome-ignore lint/a11y/noLabelWithoutControl: the switch is inside the label, native or from Base UI.

@@ -1,0 +1,44 @@
+.t-combobox {
+  min-width: var(--t-measure-2xs);
+}
+
+.t-combobox .t-input-native {
+  text-overflow: ellipsis;
+}
+
+.t-combobox-trigger {
+  margin-inline-start: calc(var(--t-space-2) * -1);
+}
+
+.t-combobox-popup .t-option {
+  align-items: flex-start;
+}
+
+.t-combobox-popup .t-option-check {
+  height: 1lh;
+  align-items: center;
+}
+
+.t-combobox-description {
+  display: block;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-combobox-empty:empty {
+  display: none;
+}
+
+.t-combobox-empty,
+.t-combobox-status {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-height: var(--t-control-h-sm);
+  padding: var(--t-space-1) var(--t-space-2);
+  color: var(--t-muted);
+}
+
+.t-combobox-status:empty {
+  display: none;
+}

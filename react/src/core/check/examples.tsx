@@ -1,4 +1,5 @@
 import { defineExamples } from "../../examples";
+import { Field } from "../field/field";
 import { Stack } from "../stack/stack";
 import { Check, CheckGroup } from "./check";
 
@@ -40,6 +41,19 @@ export default defineExamples("check", [
         <Check name="protocol" value="https" label="HTTPS" />
         <Check name="protocol" value="ssh" label="SSH" description="Only from the local network." />
       </CheckGroup>
+    ),
+  },
+  {
+    id: "field",
+    title: "A group in a field, with an error",
+    note: "The field's label names the group; its help and error describe it.",
+    render: () => (
+      <Field label="Notify by" help="Pick one or more." error="Pick at least one way.">
+        <CheckGroup>
+          <Check name="notify" value="email" label="Email" />
+          <Check name="notify" value="sms" label="Text message" />
+        </CheckGroup>
+      </Field>
     ),
   },
 ]);

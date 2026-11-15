@@ -73,7 +73,12 @@ export function Input({
   );
   if (!grouped) return input;
   return (
-    <div className="t-control t-input-group" data-size={dataSize}>
+    <div
+      className="t-control t-input-group"
+      data-size={dataSize}
+      data-invalid={field["aria-invalid"] ? "" : undefined}
+      data-disabled={field.disabled ? "" : undefined}
+    >
       {before !== undefined ? <span className="t-input-addon">{before}</span> : null}
       {input}
       {after !== undefined ? <span className="t-input-addon">{after}</span> : null}

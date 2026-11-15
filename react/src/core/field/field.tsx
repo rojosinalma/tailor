@@ -16,7 +16,7 @@ export interface FieldControlProps {
   "aria-describedby"?: string;
 }
 
-const FieldContext = createContext<FieldControlProps>({});
+const FieldContext = createContext<FieldControlProps & { labelId?: string }>({});
 
 /**
  * The props that a control takes from the field around it, merged with its own. Every tailor control that is
@@ -34,6 +34,15 @@ export function useFieldControl(own: FieldControlProps = {}): FieldControlProps 
     "aria-invalid": own["aria-invalid"] ?? field["aria-invalid"],
     "aria-describedby": describedBy || undefined,
   };
+}
+
+/**
+ * The wiring of a group of controls (a radio group, a check group) inside a field: the field's label names the
+ * group, its help and error describe it. Undefined outside a field.
+ */
+export function useFieldGroup(): (FieldControlProps & { "aria-labelledby": string }) | undefined {
+  const { labelId, ...field } = use(FieldContext);
+  return labelId ? { ...field, "aria-labelledby": labelId } : undefined;
 }
 
 export interface FieldProps {
@@ -75,8 +84,10 @@ export function Field({
   const id = useId();
   const helpId = `${id}-help`;
   const errorId = `${id}-error`;
-  const control: FieldControlProps = {
+  const labelId = `${id}-label`;
+  const control: FieldControlProps & { labelId: string } = {
     id,
+    labelId,
     name,
     disabled,
     required,
@@ -111,45 +122,39 @@ export function Field({
     </p>
   );
 
+  // The help and the error reach every control through the field context, which also names a group;
+  // the field state on Base UI controls comes from the same props, so Base UI adds no second wiring.
+  const helpText = help ? (
+    <p className="t-field-help" id={helpId}>
+      {help}
+    </p>
+  ) : null;
+  const rootProps = {
+    className: "t-field",
+    "data-orientation": dataOrientation,
+    "data-invalid": error ? "" : undefined,
+  };
+
   if (isStatic) {
     return (
-      <div
-        className="t-field"
-        data-orientation={dataOrientation}
-        data-invalid={error ? "" : undefined}
-        data-disabled={disabled ? "" : undefined}
-      >
-        <label className="t-field-label" htmlFor={id}>
+      <div {...rootProps} data-disabled={disabled ? "" : undefined}>
+        <label className="t-field-label" htmlFor={id} id={labelId}>
           {labelContent}
         </label>
         {slot}
-        {help ? (
-          <p className="t-field-help" id={helpId}>
-            {help}
-          </p>
-        ) : null}
+        {helpText}
         {errorText}
       </div>
     );
   }
 
   return (
-    <Base.Root
-      className="t-field"
-      data-orientation={dataOrientation}
-      invalid={error ? true : undefined}
-      disabled={disabled}
-      name={name}
-    >
-      <Base.Label className="t-field-label" htmlFor={id} onClick={focusButton}>
+    <Base.Root {...rootProps} disabled={disabled} name={name}>
+      <Base.Label className="t-field-label" htmlFor={id} id={labelId} onClick={focusButton}>
         {labelContent}
       </Base.Label>
       {slot}
-      {help ? (
-        <Base.Description className="t-field-help" id={helpId}>
-          {help}
-        </Base.Description>
-      ) : null}
+      {helpText}
       {errorText}
     </Base.Root>
   );

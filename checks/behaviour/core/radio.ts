@@ -39,4 +39,13 @@ export default behaviour("radio", {
     await body.getByText("example.com storage").click({ force: true });
     await expect(body.getByRole("radio", { name: "nas" })).toBeChecked();
   },
+  "in a field, the field names and describes the group": async ({ example, expect }) => {
+    const body = example("field");
+    const group = body.getByRole("radiogroup", { name: "Plan" });
+    await expect(group).toHaveAccessibleDescription("You can change it later. Pick a plan.");
+    await expect(group).toHaveAttribute("aria-invalid", "true");
+    await expect(body.locator("legend")).toHaveCount(0);
+    await body.getByText("Large").click();
+    await expect(body.locator('input[name="plan-field"]:checked')).toHaveValue("large");
+  },
 });

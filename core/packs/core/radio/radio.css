@@ -105,3 +105,8 @@
     border-color: var(--t-accent);
   }
 }
+
+/* In an invalid field the field marks the group; every circle shows it. */
+.t-radio-group[aria-invalid="true"] .t-radio-input:not(:disabled, [data-disabled]) {
+  border-color: var(--t-danger);
+}

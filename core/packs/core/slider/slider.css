@@ -156,16 +156,3 @@
   --t-slider-fill: var(--t-disabled);
   cursor: not-allowed;
 }
-
-/* On a touch screen the thumb takes a touch-sized hit area around it. */
-@media (pointer: coarse) {
-  .t-slider-thumb::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: var(--t-touch);
-    height: var(--t-touch);
-    translate: -50% -50%;
-  }
-}

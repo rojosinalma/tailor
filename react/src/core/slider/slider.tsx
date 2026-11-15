@@ -79,12 +79,14 @@ export function Slider({
       step={step}
       name={field.name}
       disabled={field.disabled}
+      aria-disabled={field.disabled ? true : undefined}
     >
       <div className="t-slider-header">
         <Base.Label className="t-slider-label">{label}</Base.Label>
         {showValue ? <Base.Value className="t-slider-value" /> : null}
       </div>
-      <Base.Control className="t-slider-control">
+      {/* The whole control takes the pointer, so it is the hit area of the thumb. */}
+      <Base.Control className="t-slider-control" data-t-hit="">
         <Base.Track className="t-slider-track">
           <Base.Indicator className="t-slider-fill" />
           <Base.Thumb className="t-slider-thumb" />
