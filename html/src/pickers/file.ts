@@ -2,6 +2,7 @@ import { close, upload } from "@tailor/core/glyphs.gen";
 import { t } from "@tailor/core/text";
 import { addFiles, formatSize, type Refusal, refusalText } from "@tailor/packs/pickers/file/logic";
 import { glyph, h, register } from "../runtime";
+import { fieldGroup } from "./date";
 
 /** Draws a drop zone and a file list around a native <input type="file">, which stays in the form as the value holder. */
 register("file", (element) => {
@@ -33,8 +34,11 @@ register("file", (element) => {
     {
       class: "t-file",
       role: "group",
+      id: input.id || undefined,
       "aria-label": input.getAttribute("aria-label") ?? undefined,
+      "aria-labelledby": input.getAttribute("aria-labelledby") ?? undefined,
       "aria-describedby": input.getAttribute("aria-describedby") ?? undefined,
+      "aria-invalid": input.getAttribute("aria-invalid") ?? undefined,
       "aria-disabled": input.disabled ? "true" : undefined,
     },
     h(
@@ -135,5 +139,6 @@ register("file", (element) => {
   input.hidden = true;
   input.tabIndex = -1;
   input.setAttribute("data-t-upgraded", "");
-  if (input.id) input.removeAttribute("id");
+  input.removeAttribute("id");
+  fieldGroup(root, () => choose);
 });

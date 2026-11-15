@@ -34,7 +34,7 @@ register("color", (element) => {
   const allowNone = input.dataset.allowNone !== undefined;
   const fallback = allowNone ? "" : "#000000";
   const current = (): string => parseHex(input.value) ?? fallback;
-  const { trigger, labels, paint } = pickerTrigger(input, "t-color-picker", null, "", input.disabled);
+  const { trigger, labels, paint } = pickerTrigger(input, "t-color-picker", null, "", input);
   const swatch = h("span", { class: "t-color-picker-swatch" });
   trigger.prepend(swatch);
 

@@ -9,10 +9,10 @@ export default defineComponent({
     "A rating from 1 to a maximum, drawn as stars: a radio group, or an image of the stars when read-only.",
   root: "t-rating",
   parts: {
-    "t-rating-star": "one star, a radio; filled up to the picked one",
+    "t-rating-star": "one star, a radio; filled up to the picked one (data-rated when read-only)",
     "t-rating-input": "the native radio (HTML kit)",
     "t-rating-glyph": "the empty and the filled star, stacked",
   },
   props: { size: SIZES },
-  html: "markup",
+  html: "script",
 });

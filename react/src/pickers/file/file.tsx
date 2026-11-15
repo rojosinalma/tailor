@@ -4,12 +4,13 @@ import { addFiles, formatSize, type Refusal, refusalText } from "@tailor/packs/p
 import { type DragEvent, useRef, useState } from "react";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
+import { useFieldGroup } from "../date/date";
 
 export interface FilePickerProps {
   onFilesChange?: (files: File[]) => void;
   name?: string;
-  /** The accessible name of the picker. */
-  label: string;
+  /** The accessible name of the picker; inside a Field the field's label names it. */
+  label?: string;
   /** The accept attribute: extensions (".pdf"), MIME types or groups ("image/*"). */
   accept?: string;
   multiple?: boolean;
@@ -20,6 +21,7 @@ export interface FilePickerProps {
   /** A line under the button, e.g. "PDF, up to 10 MB". */
   hint?: string;
   disabled?: boolean;
+  required?: boolean;
   id?: string;
   "aria-describedby"?: string;
 }
@@ -49,15 +51,22 @@ export function FilePicker({
   maxFiles,
   hint,
   disabled,
+  required,
   id,
   "aria-describedby": describedBy,
 }: FilePickerProps) {
   const isStatic = useIsStatic();
+  const group = useFieldGroup(
+    { id, name, disabled, required, "aria-describedby": describedBy },
+    label,
+    ".t-btn",
+  );
+  const { field } = group;
   const [files, setFiles] = useState<File[]>([]);
   const [refused, setRefused] = useState<Refusal[]>([]);
   const [dragging, setDragging] = useState(false);
   const input = useRef<HTMLInputElement>(null);
-  const root = useRef<HTMLDivElement>(null);
+  const root = group.ref;
   const rules = { accept, multiple, maxSize, maxFiles };
 
   if (isStatic) {
@@ -66,16 +75,13 @@ export function FilePicker({
         type="file"
         className="t-control t-input"
         data-t="file"
-        name={name}
-        id={id}
+        {...field}
         accept={accept}
         multiple={multiple}
         data-max-size={maxSize}
         data-max-files={maxFiles}
         data-hint={hint}
         aria-label={label}
-        aria-describedby={describedBy}
-        disabled={disabled}
       />
     );
   }
@@ -104,7 +110,7 @@ export function FilePicker({
   };
   const drop = {
     onDragOver: (event: DragEvent) => {
-      if (disabled) return;
+      if (field.disabled) return;
       event.preventDefault();
       setDragging(true);
     },
@@ -115,7 +121,7 @@ export function FilePicker({
     onDrop: (event: DragEvent) => {
       event.preventDefault();
       setDragging(false);
-      if (!disabled) add([...event.dataTransfer.files]);
+      if (!field.disabled) add([...event.dataTransfer.files]);
     },
   };
 
@@ -125,9 +131,12 @@ export function FilePicker({
       className="t-file"
       ref={root}
       role="group"
+      id={field.id}
       aria-label={label}
-      aria-describedby={describedBy}
-      aria-disabled={disabled || undefined}
+      aria-labelledby={label ? undefined : group.labelledBy}
+      aria-describedby={field["aria-describedby"]}
+      aria-invalid={field["aria-invalid"]}
+      aria-disabled={field.disabled}
       data-dragging={dragging ? "" : undefined}
       {...drop}
     >
@@ -140,8 +149,7 @@ export function FilePicker({
             type="button"
             className="t-btn"
             data-size="sm"
-            id={id}
-            disabled={disabled}
+            disabled={field.disabled}
             onClick={() => input.current?.click()}
           >
             {t(multiple ? "fileChoose" : "fileChooseOne")}
@@ -154,10 +162,11 @@ export function FilePicker({
         ref={input}
         type="file"
         hidden
-        name={name}
+        name={field.name}
         accept={accept}
         multiple={multiple}
-        disabled={disabled}
+        disabled={field.disabled}
+        required={field.required}
         tabIndex={-1}
         onChange={(event) => add([...(event.currentTarget.files ?? [])])}
       />
@@ -174,7 +183,7 @@ export function FilePicker({
                 data-size="sm"
                 data-icon-only=""
                 aria-label={`${t("fileRemove")} ${file.name}`}
-                disabled={disabled}
+                disabled={field.disabled}
                 onClick={() => remove(index)}
               >
                 <Glyph body={close} />

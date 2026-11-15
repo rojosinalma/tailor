@@ -1,3 +1,4 @@
+import { Field } from "../../core/field/field";
 import { defineExamples } from "../../examples";
 import { DateRangePicker } from "./date-range";
 
@@ -71,6 +72,24 @@ export default defineExamples("date-range", [
     width: "sm",
     render: () => (
       <DateRangePicker defaultValue={{ start: "2026-11-10", end: "2026-12-02" }} aria-label="Freeze period" />
+    ),
+  },
+  {
+    id: "field",
+    title: "Inside a Field, with help and an error",
+    render: () => (
+      <Field
+        label="Report period"
+        help="The days the report covers."
+        error="The period is longer than a month."
+        required
+      >
+        <DateRangePicker
+          nameStart="report-start"
+          nameEnd="report-end"
+          defaultValue={{ start: "2026-11-02", end: "2026-11-06" }}
+        />
+      </Field>
     ),
   },
 ]);

@@ -45,7 +45,7 @@ register("time", (element) => {
     "t-time",
     glyph(clock),
     data.placeholder ?? "",
-    input.disabled,
+    input,
   );
   const prefix = uid("t-time");
   const columns = h("div", { class: "t-time-columns" });

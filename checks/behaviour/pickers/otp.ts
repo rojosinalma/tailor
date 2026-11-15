@@ -65,4 +65,18 @@ export default behaviour("otp", {
     await expect(first).toHaveAttribute("autocomplete", "one-time-code");
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   },
+  "inside a Field: the label names the boxes and focuses the first, help and error describe it": async ({
+    example,
+    expect,
+  }) => {
+    const body = example("field");
+    await expect(body.getByRole("group", { name: "Verification code" })).toBeVisible();
+    const first = body.getByRole("textbox", { name: "Verification code" });
+    await expect(first).toHaveAccessibleDescription("The code from the text message. The code is wrong.");
+    await expect(first).toHaveAttribute("aria-invalid", "true");
+    await expect(first).toHaveAttribute("required", "");
+    await body.locator(".t-field-label").click();
+    await expect(first).toBeFocused();
+    await expect(body.locator('[name="code-field"]')).toHaveValue("4829");
+  },
 });

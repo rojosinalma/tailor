@@ -15,7 +15,7 @@ import type spec from "@tailor/packs/pickers/date-range/spec";
 import { useRef, useState } from "react";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
-import { Calendar, useValueName } from "../date/date";
+import { Calendar, usePickerField } from "../date/date";
 
 export type { DateRange, RangePreset };
 
@@ -31,6 +31,8 @@ export interface DateRangePickerProps {
   /** The form field of the end day. */
   nameEnd?: string;
   disabled?: boolean;
+  required?: boolean;
+  id?: string;
   /** Shown while no range is set. */
   placeholder?: string;
   /** Short ranges beside the calendar, e.g. "Last 7 days". */
@@ -56,6 +58,8 @@ export function DateRangePicker({
   nameStart,
   nameEnd,
   disabled,
+  required,
+  id,
   placeholder = t("pickRange"),
   presets = [],
   size = "md",
@@ -69,18 +73,15 @@ export function DateRangePicker({
   const [draft, setDraft] = useState<string | null>(null);
   const [hover, setHover] = useState<string | null>(null);
   const [months, setMonths] = useState<1 | 2>(2);
-  const trigger = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement>(null);
   const dataSize = size === "md" ? undefined : size;
   const current = value !== undefined ? cleanRange(value) : inner;
   const shown = current.start && current.end ? formatRange(current, locale) : null;
-  const named = useValueName(aria, shown ?? placeholder);
+  const picker = usePickerField({ id, disabled, required }, aria, shown ?? placeholder);
+  const { field } = picker;
   const usable = presets.filter((preset) => presetUsable(preset, min, max));
-  const group = {
-    role: "group",
-    "aria-label": aria["aria-label"],
-    "aria-labelledby": aria["aria-labelledby"],
-  };
+  // An own label names the group of the two days; inside a Field the label names the trigger.
+  const group = aria["aria-label"] || aria["aria-labelledby"] ? { role: "group", ...picker.popup } : {};
 
   if (isStatic) {
     const input = (which: "start" | "end") => (
@@ -92,7 +93,15 @@ export function DateRangePicker({
         defaultValue={current[which] ?? undefined}
         min={min}
         max={max}
-        disabled={disabled}
+        disabled={field.disabled}
+        required={field.required}
+        {...(which === "start"
+          ? {
+              id: field.id,
+              "aria-invalid": field["aria-invalid"],
+              "aria-describedby": field["aria-describedby"],
+            }
+          : {})}
       />
     );
     return (
@@ -104,7 +113,6 @@ export function DateRangePicker({
         data-week-start={weekStart === 1 ? undefined : weekStart}
         data-locale={locale}
         data-presets={usable.length ? JSON.stringify(usable) : undefined}
-        aria-describedby={aria["aria-describedby"]}
         {...group}
       >
         {input("start")}
@@ -130,16 +138,14 @@ export function DateRangePicker({
     <span className="t-date-range" {...group}>
       <Popover.Root open={open} onOpenChange={onOpenChange}>
         <Popover.Trigger
-          ref={trigger}
+          ref={picker.ref}
           type="button"
           className="t-control t-date-range-trigger"
           aria-haspopup="dialog"
           data-size={dataSize}
-          disabled={disabled}
-          aria-describedby={aria["aria-describedby"]}
-          {...named.trigger}
+          {...picker.trigger}
         >
-          <span className="t-date-range-value" id={named.valueId} data-placeholder={shown ? undefined : ""}>
+          <span className="t-date-range-value" id={picker.valueId} data-placeholder={shown ? undefined : ""}>
             {shown ?? placeholder}
           </span>
           <span className="t-date-range-icon">
@@ -154,13 +160,12 @@ export function DateRangePicker({
               ref={popup}
               className="t-popup t-date-range-popup"
               role="dialog"
-              aria-label={aria["aria-label"]}
-              aria-labelledby={aria["aria-labelledby"]}
+              {...picker.popup}
               initialFocus={() =>
                 popup.current?.querySelector<HTMLElement>('.t-calendar-day[tabindex="0"]:not(:disabled)') ??
                 true
               }
-              finalFocus={trigger}
+              finalFocus={picker.ref}
             >
               {usable.length ? (
                 <fieldset className="t-date-range-presets" aria-label={t("rangePresets")}>

@@ -78,3 +78,7 @@
     box-shadow: 0 0 0 var(--t-border-w-strong) var(--t-border-control);
   }
 }
+
+.t-swatches[aria-invalid="true"] > .t-swatches-option {
+  border-color: var(--t-danger);
+}

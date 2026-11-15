@@ -20,7 +20,7 @@ import type spec from "@tailor/packs/pickers/time/spec";
 import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
-import { useValueName } from "../date/date";
+import { usePickerField } from "../date/date";
 
 export interface TimePickerProps {
   /** "HH:MM", or "HH:MM:SS" with `seconds`, in 24-hour time; null for no time. */
@@ -38,6 +38,7 @@ export interface TimePickerProps {
   name?: string;
   id?: string;
   disabled?: boolean;
+  required?: boolean;
   /** Shown while no time is set. */
   placeholder?: string;
   size?: (typeof spec.props.size)[number];
@@ -151,6 +152,7 @@ export function TimePicker({
   name,
   id,
   disabled,
+  required,
   placeholder = t("pickTime"),
   size = "md",
   locale,
@@ -160,7 +162,6 @@ export function TimePicker({
   const [open, setOpen] = useState(false);
   const [inner, setInner] = useState<string | null>(defaultValue ?? null);
   const [draft, setDraft] = useState<Time | null>(null);
-  const trigger = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement>(null);
   const dataSize = size === "md" ? undefined : size;
   const twelve = uses12Hour(locale, hour12);
@@ -168,7 +169,7 @@ export function TimePicker({
   const current = value !== undefined ? value : inner;
   const time = parseTime(current);
   const shown = time ? formatTime(time, twelve, seconds, locale) : null;
-  const named = useValueName(aria, shown ?? placeholder);
+  const picker = usePickerField({ id, name, disabled, required }, aria, shown ?? placeholder);
 
   if (isStatic) {
     return (
@@ -183,14 +184,11 @@ export function TimePicker({
           data-seconds={seconds ? "" : undefined}
           data-hour12={hour12 === undefined ? undefined : String(hour12)}
           data-locale={locale}
-          name={name}
-          id={id}
+          {...picker.native}
           defaultValue={current ?? undefined}
           min={min}
           max={max}
           step={seconds ? 1 : step * 60}
-          disabled={disabled}
-          {...aria}
         />
       </span>
     );
@@ -214,34 +212,30 @@ export function TimePicker({
         }}
       >
         <Popover.Trigger
-          ref={trigger}
+          ref={picker.ref}
           type="button"
           className="t-control t-time-trigger"
           aria-haspopup="dialog"
           data-size={dataSize}
-          id={id}
-          disabled={disabled}
-          aria-describedby={aria["aria-describedby"]}
-          {...named.trigger}
+          {...picker.trigger}
         >
-          <span className="t-time-value" id={named.valueId} data-placeholder={shown ? undefined : ""}>
+          <span className="t-time-value" id={picker.valueId} data-placeholder={shown ? undefined : ""}>
             {shown ?? placeholder}
           </span>
           <span className="t-time-icon">
             <Glyph body={clock} />
           </span>
         </Popover.Trigger>
-        <input type="hidden" name={name} value={current ?? ""} />
+        <input type="hidden" name={picker.field.name} value={current ?? ""} />
         <Popover.Portal>
           <Popover.Positioner className="t-popup-positioner" sideOffset={4} align="start">
             <Popover.Popup
               ref={popup}
               className="t-popup t-time-popup"
               role="dialog"
-              aria-label={aria["aria-label"]}
-              aria-labelledby={aria["aria-labelledby"]}
+              {...picker.popup}
               initialFocus={() => popup.current?.querySelector<HTMLElement>(".t-time-column") ?? true}
-              finalFocus={trigger}
+              finalFocus={picker.ref}
             >
               {draft ? (
                 <Columns time={draft} settings={settings} onPick={pick} onDone={() => setOpen(false)} />

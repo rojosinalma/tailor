@@ -31,7 +31,9 @@ export interface PickerTrigger {
 
 /**
  * The trigger of a picker that shows its value: a t-control button with the value and an icon.
- * It takes the label of the source (aria-label, aria-labelledby or a <label>), and a click on that label focuses it.
+ * It takes the label of the source (aria-label, aria-labelledby or the <label> of the native control, as a Field
+ * gives it), and a click on that label focuses it. The native control also hands over the description and the
+ * invalid state (a button takes no aria-required: required stays on the native control).
  */
 export function pickerTrigger(
   source: HTMLElement,
@@ -39,7 +41,7 @@ export function pickerTrigger(
   root: string,
   icon: Node | null,
   placeholder: string,
-  disabled: boolean,
+  native: HTMLInputElement,
 ): PickerTrigger {
   const value = h("span", { class: `${root}-value`, id: uid("t-value") });
   const trigger = h(
@@ -50,15 +52,16 @@ export function pickerTrigger(
       "aria-haspopup": "dialog",
       "aria-expanded": "false",
       "data-size": source.dataset.size,
-      "aria-describedby": source.getAttribute("aria-describedby") ?? undefined,
-      disabled,
+      "aria-describedby": native.getAttribute("aria-describedby") ?? undefined,
+      "aria-invalid": native.getAttribute("aria-invalid") ?? undefined,
+      disabled: native.disabled,
     },
     value,
     icon ? h("span", { class: `${root}-icon` }, icon) : null,
   );
   const label = source.getAttribute("aria-label");
   let labelledBy = source.getAttribute("aria-labelledby");
-  const element = source instanceof HTMLInputElement ? source.labels?.[0] : undefined;
+  const element = native.labels?.[0];
   if (element && !label && !labelledBy) {
     element.id ||= uid("t-label");
     labelledBy = element.id;
@@ -258,7 +261,7 @@ register("date", (element) => {
     "t-date",
     glyph(calendar),
     input.dataset.placeholder ?? "",
-    input.disabled,
+    input,
   );
 
   const view = createCalendar({
@@ -306,6 +309,22 @@ register("date", (element) => {
   input.after(trigger);
   show();
 });
+
+/**
+ * Names a group (radios, a drop zone, code boxes) by the <label for> of a Field around it, unless it has a name,
+ * and makes a click on that label focus the first match of `focus` inside the group.
+ */
+export function fieldGroup(group: HTMLElement, focus: () => HTMLElement | null | undefined): void {
+  if (!group.id || group.hasAttribute("aria-label") || group.hasAttribute("aria-labelledby")) return;
+  const label = document.querySelector<HTMLLabelElement>(`label[for="${CSS.escape(group.id)}"]`);
+  if (!label) return;
+  label.id ||= uid("t-label");
+  group.setAttribute("aria-labelledby", `${label.id} ${group.dataset.valueId ?? ""}`.trim());
+  label.addEventListener("click", (event) => {
+    event.preventDefault();
+    focus()?.focus();
+  });
+}
 
 /** Focus that leaves for another control closes the popup, as a click outside does. */
 export function closeOnFocusOut(

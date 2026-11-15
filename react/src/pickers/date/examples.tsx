@@ -1,3 +1,4 @@
+import { Field } from "../../core/field/field";
 import { defineExamples } from "../../examples";
 import { DatePicker } from "./date";
 
@@ -24,5 +25,14 @@ export default defineExamples("date", [
     id: "disabled",
     title: "Disabled",
     render: () => <DatePicker defaultValue="2026-11-15" disabled aria-label="Locked date" />,
+  },
+  {
+    id: "field",
+    title: "Inside a Field, with help and an error",
+    render: () => (
+      <Field label="Due date" help="The day the work is due." error="The date is in the past." required>
+        <DatePicker name="due-field" defaultValue="2026-11-02" />
+      </Field>
+    ),
   },
 ]);

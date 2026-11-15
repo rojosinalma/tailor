@@ -19,7 +19,16 @@ import {
   weekdayNames,
 } from "@tailor/packs/pickers/date/logic";
 import type spec from "@tailor/packs/pickers/date/spec";
-import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
+import {
+  type KeyboardEvent,
+  type RefObject,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { type FieldControlProps, useFieldControl } from "../../core/field/field";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
 
@@ -206,21 +215,87 @@ export function Calendar({
   );
 }
 
-/** The accessible name of a trigger that shows a value: the label, then the shown text. */
-export function useValueName(
-  aria: { readonly "aria-label"?: string; readonly "aria-labelledby"?: string },
-  text: string,
-): { trigger: { "aria-label"?: string; "aria-labelledby"?: string }; valueId: string } {
+export interface PickerAria {
+  readonly "aria-label"?: string;
+  readonly "aria-labelledby"?: string;
+  readonly "aria-describedby"?: string;
+}
+
+/** The label element of a Field around the control with this id (a group is not labelable, so search by for). */
+export const fieldLabelFor = (id: string | undefined): HTMLLabelElement | null =>
+  id ? document.querySelector<HTMLLabelElement>(`label[for="${CSS.escape(id)}"]`) : null;
+
+/**
+ * The Field wiring of a picker whose trigger shows a value. The trigger's accessible name is "label: value":
+ * the own aria-label, the own aria-labelledby or the label of the Field around it, then the shown text.
+ */
+export function usePickerField(own: FieldControlProps, aria: PickerAria, text: string) {
+  const field = useFieldControl({ ...own, "aria-describedby": aria["aria-describedby"] });
   const valueId = useId();
+  const ref = useRef<HTMLButtonElement>(null);
+  const [fieldLabel, setFieldLabel] = useState<string>();
   const label = aria["aria-label"];
-  const labelledBy = aria["aria-labelledby"];
+  const labelledBy = aria["aria-labelledby"] ?? fieldLabel;
+  useLayoutEffect(() => {
+    if (label || aria["aria-labelledby"]) return;
+    const element = fieldLabelFor(field.id);
+    if (!element) return;
+    element.id ||= `${valueId}-label`;
+    setFieldLabel(element.id);
+  });
+  const described = { "aria-invalid": field["aria-invalid"], "aria-describedby": field["aria-describedby"] };
   return {
+    field,
+    ref,
     valueId,
+    /** The native control of the static markup. */
+    native: { ...field, "aria-label": label, "aria-labelledby": aria["aria-labelledby"] },
     trigger: {
+      ...described,
+      id: field.id,
+      disabled: field.disabled,
       "aria-label": label ? `${label}: ${text}` : undefined,
       "aria-labelledby": labelledBy ? `${labelledBy} ${valueId}` : undefined,
     },
+    /** The popup takes the label without the value. */
+    popup: { "aria-label": label, "aria-labelledby": labelledBy },
   };
+}
+
+/**
+ * The Field wiring of a group (radios, a drop zone, code boxes): the group takes the Field's label as its name
+ * unless it has its own, and a click on that label focuses the first match inside the group of the selectors
+ * in `target`, tried in order and joined by "|".
+ */
+export function useFieldGroup(
+  own: FieldControlProps,
+  label: string | undefined,
+  target: string,
+): { field: FieldControlProps; ref: RefObject<HTMLDivElement | null>; labelledBy: string | undefined } {
+  const field = useFieldControl(own);
+  const ref = useRef<HTMLDivElement>(null);
+  const fallback = useId();
+  const [labelledBy, setLabelledBy] = useState<string>();
+  useLayoutEffect(() => {
+    if (label) return;
+    const element = fieldLabelFor(field.id);
+    if (!element) return;
+    element.id ||= `${fallback}-label`;
+    setLabelledBy(element.id);
+    const focus = (event: MouseEvent): void => {
+      event.preventDefault();
+      for (const selector of target.split("|")) {
+        const found = ref.current?.querySelector<HTMLElement>(selector);
+        if (found) {
+          found.focus();
+          return;
+        }
+      }
+    };
+    element.addEventListener("click", focus);
+    return () => element.removeEventListener("click", focus);
+  }, [label, field.id, fallback, target]);
+  return { field, ref, labelledBy };
 }
 
 export interface DatePickerProps {
@@ -239,8 +314,10 @@ export interface DatePickerProps {
   /** 0 = Sunday, 1 = Monday. */
   weekStart?: WeekStart;
   locale?: string;
+  required?: boolean;
   "aria-label"?: string;
   "aria-labelledby"?: string;
+  "aria-describedby"?: string;
 }
 
 export function DatePicker({
@@ -252,6 +329,7 @@ export function DatePicker({
   name,
   id,
   disabled,
+  required,
   placeholder = t("pickDate"),
   size = "md",
   weekStart = 1,
@@ -261,12 +339,11 @@ export function DatePicker({
   const isStatic = useIsStatic();
   const [open, setOpen] = useState(false);
   const [inner, setInner] = useState<string | null>(defaultValue ?? null);
-  const trigger = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement>(null);
   const dataSize = size === "md" ? undefined : size;
   const current = value !== undefined ? value : inner;
   const shown = parseIso(current) && current ? formatDate(current, locale) : null;
-  const named = useValueName(aria, shown ?? placeholder);
+  const picker = usePickerField({ id, name, disabled, required }, aria, shown ?? placeholder);
 
   if (isStatic) {
     return (
@@ -278,13 +355,10 @@ export function DatePicker({
         data-placeholder={placeholder}
         data-week-start={weekStart === 1 ? undefined : weekStart}
         data-locale={locale}
-        name={name}
-        id={id}
+        {...picker.native}
         defaultValue={value ?? defaultValue}
         min={min}
         max={max}
-        disabled={disabled}
-        {...aria}
       />
     );
   }
@@ -292,35 +366,33 @@ export function DatePicker({
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
       <Popover.Trigger
-        ref={trigger}
+        ref={picker.ref}
         type="button"
         className="t-control t-date-trigger"
         aria-haspopup="dialog"
         data-size={dataSize}
-        id={id}
-        disabled={disabled}
-        {...named.trigger}
+        {...picker.trigger}
       >
-        <span className="t-date-value" id={named.valueId} data-placeholder={shown ? undefined : ""}>
+        <span className="t-date-value" id={picker.valueId} data-placeholder={shown ? undefined : ""}>
           {shown ?? placeholder}
         </span>
         <span className="t-date-icon">
           <Glyph body={calendar} />
         </span>
       </Popover.Trigger>
-      <input type="hidden" name={name} value={current ?? ""} />
+      <input type="hidden" name={picker.field.name} value={current ?? ""} />
       <Popover.Portal>
         <Popover.Positioner className="t-popup-positioner" sideOffset={4} align="start">
           <Popover.Popup
             ref={popup}
             className="t-popup t-date-popup"
             role="dialog"
-            {...aria}
+            {...picker.popup}
             initialFocus={() =>
               popup.current?.querySelector<HTMLElement>('.t-calendar-day[tabindex="0"]:not(:disabled)') ??
               true
             }
-            finalFocus={trigger}
+            finalFocus={picker.ref}
           >
             <Calendar
               value={current}

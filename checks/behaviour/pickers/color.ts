@@ -94,4 +94,21 @@ export default behaviour("color", {
       })
       .toEqual([390, 800]);
   },
+  "inside a Field: the label names and focuses it, help and error describe it": async ({
+    page,
+    example,
+    expect,
+  }) => {
+    const body = example("field");
+    const trigger = body.getByRole("button", { name: "Brand colour" });
+    await expect(trigger).toHaveAccessibleName("Brand colour #e63946");
+    await expect(trigger).toHaveAccessibleDescription(
+      "Used for links and buttons. This colour is too light on white.",
+    );
+    await expect(trigger).toHaveAttribute("aria-invalid", "true");
+    await body.locator(".t-field-label").click();
+    await expect(trigger).toBeFocused();
+    await expect(page.getByRole("slider")).toHaveCount(0);
+    await expect(body.locator('[name="brand"]')).toHaveValue("#e63946");
+  },
 });

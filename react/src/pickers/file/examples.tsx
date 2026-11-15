@@ -1,3 +1,4 @@
+import { Field } from "../../core/field/field";
 import { defineExamples } from "../../examples";
 import { FilePicker } from "./file";
 
@@ -38,5 +39,14 @@ export default defineExamples("file", [
     title: "In a narrow box",
     width: "sm",
     render: () => <FilePicker name="logs" label="Log files" multiple hint="Any log file of web-1 or nas" />,
+  },
+  {
+    id: "field",
+    title: "Inside a Field, with help and an error",
+    render: () => (
+      <Field label="Report" help="A PDF of up to 10 MB." error="Add the report." required>
+        <FilePicker name="report" accept=".pdf" />
+      </Field>
+    ),
   },
 ]);

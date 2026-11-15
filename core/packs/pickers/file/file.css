@@ -25,6 +25,10 @@
   background: color-mix(in srgb, var(--t-accent) var(--t-tint-weak), var(--t-inset));
 }
 
+.t-file[aria-invalid="true"] > .t-file-zone {
+  border-color: var(--t-danger);
+}
+
 .t-file-icon {
   display: inline-flex;
   flex: none;

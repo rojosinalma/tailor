@@ -79,4 +79,19 @@ export default behaviour("date", {
     const trigger = example("disabled").getByRole("button", { name: "Locked date" });
     await expect(trigger).toBeDisabled();
   },
+  "inside a Field: the label names and focuses it, help and error describe it": async ({
+    page,
+    example,
+    expect,
+  }) => {
+    const body = example("field");
+    const trigger = body.getByRole("button", { name: "Due date" });
+    await expect(trigger).toHaveAccessibleName("Due date Nov 2, 2026");
+    await expect(trigger).toHaveAccessibleDescription("The day the work is due. The date is in the past.");
+    await expect(trigger).toHaveAttribute("aria-invalid", "true");
+    await body.locator(".t-field-label").click();
+    await expect(trigger).toBeFocused();
+    await expect(page.getByRole("grid")).toBeHidden();
+    await expect(body.locator('[name="due-field"]')).toHaveValue("2026-11-02");
+  },
 });

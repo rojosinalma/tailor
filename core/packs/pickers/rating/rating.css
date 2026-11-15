@@ -32,7 +32,7 @@
 /* A star is filled when it or a later star is picked. */
 .t-rating-star:is(
   [data-checked],
-  [data-filled],
+  [data-rated],
   :has(:checked),
   :has(~ [data-checked]),
   :has(~ .t-rating-star :checked)
@@ -80,6 +80,10 @@
 
 .t-rating-glyph > :last-child {
   opacity: var(--t-rating-on);
+}
+
+.t-rating[aria-invalid="true"] .t-rating-glyph > :first-child {
+  color: var(--t-danger);
 }
 
 .t-rating[data-disabled] .t-rating-glyph {

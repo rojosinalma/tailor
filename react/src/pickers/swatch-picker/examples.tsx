@@ -1,3 +1,4 @@
+import { Field } from "../../core/field/field";
 import { Stack } from "../../core/stack/stack";
 import { defineExamples } from "../../examples";
 import { type SwatchOption, SwatchPicker } from "./swatch-picker";
@@ -66,5 +67,19 @@ export default defineExamples("swatch-picker", [
     title: "In a narrow box",
     width: "sm",
     render: () => <SwatchPicker options={hues} name="narrow" defaultValue="blue" label="Folder colour" />,
+  },
+  {
+    id: "field",
+    title: "Inside a Field, with help and an error",
+    render: () => (
+      <Field
+        label="Tag colour"
+        help="The colour of the tag in lists."
+        error="Pick another colour: red is taken."
+        required
+      >
+        <SwatchPicker options={hues} name="tag-field" defaultValue="red" />
+      </Field>
+    ),
   },
 ]);

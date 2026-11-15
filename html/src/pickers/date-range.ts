@@ -42,7 +42,7 @@ register("date-range", (root) => {
     "t-date-range",
     glyph(calendar),
     root.dataset.placeholder ?? "",
-    first.disabled,
+    first,
   );
   let draft: string | null = null;
   let hover: string | null = null;

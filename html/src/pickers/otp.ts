@@ -10,6 +10,7 @@ register("otp", (element) => {
   const length = input.maxLength > 0 ? input.maxLength : 6;
   const numeric = input.inputMode !== "text";
   const label = input.getAttribute("aria-label") ?? undefined;
+  const describedBy = input.getAttribute("aria-describedby") ?? undefined;
   const slots = Array.from({ length }, (_, i) =>
     h("input", {
       class: "t-control t-otp-input",
@@ -20,7 +21,11 @@ register("otp", (element) => {
       spellcheck: "false",
       enterkeyhint: i === length - 1 ? "done" : "next",
       maxlength: i === 0 ? String(length) : undefined,
+      id: i === 0 && input.id ? input.id : undefined,
       "aria-label": i === 0 ? label : `${t("otpCharacter")} ${i + 1} ${t("of")} ${length}`,
+      "aria-describedby": i === 0 ? describedBy : undefined,
+      "aria-invalid": input.getAttribute("aria-invalid") ?? undefined,
+      required: input.required,
       disabled: input.disabled,
     }),
   );
@@ -30,7 +35,7 @@ register("otp", (element) => {
       class: "t-otp",
       role: "group",
       "aria-label": label,
-      "aria-describedby": input.getAttribute("aria-describedby") ?? undefined,
+      "aria-describedby": describedBy,
       "data-size": input.dataset.size,
       "data-disabled": input.disabled,
     },
@@ -102,7 +107,17 @@ register("otp", (element) => {
     });
   });
 
+  const id = input.id;
+  input.removeAttribute("id");
   hideNative(input);
   input.before(root);
   paint();
+  // Inside a Field the label names the first box (by its id) and the group.
+  if (id && !label) {
+    const named = document.querySelector<HTMLLabelElement>(`label[for="${CSS.escape(id)}"]`);
+    if (named) {
+      named.id ||= `${id}-label`;
+      root.setAttribute("aria-labelledby", named.id);
+    }
+  }
 });

@@ -1,3 +1,4 @@
+import { Field } from "../../core/field/field";
 import { Stack } from "../../core/stack/stack";
 import { defineExamples } from "../../examples";
 import { Rating } from "./rating";
@@ -40,5 +41,19 @@ export default defineExamples("rating", [
     title: "In a narrow box",
     width: "sm",
     render: () => <Rating name="narrow" defaultValue={3} max={10} label="Uptime score" />,
+  },
+  {
+    id: "field",
+    title: "Inside a Field, with help and an error",
+    render: () => (
+      <Field
+        label="Support quality"
+        help="How well the issue was solved."
+        error="Tell us why in a comment."
+        required
+      >
+        <Rating name="support-field" defaultValue={2} />
+      </Field>
+    ),
   },
 ]);

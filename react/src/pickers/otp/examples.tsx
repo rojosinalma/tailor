@@ -1,3 +1,4 @@
+import { Field } from "../../core/field/field";
 import { Stack } from "../../core/stack/stack";
 import { defineExamples } from "../../examples";
 import { OtpField } from "./otp";
@@ -34,5 +35,19 @@ export default defineExamples("otp", [
     title: "In a narrow box",
     width: "sm",
     render: () => <OtpField name="narrow" defaultValue="12" label="Backup code" />,
+  },
+  {
+    id: "field",
+    title: "Inside a Field, with help and an error",
+    render: () => (
+      <Field
+        label="Verification code"
+        help="The code from the text message."
+        error="The code is wrong."
+        required
+      >
+        <OtpField name="code-field" defaultValue="4829" />
+      </Field>
+    ),
   },
 ]);

@@ -64,6 +64,12 @@ describe("columns", () => {
     expect(minutes?.options).toHaveLength(12);
   });
 
+  test("a minute off the step still shows", () => {
+    const minutes = timeColumns(at("10:07"), h24)[1]?.options ?? [];
+    expect(minutes).toHaveLength(13);
+    expect(minutes.find((o) => o.selected)?.text).toBe("07");
+  });
+
   test("12-hour: 12 first, and an AM/PM column", () => {
     const columns = timeColumns(at("14:30"), h12);
     expect(columns.map((c) => c.key)).toEqual(["hour", "minute", "period"]);

@@ -102,4 +102,21 @@ export default behaviour("time", {
       })
       .toEqual([390, 800]);
   },
+  "inside a Field: the label names and focuses it, help and error describe it": async ({
+    page,
+    example,
+    expect,
+  }) => {
+    const body = example("field");
+    const trigger = body.getByRole("button", { name: "Backup time" });
+    await expect(trigger).toHaveAccessibleName("Backup time 03:30");
+    await expect(trigger).toHaveAccessibleDescription(
+      "The time of the nightly backup. Backups cannot run at that time.",
+    );
+    await expect(trigger).toHaveAttribute("aria-invalid", "true");
+    await body.locator(".t-field-label").click();
+    await expect(trigger).toBeFocused();
+    await expect(page.getByRole("listbox")).toHaveCount(0);
+    await expect(body.locator('[name="backup-field"]')).toHaveValue("03:30");
+  },
 });

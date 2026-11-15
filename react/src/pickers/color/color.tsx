@@ -14,7 +14,7 @@ import {
 import type spec from "@tailor/packs/pickers/color/spec";
 import { type CSSProperties, type KeyboardEvent, type PointerEvent, useRef, useState } from "react";
 import { useIsStatic } from "../../kit";
-import { useValueName } from "../date/date";
+import { usePickerField } from "../date/date";
 
 export interface ColorPickerProps {
   /** "#rrggbb"; "" for no colour (with `allowNone`). */
@@ -28,6 +28,7 @@ export interface ColorPickerProps {
   name?: string;
   id?: string;
   disabled?: boolean;
+  required?: boolean;
   size?: (typeof spec.props.size)[number];
   "aria-label"?: string;
   "aria-labelledby"?: string;
@@ -62,6 +63,7 @@ export function ColorPicker({
   name,
   id,
   disabled,
+  required,
   size = "md",
   ...aria
 }: ColorPickerProps) {
@@ -71,11 +73,10 @@ export function ColorPicker({
   const current = value !== undefined ? (parseHex(value) ?? (allowNone ? "" : "#000000")) : inner;
   const [hsv, setHsv] = useState<Hsv>(() => hexToHsv(current || "#000000"));
   const [hex, setHex] = useState(current);
-  const trigger = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement>(null);
   const dataSize = size === "md" ? undefined : size;
   const shown = current || t("colorNone");
-  const named = useValueName(aria, shown);
+  const picker = usePickerField({ id, name, disabled, required }, aria, shown);
   const presets = swatches.map(parseHex).filter((s): s is string => s !== null);
 
   if (isStatic) {
@@ -89,11 +90,8 @@ export function ColorPicker({
           data-allow-none={allowNone ? "" : undefined}
           data-swatches={presets.length ? presets.join(" ") : undefined}
           pattern={allowNone ? "#[0-9a-fA-F]{6}" : undefined}
-          name={name}
-          id={id}
+          {...picker.native}
           defaultValue={current}
-          disabled={disabled}
-          {...aria}
         />
       </span>
     );
@@ -143,37 +141,33 @@ export function ColorPicker({
         }}
       >
         <Popover.Trigger
-          ref={trigger}
+          ref={picker.ref}
           type="button"
           className="t-control t-color-picker-trigger"
           aria-haspopup="dialog"
           data-size={dataSize}
-          id={id}
-          disabled={disabled}
-          aria-describedby={aria["aria-describedby"]}
-          {...named.trigger}
+          {...picker.trigger}
         >
           <span
             className="t-color-picker-swatch"
             data-none={current ? undefined : ""}
             style={current ? ({ "--t-swatch": current } as CSSProperties) : undefined}
           />
-          <span className="t-color-picker-value" id={named.valueId}>
+          <span className="t-color-picker-value" id={picker.valueId}>
             {shown}
           </span>
         </Popover.Trigger>
-        <input type="hidden" name={name} value={current} />
+        <input type="hidden" name={picker.field.name} value={current} />
         <Popover.Portal>
           <Popover.Positioner className="t-popup-positioner" sideOffset={4} align="start">
             <Popover.Popup
               ref={popup}
               className="t-popup t-color-picker-popup"
               role="dialog"
-              aria-label={aria["aria-label"]}
-              aria-labelledby={aria["aria-labelledby"]}
+              {...picker.popup}
               style={colorVars(hsv)}
               initialFocus={() => popup.current?.querySelector<HTMLElement>(".t-color-area-thumb") ?? true}
-              finalFocus={trigger}
+              finalFocus={picker.ref}
             >
               <div className="t-color-area" {...drag(({ x, y }) => fromArea(hsv.h, x, y))}>
                 <div

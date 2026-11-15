@@ -91,4 +91,21 @@ export default behaviour("date-range", {
       .toEqual([390, 800]);
     await expect(page.evaluate(() => document.documentElement.scrollWidth)).resolves.toBeLessThanOrEqual(390);
   },
+  "inside a Field: the label names and focuses it, help and error describe it": async ({
+    page,
+    example,
+    expect,
+  }) => {
+    const body = example("field");
+    const trigger = body.getByRole("button", { name: "Report period" });
+    await expect(trigger).toHaveAccessibleName(/^Report period Nov 2\s–\s6, 2026$/);
+    await expect(trigger).toHaveAccessibleDescription(
+      "The days the report covers. The period is longer than a month.",
+    );
+    await expect(trigger).toHaveAttribute("aria-invalid", "true");
+    await body.locator(".t-field-label").click();
+    await expect(trigger).toBeFocused();
+    await expect(page.getByRole("grid")).toHaveCount(0);
+    await expect(body.locator('[name="report-start"]')).toHaveValue("2026-11-02");
+  },
 });

@@ -1,3 +1,4 @@
+import { Field } from "../../core/field/field";
 import { defineExamples } from "../../examples";
 import { ColorPicker } from "./color";
 
@@ -35,5 +36,19 @@ export default defineExamples("color", [
     title: "In a narrow box",
     width: "sm",
     render: () => <ColorPicker defaultValue="#fabd2f" size="sm" aria-label="Badge colour" />,
+  },
+  {
+    id: "field",
+    title: "Inside a Field, with help and an error",
+    render: () => (
+      <Field
+        label="Brand colour"
+        help="Used for links and buttons."
+        error="This colour is too light on white."
+        required
+      >
+        <ColorPicker name="brand" defaultValue="#e63946" />
+      </Field>
+    ),
   },
 ]);

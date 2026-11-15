@@ -126,12 +126,15 @@ export function timeColumns(time: Time, settings: TimeSettings): TimeColumn[] {
     },
     {
       key: "minute",
-      options: range(60, Math.min(Math.max(1, Math.round(step)), 60)).map((value) => ({
-        value,
-        text: pad(value),
-        disabled: outside(base + value * 60, base + value * 60 + 59, settings),
-        selected: value === time.minute,
-      })),
+      // A minute off the step (a value from outside) still shows, so the column always marks the time.
+      options: [...new Set([...range(60, Math.min(Math.max(1, Math.round(step)), 60)), time.minute])]
+        .sort((a, b) => a - b)
+        .map((value) => ({
+          value,
+          text: pad(value),
+          disabled: outside(base + value * 60, base + value * 60 + 59, settings),
+          selected: value === time.minute,
+        })),
     },
   ];
   if (settings.seconds) {

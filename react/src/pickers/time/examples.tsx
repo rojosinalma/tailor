@@ -1,4 +1,5 @@
 import { Cluster } from "../../core/cluster/cluster";
+import { Field } from "../../core/field/field";
 import { defineExamples } from "../../examples";
 import { TimePicker } from "./time";
 
@@ -58,5 +59,19 @@ export default defineExamples("time", [
     title: "In a narrow box",
     width: "sm",
     render: () => <TimePicker defaultValue="23:45" hour12={false} aria-label="Cut-off time" />,
+  },
+  {
+    id: "field",
+    title: "Inside a Field, with help and an error",
+    render: () => (
+      <Field
+        label="Backup time"
+        help="The time of the nightly backup."
+        error="Backups cannot run at that time."
+        required
+      >
+        <TimePicker name="backup-field" defaultValue="03:30" hour12={false} />
+      </Field>
+    ),
   },
 ]);

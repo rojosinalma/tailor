@@ -9,7 +9,8 @@
   justify-content: center;
   width: var(--t-control-h-md);
   min-width: 2em;
-  padding: 0;
+  /* Digits have no descenders: a little more room above centres them in the box. */
+  padding: 0.2em 0 0;
   font-family: var(--t-font-mono);
   font-size: var(--t-text-lg);
   font-variant-numeric: tabular-nums;

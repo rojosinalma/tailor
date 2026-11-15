@@ -93,4 +93,16 @@ export default behaviour("file", {
     await expect(body.getByRole("listitem")).toHaveCount(1);
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   },
+  "inside a Field: the label names the zone and focuses its button, help and error describe it": async ({
+    example,
+    expect,
+  }) => {
+    const body = example("field");
+    const group = body.getByRole("group", { name: "Report" });
+    await expect(group).toHaveAccessibleDescription("A PDF of up to 10 MB. Add the report.");
+    await expect(group).toHaveAttribute("aria-invalid", "true");
+    await expect(body.locator('input[name="report"]')).toHaveAttribute("required", "");
+    await body.locator(".t-field-label").click();
+    await expect(group.getByRole("button", { name: "Choose a file" })).toBeFocused();
+  },
 });

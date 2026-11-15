@@ -4,6 +4,7 @@
 }
 
 .t-date-range-trigger {
+  flex: 1;
   justify-content: space-between;
   min-width: var(--t-measure-xs);
   max-width: 100%;
