@@ -9,6 +9,8 @@ export interface Example {
   readonly render: () => ReactNode;
   /** "frame": the example needs a page of its own (shells, layouts, fill-mode parts). */
   readonly display?: "inline" | "frame";
+  /** A narrow box around the example, to show how the component adapts to its container. */
+  readonly width?: "sm" | "md";
 }
 
 export interface ExampleSet {

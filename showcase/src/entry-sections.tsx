@@ -23,7 +23,9 @@ export function EntrySections({
         >
           <h2 className="sc-example-title">{example.title}</h2>
           {example.note ? <p className="sc-example-note">{example.note}</p> : null}
-          <div className="sc-example-body">{example.render()}</div>
+          <div className="sc-example-body" data-width={example.width}>
+            {example.render()}
+          </div>
         </section>
       ))}
     </main>

@@ -44,3 +44,11 @@
   border: var(--t-border-w) solid var(--t-border);
   border-radius: var(--t-radius-box);
 }
+
+.sc-example-body[data-width="sm"] {
+  max-width: var(--t-measure-sm);
+}
+
+.sc-example-body[data-width="md"] {
+  max-width: var(--t-measure-md);
+}
