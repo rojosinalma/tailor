@@ -16,6 +16,45 @@
   box-shadow: inset 0 calc(-1 * var(--t-border-w)) var(--t-border);
 }
 
+/* A fade at the edge that has more tabs, where the browser has scroll-driven animations. */
+@supports (animation-timeline: scroll()) {
+  .t-tabs-list {
+    --t-tabs-fade-dir: to right;
+    --t-tabs-fade-start: 0em;
+    --t-tabs-fade-end: 0em;
+    mask-image: linear-gradient(
+      var(--t-tabs-fade-dir),
+      transparent,
+      currentColor var(--t-tabs-fade-start),
+      currentColor calc(100% - var(--t-tabs-fade-end)),
+      transparent
+    );
+    animation: t-tabs-fade linear both;
+    animation-timeline: scroll(self inline);
+  }
+
+  .t-tabs-list:dir(rtl) {
+    --t-tabs-fade-dir: to left;
+  }
+}
+
+/* The custom properties flip at the midpoints: no fade at the start edge, none at the end edge. */
+@keyframes t-tabs-fade {
+  0% {
+    --t-tabs-fade-start: 0em;
+    --t-tabs-fade-end: 2em;
+  }
+  1%,
+  99% {
+    --t-tabs-fade-start: 2em;
+    --t-tabs-fade-end: 2em;
+  }
+  100% {
+    --t-tabs-fade-start: 2em;
+    --t-tabs-fade-end: 0em;
+  }
+}
+
 .t-tabs-list > li {
   display: flex;
   flex: none;
@@ -61,18 +100,6 @@
   cursor: not-allowed;
 }
 
-.t-tab-count {
-  min-width: 1.5em;
-  padding: 0 var(--t-space-1);
-  border-radius: var(--t-radius-pill);
-  background: var(--t-hover);
-  color: var(--t-muted);
-  font-size: var(--t-text-xs);
-  font-variant-numeric: tabular-nums;
-  line-height: 1.5;
-  text-align: center;
-}
-
 .t-tabs[data-variant="pills"] > .t-tabs-list {
   box-shadow: none;
 }
@@ -88,12 +115,7 @@
   box-shadow: none;
 }
 
-.t-tabs[data-variant="pills"] .t-tab:is([aria-selected="true"], [aria-current="page"]) .t-tab-count {
-  background: color-mix(in srgb, var(--t-on-accent) 20%, transparent);
-  color: var(--t-on-accent);
-}
-
-.t-tabs-panel {
+.t-tabs[data-variant="pills"] .t-tab:is([aria-selected="true"], [aria-current="page"]) .t-tabs-panel {
   min-width: 0;
 }
 

@@ -33,4 +33,21 @@ export default defineExamples("breadcrumb", [
     title: "Two levels",
     render: () => <Breadcrumb items={[{ label: "Settings", to: "#settings" }, { label: "Users" }]} />,
   },
+  {
+    id: "narrow",
+    title: "In a narrow box",
+    note: "The first item, an ellipsis and the last two.",
+    width: "sm",
+    render: () => (
+      <Breadcrumb
+        items={[
+          { label: "Home", to: "#home" },
+          { label: "Hosts", to: "#hosts" },
+          { label: "nas", to: "#nas" },
+          { label: "Volumes", to: "#volumes" },
+          { label: "Snapshots" },
+        ]}
+      />
+    ),
+  },
 ]);

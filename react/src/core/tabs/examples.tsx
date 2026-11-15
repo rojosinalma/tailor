@@ -70,6 +70,13 @@ export default defineExamples("tabs", [
     render: () => <Tabs label="Storage sections" tabs={many} defaultValue="settings" />,
   },
   {
+    id: "narrow",
+    title: "In a narrow box",
+    note: "The fade at an edge shows that more tabs sit on that side.",
+    width: "sm",
+    render: () => <Tabs label="Narrow host sections" tabs={sections} defaultValue="logs" />,
+  },
+  {
     id: "nav",
     title: "Links to sub-pages",
     note: "NavTabs: the same look, each tab is a link. The current page has aria-current.",

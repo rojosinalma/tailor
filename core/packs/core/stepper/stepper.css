@@ -82,7 +82,7 @@
 
 .t-stepper-step[data-state="current"] .t-stepper-marker {
   border-color: var(--t-accent);
-  color: var(--t-accent);
+  color: var(--t-accent-text);
 }
 
 .t-stepper-step:not([data-state="upcoming"]) .t-stepper-label {

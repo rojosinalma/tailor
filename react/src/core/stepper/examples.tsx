@@ -34,4 +34,11 @@ export default defineExamples("stepper", [
       />
     ),
   },
+  {
+    id: "narrow",
+    title: "Horizontal, in a narrow box",
+    note: "The horizontal stepper turns vertical.",
+    width: "sm",
+    render: () => <Stepper steps={steps} current="access" />,
+  },
 ]);

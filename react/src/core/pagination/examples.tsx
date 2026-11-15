@@ -32,4 +32,11 @@ export default defineExamples("pagination", [
       </Stack>
     ),
   },
+  {
+    id: "narrow",
+    title: "In a narrow box",
+    note: "Previous, Page N of M, next.",
+    width: "sm",
+    render: () => <Pages start={5} pageCount={12} label="Narrow hosts pages" />,
+  },
 ]);

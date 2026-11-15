@@ -42,8 +42,11 @@
   line-height: var(--t-control-h-sm);
 }
 
+/* A short label still gives a touch target of the minimum width. */
 .t-breadcrumb-item > a {
+  min-width: var(--t-space-5);
   color: var(--t-link);
+  text-align: center;
 }
 
 .t-breadcrumb-item > [aria-current="page"] {

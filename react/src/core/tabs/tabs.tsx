@@ -3,6 +3,7 @@ import type spec from "@tailor/packs/core/tabs/spec";
 import { type ReactNode, useId, useLayoutEffect, useRef, useState } from "react";
 import { useIsStatic } from "../../kit";
 import { AppLink } from "../../link";
+import { Counter } from "../counter/counter";
 
 type TabsVariant = (typeof spec.props.variant)[number];
 
@@ -41,7 +42,7 @@ function TabInner({ icon, label, counter }: { icon?: ReactNode; label: string; c
     <>
       {icon}
       <span className="t-tab-label">{label}</span>
-      {counter === undefined ? null : <span className="t-tab-count">{counter}</span>}
+      {counter === undefined ? null : <Counter value={counter} />}
     </>
   );
 }
