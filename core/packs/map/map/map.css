@@ -39,6 +39,13 @@
   filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85);
 }
 
+/* Leaflet keeps its line layer on a 3D layer for the zoom animation, which reduced motion turns off. */
+@media (prefers-reduced-motion: reduce) {
+  .t-map svg.leaflet-zoom-animated {
+    will-change: auto;
+  }
+}
+
 /* Controls: a vertical stack of icon buttons in the top end corner. */
 .t-map .leaflet-control {
   margin: var(--t-space-2);
@@ -55,8 +62,9 @@
   border-radius: 0;
 }
 
+/* Neighbours share one line and never overlap, so each button keeps its whole target size. */
 .t-map-controls > .t-btn + .t-btn {
-  margin-block-start: calc(var(--t-border-w) * -1);
+  border-block-start-width: 0;
 }
 
 .t-map-controls > .t-btn:first-child {

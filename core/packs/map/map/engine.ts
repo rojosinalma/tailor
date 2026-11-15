@@ -4,6 +4,7 @@
  */
 import { close, dash, mapFit, mapLocate, plus } from "@tailor/core/glyphs.gen";
 import { type TextKey, t } from "@tailor/core/text";
+import "./flat";
 import * as L from "leaflet";
 import type { LatLng, MapControl, MapMarkerData, MapPathData, MapTiles, MapViewState } from "./logic";
 
@@ -76,6 +77,9 @@ export function createMap(root: HTMLElement, options: MapEngineOptions): MapEngi
     fadeAnimation: !still,
     zoomAnimation: !still,
     markerZoomAnimation: !still,
+    // The ResizeObserver below follows every size change, the window's too, in the same frame. Leaflet's own
+    // window listener would redraw a frame later and the tiles 200 ms after that.
+    trackResize: false,
   });
   L.tileLayer(options.tiles.url, {
     attribution: options.tiles.attribution,
