@@ -1,0 +1,87 @@
+/* The whole label is the hit area; on a touch screen it reaches the touch size. */
+.t-switch {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-content: center;
+  align-items: start;
+  column-gap: var(--t-space-2);
+  min-width: 0;
+  min-height: var(--t-control-h-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.t-switch-input {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  width: 2.25em;
+  height: 1.25em;
+  margin-block: calc((1lh - 1.25em) / 2);
+  padding: 0 var(--t-space-05);
+  border: 0;
+  border-radius: var(--t-radius-pill);
+  background: var(--t-border-control);
+  cursor: inherit;
+  transition: background-color var(--t-motion-fast) var(--t-ease);
+}
+
+/* The React kit draws the thumb as a part, the HTML kit as the track's ::before. */
+.t-switch-thumb,
+input.t-switch-input::before {
+  content: "";
+  flex: none;
+  width: calc(1.25em - 2 * var(--t-space-05));
+  height: calc(1.25em - 2 * var(--t-space-05));
+  border-radius: var(--t-radius-pill);
+  background: var(--t-text);
+  box-shadow: var(--t-shadow-sm);
+  transition:
+    translate var(--t-motion-base) var(--t-ease),
+    background-color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-switch-input:checked,
+.t-switch-input[data-checked] {
+  background: var(--t-accent-solid);
+}
+
+.t-switch-input:checked::before,
+.t-switch-input[data-checked] > .t-switch-thumb {
+  translate: 1em;
+  background: var(--t-on-accent);
+}
+
+.t-switch-input[aria-invalid="true"],
+.t-switch-input[data-invalid] {
+  outline: var(--t-border-w) solid var(--t-danger);
+}
+
+.t-switch-label {
+  min-width: 0;
+}
+
+.t-switch-description {
+  grid-column: 2;
+  min-width: 0;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-switch:has(> .t-switch-input:disabled),
+.t-switch:has(> .t-switch-input[data-disabled]) {
+  color: var(--t-disabled);
+  cursor: not-allowed;
+}
+
+.t-switch-input:disabled,
+.t-switch-input[data-disabled] {
+  background: var(--t-selection);
+}
+
+.t-switch-input:disabled::before,
+.t-switch-input[data-disabled] > .t-switch-thumb {
+  background: var(--t-disabled);
+  box-shadow: none;
+}

@@ -1,0 +1,105 @@
+.t-input {
+  width: 100%;
+  font-family: inherit;
+}
+
+.t-input:read-only:not(:disabled) {
+  background: transparent;
+}
+
+/* A box that holds the input and a glyph, icon, text or buttons; the focus on the input lights the box. */
+.t-input-group {
+  display: flex;
+  width: 100%;
+  cursor: text;
+}
+
+.t-control.t-input-group:focus-within {
+  border-color: var(--t-accent);
+}
+
+.t-control.t-input-group:has(.t-input-native[aria-invalid="true"]),
+.t-control.t-input-group:has(.t-input-native[data-invalid]) {
+  border-color: var(--t-danger);
+}
+
+.t-input-group:has(.t-input-native:disabled) {
+  color: var(--t-disabled);
+  cursor: not-allowed;
+}
+
+.t-input-native {
+  flex: 1;
+  align-self: stretch;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+}
+
+.t-input-native::placeholder {
+  color: var(--t-muted);
+}
+
+.t-input-native:disabled {
+  cursor: not-allowed;
+}
+
+.t-input-addon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  color: var(--t-muted);
+  white-space: nowrap;
+}
+
+/* The focus ring of a group sits on the box, not on the bare input. */
+.t-input-group:has(.t-input-native:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: var(--t-focus-offset);
+}
+
+@media (pointer: coarse) {
+  .t-input-native {
+    font-size: max(var(--t-text-touch), var(--t-text-base));
+  }
+}
+
+/* A small icon button inside a group: as high as the box, square on a touch screen. */
+.t-input-action {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  width: var(--t-control-h-sm);
+  padding: 0;
+  border: 0;
+  border-radius: var(--t-radius-control);
+  background: transparent;
+  color: var(--t-muted);
+  cursor: pointer;
+  transition: color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-input-action:last-child {
+  margin-inline-end: calc(var(--t-control-px) * -1 + var(--t-space-05));
+}
+
+.t-input-action:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+.t-input-action:disabled {
+  color: var(--t-disabled);
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .t-input-action:hover:not(:disabled) {
+    color: var(--t-text);
+  }
+}

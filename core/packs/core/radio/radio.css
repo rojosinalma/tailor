@@ -1,0 +1,107 @@
+.t-radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-1);
+  min-width: 0;
+}
+
+.t-radio-group[data-orientation="horizontal"] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: var(--t-space-5);
+}
+
+.t-radio-group-label {
+  width: 100%;
+  padding: 0 0 var(--t-space-1);
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-label-weight);
+  text-transform: var(--t-label-transform);
+}
+
+/* The whole label is the hit area; on a touch screen it reaches the touch size. */
+.t-radio {
+  position: relative;
+  display: inline-grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-content: center;
+  align-items: start;
+  column-gap: var(--t-space-2);
+  min-width: 0;
+  min-height: var(--t-control-h-sm);
+  cursor: pointer;
+  user-select: none;
+}
+
+.t-radio-input {
+  appearance: none;
+  display: inline-grid;
+  place-content: center;
+  width: 1.125em;
+  height: 1.125em;
+  margin-block: calc((1lh - 1.125em) / 2);
+  border: var(--t-border-w) solid var(--t-border-control);
+  border-radius: var(--t-radius-pill);
+  background: var(--t-inset);
+  color: var(--t-on-accent);
+  cursor: inherit;
+  transition:
+    background-color var(--t-motion-fast) var(--t-ease),
+    border-color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-radio-input::after {
+  content: "";
+  width: 0.4375em;
+  height: 0.4375em;
+  border-radius: var(--t-radius-pill);
+  background: currentColor;
+  scale: 0;
+  transition: scale var(--t-motion-fast) var(--t-ease);
+}
+
+.t-radio-input:checked,
+.t-radio-input[data-checked] {
+  border-color: var(--t-accent-solid);
+  background: var(--t-accent-solid);
+}
+
+.t-radio-input:checked::after,
+.t-radio-input[data-checked]::after {
+  scale: 1;
+}
+
+.t-radio-input[aria-invalid="true"],
+.t-radio-input[data-invalid] {
+  border-color: var(--t-danger);
+}
+
+.t-radio-label {
+  min-width: 0;
+}
+
+.t-radio-description {
+  grid-column: 2;
+  min-width: 0;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-radio:has(> .t-radio-input:disabled),
+.t-radio:has(> .t-radio-input[data-disabled]) {
+  color: var(--t-disabled);
+  cursor: not-allowed;
+}
+
+.t-radio-input:disabled,
+.t-radio-input[data-disabled] {
+  border-color: var(--t-border);
+  background: var(--t-inset);
+  color: var(--t-disabled);
+}
+
+@media (hover: hover) {
+  .t-radio:hover > .t-radio-input:not(:checked, :disabled, [data-checked], [data-disabled]) {
+    border-color: var(--t-accent);
+  }
+}

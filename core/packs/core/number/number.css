@@ -1,0 +1,111 @@
+/* The box of the field: the step buttons sit inside it, at its ends, as high as the box. */
+.t-number {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  width: 100%;
+  padding: 0;
+}
+
+.t-control.t-number:focus-within {
+  border-color: var(--t-accent);
+}
+
+.t-control.t-number:has(.t-number-input[aria-invalid="true"]),
+.t-control.t-number[data-invalid] {
+  border-color: var(--t-danger);
+}
+
+.t-number-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 var(--t-space-2);
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  appearance: textfield;
+}
+
+.t-number-input::-webkit-inner-spin-button,
+.t-number-input::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
+.t-number:has(.t-number-input:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: var(--t-focus-offset);
+}
+
+.t-number-unit {
+  display: inline-flex;
+  align-items: center;
+  padding-inline-end: var(--t-space-2);
+  color: var(--t-muted);
+  white-space: nowrap;
+}
+
+.t-number-step {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--t-control-h-md);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--t-muted);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  transition: background-color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-number-step:first-child {
+  border-inline-end: var(--t-border-w) solid var(--t-border-control);
+  border-radius: var(--t-radius-control) 0 0 var(--t-radius-control);
+}
+
+.t-number-step:last-child {
+  border-inline-start: var(--t-border-w) solid var(--t-border-control);
+  border-radius: 0 var(--t-radius-control) var(--t-radius-control) 0;
+}
+
+.t-number[data-size="sm"] .t-number-step {
+  width: var(--t-control-h-sm);
+}
+
+.t-number[data-size="lg"] .t-number-step {
+  width: var(--t-control-h-lg);
+}
+
+.t-number-step:active:not(:disabled, [data-disabled]) {
+  background: var(--t-active);
+}
+
+.t-number-step:disabled,
+.t-number-step[data-disabled] {
+  color: var(--t-disabled);
+  cursor: not-allowed;
+}
+
+.t-number-input:disabled,
+.t-number-input[data-disabled] {
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .t-number-step:hover:not(:disabled, [data-disabled]) {
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+}
+
+@media (pointer: coarse) {
+  .t-number-input {
+    font-size: max(var(--t-text-touch), var(--t-text-base));
+  }
+}

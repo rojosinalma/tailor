@@ -1,0 +1,96 @@
+.t-field {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.t-field-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--t-space-2);
+  min-width: 0;
+  color: var(--t-text);
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-label-weight);
+  text-transform: var(--t-label-transform);
+  line-height: var(--t-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.t-field[data-disabled] .t-field-label {
+  color: var(--t-disabled);
+}
+
+.t-field-required {
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  font-weight: var(--t-weight-normal);
+}
+
+.t-field-control {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.t-field-help,
+.t-field-error {
+  margin: 0;
+  min-width: 0;
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.t-field-help {
+  color: var(--t-muted);
+}
+
+.t-field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--t-space-1);
+  color: var(--t-danger-text);
+}
+
+.t-field-error:empty {
+  display: none;
+}
+
+.t-field-error > .t-icon {
+  flex: none;
+  height: 1lh;
+}
+
+/* Horizontal: the label sits beside the control; a narrow field stacks them again. */
+.t-field[data-orientation="horizontal"] {
+  grid-template-columns: var(--t-measure-2xs) minmax(0, 1fr);
+  align-items: start;
+  column-gap: var(--t-space-4);
+  container-type: inline-size;
+}
+
+.t-field[data-orientation="horizontal"] > .t-field-label {
+  align-items: center;
+  min-height: var(--t-control-h-md);
+}
+
+.t-field[data-orientation="horizontal"] > .t-field-help,
+.t-field[data-orientation="horizontal"] > .t-field-error {
+  grid-column: 2;
+}
+
+@container (max-width: 40rem) {
+  .t-field[data-orientation="horizontal"] > .t-field-label,
+  .t-field[data-orientation="horizontal"] > .t-field-control,
+  .t-field[data-orientation="horizontal"] > .t-field-help,
+  .t-field[data-orientation="horizontal"] > .t-field-error {
+    grid-column: 1 / -1;
+  }
+
+  .t-field[data-orientation="horizontal"] > .t-field-label {
+    min-height: 0;
+  }
+}

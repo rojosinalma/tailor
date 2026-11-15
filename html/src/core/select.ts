@@ -22,6 +22,8 @@ register("select", (element) => {
       "data-size": select.dataset.size,
       "aria-label": select.getAttribute("aria-label") ?? undefined,
       "aria-labelledby": select.getAttribute("aria-labelledby") ?? undefined,
+      "aria-describedby": select.getAttribute("aria-describedby") ?? undefined,
+      "aria-invalid": select.getAttribute("aria-invalid") ?? undefined,
       disabled: select.disabled,
     },
     value,

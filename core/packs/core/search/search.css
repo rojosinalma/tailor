@@ -1,0 +1,38 @@
+.t-search .t-input-native::-webkit-search-cancel-button,
+.t-search .t-input-native::-webkit-search-decoration {
+  appearance: none;
+}
+
+.t-search .t-input-native:placeholder-shown ~ .t-search-clear {
+  display: none;
+}
+
+.t-search-key {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.5em;
+  padding: 0 var(--t-space-1);
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-check);
+  color: var(--t-muted);
+  font-family: var(--t-font-mono);
+  font-size: var(--t-text-xs);
+  line-height: var(--t-leading);
+}
+
+.t-search:focus-within .t-search-key {
+  display: none;
+}
+
+.t-search .t-input-native:not(:placeholder-shown) ~ .t-search-key {
+  display: none;
+}
+
+/* A touch screen has no / key to press. */
+@media (pointer: coarse) {
+  .t-search .t-input-native ~ .t-search-key {
+    display: none;
+  }
+}

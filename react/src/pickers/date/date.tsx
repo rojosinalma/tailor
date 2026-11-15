@@ -17,6 +17,7 @@ import {
 } from "@tailor/packs/pickers/date/logic";
 import type spec from "@tailor/packs/pickers/date/spec";
 import { type KeyboardEvent, useEffect, useRef, useState } from "react";
+import { useFieldControl } from "../../core/field/field";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
 
@@ -197,6 +198,7 @@ export function DatePicker({
   ...aria
 }: DatePickerProps) {
   const isStatic = useIsStatic();
+  const field = useFieldControl({ id, name, disabled });
   const [open, setOpen] = useState(false);
   const [inner, setInner] = useState<string | null>(defaultValue ?? null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -213,12 +215,10 @@ export function DatePicker({
         data-placeholder={placeholder}
         data-week-start={weekStart === 1 ? undefined : weekStart}
         data-locale={locale}
-        name={name}
-        id={id}
+        {...field}
         defaultValue={value ?? defaultValue}
         min={min}
         max={max}
-        disabled={disabled}
         {...aria}
       />
     );
@@ -235,8 +235,11 @@ export function DatePicker({
         className="t-control t-date-trigger"
         aria-haspopup="dialog"
         data-size={dataSize}
-        id={id}
-        disabled={disabled}
+        id={field.id}
+        disabled={field.disabled}
+        aria-invalid={field["aria-invalid"]}
+        aria-describedby={field["aria-describedby"]}
+        aria-required={field.required}
         {...aria}
       >
         <span className="t-date-value" data-placeholder={shown ? undefined : ""}>
@@ -246,7 +249,7 @@ export function DatePicker({
           <Glyph body={calendar} />
         </span>
       </Popover.Trigger>
-      <input type="hidden" name={name} value={current ?? ""} />
+      <input type="hidden" name={field.name} value={current ?? ""} />
       <Popover.Portal>
         <Popover.Positioner className="t-popup-positioner" sideOffset={4} align="start">
           <Popover.Popup

@@ -4,6 +4,7 @@ import { t } from "@tailor/core/text";
 import type spec from "@tailor/packs/core/select/spec";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
+import { useFieldControl } from "../field/field";
 
 export interface SelectOption {
   readonly value: string;
@@ -41,6 +42,8 @@ export function Select({
   ...aria
 }: SelectProps) {
   const isStatic = useIsStatic();
+  const field = useFieldControl({ id, name, disabled, required });
+  const describe = { "aria-invalid": field["aria-invalid"], "aria-describedby": field["aria-describedby"] };
   const dataSize = size === "md" ? undefined : size;
 
   if (isStatic) {
@@ -50,10 +53,7 @@ export function Select({
         data-t="select"
         data-size={dataSize}
         data-placeholder={placeholder}
-        name={name}
-        id={id}
-        disabled={disabled}
-        required={required}
+        {...field}
         defaultValue={value ?? defaultValue ?? ""}
         {...aria}
       >
@@ -77,12 +77,12 @@ export function Select({
       onValueChange={(next: string | null) => {
         if (next !== null) onValueChange?.(next);
       }}
-      name={name}
-      id={id}
-      disabled={disabled}
-      required={required}
+      name={field.name}
+      id={field.id}
+      disabled={field.disabled}
+      required={field.required}
     >
-      <Base.Trigger className="t-control t-select-trigger" data-size={dataSize} {...aria}>
+      <Base.Trigger className="t-control t-select-trigger" data-size={dataSize} {...describe} {...aria}>
         <Base.Value className="t-select-value" placeholder={placeholder} />
         <Base.Icon className="t-select-icon">
           <Glyph body={chevronExpand} />
