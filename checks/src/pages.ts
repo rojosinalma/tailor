@@ -41,6 +41,8 @@ export interface PagesOptions {
   readonly images?: boolean;
   /** Use the hash of an image from the local cache when nothing that draws it changed. */
   readonly skipKnown?: boolean;
+  /** A page with no reference image yet is not a problem. For work on a new component. */
+  readonly allowNew?: boolean;
   /** Accept new and changed images as the reference. */
   readonly update?: boolean;
   readonly axe?: boolean;
@@ -452,7 +454,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
           message:
             "the image differs from the reference; look at checks/.images, then accept with --update-images",
         });
-      for (const key of added)
+      for (const key of options.allowNew ? [] : added)
         problems.push({
           page: key,
           state: "image",

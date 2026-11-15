@@ -3,24 +3,8 @@ import { loadPalettes, loadSkins } from "../../bin/lib/build";
 import { DEFAULT_PALETTE, DEFAULT_SKIN } from "../../bin/lib/build-showcase";
 import { gen } from "../../bin/lib/gen";
 import { serve } from "../../bin/lib/serve";
-import { type PageProblem, runPages } from "./pages";
-
-export function printProblems(problems: readonly PageProblem[]): void {
-  const seen = new Map<string, { problem: PageProblem; states: string[] }>();
-  for (const problem of problems) {
-    const key = `${problem.page}|${problem.rule}|${problem.message}`;
-    const entry = seen.get(key) ?? { problem, states: [] };
-    entry.states.push(problem.state);
-    seen.set(key, entry);
-  }
-  for (const { problem, states } of seen.values()) {
-    const where =
-      states.length > 3
-        ? `${states.slice(0, 3).join(", ")} and ${states.length - 3} more`
-        : states.join(", ");
-    console.error(`FAIL ${problem.page} [${problem.rule}] ${problem.message}\n     at: ${where}`);
-  }
-}
+import { runPages } from "./pages";
+import { printProblems } from "./report";
 
 if (import.meta.main) {
   const args = process.argv.slice(2);

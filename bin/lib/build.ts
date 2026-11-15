@@ -91,7 +91,7 @@ async function buildHtmlKit(): Promise<void> {
   }
 }
 
-export async function build(): Promise<void> {
+export async function build(options: { quiet?: boolean } = {}): Promise<void> {
   const started = performance.now();
   const { specs, errors } = await gen();
   if (errors.length > 0) throw new Error(`The components are not complete:\n${errors.join("\n")}`);
@@ -120,9 +120,10 @@ export async function build(): Promise<void> {
     skins.map((s) => s.spec),
     palettes,
   );
-  console.log(
-    `build: ${specs.length} components, ${skins.length} skins, ${palettes.length} palettes in ${Math.round(performance.now() - started)} ms`,
-  );
+  if (!options.quiet)
+    console.log(
+      `build: ${specs.length} components, ${skins.length} skins, ${palettes.length} palettes in ${Math.round(performance.now() - started)} ms`,
+    );
 }
 
 if (import.meta.main) await build();

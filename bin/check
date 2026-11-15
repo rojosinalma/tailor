@@ -1,0 +1,154 @@
+#!/usr/bin/env bun
+/**
+ * The checks. With no option: the checks that matter for what changed, in seconds.
+ *   bin/check                  changed files only (against the last commit), then the pages they touch
+ *   bin/check <id> …           the named components
+ *   bin/check --release        everything; images that nothing changed are taken from the local cache
+ *   bin/check --full           everything, every image taken again, contrast in every skin and palette
+ *   --update-images            accept new and changed images as the reference
+ *   --enforce-time             fail when the run is over its time limit (10 s for a change, 2 min for a release)
+ */
+import { $ } from "bun";
+import { runBehaviour } from "../checks/src/run-behaviour";
+import { runContrast } from "../checks/src/contrast";
+import { runPages } from "../checks/src/pages";
+import { printProblems } from "../checks/src/report";
+import { checkWeight } from "../checks/src/weight";
+import { build, loadPalettes, loadSkins } from "./lib/build";
+import { DEFAULT_PALETTE, DEFAULT_SKIN } from "./lib/build-showcase";
+import { gen } from "./lib/gen";
+import { lintCss, report } from "./lib/lint-css";
+import { lintSkins } from "./lib/lint-skins";
+import { at } from "./lib/paths";
+import { serve } from "./lib/serve";
+
+const args = process.argv.slice(2);
+const flag = (name: string): boolean => args.includes(`--${name}`);
+const named = args.filter((a) => !a.startsWith("--"));
+const mode: "change" | "release" | "full" = flag("full") ? "full" : flag("release") ? "release" : "change";
+const LIMITS = { change: 10_000, release: 120_000, full: Number.POSITIVE_INFINITY };
+
+let failed = false;
+const timings: [string, number][] = [];
+
+async function step(name: string, run: () => Promise<boolean>): Promise<void> {
+  const started = performance.now();
+  let ok = false;
+  try {
+    ok = await run();
+  } catch (error) {
+    console.error(error instanceof Error ? error.message : error);
+  }
+  const ms = Math.round(performance.now() - started);
+  timings.push([name, ms]);
+  if (!ok) failed = true;
+  console.log(`${ok ? "ok  " : "FAIL"} ${name} (${ms} ms)`);
+}
+
+const quiet = async (command: ReturnType<typeof $>): Promise<boolean> => {
+  const result = await command.nothrow().quiet();
+  if (result.exitCode !== 0) console.error(result.stdout.toString() + result.stderr.toString());
+  return result.exitCode === 0;
+};
+
+/** The components and skins that the changed files belong to. `all` when a shared file changed. */
+async function changed(): Promise<{ all: boolean; components: Set<string>; skins: Set<string> }> {
+  const out = (await $`git status --porcelain --untracked-files=all`.cwd(at(".")).quiet()).stdout.toString();
+  const components = new Set<string>();
+  const skins = new Set<string>();
+  let all = false;
+  for (const line of out.split("\n")) {
+    const path = line.slice(3).split(" -> ").pop()?.trim();
+    if (!path) continue;
+    const component =
+      /^core\/packs\/[^/]+\/([^/]+)\//.exec(path) ??
+      /^react\/src\/[^/]+\/([^/]+)\//.exec(path) ??
+      /^html\/src\/[^/]+\/([^/.]+)\.ts$/.exec(path) ??
+      /^checks\/behaviour\/[^/]+\/([^/.]+)\.ts$/.exec(path);
+    const skin = /^core\/skins\/([^/]+)\//.exec(path);
+    if (component?.[1]) components.add(component[1]);
+    else if (skin?.[1]) skins.add(skin[1]);
+    else if (!/^(docs\/|[^/]+\.md$|\.github\/)/.test(path)) all = true;
+  }
+  return { all, components, skins };
+}
+
+const started = performance.now();
+const { specs, errors } = await gen();
+for (const error of errors) console.error(`error: ${error}`);
+if (errors.length > 0) failed = true;
+
+const scope = mode === "change" && named.length === 0 ? await changed() : { all: named.length === 0, components: new Set(named), skins: new Set<string>() };
+const known = new Set(specs.map((s) => s.id));
+const only = scope.all ? undefined : new Set([...scope.components].filter((id) => known.has(id)));
+const everything = mode !== "change";
+
+await Promise.all([
+  step("lint and format", () => quiet($`bunx biome check .`.cwd(at(".")))),
+  step("types", () => quiet($`bunx tsc --noEmit`.cwd(at(".")))),
+  step("stylesheet rules", async () => report("lint-css", await lintCss(), "all files") === 0),
+  step("skin rules", async () => report("lint-skins", await lintSkins(), "all skins") === 0),
+  step("unit tests", () => quiet($`bun test`.cwd(at(".")))),
+  ...(everything ? [step("unused code", () => quiet($`bunx knip`.cwd(at("."))))] : []),
+]);
+
+await step("build", async () => {
+  await build({ quiet: true });
+  return true;
+});
+
+if (!failed || everything) {
+  const skins = (await loadSkins()).map((s) => s.spec.id);
+  const palettes = (await loadPalettes()).map((p) => p.id);
+  const site = serve();
+  try {
+    await step("weight", () => checkWeight());
+    const nothingToOpen = mode === "change" && !scope.all && (only?.size ?? 0) === 0 && scope.skins.size === 0;
+    if (!nothingToOpen) {
+      await step("behaviour in both kits", async () => {
+        const result = await runBehaviour(site.url, specs, scope.skins.size > 0 && (only?.size ?? 0) === 0 ? new Set<string>() : only);
+        for (const f of result.failures) console.error(`FAIL ${f.component} [${f.kit}] ${f.test}\n  ${f.error.replaceAll("\n", "\n  ")}\n`);
+        for (const id of everything ? result.untested : []) console.error(`FAIL ${id}: a component with an HTML kit script needs behaviour tests`);
+        return result.failures.length === 0 && (!everything || result.untested.length === 0);
+      });
+      await step("pages and images", async () => {
+        const result = await runPages({
+          siteUrl: site.url,
+          specs,
+          skins,
+          palettes,
+          defaultSkin: DEFAULT_SKIN,
+          defaultPalette: DEFAULT_PALETTE,
+          ...(only && only.size > 0 ? { only } : {}),
+          ...(mode === "change" && scope.skins.size > 0 && !scope.all && (only?.size ?? 0) === 0 ? { onlySkins: scope.skins } : {}),
+          images: true,
+          skipKnown: mode !== "full",
+          sweep: everything,
+          axe: true,
+          allowNew: mode === "change",
+          update: flag("update-images"),
+        });
+        printProblems(result.problems);
+        const { taken, skipped, changed: differ, added } = result.images;
+        console.log(`    ${result.pages} pages, ${result.states} states, ${taken} images taken, ${skipped} known, ${differ.length} changed, ${added.length} new`);
+        return result.problems.length === 0;
+      });
+      if (everything) {
+        await step("contrast in every skin and palette", async () => {
+          const result = await runContrast({ siteUrl: site.url, specs, skins, palettes, all: mode === "full" });
+          printProblems(result.problems);
+          console.log(`    ${result.states} combinations`);
+          return result.problems.length === 0;
+        });
+      }
+    }
+  } finally {
+    site.stop();
+  }
+}
+
+const total = Math.round(performance.now() - started);
+const limit = LIMITS[mode];
+console.log(`\n${failed ? "FAILED" : "passed"}: ${mode} check in ${(total / 1000).toFixed(1)} s${total > limit ? ` — over the limit of ${limit / 1000} s` : ""}`);
+if (total > limit && flag("enforce-time")) failed = true;
+process.exit(failed ? 1 : 0);

@@ -1,0 +1,37 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": ["bin/build", "bin/check", "bin/lib/*.ts"],
+      "project": ["bin/**"]
+    },
+    "core": {
+      "entry": ["packs/*/*/spec.ts", "packs/**/*.test.ts", "src/*.ts"],
+      "project": ["**/*.ts"]
+    },
+    "react": {
+      "entry": ["src/*.{ts,tsx}", "src/*/*/*.tsx"],
+      "project": ["src/**/*.{ts,tsx}"]
+    },
+    "html": {
+      "entry": ["src/*/*.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "showcase": {
+      "entry": ["src/entry.tsx", "src/entry-sections.tsx"],
+      "project": ["src/**/*.{ts,tsx}"]
+    },
+    "checks": {
+      "entry": ["src/*.ts", "behaviour/*/*.ts"],
+      "project": ["**/*.ts"]
+    }
+  },
+  "ignoreExportsUsedInFile": true,
+  "rules": {
+    "exports": "off",
+    "types": "off",
+    "duplicates": "off"
+  },
+  "ignoreDependencies": ["@iconify-json/bi", "@iconify-json/simple-icons"],
+  "ignoreWorkspaces": ["cli"]
+}
