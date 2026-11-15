@@ -1,0 +1,130 @@
+.t-carousel {
+  --t-carousel-gap: var(--t-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-3);
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.t-carousel[data-gap="0"] {
+  --t-carousel-gap: 0%;
+}
+
+.t-carousel[data-gap="1"] {
+  --t-carousel-gap: var(--t-space-1);
+}
+
+.t-carousel[data-gap="2"] {
+  --t-carousel-gap: var(--t-space-2);
+}
+
+.t-carousel[data-gap="3"] {
+  --t-carousel-gap: var(--t-space-3);
+}
+
+.t-carousel[data-gap="5"] {
+  --t-carousel-gap: var(--t-space-5);
+}
+
+.t-carousel[data-gap="6"] {
+  --t-carousel-gap: var(--t-space-6);
+}
+
+/* The track scrolls sideways on purpose and snaps to the slides; touch and trackpads move it natively. */
+.t-carousel-track {
+  --t-carousel-per: 1;
+  display: flex;
+  gap: var(--t-carousel-gap);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  border-radius: var(--t-radius-box);
+}
+
+.t-carousel[data-per-view="2"] > .t-carousel-track {
+  --t-carousel-per: 2;
+}
+
+.t-carousel[data-per-view="3"] > .t-carousel-track {
+  --t-carousel-per: 3;
+}
+
+.t-carousel-slide {
+  display: flex;
+  flex: 0 0 calc((100% - (var(--t-carousel-per) - 1) * var(--t-carousel-gap)) / var(--t-carousel-per));
+  min-width: 0;
+  scroll-snap-align: start;
+}
+
+.t-carousel-slide > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/* A bare image or video as a slide fills it. */
+.t-carousel-slide > :is(img, video) {
+  width: 100%;
+  height: auto;
+  border-radius: var(--t-radius-box);
+  object-fit: cover;
+}
+
+.t-carousel-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--t-space-2);
+}
+
+.t-carousel-dots {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  min-width: 0;
+}
+
+.t-carousel-dot {
+  display: inline-grid;
+  place-items: center;
+  min-width: var(--t-space-5);
+  min-height: var(--t-control-h-sm);
+  border-radius: var(--t-radius-pill);
+}
+
+.t-carousel-dot::before {
+  content: "";
+  width: var(--t-space-2);
+  height: var(--t-space-2);
+  border-radius: var(--t-radius-pill);
+  background: var(--t-border-control);
+  transition: width var(--t-motion-fast) var(--t-ease);
+}
+
+.t-carousel-dot[aria-current="true"]::before {
+  width: var(--t-space-4);
+  background: var(--t-text);
+}
+
+@media (hover: hover) {
+  .t-carousel-dot:hover::before {
+    background: var(--t-muted);
+  }
+
+  .t-carousel-dot[aria-current="true"]:hover::before {
+    background: var(--t-text);
+  }
+}
+
+@container (max-width: 64rem) {
+  .t-carousel[data-per-view="3"] > .t-carousel-track {
+    --t-carousel-per: 2;
+  }
+}
+
+@container (max-width: 40rem) {
+  .t-carousel[data-per-view] > .t-carousel-track {
+    --t-carousel-per: 1;
+  }
+}

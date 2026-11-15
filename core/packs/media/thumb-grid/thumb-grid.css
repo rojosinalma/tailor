@@ -1,0 +1,173 @@
+.t-thumbs {
+  --t-thumbs-min: var(--t-measure-xs);
+  --t-thumbs-ratio: 4 / 3;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--t-thumbs-min)), 1fr));
+  gap: var(--t-space-4) var(--t-space-3);
+  min-width: 0;
+}
+
+.t-thumbs[data-min="2xs"] {
+  --t-thumbs-min: var(--t-measure-2xs);
+}
+
+.t-thumbs[data-min="sm"] {
+  --t-thumbs-min: var(--t-measure-sm);
+}
+
+.t-thumbs[data-ratio="1:1"] {
+  --t-thumbs-ratio: 1;
+}
+
+.t-thumbs[data-ratio="16:9"] {
+  --t-thumbs-ratio: 16 / 9;
+}
+
+.t-thumbs > li {
+  display: flex;
+  min-width: 0;
+}
+
+.t-thumbs-item {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--t-space-2);
+  min-width: 0;
+  border-radius: var(--t-radius-box);
+}
+
+.t-thumbs-preview {
+  position: relative;
+  aspect-ratio: var(--t-thumbs-ratio);
+  overflow: hidden;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  background: var(--t-inset);
+}
+
+.t-thumbs-preview > .t-skeleton {
+  height: 100%;
+  border-radius: 0;
+}
+
+.t-thumbs-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* A browser draws the pseudo-elements of an image only when it fails to load: they cover the
+   broken-image mark with a neutral placeholder and an image glyph. */
+.t-thumbs-image::before,
+.t-thumbs-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.t-thumbs-image::before {
+  background: var(--t-inset);
+}
+
+.t-thumbs-image::after {
+  background: var(--t-muted);
+  mask:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M6.002 5.5a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0'/%3E%3Cpath d='M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71l-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1z'/%3E%3C/svg%3E")
+    center / var(--t-space-6) no-repeat;
+}
+
+.t-thumbs-kind {
+  position: absolute;
+  inset-block-start: var(--t-space-2);
+  inset-inline-start: var(--t-space-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--t-space-1);
+  border-radius: var(--t-radius-control);
+  background: var(--t-surface);
+  color: var(--t-text);
+  box-shadow: var(--t-shadow-sm);
+}
+
+/* A video gets a play mark in the middle of its poster. */
+.t-thumbs-kind[data-kind="video"] {
+  inset: 50% auto auto 50%;
+  translate: -50% -50%;
+  padding: var(--t-space-3);
+  border-radius: 50%;
+  font-size: var(--t-text-lg);
+}
+
+.t-thumbs-caption {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: var(--t-leading-tight);
+}
+
+.t-thumbs-name,
+.t-thumbs-meta {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-thumbs-name {
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-weight-medium);
+  text-align: start;
+}
+
+.t-thumbs-meta {
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+}
+
+/* A tile with an address or an action: the name is the link or the button and its hit area covers the tile. */
+:is(a, button).t-thumbs-name::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+:is(a, button).t-thumbs-name:focus-visible {
+  outline: none;
+}
+
+.t-thumbs-item:has(.t-thumbs-name:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: var(--t-focus-offset);
+}
+
+.t-thumbs-item:has([aria-current="true"], [aria-pressed="true"]) .t-thumbs-preview {
+  border-color: var(--t-accent);
+  outline: var(--t-border-w-strong) solid var(--t-accent);
+  outline-offset: calc(var(--t-border-w) * -1);
+}
+
+.t-thumbs-actions {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: var(--t-space-2);
+  inset-inline-end: var(--t-space-2);
+  display: flex;
+  gap: var(--t-space-1);
+}
+
+@media (hover: hover) {
+  .t-thumbs-item:has(:is(a, button).t-thumbs-name):hover .t-thumbs-preview {
+    border-color: color-mix(in srgb, var(--t-border), var(--t-text) 30%);
+  }
+
+  .t-thumbs-item:has(:is(a, button).t-thumbs-name):hover .t-thumbs-name {
+    text-decoration: underline;
+  }
+}
