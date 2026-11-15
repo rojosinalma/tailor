@@ -74,10 +74,26 @@ test("the guarded tokens stay readable on every surface, in every palette and mo
         ]) {
           check(text, surface, 4.5);
         }
+        for (const hue of ["red", "orange", "yellow", "green", "cyan", "blue", "purple", "pink"]) {
+          if (get(`hue-${hue}-text`)) check(`hue-${hue}-text`, surface, 4.5);
+        }
         check("border-control", surface, 3);
         check("focus", surface, 3);
       }
       check("text", "selection", 4.5);
+      // Text in a tone colour on the tint (20%) of that tone, over every surface. Neutral is muted on muted.
+      for (const [text, tone] of [
+        ["muted", "muted"],
+        ...["accent", "success", "warning", "danger", "info"].map((t) => [`${t}-text`, t]),
+      ]) {
+        for (const surface of ["canvas", "surface", "inset"]) {
+          const ratio = contrast(get(text as string), mix(get(surface), get(tone as string), 0.2));
+          if (ratio < 4.5)
+            problems.push(
+              `${palette.id} ${mode}: ${text} on a ${tone} tint of ${surface} is ${ratio.toFixed(2)}`,
+            );
+        }
+      }
       // Normal text on the weak tint (5%) of every tone, over the canvas and the raised surface.
       for (const tone of ["accent", "success", "warning", "danger", "info"]) {
         for (const surface of ["canvas", "surface"]) {

@@ -7,7 +7,7 @@
   height: var(--t-space-6);
   overflow: hidden;
   border-radius: var(--t-radius-pill);
-  --t-avatar-bg: color-mix(in srgb, var(--t-accent) var(--t-tint), var(--t-surface));
+  --t-avatar-bg: var(--t-selection);
   background: var(--t-avatar-bg);
   color: var(--t-text);
   font-size: var(--t-text-sm);

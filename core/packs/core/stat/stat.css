@@ -28,7 +28,7 @@
 }
 
 .t-stat[data-tone] > .t-stat-value {
-  color: color-mix(in srgb, var(--t-tone), var(--t-text) 30%);
+  color: var(--t-tone-text);
 }
 
 .t-stat-sub {
@@ -64,7 +64,7 @@
 
 @media (hover: hover) {
   .t-stat:has(.t-stat-link):hover {
-    border-color: color-mix(in srgb, var(--t-border), var(--t-text) 30%);
+    border-color: var(--t-border-control);
   }
 
   .t-stat:has(.t-stat-link):hover .t-stat-link {

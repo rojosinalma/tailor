@@ -17,8 +17,8 @@
 
 .t-chip[data-tone] {
   border-color: color-mix(in srgb, var(--t-tone) var(--t-tint-strong), transparent);
-  background: color-mix(in srgb, var(--t-tone) var(--t-tint-weak), transparent);
-  color: color-mix(in srgb, var(--t-tone), var(--t-text) 55%);
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint), transparent);
+  color: var(--t-tone-text);
 }
 
 .t-chip-label {
@@ -38,6 +38,9 @@
   justify-content: center;
   width: var(--t-control-h-sm);
   align-self: stretch;
+  /* Over the chip's own line, so the button is as tall as the chip. */
+  margin-block: calc(var(--t-border-w) * -1);
+  margin-inline-end: calc(var(--t-border-w) * -1);
   border-radius: var(--t-radius-pill);
   color: inherit;
   font-size: var(--t-text-xs);
@@ -66,16 +69,12 @@ button.t-chip[aria-pressed="true"] {
 }
 
 button.t-chip[data-tone][aria-pressed="true"] {
-  border-color: transparent;
-  background: color-mix(in srgb, var(--t-tone), var(--t-text) 25%);
+  border-color: var(--t-tone);
+  background: var(--t-tone);
   color: var(--t-on-tone);
 }
 
-button.t-chip[data-tone="accent"][aria-pressed="true"] {
-  background: var(--t-accent-solid);
-}
-
-.t-chip[data-disabled],
+.t-chip[aria-disabled="true"],
 button.t-chip:disabled {
   border-color: var(--t-border);
   background: var(--t-inset);

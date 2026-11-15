@@ -45,6 +45,14 @@
     --t-hue-blue: var(--t-link);
     --t-hue-purple: var(--t-accent);
     --t-hue-pink: var(--t-accent);
+    --t-hue-red-text: var(--t-hue-red);
+    --t-hue-orange-text: var(--t-hue-orange);
+    --t-hue-yellow-text: var(--t-hue-yellow);
+    --t-hue-green-text: var(--t-hue-green);
+    --t-hue-cyan-text: var(--t-hue-cyan);
+    --t-hue-blue-text: var(--t-hue-blue);
+    --t-hue-purple-text: var(--t-hue-purple);
+    --t-hue-pink-text: var(--t-hue-pink);
 
     /* Skin settings: typography. */
     --t-font-sans:

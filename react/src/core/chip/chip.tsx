@@ -48,7 +48,7 @@ export function Chip({ tone, disabled, children, ...rest }: ChipProps) {
   }
   const { onRemove } = rest;
   return (
-    <span className="t-chip" data-tone={tone} data-disabled={disabled ? "" : undefined}>
+    <span className="t-chip" data-tone={tone} aria-disabled={disabled ? true : undefined}>
       <span className="t-chip-label">{children}</span>
       {onRemove ? (
         <button

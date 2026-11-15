@@ -42,6 +42,6 @@ export default defineExamples("avatar", [
     id: "broken",
     title: "An image that does not load",
     note: "The initials show.",
-    render: () => <Avatar name="Bob Stone" src="/missing/bob.png" size="lg" />,
+    render: () => <Avatar name="Bob Stone" src="data:text/plain,not-an-image" size="lg" />,
   },
 ]);

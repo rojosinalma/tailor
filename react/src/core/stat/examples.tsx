@@ -1,5 +1,5 @@
 import { defineExamples } from "../../examples";
-import { Cluster } from "../cluster/cluster";
+import { Grid } from "../grid/grid";
 import { Stat } from "./stat";
 
 function Spark({ points }: { points: string }) {
@@ -21,19 +21,19 @@ export default defineExamples("stat", [
     id: "grid",
     title: "A row of stats",
     render: () => (
-      <Cluster align="stretch">
+      <Grid min="2xs">
         <Stat label="Hosts" value="12" sub="2 added this week" />
         <Stat label="Running" value="11" tone="success" sub="of 12" />
         <Stat label="Failed checks" value="3" tone="danger" sub="+2 since yesterday" />
         <Stat label="Disk used" value="91%" tone="warning" sub="nas, 3.6 of 4 TB" />
-      </Cluster>
+      </Grid>
     ),
   },
   {
     id: "chart",
     title: "With a chart",
     render: () => (
-      <Cluster align="stretch">
+      <Grid min="2xs">
         <Stat
           label="Requests per minute"
           value="1,284"
@@ -47,7 +47,7 @@ export default defineExamples("stat", [
           sub="last 24 hours"
           chart={<Spark points="0,10 20,12 40,8 60,20 80,15 100,18" />}
         />
-      </Cluster>
+      </Grid>
     ),
   },
   {

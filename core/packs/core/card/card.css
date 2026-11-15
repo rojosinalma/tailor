@@ -107,7 +107,7 @@
 
 @media (hover: hover) {
   .t-card:has(.t-card-link):hover {
-    border-color: color-mix(in srgb, var(--t-border), var(--t-text) 30%);
+    border-color: var(--t-border-control);
   }
 
   .t-card:has(.t-card-link):hover .t-card-link {

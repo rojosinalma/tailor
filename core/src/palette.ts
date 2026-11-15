@@ -151,6 +151,16 @@ export function tokenPairs(c: PaletteColors, mode: Mode): [string, string][] {
   const onSurfaces = (color: string, backgrounds: readonly string[] = surfaces, min = 4.5): string =>
     readable(color, backgrounds, away, min);
 
+  // Muted text is also the text of the neutral tone, which sits on tints of itself: the tint moves with the
+  // text, so the search repeats until the pair holds.
+  let muted = onSurfaces(c.muted);
+  for (let i = 0; i < 8; i++) {
+    const tints = surfaces.map((surface) => mix(surface, muted, 0.2));
+    const next = onSurfaces(muted, [...surfaces, ...tints]);
+    if (next === muted) break;
+    muted = next;
+  }
+
   const pairs: [string, string][] = [
     ["--t-canvas", c.canvas],
     ["--t-inset", c.inset],
@@ -160,7 +170,7 @@ export function tokenPairs(c: PaletteColors, mode: Mode): [string, string][] {
     ["--t-border-control", onSurfaces(c.border, surfaces, 3)],
     ["--t-overlay-bg", beyond ?? (mode === "dark" ? c.inset : c.text)],
     ["--t-text", c.text],
-    ["--t-muted", onSurfaces(c.muted)],
+    ["--t-muted", muted],
     ["--t-disabled", c.disabled],
     ["--t-accent", c.accent],
     ["--t-accent-solid", c.accent_solid ?? c.accent],
@@ -185,7 +195,10 @@ export function tokenPairs(c: PaletteColors, mode: Mode): [string, string][] {
   }
   for (const hue of HUES) {
     const value = c.extra[hue];
-    if (value) pairs.push([`--t-hue-${hue}`, value]);
+    if (!value) continue;
+    pairs.push([`--t-hue-${hue}`, value]);
+    // A hue as text, for example in code colours, stays readable on every surface.
+    pairs.push([`--t-hue-${hue}-text`, onSurfaces(value)]);
   }
   return pairs;
 }

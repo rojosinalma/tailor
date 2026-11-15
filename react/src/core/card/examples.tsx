@@ -4,7 +4,7 @@ import { Badge } from "../badge/badge";
 import { Button } from "../button/button";
 import { Cluster } from "../cluster/cluster";
 import { Facts } from "../facts/facts";
-import { Stack } from "../stack/stack";
+import { Grid } from "../grid/grid";
 import { StateLabel } from "../state-label/state-label";
 import { Card } from "./card";
 
@@ -82,12 +82,12 @@ export default defineExamples("card", [
     id: "tones",
     title: "Tones and selection",
     render: () => (
-      <Stack>
+      <Grid min="2xs">
         {TONES.map((tone) => (
-          <Card key={tone} tone={tone} title={`Tone ${tone}`} />
+          <Card key={tone} tone={tone} title={tone} />
         ))}
         <Card selected title="Selected" description="The card the user picked." />
-      </Stack>
+      </Grid>
     ),
   },
   {

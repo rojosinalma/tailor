@@ -6,12 +6,17 @@
   height: 1.6em;
   padding: 0 var(--t-space-1);
   border-radius: var(--t-radius-pill);
-  background: color-mix(in srgb, var(--t-tone) var(--t-tint-weak), transparent);
-  color: color-mix(in srgb, var(--t-tone), var(--t-text) 55%);
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint), transparent);
+  color: var(--t-tone-text);
   font-size: var(--t-text-xs);
   font-weight: var(--t-weight-bold);
   font-variant-numeric: tabular-nums;
   line-height: 1;
   white-space: nowrap;
   vertical-align: middle;
+}
+
+/* The palettes keep --t-muted readable on the inset surface, not on a tint of itself. */
+.t-counter[data-tone="neutral"] {
+  background: var(--t-inset);
 }
