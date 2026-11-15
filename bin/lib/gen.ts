@@ -32,7 +32,10 @@ export async function gen(): Promise<GenResult> {
     icons: Record<string, { body: string }>;
   };
   const glyphs = new Map<string, string>();
-  for (const file of await scan("core/packs/*/glyphs.json")) {
+  for (const file of [
+    ...(await scan("core/packs/*/glyphs.json")),
+    ...(await scan("core/packs/*/*/glyphs.json")),
+  ]) {
     const map = (await Bun.file(at(file)).json()) as Record<string, string>;
     for (const [name, icon] of Object.entries(map)) {
       const body = iconData.icons[icon]?.body;
@@ -48,6 +51,21 @@ export async function gen(): Promise<GenResult> {
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([name, body]) => `export const ${name} = ${JSON.stringify(body)};`)
       .join("\n")}\n`,
+  );
+
+  // Texts: the base table plus the texts that a component brings.
+  const texts = new Map<string, string>();
+  for (const file of ["core/src/texts.json", ...(await scan("core/packs/*/*/texts.json"))]) {
+    const map = (await Bun.file(at(file)).json()) as Record<string, string>;
+    for (const [key, value] of Object.entries(map)) {
+      if (texts.has(key) && texts.get(key) !== value)
+        errors.push(`${file}: the text "${key}" is defined twice`);
+      else texts.set(key, value);
+    }
+  }
+  await write(
+    "core/src/texts.gen.ts",
+    `${HEADER}export const TEXTS = ${JSON.stringify(Object.fromEntries([...texts].sort(([a], [b]) => a.localeCompare(b))), null, 2)} as const;\n`,
   );
 
   // Specs.

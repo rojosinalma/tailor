@@ -190,7 +190,7 @@ export function DatePicker({
   name,
   id,
   disabled,
-  placeholder = "Pick a date",
+  placeholder = t("pickDate"),
   size = "md",
   weekStart = 1,
   locale,
