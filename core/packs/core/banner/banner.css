@@ -1,0 +1,60 @@
+/* Same weak tint as the alert, for the same reason: the text keeps 4.5:1 in every palette. */
+.t-banner {
+  container-type: inline-size;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-2) var(--t-space-3);
+  width: 100%;
+  padding: var(--t-space-2) var(--t-space-4);
+  border-bottom: var(--t-border-w) solid color-mix(in srgb, var(--t-tone) 45%, var(--t-border));
+  background: color-mix(in srgb, var(--t-tone) 6%, var(--t-canvas));
+  color: var(--t-text);
+}
+
+.t-banner-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--t-tone);
+}
+
+.t-banner-text {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.t-banner-action {
+  display: inline-flex;
+  flex: none;
+}
+
+.t-banner-close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--t-control-h-sm);
+  min-height: var(--t-control-h-sm);
+  border-radius: var(--t-radius-control);
+  color: var(--t-muted);
+}
+
+.t-banner-close:active {
+  background: var(--t-active);
+}
+
+/* A narrow banner puts the action on a line of its own, under the text. */
+@container (max-width: 40rem) {
+  .t-banner-action {
+    flex-basis: 100%;
+    order: 1;
+    padding-inline-start: calc(var(--t-icon) + var(--t-space-3));
+  }
+}
+
+@media (hover: hover) {
+  .t-banner-close:hover {
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+}

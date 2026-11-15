@@ -1,0 +1,45 @@
+/*
+ * The tooltip stays a small label next to its control, also on a phone (it is not a t-popup).
+ * --t-overlay-bg is near black in dark mode and the text colour in light mode, so the text is
+ * --t-text in dark mode (6.3:1 or more in every palette) and --t-canvas in light mode (5:1 or more).
+ */
+.t-tooltip-positioner {
+  z-index: var(--t-z-popup);
+  pointer-events: auto;
+}
+
+.t-tooltip-positioner[popover] {
+  position: fixed;
+}
+
+.t-tooltip {
+  max-width: min(var(--t-measure-xs), calc(100vw - var(--t-space-4)));
+  padding: var(--t-space-1) var(--t-space-2);
+  border: var(--t-border-w) solid color-mix(in srgb, var(--t-text) 15%, var(--t-overlay-bg));
+  border-radius: var(--t-radius-control);
+  background: var(--t-overlay-bg);
+  color: var(--t-text);
+  font-size: var(--t-text-xs);
+  line-height: var(--t-leading-tight);
+  box-shadow: var(--t-shadow-sm);
+  transition:
+    opacity var(--t-motion-fast) var(--t-ease),
+    scale var(--t-motion-fast) var(--t-ease);
+}
+
+[data-mode="light"] .t-tooltip {
+  color: var(--t-canvas);
+}
+
+.t-tooltip[data-starting-style],
+.t-tooltip[data-ending-style] {
+  opacity: 0;
+  scale: 0.95;
+}
+
+@starting-style {
+  .t-tooltip-positioner[popover]:popover-open > .t-tooltip {
+    opacity: 0;
+    scale: 0.95;
+  }
+}

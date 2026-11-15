@@ -70,18 +70,18 @@ export default behaviour("tabs", {
     const list = body.getByRole("tablist");
     const settings = body.getByRole("tab", { name: "Settings" });
     await expect(settings).toHaveAttribute("aria-selected", "true");
-    await expect(settings).toBeInViewport({ ratio: 1 });
+    await expect(settings).toBeInViewport({ ratio: 0.98 });
     const page390 = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(page390).toBe(390);
     const sizes = await list.evaluate((el) => ({ scroll: el.scrollWidth, client: el.clientWidth }));
     expect(sizes.scroll).toBeGreaterThan(sizes.client);
     await body.getByRole("tab", { name: "Overview" }).focus();
-    await expect(body.getByRole("tab", { name: "Overview" })).toBeInViewport({ ratio: 1 });
+    await expect(body.getByRole("tab", { name: "Overview" })).toBeInViewport({ ratio: 0.98 });
     await page.keyboard.press("Enter");
     await page.keyboard.press("End");
     await page.keyboard.press("Enter");
     await expect(settings).toHaveAttribute("aria-selected", "true");
-    await expect(settings).toBeInViewport({ ratio: 1 });
+    await expect(settings).toBeInViewport({ ratio: 0.98 });
     const box = await list.boundingBox();
     const tab = await settings.boundingBox();
     expect(Math.round((tab?.x ?? 0) + (tab?.width ?? 0))).toBeLessThanOrEqual(

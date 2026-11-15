@@ -1,0 +1,18 @@
+/* A confirm is a small dialog: a question, one paragraph and two buttons, with no lines between them. */
+.t-dialog[data-variant="confirm"] {
+  width: min(var(--t-measure-sm), calc(100vw - var(--t-space-6)));
+}
+
+.t-dialog[data-variant="confirm"] .t-dialog-header {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.t-dialog[data-variant="confirm"] .t-dialog-body {
+  padding-block: var(--t-space-2) 0;
+}
+
+.t-dialog[data-variant="confirm"] .t-dialog-footer {
+  padding-top: var(--t-space-4);
+  border-top: 0;
+}

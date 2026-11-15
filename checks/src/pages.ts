@@ -90,7 +90,22 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
     // A box of one pixel is a visually hidden element, such as a native control behind a drawn one.
     if (rect.width <= 1 || rect.height <= 1) return false;
     const style = getComputedStyle(el);
-    return style.visibility !== "hidden" && style.display !== "none" && Number(style.opacity) > 0;
+    if (style.visibility === "hidden" || style.display === "none" || Number(style.opacity) === 0)
+      return false;
+    // An element that an ancestor scrolled out of sight or clipped away is not on the screen.
+    for (let node = el.parentElement; node; node = node.parentElement) {
+      if (getComputedStyle(node).overflow === "visible") continue;
+      const box = node.getBoundingClientRect();
+      if (
+        rect.right <= box.left + 1 ||
+        rect.left >= box.right - 1 ||
+        rect.bottom <= box.top + 1 ||
+        rect.top >= box.bottom - 1
+      ) {
+        return false;
+      }
+    }
+    return true;
   };
   const allowsScrollX = (el: Element): boolean => {
     for (let node: Element | null = el; node; node = node.parentElement) {

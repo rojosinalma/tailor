@@ -1,0 +1,53 @@
+/* The close button shows only in the sheet form, where a click outside is harder to find. */
+.t-popover {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  min-width: var(--t-measure-xs);
+  padding: var(--t-space-3) var(--t-space-4);
+}
+
+.t-popover-title {
+  grid-column: 1;
+  grid-row: 1;
+  padding-bottom: var(--t-space-2);
+  font-size: var(--t-text-base);
+}
+
+.t-popover-close {
+  display: none;
+  grid-column: 2;
+  grid-row: 1;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--t-control-h-sm);
+  min-height: var(--t-control-h-sm);
+  border-radius: var(--t-radius-control);
+  color: var(--t-muted);
+}
+
+.t-popover-close:active {
+  background: var(--t-active);
+}
+
+.t-popover-body {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+@media (hover: hover) {
+  .t-popover-close:hover {
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+}
+
+@media (max-width: 40rem) {
+  .t-popover {
+    padding: var(--t-space-3) var(--t-space-4) calc(var(--t-space-4) + var(--t-safe-bottom));
+  }
+
+  .t-popover-close {
+    display: inline-flex;
+  }
+}

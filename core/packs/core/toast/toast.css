@@ -1,0 +1,102 @@
+/* The region keeps the newest toast nearest the edge. */
+.t-toasts {
+  position: fixed;
+  inset-block-end: calc(var(--t-space-4) + var(--t-safe-bottom));
+  inset-inline-end: calc(var(--t-space-4) + var(--t-safe-right));
+  z-index: var(--t-z-toast);
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--t-space-2);
+  width: min(var(--t-measure-sm), calc(100vw - var(--t-space-6)));
+  outline: none;
+  pointer-events: none;
+}
+
+.t-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--t-space-3);
+  min-width: 0;
+  padding: var(--t-space-3);
+  border: var(--t-border-w) solid var(--t-border);
+  border-inline-start: var(--t-border-w-strong) solid var(--t-tone);
+  border-radius: var(--t-radius-box);
+  background: var(--t-surface);
+  color: var(--t-text);
+  box-shadow: var(--t-shadow-md);
+  pointer-events: auto;
+  transition:
+    opacity var(--t-motion-base) var(--t-ease),
+    translate var(--t-motion-base) var(--t-ease);
+}
+
+.t-toast[data-starting-style],
+.t-toast[data-ending-style] {
+  opacity: 0;
+  translate: 0 var(--t-space-4);
+}
+
+.t-toast[data-limited] {
+  display: none;
+}
+
+.t-toast-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: calc(var(--t-leading) * 1em);
+  color: var(--t-tone);
+}
+
+.t-toast-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--t-space-05);
+  min-width: 0;
+}
+
+.t-toast-title {
+  font-size: var(--t-text-base);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-toast-title + .t-toast-text {
+  font-size: var(--t-text-sm);
+}
+
+.t-toast-action {
+  flex: none;
+}
+
+.t-toast-close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--t-control-h-sm);
+  min-height: var(--t-control-h-sm);
+  margin: calc(var(--t-space-1) * -1) calc(var(--t-space-1) * -1) calc(var(--t-space-1) * -1) 0;
+  border-radius: var(--t-radius-control);
+  color: var(--t-muted);
+}
+
+.t-toast-close:active {
+  background: var(--t-active);
+}
+
+@media (hover: hover) {
+  .t-toast-close:hover {
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+}
+
+/* A phone shows the toasts across the full width, above the safe area. */
+@media (max-width: 40rem) {
+  .t-toasts {
+    inset-inline: var(--t-space-2);
+    inset-block-end: calc(var(--t-space-2) + var(--t-safe-bottom));
+    width: auto;
+  }
+}

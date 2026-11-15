@@ -1,0 +1,146 @@
+.t-drawer-backdrop,
+.t-drawer::backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--t-z-overlay);
+  background: var(--t-backdrop);
+  transition: opacity var(--t-motion-base) var(--t-ease);
+}
+
+/* The side drawers. The end side is the default; "start" and "bottom" change the edge. */
+.t-drawer {
+  --t-drawer-from: 100%;
+  position: fixed;
+  inset-block: 0;
+  inset-inline: auto 0;
+  z-index: var(--t-z-overlay);
+  display: flex;
+  flex-direction: column;
+  width: min(var(--t-measure-sm), 85vw);
+  height: 100dvh;
+  max-height: none;
+  padding-block: var(--t-safe-top) var(--t-safe-bottom);
+  overflow: hidden;
+  border-inline-start: var(--t-border-w) solid var(--t-border);
+  background: var(--t-surface);
+  color: var(--t-text);
+  box-shadow: var(--t-shadow-lg);
+  transition:
+    translate var(--t-motion-base) var(--t-ease),
+    display var(--t-motion-base) allow-discrete,
+    overlay var(--t-motion-base) allow-discrete;
+}
+
+.t-drawer[data-size="md"] {
+  width: min(var(--t-measure-md), 85vw);
+}
+
+.t-drawer:not([data-side]) {
+  padding-inline-end: var(--t-safe-right);
+}
+
+.t-drawer[data-side="start"] {
+  --t-drawer-from: -100%;
+  inset-inline: 0 auto;
+  padding-inline-start: var(--t-safe-left);
+  border-inline-start: 0;
+  border-inline-end: var(--t-border-w) solid var(--t-border);
+}
+
+/* A bottom drawer is a sheet with round top corners. */
+.t-drawer[data-side="bottom"] {
+  inset: auto 0 0;
+  width: 100%;
+  height: auto;
+  max-height: 85dvh;
+  padding: 0 var(--t-safe-right) var(--t-safe-bottom) var(--t-safe-left);
+  border: 0;
+  border-top: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-popup) var(--t-radius-popup) 0 0;
+}
+
+dialog.t-drawer:not([open]) {
+  display: none;
+  translate: var(--t-drawer-from) 0;
+}
+
+dialog.t-drawer[data-side="bottom"]:not([open]),
+.t-drawer[data-side="bottom"][data-starting-style],
+.t-drawer[data-side="bottom"][data-ending-style] {
+  translate: 0 100%;
+}
+
+@starting-style {
+  dialog.t-drawer[open] {
+    translate: var(--t-drawer-from) 0;
+  }
+
+  dialog.t-drawer[data-side="bottom"][open] {
+    translate: 0 100%;
+  }
+}
+
+.t-drawer[data-starting-style],
+.t-drawer[data-ending-style] {
+  translate: var(--t-drawer-from) 0;
+}
+
+.t-drawer-backdrop[data-starting-style],
+.t-drawer-backdrop[data-ending-style] {
+  opacity: 0;
+}
+
+.t-drawer-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--t-space-3);
+  padding: var(--t-space-3) var(--t-space-4);
+  border-bottom: var(--t-border-w) solid var(--t-border);
+}
+
+.t-drawer-title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--t-text-lg);
+}
+
+.t-drawer-close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--t-control-h-sm);
+  min-height: var(--t-control-h-sm);
+  border-radius: var(--t-radius-control);
+  color: var(--t-muted);
+}
+
+.t-drawer-close:active {
+  background: var(--t-active);
+}
+
+.t-drawer-body {
+  flex: 1;
+  min-height: 0;
+  padding: var(--t-space-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.t-drawer-footer {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--t-space-2);
+  padding: var(--t-space-3) var(--t-space-4);
+  border-top: var(--t-border-w) solid var(--t-border);
+}
+
+@media (hover: hover) {
+  .t-drawer-close:hover {
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+}
