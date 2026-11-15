@@ -4,6 +4,7 @@ import { dirname } from "node:path";
 import { Glob } from "bun";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { withRequirements } from "../../core/src/packs";
 import type { PaletteSpec } from "../../core/src/palette";
 import type { SkinSpec } from "../../core/src/skins";
 import type { ComponentSpec } from "../../core/src/spec";
@@ -138,9 +139,17 @@ export async function buildShowcase(
   const { StaticKit } = await import(at("react/src/kit.tsx"));
   const { EntrySections } = await import(at("showcase/src/entry-sections.tsx"));
   const { IconSprite } = await import(at("react/src/core/icon/icon.tsx"));
-  const htmlScripts = (await scan("dist/html/*.js"))
-    .map((f) => `tailor/${f.split("/").pop()}`)
-    .sort((a, b) => (a === "tailor/tailor.js" ? -1 : b === "tailor/tailor.js" ? 1 : a.localeCompare(b)));
+  // A page loads the scripts of its own pack, of the packs that one requires, and of any pack whose
+  // component an example uses (the markup names it in data-t), as a project would.
+  const built = new Set((await scan("dist/html/*.js")).map((f) => f.split("/").pop()));
+  const scriptsFor = (pack: string, body: string): string[] => {
+    const used = new Set([...body.matchAll(/data-t="([^"]+)"/g)].flatMap((m) => (m[1] ?? "").split(/\s+/)));
+    const packs = specs.filter((s) => s.html === "script" && used.has(s.id)).map((s) => s.pack);
+    return withRequirements([pack, ...packs])
+      .map((id) => (id === "core" ? "tailor.js" : `tailor-${id}.js`))
+      .filter((file) => built.has(file))
+      .map((file) => `tailor/${file}`);
+  };
   for (const spec of specs) {
     if (spec.html === "none") continue;
     const set = (
@@ -164,7 +173,7 @@ export async function buildShowcase(
         rel: "../",
         theme,
         body,
-        scripts: htmlScripts,
+        scripts: scriptsFor(spec.pack, body),
         bodyClass: "sc-entry",
       }),
     );
