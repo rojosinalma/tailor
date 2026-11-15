@@ -47,4 +47,18 @@ export default defineExamples("grid", [
       </Grid>
     ),
   },
+  {
+    id: "narrow",
+    title: "In a narrow box the columns wrap",
+    width: "md",
+    render: () => (
+      <Grid>
+        {HOSTS.slice(0, 4).map((host) => (
+          <Pane key={host} title={host}>
+            <p>Up.</p>
+          </Pane>
+        ))}
+      </Grid>
+    ),
+  },
 ]);

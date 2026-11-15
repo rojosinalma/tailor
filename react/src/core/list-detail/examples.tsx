@@ -46,7 +46,14 @@ export default defineExamples("list-detail", [
   {
     id: "default",
     title: "Hosts and one host",
-    note: "In a narrow space only the list shows; a host opens alone, with a back button.",
+    display: "frame",
+    render: () => <Hosts />,
+  },
+  {
+    id: "narrow",
+    title: "Narrow: the list, or one host with a back button",
+    display: "frame",
+    width: "sm",
     render: () => <Hosts />,
   },
 ]);

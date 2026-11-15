@@ -3,7 +3,8 @@
   flex: 1;
   flex-direction: column;
   min-width: 0;
-  min-height: 0;
+  /* Never shrinks below a usable box; a parent that scrolls (a split pane) then scrolls instead. */
+  min-height: var(--t-measure-2xs);
   overflow: hidden;
   border: var(--t-border-w) solid var(--t-border);
   border-radius: var(--t-radius-box);
@@ -52,6 +53,11 @@
   padding: var(--t-space-4);
   overflow: auto;
   overscroll-behavior: contain;
+}
+
+/* The pane cuts off what is outside it, so the ring of the body goes inside. */
+.t-pane-body:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
 }
 
 .t-pane-body[data-padding="none"] {

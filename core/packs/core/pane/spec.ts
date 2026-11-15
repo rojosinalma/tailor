@@ -12,7 +12,8 @@ export default defineComponent({
     "t-pane-header": "the title row",
     "t-pane-title": "the title",
     "t-pane-actions": "the pane actions, at the end",
-    "t-pane-body": "the content, which scrolls; data-padding=none for tables and lists",
+    "t-pane-body":
+      "the content: a named region in the tab order, which scrolls; data-padding=none for tables and lists",
     "t-pane-footer": "an optional row at the bottom",
   },
   props: { title: [], actions: [], footer: [], label: [], padding: ["default", "none"] },

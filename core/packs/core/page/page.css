@@ -45,6 +45,15 @@
   min-width: 0;
 }
 
+/* The other actions: their buttons in a wide page, the "more" menu in a narrow one. */
+.t-page-secondary {
+  display: contents;
+}
+
+.t-page-more {
+  display: none;
+}
+
 .t-page-body {
   display: grid;
   flex: 1;
@@ -58,7 +67,16 @@
 }
 
 /* Fill: the body takes exactly the free height and never scrolls; its children scroll alone. */
-.t-page[data-mode="fill"] > .t-page-body {
+.t-page[data-mode="fill"] > /* The other actions: their buttons in a wide page, the "more" menu in a narrow one. */
+.t-page-secondary {
+  display: contents;
+}
+
+.t-page-more {
+  display: none;
+}
+
+.t-page-body {
   display: flex;
   flex-direction: column;
   gap: var(--t-space-4);
@@ -72,5 +90,13 @@
 @container (max-width: 40rem) {
   .t-page-actions {
     flex-basis: 100%;
+  }
+
+  .t-page-secondary {
+    display: none;
+  }
+
+  .t-page-more {
+    display: contents;
   }
 }

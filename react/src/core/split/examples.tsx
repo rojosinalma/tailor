@@ -27,12 +27,13 @@ export default defineExamples("split", [
   {
     id: "default",
     title: "Side by side",
-    note: "In a narrow space the panes stack and the handle hides.",
+    display: "frame",
     render: () => <Split label="Resize the host list" first={hosts} second={detail} />,
   },
   {
     id: "column",
     title: "One above the other, 30 percent, limits 20 to 60",
+    display: "frame",
     render: () => (
       <Split
         direction="column"
@@ -53,6 +54,7 @@ export default defineExamples("split", [
     id: "remembered",
     title: "Remembers its size",
     note: "The size stays after a reload.",
+    display: "frame",
     render: () => (
       <Split
         label="Resize the side list"
@@ -62,5 +64,12 @@ export default defineExamples("split", [
         second={detail}
       />
     ),
+  },
+  {
+    id: "narrow",
+    title: "In a narrow space the panes stack and the handle hides",
+    display: "frame",
+    width: "sm",
+    render: () => <Split label="Resize the narrow host list" first={hosts} second={detail} />,
   },
 ]);

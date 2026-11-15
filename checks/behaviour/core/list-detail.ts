@@ -43,6 +43,15 @@ export default behaviour("list-detail", {
     await expect(detail).toBeHidden();
     await expect(list.getByRole("button", { name: "db-1" })).toBeFocused();
   },
+  "in a narrow box only one view shows, also on a wide screen": async ({ example, expect }) => {
+    const body = example("narrow");
+    const list = body.getByRole("region", { name: "Host list" });
+    const detail = body.getByRole("region", { name: "Host details" });
+    await expect(detail).toBeHidden();
+    await list.getByRole("button", { name: "mail" }).click();
+    await expect(list).toBeHidden();
+    await expect(detail.getByRole("button", { name: "Back" })).toBeFocused();
+  },
   "the HTML kit fires t:back on the root": async ({ page, kit, example, expect }) => {
     if (kit !== "html") return;
     await page.setViewportSize({ width: 390, height: 800 });

@@ -9,27 +9,36 @@ const STATES = [
   { value: "down", label: "Down" },
 ];
 
+function HostToolbar() {
+  return (
+    <Toolbar
+      start={
+        <>
+          <Select options={STATES} defaultValue="all" aria-label="State" />
+          <Button>web-1</Button>
+        </>
+      }
+      end={
+        <>
+          <Button>Export</Button>
+          <Button variant="primary">Add host</Button>
+        </>
+      }
+    />
+  );
+}
+
 export default defineExamples("toolbar", [
   {
     id: "default",
     title: "Filters at the start, actions at the end",
-    note: "In a narrow space the actions go under the filters.",
-    render: () => (
-      <Toolbar
-        start={
-          <>
-            <Select options={STATES} defaultValue="all" aria-label="State" />
-            <Button>web-1</Button>
-          </>
-        }
-        end={
-          <>
-            <Button>Export</Button>
-            <Button variant="primary">Add host</Button>
-          </>
-        }
-      />
-    ),
+    render: () => <HostToolbar />,
+  },
+  {
+    id: "narrow",
+    title: "Narrow: the actions go under the filters",
+    width: "sm",
+    render: () => <HostToolbar />,
   },
   {
     id: "children",

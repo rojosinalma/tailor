@@ -15,6 +15,8 @@ export default defineComponent({
     "t-page-title": "the one h1 of the page",
     "t-page-description": "one line under the title",
     "t-page-actions": "the page actions, at the end; under the title in a narrow page",
+    "t-page-secondary": "the other actions as buttons, in a page of at least 40rem",
+    "t-page-more": "the other actions as one menu, in a narrower page",
     "t-page-body": "the content: scrolls (mode scroll) or takes the free height (mode fill)",
   },
   props: {
@@ -22,6 +24,8 @@ export default defineComponent({
     description: [],
     breadcrumb: [],
     actions: [],
+    primaryAction: [],
+    moreActions: [],
     mode: ["scroll", "fill"],
     width: ["full", "readable"],
   },

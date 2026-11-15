@@ -92,4 +92,12 @@ export default behaviour("split", {
     expect(Math.round(second.width)).toBe(Math.round(whole.width));
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
   },
+  "in a narrow box a row split stacks, also on a wide screen": async ({ example, expect }) => {
+    const body = example("narrow");
+    await expect(body.getByRole("separator", { name: "Resize the narrow host list" })).toBeHidden();
+    const panes = body.locator(".t-split-pane");
+    const [first, second] = await Promise.all([panes.nth(0).boundingBox(), panes.nth(1).boundingBox()]);
+    if (!first || !second) throw new Error("no box");
+    expect(second.y).toBeGreaterThanOrEqual(first.y + first.height);
+  },
 });
