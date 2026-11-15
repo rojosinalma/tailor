@@ -6,6 +6,7 @@
 import { createHash } from "node:crypto";
 import { mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
+import { inflateSync } from "node:zlib";
 import { AxeBuilder } from "@axe-core/playwright";
 import type { Browser, BrowserContext, Page } from "playwright";
 import { at } from "../../bin/lib/paths";
@@ -64,6 +65,26 @@ export interface PagesResult {
 
 const sha = (data: string | Uint8Array): string =>
   createHash("sha256").update(data).digest("hex").slice(0, 20);
+
+/**
+ * The hash of the pixels of a PNG file. The browser does not always compress the same pixels to the same
+ * bytes, so the hash is taken from the image data after it is unpacked, not from the file.
+ */
+export function pixelHash(png: Uint8Array): string {
+  const view = new DataView(png.buffer, png.byteOffset, png.byteLength);
+  const hash = createHash("sha256");
+  const data: Uint8Array[] = [];
+  for (let at = 8; at < png.length; ) {
+    const length = view.getUint32(at);
+    const type = String.fromCharCode(...png.subarray(at + 4, at + 8));
+    const body = png.subarray(at + 8, at + 8 + length);
+    if (type === "IHDR") hash.update(body);
+    else if (type === "IDAT") data.push(body);
+    at += 12 + length;
+  }
+  hash.update(inflateSync(Buffer.concat(data)));
+  return hash.digest("hex").slice(0, 20);
+}
 
 const REFERENCE = "checks/images.json";
 const CACHE = "checks/.results/fingerprints.json";
@@ -241,6 +262,20 @@ async function settle(page: Page): Promise<void> {
   });
 }
 
+/**
+ * Makes the browser lay out and paint the whole page again. After a change of skin or width the browser
+ * repaints only what it thinks changed, and the edges it keeps can differ by a few pixels from a fresh paint.
+ */
+async function repaint(page: Page): Promise<void> {
+  await page.evaluate(async () => {
+    const root = document.documentElement;
+    root.style.display = "none";
+    void root.offsetHeight;
+    root.style.display = "";
+    await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => done(null))));
+  });
+}
+
 interface Target {
   readonly component: string;
   readonly kit: Kit;
@@ -371,8 +406,9 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
                 taken.set(state.image, known);
                 skipped++;
               } else {
+                await repaint(page);
                 const png = await page.screenshot({ fullPage: true, animations: "disabled", caret: "hide" });
-                const hash = sha(png);
+                const hash = pixelHash(png);
                 taken.set(state.image, hash);
                 cache[`${state.image}@${fingerprint}`] = hash;
                 if (reference[state.image] !== hash)
