@@ -124,6 +124,13 @@
     display: block;
   }
 
+  .t-table:not([data-narrow]) thead,
+  .t-table:not([data-narrow]) thead tr,
+  .t-table:not([data-narrow]) thead th {
+    display: block;
+    white-space: normal;
+  }
+
   .t-table:not([data-narrow]) thead {
     position: absolute;
     width: var(--t-hairline);

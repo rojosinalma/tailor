@@ -4,6 +4,7 @@ import { defineExamples } from "../../examples";
 import { Glyph } from "../../glyph";
 import { Button } from "../button/button";
 import { RelativeTime } from "../relative-time/relative-time";
+import { StateLabel } from "../state-label/state-label";
 import { Table, type TableColumn } from "./table";
 
 interface Service {
@@ -15,29 +16,58 @@ interface Service {
   memory: number;
 }
 
-const HOUR = 3_600_000;
-const ago = (hours: number): string => new Date(Date.now() - hours * HOUR).toISOString();
+// Fixed dates, so the pages of both kits stay the same whenever they are built.
 
 const services: Service[] = [
-  { name: "web-1", host: "nas", status: "running", image: "nginx:1.27", updated: ago(2), memory: 64 },
-  { name: "api", host: "nas", status: "degraded", image: "example/api:3.4.1", updated: ago(26), memory: 412 },
-  { name: "db", host: "web-1", status: "running", image: "postgres:17", updated: ago(24 * 9), memory: 1536 },
+  {
+    name: "web-1",
+    host: "nas",
+    status: "running",
+    image: "nginx:1.27",
+    updated: "2026-11-15T10:00:00Z",
+    memory: 64,
+  },
+  {
+    name: "api",
+    host: "nas",
+    status: "degraded",
+    image: "example/api:3.4.1",
+    updated: "2026-11-14T10:00:00Z",
+    memory: 412,
+  },
+  {
+    name: "db",
+    host: "web-1",
+    status: "running",
+    image: "postgres:17",
+    updated: "2026-11-06T12:00:00Z",
+    memory: 1536,
+  },
   {
     name: "backup-worker-with-a-long-name",
     host: "nas",
     status: "stopped",
     image: "example/backup:2026.11",
-    updated: ago(24 * 40),
+    updated: "2026-10-06T12:00:00Z",
     memory: 0,
   },
 ];
 
 const TONE: Record<Service["status"], Tone> = { running: "success", degraded: "warning", stopped: "neutral" };
+const LABEL: Record<Service["status"], string> = {
+  running: "Running",
+  degraded: "Degraded",
+  stopped: "Stopped",
+};
 
 const columns: TableColumn<Service>[] = [
   { key: "name", header: "Name" },
   { key: "host", header: "Host" },
-  { key: "status", header: "Status" },
+  {
+    key: "status",
+    header: "Status",
+    render: (s) => <StateLabel tone={TONE[s.status]}>{LABEL[s.status]}</StateLabel>,
+  },
   { key: "image", header: "Image", priority: "low" },
   { key: "memory", header: "Memory (MB)", kind: "num" },
   { key: "updated", header: "Updated", render: (s) => <RelativeTime date={s.updated} /> },
@@ -67,6 +97,21 @@ export default defineExamples("table", [
     ),
   },
   {
+    id: "narrow",
+    title: "In a narrow box",
+    note: "The table follows its box, not the screen: in a box below 40rem each row is a card.",
+    width: "sm",
+    render: () => (
+      <Table
+        caption="Services"
+        columns={columns}
+        rows={services}
+        rowKey={(s) => s.name}
+        rowTone={(s) => TONE[s.status]}
+      />
+    ),
+  },
+  {
     id: "compact",
     title: "Compact",
     render: () => <Table density="compact" columns={columns} rows={services} rowKey={(s) => s.name} />,
@@ -75,6 +120,7 @@ export default defineExamples("table", [
     id: "scroll",
     title: "Scrolls in a narrow box",
     note: 'narrow="scroll": below 40rem the table keeps its columns and scrolls sideways inside its box.',
+    width: "sm",
     render: () => (
       <Table caption="Services" narrow="scroll" columns={columns} rows={services} rowKey={(s) => s.name} />
     ),

@@ -22,9 +22,20 @@
   border-top: var(--t-border-w) solid var(--t-border);
 }
 
+/* The selected row: a sunken fill, on which every text colour stays readable, and an accent edge. */
 .t-list-item[aria-current],
 .t-list-item:has(> .t-list-content .t-list-link[aria-current]) {
-  background: var(--t-selection);
+  background: var(--t-inset);
+}
+
+.t-list-item[aria-current]::before,
+.t-list-item:has(> .t-list-content .t-list-link[aria-current])::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: var(--t-border-w-strong);
+  background: var(--t-accent);
 }
 
 .t-list-leading,
@@ -70,7 +81,10 @@
 }
 
 .t-list-link {
+  display: block;
+  overflow: hidden;
   color: inherit;
+  text-overflow: ellipsis;
   outline: none;
 }
 

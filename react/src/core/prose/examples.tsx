@@ -1,6 +1,16 @@
 import { defineExamples } from "../../examples";
 import { Prose } from "./prose";
 
+// A small diagram as a data: URI, so the example loads no file: two hosts and the move between them.
+const diagram = `data:image/svg+xml,${encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160">' +
+    '<rect width="480" height="160" fill="hsl(210 20% 50% / 0.15)"/>' +
+    '<rect x="40" y="50" width="140" height="60" rx="8" fill="hsl(210 60% 55%)"/>' +
+    '<rect x="300" y="50" width="140" height="60" rx="8" fill="hsl(150 45% 45%)"/>' +
+    '<path d="M190 80h96m-12-10 12 10-12 10" stroke="hsl(210 15% 55%)" stroke-width="4" fill="none"/>' +
+    "</svg>",
+)}`;
+
 export default defineExamples("prose", [
   {
     id: "markdown",
@@ -46,6 +56,14 @@ export default defineExamples("prose", [
             uses.
           </p>
         </blockquote>
+        <p>
+          <img
+            src={diagram}
+            alt="The service moves from nas, on the left, to the new host, on the right."
+            width={480}
+            height={160}
+          />
+        </p>
         <h3>Sizes of the volumes</h3>
         <table>
           <thead>

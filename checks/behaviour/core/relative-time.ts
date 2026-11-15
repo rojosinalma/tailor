@@ -27,7 +27,9 @@ export default behaviour("relative-time", {
     await page.clock.runFor(60_000);
     await expect(time).toHaveText("1 minute ago");
   },
-  "follows the locale": async ({ example, expect }) => {
-    await expect(example("locale").locator("time")).toHaveText(/^vor \d+ Minuten$/);
+  "follows the locale": async ({ page, example, expect }) => {
+    await page.clock.install({ time: new Date("2026-11-15T12:00:00Z") });
+    await page.reload();
+    await expect(example("locale").locator("time")).toHaveText("vor 45 Minuten");
   },
 });

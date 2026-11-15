@@ -33,7 +33,12 @@ export interface ListItemProps {
 
 export function ListItem({ leading, title, description, trailing, to, selected = false }: ListItemProps) {
   return (
-    <li className="t-list-item" aria-current={selected && !to ? "true" : undefined}>
+    // A row with a link: the whole row is the hit area of the link.
+    <li
+      className="t-list-item"
+      aria-current={selected && !to ? "true" : undefined}
+      data-t-hit={to ? "" : undefined}
+    >
       {leading ? <span className="t-list-leading">{leading}</span> : null}
       <div className="t-list-content">
         <span className="t-list-title">
