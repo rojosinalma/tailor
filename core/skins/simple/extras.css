@@ -1,0 +1,125 @@
+/* Simple.css: flat surfaces, 1px borders, one solid accent button, no shadows, accent text on hover. */
+
+/* button */
+.t-btn {
+  background: transparent;
+  color: var(--t-text);
+}
+
+.t-btn:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: var(--t-accent);
+  background: var(--t-inset);
+  color: var(--t-accent-text);
+}
+
+.t-btn[data-variant="primary"] {
+  border-color: var(--t-accent-solid);
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+}
+
+.t-btn[data-variant="primary"]:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: color-mix(in srgb, var(--t-accent-solid) 82%, var(--t-on-accent));
+  background: color-mix(in srgb, var(--t-accent-solid) 82%, var(--t-on-accent));
+  color: var(--t-on-accent);
+}
+
+.t-btn[data-variant="danger"] {
+  border-color: var(--t-danger);
+  background: var(--t-danger);
+  color: var(--t-on-danger);
+}
+
+.t-btn[data-variant="danger"]:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: color-mix(in srgb, var(--t-danger) 82%, var(--t-text));
+  background: color-mix(in srgb, var(--t-danger) 82%, var(--t-text));
+  color: var(--t-on-danger);
+}
+
+.t-btn[data-variant="ghost"] {
+  border-color: transparent;
+  color: var(--t-muted);
+}
+
+.t-btn[data-variant="ghost"]:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: transparent;
+  background: transparent;
+  color: var(--t-accent-text);
+}
+
+.t-btn[data-variant="link"] {
+  border-color: transparent;
+  color: var(--t-link);
+  text-decoration: underline;
+}
+
+.t-btn:is(:disabled, [aria-disabled="true"]) {
+  border-color: var(--t-selection);
+  background: var(--t-selection);
+  color: var(--t-muted);
+}
+
+.t-btn:is([data-variant="ghost"], [data-variant="link"]):is(:disabled, [aria-disabled="true"]) {
+  border-color: transparent;
+  background: none;
+}
+
+@media (hover: hover) {
+  .t-btn:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: var(--t-accent);
+    background: var(--t-inset);
+    color: var(--t-accent-text);
+  }
+
+  .t-btn[data-variant="primary"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: color-mix(in srgb, var(--t-accent-solid) 88%, var(--t-on-accent));
+    background: color-mix(in srgb, var(--t-accent-solid) 88%, var(--t-on-accent));
+    color: var(--t-on-accent);
+  }
+
+  .t-btn[data-variant="danger"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: color-mix(in srgb, var(--t-danger) 82%, var(--t-text));
+    background: color-mix(in srgb, var(--t-danger) 82%, var(--t-text));
+    color: var(--t-on-danger);
+  }
+
+  .t-btn[data-variant="ghost"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: transparent;
+    background: transparent;
+    color: var(--t-accent-text);
+  }
+
+  .t-btn[data-variant="link"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: transparent;
+    background: transparent;
+    text-decoration: none;
+  }
+}
+
+/* control: the page background inside a plain border */
+.t-control {
+  background: var(--t-canvas);
+}
+
+.t-control:is(:disabled, [data-disabled], [aria-disabled="true"]) {
+  background: var(--t-selection);
+}
+
+/* popup: a flat box on the page background, the accent on the chosen option */
+.t-popup {
+  background: var(--t-canvas);
+}
+
+.t-option[aria-selected="true"] {
+  color: var(--t-accent-text);
+}
+
+/* dialog: the page background, one border, no shadow */
+.t-dialog {
+  background: var(--t-canvas);
+}
+
+/* date: the chosen day in the accent, today in accent text */
+.t-calendar-day[data-today]:not([data-selected]) {
+  color: var(--t-accent-text);
+}

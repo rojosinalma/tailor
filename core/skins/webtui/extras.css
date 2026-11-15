@@ -1,0 +1,199 @@
+/* WebTUI: a monospace character grid, square frames, bracketed buttons, inverse-video highlight. */
+
+/* button: [ label ] on the page, the primary a solid block; pressing inverts the colours */
+.t-btn {
+  border-color: transparent;
+  background: transparent;
+  color: var(--t-text);
+}
+
+.t-btn:not([data-variant="link"], [data-variant="ghost"])::before {
+  content: "[";
+}
+
+.t-btn:not([data-variant="link"], [data-variant="ghost"])::after {
+  content: "]";
+}
+
+.t-btn:active:not(:disabled, [aria-disabled="true"]) {
+  background: var(--t-text);
+  color: var(--t-canvas);
+}
+
+.t-btn[data-variant="primary"] {
+  border-color: transparent;
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+}
+
+.t-btn[data-variant="danger"] {
+  border-color: transparent;
+  color: var(--t-danger-text);
+}
+
+.t-btn[data-variant="ghost"] {
+  color: var(--t-muted);
+}
+
+.t-btn[data-variant="link"] {
+  color: var(--t-link);
+  text-decoration: underline;
+}
+
+.t-btn:is(
+  [data-variant="primary"],
+  [data-variant="danger"],
+  [data-variant="ghost"],
+  [data-variant="link"]
+):active:not(:disabled, [aria-disabled="true"]) {
+  background: var(--t-text);
+  color: var(--t-canvas);
+}
+
+.t-btn:focus-visible {
+  text-decoration: underline;
+}
+
+.t-btn:is(:disabled, [aria-disabled="true"]) {
+  border-color: transparent;
+  background: transparent;
+  color: var(--t-disabled);
+  text-decoration: line-through;
+}
+
+@media (hover: hover) {
+  .t-btn:hover:not(:disabled, [aria-disabled="true"]) {
+    background: var(--t-selection);
+    color: var(--t-text);
+  }
+
+  .t-btn[data-variant="primary"]:hover:not(:disabled, [aria-disabled="true"]) {
+    background: color-mix(in srgb, var(--t-accent-solid) 85%, var(--t-on-accent));
+    color: var(--t-on-accent);
+  }
+
+  .t-btn[data-variant="danger"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: transparent;
+    background: var(--t-danger);
+    color: var(--t-on-danger);
+  }
+
+  .t-btn[data-variant="link"]:hover:not(:disabled, [aria-disabled="true"]) {
+    background: transparent;
+    color: var(--t-accent-text);
+  }
+}
+
+/* control: a filled row with no frame; focus or an open list underlines it */
+.t-control {
+  border-color: transparent;
+  border-bottom-color: var(--t-border-control);
+  background: var(--t-surface);
+}
+
+.t-control[data-popup-open],
+.t-control[aria-expanded="true"],
+input.t-control:focus,
+textarea.t-control:focus {
+  border-bottom-color: var(--t-focus);
+}
+
+.t-control:is([aria-invalid="true"], [data-invalid]) {
+  border-bottom-color: var(--t-danger);
+}
+
+.t-control:is(:disabled, [data-disabled], [aria-disabled="true"]) {
+  background: var(--t-inset);
+  text-decoration: line-through;
+}
+
+/* popup: a framed box on the page background; the highlighted row in inverse video */
+.t-popup {
+  border-color: var(--t-muted);
+  background: var(--t-canvas);
+}
+
+.t-option[data-highlighted] {
+  background: var(--t-text);
+  color: var(--t-canvas);
+}
+
+.t-option[aria-selected="true"] {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-option[data-highlighted] .t-option-check {
+  color: inherit;
+}
+
+.t-option:is([aria-disabled="true"], [data-disabled]) {
+  text-decoration: line-through;
+}
+
+/* dialog: a double frame, the title in the accent, a [×] close */
+.t-dialog {
+  border: 6px double var(--t-muted);
+  background: var(--t-canvas);
+}
+
+.t-dialog-title {
+  color: var(--t-accent-text);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-dialog-close {
+  color: var(--t-text);
+}
+
+.t-dialog-close::before {
+  content: "[";
+}
+
+.t-dialog-close::after {
+  content: "]";
+}
+
+.t-dialog-close:active {
+  background: var(--t-text);
+  color: var(--t-canvas);
+}
+
+@media (hover: hover) {
+  .t-dialog-close:hover {
+    background: var(--t-selection);
+    color: var(--t-text);
+  }
+}
+
+/* select */
+.t-select-icon {
+  color: var(--t-text);
+}
+
+/* date: square cells, the chosen day in inverse video */
+.t-date-icon {
+  color: var(--t-text);
+}
+
+.t-calendar-title {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-calendar-day[data-selected] {
+  background: var(--t-text);
+  color: var(--t-canvas);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-calendar-day[data-today]:not([data-selected]) {
+  border-color: transparent;
+  color: var(--t-accent-text);
+  text-decoration: underline;
+}
+
+@media (hover: hover) {
+  .t-calendar-nav:hover:not(:disabled),
+  .t-calendar-day:hover:not(:disabled, [data-selected]) {
+    background: var(--t-selection);
+  }
+}

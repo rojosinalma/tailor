@@ -1,0 +1,162 @@
+/* Luz: borderless soft fills, one solid primary, tinted tone fills, depth-shifted surfaces, a half-alpha focus outline. */
+
+/* button */
+.t-btn {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--t-muted) 20%, transparent);
+  color: var(--t-text);
+}
+
+.t-btn:active:not(:disabled, [aria-disabled="true"]) {
+  background: color-mix(in srgb, var(--t-muted) 34%, transparent);
+}
+
+.t-btn[data-variant="primary"] {
+  border-color: transparent;
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-btn[data-variant="primary"]:active:not(:disabled, [aria-disabled="true"]) {
+  background: color-mix(in srgb, var(--t-accent-solid) 84%, var(--t-on-accent));
+}
+
+.t-btn[data-variant="danger"] {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--t-danger) 18%, transparent);
+  color: color-mix(in srgb, var(--t-danger-text) 55%, var(--t-text));
+}
+
+.t-btn[data-variant="danger"]:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--t-danger) 34%, transparent);
+  color: color-mix(in srgb, var(--t-danger-text) 55%, var(--t-text));
+}
+
+.t-btn[data-variant="ghost"] {
+  background: transparent;
+  color: var(--t-muted);
+}
+
+.t-btn[data-variant="ghost"]:active:not(:disabled, [aria-disabled="true"]) {
+  background: color-mix(in srgb, var(--t-text) 14%, transparent);
+  color: var(--t-text);
+}
+
+.t-btn[data-variant="link"] {
+  background: none;
+  color: var(--t-link);
+}
+
+.t-btn:is(:disabled, [aria-disabled="true"]) {
+  opacity: 0.4;
+}
+
+@media (hover: hover) {
+  .t-btn:hover:not(:disabled, [aria-disabled="true"]) {
+    background: color-mix(in srgb, var(--t-muted) 28%, transparent);
+  }
+
+  .t-btn[data-variant="primary"]:hover:not(:disabled, [aria-disabled="true"]) {
+    background: color-mix(in srgb, var(--t-accent-solid) 92%, var(--t-on-accent));
+  }
+
+  .t-btn[data-variant="danger"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: transparent;
+    background: color-mix(in srgb, var(--t-danger) 28%, transparent);
+    color: color-mix(in srgb, var(--t-danger-text) 55%, var(--t-text));
+  }
+
+  .t-btn[data-variant="ghost"]:hover:not(:disabled, [aria-disabled="true"]) {
+    background: color-mix(in srgb, var(--t-text) 8%, transparent);
+    color: var(--t-text);
+  }
+
+  .t-btn[data-variant="link"]:hover:not(:disabled, [aria-disabled="true"]) {
+    background: none;
+    color: color-mix(in srgb, var(--t-link) 70%, var(--t-text));
+  }
+}
+
+/* control: one depth step below its surface, a soft border, the focus outline instead of a border change */
+.t-control {
+  border-color: color-mix(in srgb, var(--t-border-control) 60%, var(--t-border));
+  background: color-mix(in srgb, var(--t-canvas) 91%, var(--t-text));
+}
+
+.t-control[data-popup-open],
+.t-control[aria-expanded="true"],
+input.t-control:focus,
+textarea.t-control:focus {
+  border-color: color-mix(in srgb, var(--t-border-control) 60%, var(--t-border));
+  outline: 2px solid color-mix(in srgb, var(--t-focus) 65%, transparent);
+  outline-offset: -1px;
+}
+
+.t-control:is([aria-invalid="true"], [data-invalid]) {
+  border-color: color-mix(in srgb, var(--t-danger) 60%, transparent);
+}
+
+.t-control:is(:disabled, [data-disabled], [aria-disabled="true"]) {
+  background: var(--t-canvas);
+}
+
+@media (hover: hover) {
+  .t-control:hover:not(:disabled, [data-disabled], [aria-disabled="true"], [data-popup-open], :focus) {
+    border-color: var(--t-border-control);
+  }
+}
+
+/* popup: one depth step above the page, soft border; the chosen option in a tinted fill */
+.t-popup {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+  background: color-mix(in srgb, var(--t-canvas) 94.5%, var(--t-text));
+}
+
+.t-option[aria-selected="true"] {
+  background: color-mix(in srgb, var(--t-accent) 16%, transparent);
+  color: color-mix(in srgb, var(--t-accent-text) 55%, var(--t-text));
+}
+
+.t-option[aria-selected="true"][data-highlighted] {
+  background: color-mix(in srgb, var(--t-accent) 26%, transparent);
+}
+
+.t-option-check {
+  color: inherit;
+}
+
+/* dialog: the depth surface with a soft border and a blurred page behind */
+.t-dialog-backdrop,
+.t-dialog::backdrop {
+  backdrop-filter: blur(0.125em);
+}
+
+.t-dialog {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+  background: color-mix(in srgb, var(--t-canvas) 94.5%, var(--t-text));
+}
+
+.t-dialog-header,
+.t-dialog-footer {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+.t-dialog-title {
+  font-weight: var(--t-weight-bold);
+}
+
+/* date: tinted hover and today, the solid primary for the chosen day */
+.t-calendar-day[data-today]:not([data-selected]) {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--t-accent) 16%, transparent);
+  color: color-mix(in srgb, var(--t-accent-text) 55%, var(--t-text));
+}
+
+@media (hover: hover) {
+  .t-calendar-nav:hover:not(:disabled),
+  .t-calendar-day:hover:not(:disabled, [data-selected]) {
+    background: color-mix(in srgb, var(--t-muted) 20%, transparent);
+  }
+}

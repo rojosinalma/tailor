@@ -1,0 +1,150 @@
+/* Pico: solid secondary and primary buttons, filled fields with an accent border and ring, sectioned cards on a frosted page. */
+
+/* button */
+.t-btn {
+  border-color: var(--t-muted);
+  background: var(--t-muted);
+  color: var(--t-canvas);
+}
+
+.t-btn:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: color-mix(in srgb, var(--t-muted) 80%, var(--t-text));
+  background: color-mix(in srgb, var(--t-muted) 80%, var(--t-text));
+}
+
+.t-btn[data-variant="primary"] {
+  border-color: var(--t-accent-solid);
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+}
+
+.t-btn[data-variant="primary"]:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: color-mix(in srgb, var(--t-accent-solid) 82%, var(--t-on-accent));
+  background: color-mix(in srgb, var(--t-accent-solid) 82%, var(--t-on-accent));
+}
+
+.t-btn[data-variant="danger"] {
+  border-color: var(--t-danger);
+  background: var(--t-danger);
+  color: var(--t-on-danger);
+}
+
+.t-btn[data-variant="danger"]:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: color-mix(in srgb, var(--t-danger) 80%, var(--t-text));
+  background: color-mix(in srgb, var(--t-danger) 80%, var(--t-text));
+}
+
+.t-btn[data-variant="danger"]:focus-visible {
+  outline-color: color-mix(in srgb, var(--t-danger) 60%, transparent);
+}
+
+.t-btn[data-variant="ghost"] {
+  border-color: transparent;
+  background: transparent;
+  color: var(--t-muted);
+}
+
+.t-btn[data-variant="ghost"]:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: transparent;
+  background: var(--t-active);
+  color: var(--t-text);
+}
+
+.t-btn[data-variant="link"] {
+  border-color: transparent;
+  background: none;
+  color: var(--t-link);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--t-link) 50%, transparent);
+  text-underline-offset: 0.125em;
+}
+
+.t-btn:is(:disabled, [aria-disabled="true"]) {
+  opacity: 0.5;
+}
+
+@media (hover: hover) {
+  .t-btn:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: color-mix(in srgb, var(--t-muted) 88%, var(--t-text));
+    background: color-mix(in srgb, var(--t-muted) 88%, var(--t-text));
+  }
+
+  .t-btn[data-variant="primary"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: color-mix(in srgb, var(--t-accent-solid) 90%, var(--t-on-accent));
+    background: color-mix(in srgb, var(--t-accent-solid) 90%, var(--t-on-accent));
+  }
+
+  .t-btn[data-variant="danger"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: color-mix(in srgb, var(--t-danger) 88%, var(--t-text));
+    background: color-mix(in srgb, var(--t-danger) 88%, var(--t-text));
+    color: var(--t-on-danger);
+  }
+
+  .t-btn[data-variant="ghost"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: transparent;
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+
+  .t-btn[data-variant="link"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: transparent;
+    background: none;
+    text-decoration-color: var(--t-link);
+  }
+}
+
+/* control: a filled box a shade off the page, the accent border and a soft ring while focused or open */
+.t-control {
+  background: color-mix(in srgb, var(--t-text) 4%, var(--t-canvas));
+  transition:
+    border-color var(--t-motion-fast) var(--t-ease),
+    box-shadow var(--t-motion-fast) var(--t-ease);
+}
+
+.t-control[data-popup-open],
+.t-control[aria-expanded="true"],
+input.t-control:focus,
+textarea.t-control:focus {
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--t-focus) 50%, transparent);
+}
+
+.t-control:is(:disabled, [data-disabled], [aria-disabled="true"]) {
+  color: var(--t-text);
+  opacity: 0.5;
+}
+
+/* popup: the dropdown, full-width items with a soft hover */
+.t-option {
+  border-radius: 0;
+}
+
+.t-option[data-highlighted] {
+  background: color-mix(in srgb, var(--t-text) 7%, transparent);
+}
+
+/* dialog: an article card with tinted header and footer over a frosted page */
+.t-dialog-backdrop,
+.t-dialog::backdrop {
+  background: color-mix(in srgb, var(--t-canvas) 75%, transparent);
+  backdrop-filter: blur(0.375em);
+}
+
+.t-dialog-header,
+.t-dialog-footer {
+  background: color-mix(in srgb, var(--t-text) 3%, var(--t-surface));
+}
+
+.t-dialog-title {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-dialog-close {
+  opacity: 0.6;
+}
+
+@media (hover: hover) {
+  .t-dialog-close:hover {
+    background: transparent;
+    opacity: 1;
+  }
+}

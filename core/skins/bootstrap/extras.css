@@ -1,0 +1,163 @@
+/* Bootstrap 5: outline-secondary default, solid primary and danger, an underlined link, a tone-coloured focus ring. */
+
+/* button */
+.t-btn {
+  border-color: var(--t-muted);
+  background: transparent;
+  color: var(--t-muted);
+}
+
+.t-btn:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: var(--t-muted);
+  background: color-mix(in srgb, var(--t-muted) 85%, var(--t-text));
+  color: var(--t-canvas);
+}
+
+.t-btn[data-variant="primary"] {
+  border-color: var(--t-accent-solid);
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+}
+
+.t-btn[data-variant="primary"]:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: var(--t-accent-solid);
+  background: color-mix(in srgb, var(--t-accent-solid) 80%, var(--t-on-accent));
+  color: var(--t-on-accent);
+}
+
+.t-btn[data-variant="danger"] {
+  border-color: var(--t-danger);
+  background: var(--t-danger);
+  color: var(--t-on-danger);
+}
+
+.t-btn[data-variant="danger"]:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: var(--t-danger);
+  background: color-mix(in srgb, var(--t-danger) 75%, var(--t-text));
+  color: var(--t-on-danger);
+}
+
+.t-btn[data-variant="danger"]:focus-visible {
+  outline-color: color-mix(in srgb, var(--t-danger) 45%, transparent);
+}
+
+.t-btn[data-variant="ghost"] {
+  border-color: transparent;
+  background: transparent;
+  color: var(--t-text);
+}
+
+.t-btn[data-variant="ghost"]:active:not(:disabled, [aria-disabled="true"]) {
+  background: var(--t-active);
+}
+
+.t-btn[data-variant="link"] {
+  border-color: transparent;
+  background: none;
+  color: var(--t-link);
+  text-decoration: underline;
+}
+
+.t-btn:is(:disabled, [aria-disabled="true"]) {
+  opacity: 0.65;
+}
+
+@media (hover: hover) {
+  .t-btn:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: var(--t-muted);
+    background: var(--t-muted);
+    color: var(--t-canvas);
+  }
+
+  .t-btn[data-variant="primary"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: color-mix(in srgb, var(--t-accent-solid) 88%, var(--t-on-accent));
+    background: color-mix(in srgb, var(--t-accent-solid) 88%, var(--t-on-accent));
+    color: var(--t-on-accent);
+  }
+
+  .t-btn[data-variant="danger"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: color-mix(in srgb, var(--t-danger) 85%, var(--t-text));
+    background: color-mix(in srgb, var(--t-danger) 85%, var(--t-text));
+    color: var(--t-on-danger);
+  }
+
+  .t-btn[data-variant="ghost"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: transparent;
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+
+  .t-btn[data-variant="link"]:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: transparent;
+    background: none;
+    color: color-mix(in srgb, var(--t-link) 80%, var(--t-text));
+  }
+}
+
+/* control: the page background, a light-accent border and the soft ring while focused or open */
+.t-control {
+  background: var(--t-canvas);
+}
+
+.t-control[data-popup-open],
+.t-control[aria-expanded="true"],
+input.t-control:focus,
+textarea.t-control:focus {
+  border-color: color-mix(in srgb, var(--t-focus) 60%, var(--t-border));
+  box-shadow: 0 0 0 0.25rem color-mix(in srgb, var(--t-focus) 25%, transparent);
+}
+
+.t-control:is(:disabled, [data-disabled], [aria-disabled="true"]) {
+  background: var(--t-inset);
+}
+
+/* popup: the dropdown menu, square items, the chosen item filled with the accent */
+.t-popup {
+  background: var(--t-canvas);
+}
+
+.t-option {
+  border-radius: 0;
+}
+
+.t-option[data-highlighted] {
+  background: var(--t-hover);
+}
+
+.t-option[aria-selected="true"] {
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+  font-weight: var(--t-weight-normal);
+}
+
+.t-option[aria-selected="true"] .t-option-check {
+  color: var(--t-on-accent);
+}
+
+/* dialog: the modal on the page background, a faded close button */
+.t-dialog {
+  background: var(--t-canvas);
+}
+
+.t-dialog-close {
+  color: var(--t-text);
+  opacity: 0.6;
+}
+
+@media (hover: hover) {
+  .t-dialog-close:hover {
+    background: transparent;
+    color: var(--t-text);
+    opacity: 0.85;
+  }
+}
+
+/* select */
+.t-select-icon {
+  color: var(--t-text);
+}
+
+/* date */
+.t-date-icon {
+  color: var(--t-text);
+}

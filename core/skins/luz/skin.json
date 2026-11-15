@@ -1,0 +1,26 @@
+{
+  "id": "luz",
+  "name": "Luz",
+  "about": "In the style of the Luz design system by d00m-gui.",
+  "source": { "name": "d00m-gui Luz", "url": "https://github.com/d00m-gui/luz", "license": "MIT" },
+  "settings": {
+    "heading-weight": "700",
+    "label-weight": "600",
+    "radius-control": "0.375rem",
+    "radius-box": "0.625rem",
+    "radius-popup": "0.5rem",
+    "radius-check": "0.375rem",
+    "border-w": "1px",
+    "focus-w": "2px",
+    "focus-offset": "2px",
+    "focus-color": "color-mix(in srgb, var(--t-focus) 65%, transparent)",
+    "shadow-sm": "0 1px 3px rgb(0 0 0 / calc(0.35 * var(--t-shadow-strength)))",
+    "shadow-md": "0 6px 20px rgb(0 0 0 / calc(0.45 * var(--t-shadow-strength)))",
+    "shadow-lg": "0 18px 50px rgb(0 0 0 / calc(0.6 * var(--t-shadow-strength)))",
+    "control-h-sm": "1.875rem",
+    "control-h-md": "2.375rem",
+    "control-h-lg": "2.875rem",
+    "control-px": "1rem",
+    "btn-weight": "500"
+  }
+}
