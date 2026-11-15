@@ -1,0 +1,107 @@
+/* The palette is a dialog near the top of the screen; on a phone it takes the full screen. */
+.t-dialog.t-command {
+  width: min(calc(var(--t-measure-md) + var(--t-measure-2xs)), calc(100vw - var(--t-space-6)));
+  max-height: 76dvh;
+  margin: 12dvh auto auto;
+}
+
+.t-command-search {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--t-space-2);
+  padding: var(--t-space-3);
+  border-bottom: var(--t-border-w) solid var(--t-border);
+}
+
+/* Escape closes it on a keyboard; the phone form has a close button instead. */
+.t-command-search > .t-dialog-close {
+  display: none;
+}
+
+.t-command-list {
+  flex: 1;
+  min-height: 0;
+  padding: var(--t-space-2);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.t-command-group + .t-command-group {
+  padding-top: var(--t-space-2);
+}
+
+.t-command-group-label {
+  padding: var(--t-space-1) var(--t-space-2);
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  font-weight: var(--t-label-weight);
+  text-transform: var(--t-label-transform);
+}
+
+.t-command .t-option {
+  cursor: pointer;
+}
+
+.t-command .t-option[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.t-command-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--t-muted);
+}
+
+/* On the highlight, the icon and the keys take the text colour that the highlight guarantees. */
+.t-command .t-option[data-highlighted] .t-command-icon,
+.t-command .t-option[data-highlighted] .t-hotkeys-keys {
+  color: inherit;
+}
+
+.t-command-match {
+  background: transparent;
+  color: inherit;
+  font-weight: var(--t-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.t-command-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--t-space-2);
+  padding: var(--t-space-4);
+  color: var(--t-muted);
+}
+
+.t-command-footer {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  gap: var(--t-space-2) var(--t-space-4);
+  padding: var(--t-space-2) var(--t-space-4);
+  border-top: var(--t-border-w) solid var(--t-border);
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+}
+
+/* A touch screen has no keys to hint at. */
+@media (pointer: coarse) {
+  .t-command-footer {
+    display: none;
+  }
+}
+
+@media (max-width: 40rem) {
+  .t-dialog.t-command {
+    width: 100%;
+    max-height: none;
+    margin: 0;
+  }
+
+  .t-command-search > .t-dialog-close {
+    display: inline-flex;
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "cmdTitle": "Command palette",
+  "cmdOpen": "Open the command palette",
+  "cmdPlaceholder": "Type a command or search",
+  "cmdResults": "Results",
+  "cmdRecent": "Recent",
+  "cmdShortcuts": "Shortcuts",
+  "cmdNoResults": "No results",
+  "cmdMove": "to move",
+  "cmdSelect": "to select",
+  "cmdClose": "to close"
+}

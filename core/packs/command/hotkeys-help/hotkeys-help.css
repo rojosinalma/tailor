@@ -1,0 +1,46 @@
+.t-hotkeys-help {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-4);
+}
+
+/* As many columns as fit; one on a phone. */
+.t-hotkeys-help-groups {
+  columns: var(--t-measure-sm);
+  column-gap: var(--t-space-6);
+}
+
+.t-hotkeys-help-group {
+  padding-bottom: var(--t-space-5);
+  break-inside: avoid;
+}
+
+.t-hotkeys-help-group:last-child {
+  padding-bottom: 0;
+}
+
+.t-hotkeys-help-title {
+  padding-bottom: var(--t-space-1);
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-label-weight);
+  text-transform: var(--t-label-transform);
+}
+
+.t-hotkeys-help-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--t-space-3);
+  padding: var(--t-space-2) 0;
+  border-bottom: var(--t-border-w) solid var(--t-border);
+}
+
+.t-hotkeys-help-row > dt {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.t-hotkeys-help-row > dd {
+  flex: none;
+}

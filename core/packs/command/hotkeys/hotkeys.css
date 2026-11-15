@@ -1,0 +1,8 @@
+.t-hotkeys-keys {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-1);
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
