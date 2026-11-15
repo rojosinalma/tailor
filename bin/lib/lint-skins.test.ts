@@ -138,7 +138,7 @@ describe("extras-at-rule", () => {
     expect(ids(lintSkinExtras("extras.css", `${q} {\n  .t-btn { color: var(--t-text); }\n}\n`))).toEqual([]),
   );
 
-  test.each(["@media (max-width: 40rem)", "@layer t.skin", '@import "x.css"', "@font-face"])(
+  test.each(["@media (max-width: 48rem)", "@layer t.skin", '@import "x.css"', "@font-face"])(
     "fails: %s",
     (q) => {
       const css = q.startsWith("@import") ? `\n${q};\n` : `\n${q} {\n  color: var(--t-text);\n}\n`;

@@ -169,3 +169,26 @@ bun checks/src/run-behaviour.ts <id> …     # behaviour tests of the named comp
 
 The pages of a component after a build: `showcase/dist/entry.html?id=<id>` (React kit) and
 `showcase/dist/html/<id>.html` (HTML kit). `bun bin/lib/serve.ts` serves them.
+
+## 11. Skins
+
+A skin is `core/skins/<id>/skin.json` plus `core/skins/<id>/extras.css`. `bin/lib/lint-skins.ts` fails the
+build on a violation.
+
+1. `skin.json`: `id`, `name` (one clean name), `about` (one sentence), `source` (name, url, licence), optional
+   `fonts`, and `settings`. A setting is one of the keys in `core/src/skins.ts` (`SKIN_SETTINGS`): fonts, text
+   sizes, weights, corners, line widths, shadows, the spacing unit, control heights, motion. A skin picks
+   values; tailor's components read them.
+2. `extras.css`: looks that no setting covers. One block per component, in the order of the component list.
+   - a. Only look properties: colours through tokens, borders and outlines, shadows, fonts, text decoration,
+     opacity, filters, transitions, generated content. Never size, spacing or position.
+   - b. Colours only through `var(--t-*)` and `color-mix()` of tokens, with the readable tokens for text
+     (`--t-tone-text`, `--t-danger-text`, `--t-on-accent`, …). A skin works with every palette, dark and light.
+   - c. Selectors are tailor classes and state attributes. The build puts every rule under the skin's scope.
+     A rule for one mode starts with `&[data-mode="light"]` or `&[data-mode="dark"]`.
+   - d. At-rules: `@media (hover: hover)`, `@media (prefers-reduced-motion: …)`, `@media (max-width: 40rem)`
+     (the phone form) and `@supports`.
+3. Fonts: a skin uses fonts that are on the device. A skin whose look depends on a certain font carries the
+   files in `core/skins/<id>/fonts/` and names them in `fonts`; no font comes from another server.
+4. A look that needs a new setting is a change to `core/src/skins.ts` and `core/css/tokens.css`, never a
+   forbidden property in extras.

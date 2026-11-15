@@ -25,6 +25,7 @@
 
 .t-btn:active:not(:disabled, [aria-disabled="true"]) {
   background: color-mix(in srgb, var(--t-surface), var(--t-text) 14%);
+  translate: 0 var(--t-btn-press);
 }
 
 .t-btn[data-variant="primary"] {

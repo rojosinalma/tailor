@@ -105,6 +105,7 @@
     --t-btn-weight: var(--t-weight-medium);
     --t-btn-transform: none;
     --t-btn-shadow: none;
+    --t-btn-press: 0;
 
     /* Derived: spacing scale. */
     --t-space-05: calc(var(--t-space-unit) * 0.5);

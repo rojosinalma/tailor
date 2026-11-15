@@ -139,7 +139,12 @@ function radiusFindings(value: string): Finding[] {
   return out;
 }
 
-const ALLOWED_MEDIA = [/^\(\s*hover\s*:\s*hover\s*\)$/i, /^\(\s*prefers-reduced-motion\s*:\s*[a-z-]+\s*\)$/i];
+/** Hover, reduced motion, and the phone width: a skin can give the phone form of a component another look. */
+const ALLOWED_MEDIA = [
+  /^\(\s*hover\s*:\s*hover\s*\)$/i,
+  /^\(\s*prefers-reduced-motion\s*:\s*[a-z-]+\s*\)$/i,
+  /^\(\s*max-width\s*:\s*40rem\s*\)$/i,
+];
 
 export function lintSkinExtras(file: string, css: string): Problem[] {
   const root = postcss.parse(css, { from: file });

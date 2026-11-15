@@ -48,6 +48,7 @@ export const SKIN_SETTINGS = {
   "btn-weight": "--t-btn-weight",
   "btn-transform": "--t-btn-transform",
   "btn-shadow": "--t-btn-shadow",
+  "btn-press": "--t-btn-press",
   "nav-h": "--t-nav-h",
   "sidebar-w": "--t-sidebar-w",
 } as const;
