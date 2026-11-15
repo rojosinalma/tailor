@@ -1,0 +1,13 @@
+import type { ThemeConfig } from "@tailor/core/theme";
+
+export interface ThemeChoice {
+  readonly value: string;
+  readonly label: string;
+}
+
+/** The skins or palettes of a config as select options, sorted by display name. */
+export function themeChoices(config: ThemeConfig, part: "skin" | "palette"): ThemeChoice[] {
+  return (part === "skin" ? config.skins : config.palettes)
+    .map((value) => ({ value, label: config.labels?.[value] ?? value }))
+    .sort((a, b) => a.label.localeCompare(b.label));
+}

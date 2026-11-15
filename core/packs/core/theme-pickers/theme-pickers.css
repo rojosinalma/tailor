@@ -1,0 +1,17 @@
+.t-theme-pickers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-width: 0;
+  max-width: 100%;
+}
+
+.t-theme-pickers > .t-control {
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+
+.t-theme-mode {
+  flex: none;
+}
