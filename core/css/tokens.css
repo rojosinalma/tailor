@@ -158,7 +158,8 @@
 
     /* Derived: colour mixes. */
     --t-backdrop: color-mix(in srgb, var(--t-overlay-bg) 60%, transparent);
-    --t-tint-weak: 12%;
+    /* Tints of a tone over a surface. Normal text stays readable on the weak tint over the canvas and the raised surface; tone text on the tint. */
+    --t-tint-weak: 5%;
     --t-tint: 20%;
     --t-tint-strong: 32%;
     --t-hover: color-mix(in srgb, var(--t-text) 8%, transparent);

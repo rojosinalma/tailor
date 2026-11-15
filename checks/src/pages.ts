@@ -138,7 +138,10 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
       });
     }
     const clips = style.overflowX === "hidden" || style.overflowX === "clip";
+    // A text field scrolls its own text, so a long value is not cut.
+    const field = el.tagName === "INPUT" || el.tagName === "TEXTAREA";
     if (
+      !field &&
       clips &&
       el.scrollWidth > el.clientWidth + 1 &&
       style.textOverflow !== "ellipsis" &&
@@ -175,20 +178,40 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
   }
 
   if (touch) {
+    // The real hit area counts: a label around a control, a field box around its input, or an area that the
+    // component adds around a small icon. So a control that looks too small is probed at the edge of the touch size.
+    const owns = (el: Element, x: number, y: number): boolean => {
+      const hit = document.elementFromPoint(x, y);
+      if (!hit) return false;
+      if (hit === el || el.contains(hit)) return true;
+      const label = hit.closest("label");
+      if (label && (label.contains(el) || label.control === el)) return true;
+      return hit.closest(".t-control, [data-t-hit]")?.contains(el) ?? false;
+    };
     for (const { el, rect } of controls) {
-      // A link inside a line of text is exempt, as WCAG 2.5.8 allows. A control inside a label counts with its label.
+      // A link inside a line of text is exempt, as WCAG 2.5.8 allows.
       if (el.tagName === "A" && getComputedStyle(el).display === "inline") continue;
-      const label = el.closest("label");
-      const box = label ? label.getBoundingClientRect() : rect;
-      const hit = el.closest("[data-t-hit]")?.getBoundingClientRect() ?? box;
-      // The height is the touch size. The width of a text control follows its text, with the WCAG minimum of 24px.
-      if (hit.height < touchSize - 0.5 || hit.width < 24) {
+      if (rect.height >= touchSize - 0.5 && rect.width >= 24) continue;
+      el.scrollIntoView({ block: "center", inline: "center" });
+      const now = el.getBoundingClientRect();
+      const [cx, cy] = [now.left + now.width / 2, now.top + now.height / 2];
+      // How far the hit area reaches from the centre of the control, in each direction.
+      const extent = (dx: number, dy: number): number => {
+        let distance = 0;
+        while (distance < touchSize && owns(el, cx + dx * (distance + 2), cy + dy * (distance + 2)))
+          distance += 2;
+        return distance;
+      };
+      const tall = extent(0, -1) + extent(0, 1) >= touchSize - 2;
+      const wide = extent(-1, 0) + extent(1, 0) >= 24 - 2;
+      if (!tall || !wide) {
         problems.push({
           rule: "touch-size",
-          message: `${name(el)} is ${Math.round(hit.width)}×${Math.round(hit.height)}px; a touch screen needs ${touchSize}px of height and 24px of width`,
+          message: `${name(el)} is ${Math.round(rect.width)}×${Math.round(rect.height)}px; a touch screen needs a hit area ${touchSize}px high and 24px wide`,
         });
       }
     }
+    scrollTo(0, 0);
   }
   return problems;
 }

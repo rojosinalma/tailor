@@ -2,6 +2,7 @@ import { expect, test } from "bun:test";
 import { Glob } from "bun";
 import {
   contrast,
+  mix,
   type PaletteSpec,
   paletteColors,
   paletteContrastProblems,
@@ -77,6 +78,16 @@ test("the guarded tokens stay readable on every surface, in every palette and mo
         check("focus", surface, 3);
       }
       check("text", "selection", 4.5);
+      // Normal text on the weak tint (5%) of every tone, over the canvas and the raised surface.
+      for (const tone of ["accent", "success", "warning", "danger", "info"]) {
+        for (const surface of ["canvas", "surface"]) {
+          const ratio = contrast(get("text"), mix(get(surface), get(tone), 0.05));
+          if (ratio < 4.5)
+            problems.push(
+              `${palette.id} ${mode}: text on a weak ${tone} tint of ${surface} is ${ratio.toFixed(2)}`,
+            );
+        }
+      }
       check("on-accent", "accent-solid", 4.5);
       for (const tone of ["success", "warning", "danger", "info"]) check(`on-${tone}`, tone, 4.5);
     }
