@@ -93,21 +93,21 @@ release is a tagged build; the command takes it from a download or from a local 
 
 Every rule that matters is a check in this repository. They run on tailor's own code and showcase.
 
-| Check | What fails it |
-|---|---|
-| Types | A value outside a component's allowed values; any type error (strict TypeScript) |
-| Lint and format | Biome |
-| Stylesheet rules | A raw size, colour or duration in a component; an unknown token; a class without the `t-` prefix |
-| Skin rules | A setting that is not a setting; an extras rule that sets size, spacing or position |
-| Unit tests | Shared logic: palettes and contrast, dates, positions, pack rules, the command |
-| Completeness | A component without a spec, a React component, a showcase entry, or the script and tests its spec asks for |
-| Behaviour | One test set per component with behaviour, run against both kits |
-| Pages | Each showcase page, in each skin, at 390, 820, 1440 and 1920 px: sideways scroll, cut text, overlapping controls, touch size, WCAG 2.2 AA rules, page errors |
-| Kit parity | The HTML kit and the React kit draw a page differently |
-| Images | A page looks different from its reference image |
-| Contrast | Text below 4.5:1 in any of the 252 combinations of skin, palette and mode |
-| Weight | The HTML core above 50 kB compressed |
-| Unused code | Files and dependencies that nothing uses |
+| Check            | What fails it                                                                                                                                                |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Types            | A value outside a component's allowed values; any type error (strict TypeScript)                                                                             |
+| Lint and format  | Biome                                                                                                                                                        |
+| Stylesheet rules | A raw size, colour or duration in a component; an unknown token; a class without the `t-` prefix                                                             |
+| Skin rules       | A setting that is not a setting; an extras rule that sets size, spacing or position                                                                          |
+| Unit tests       | Shared logic: palettes and contrast, dates, positions, pack rules, the command                                                                               |
+| Completeness     | A component without a spec, a React component, a showcase entry, or the script and tests its spec asks for                                                   |
+| Behaviour        | One test set per component with behaviour, run against both kits                                                                                             |
+| Pages            | Each showcase page, in each skin, at 390, 820, 1440 and 1920 px: sideways scroll, cut text, overlapping controls, touch size, WCAG 2.2 AA rules, page errors |
+| Kit parity       | The HTML kit and the React kit draw a page differently                                                                                                       |
+| Images           | A page looks different from its reference image                                                                                                              |
+| Contrast         | Text below 4.5:1 in any of the 252 combinations of skin, palette and mode                                                                                    |
+| Weight           | The HTML core above 50 kB compressed                                                                                                                         |
+| Unused code      | Files and dependencies that nothing uses                                                                                                                     |
 
 `bin/check` runs what the changed files touch, in seconds. `bin/check --release` runs everything and takes
 an image again only when something that draws it changed. `bin/check --full` takes every image again and

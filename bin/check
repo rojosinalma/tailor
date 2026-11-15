@@ -6,6 +6,7 @@
  *   bin/check --release        everything; images that nothing changed are taken from the local cache
  *   bin/check --full           everything, every image taken again, contrast in every skin and palette
  *   --update-images            accept new and changed images as the reference
+ *   --no-reference             compare the two kits only, not the reference images (for a machine that did not make them)
  *   --enforce-time             fail when the run is over its time limit (10 s for a change, 2 min for a release)
  */
 import { $ } from "bun";
@@ -126,6 +127,7 @@ if (!failed || everything) {
           sweep: everything,
           axe: true,
           allowNew: mode === "change",
+          noReference: flag("no-reference"),
           update: flag("update-images"),
         });
         printProblems(result.problems);

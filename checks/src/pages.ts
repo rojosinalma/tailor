@@ -44,6 +44,8 @@ export interface PagesOptions {
   readonly skipKnown?: boolean;
   /** A page with no reference image yet is not a problem. For work on a new component. */
   readonly allowNew?: boolean;
+  /** Do not compare with the reference images; the two kits are still compared with each other. */
+  readonly noReference?: boolean;
   /** Accept new and changed images as the reference. */
   readonly update?: boolean;
   readonly axe?: boolean;
@@ -486,7 +488,9 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
 
   if (takeImages) {
     await writeFile(CACHE, JSON.stringify(cache));
-    if (options.update) {
+    if (options.noReference) {
+      // Nothing to compare: the reference images belong to another machine.
+    } else if (options.update) {
       const sorted = Object.fromEntries(Object.entries(next).sort(([a], [b]) => a.localeCompare(b)));
       await writeFile(
         REFERENCE,

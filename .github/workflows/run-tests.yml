@@ -1,0 +1,23 @@
+name: run-tests
+run-name: ${{ github.actor }} · ${{ github.event.pull_request.title || github.event.head_commit.message }}
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "1.4.3"
+      - run: bun install --frozen-lockfile
+      # Everything a release checks. The reference images are compared on the machine that made them,
+      # so here the image step only compares the two kits with each other.
+      - run: bin/check --release --no-reference
