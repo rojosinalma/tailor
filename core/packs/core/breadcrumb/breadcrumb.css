@@ -1,0 +1,82 @@
+.t-breadcrumb {
+  container-type: inline-size;
+  min-width: 0;
+  font-size: var(--t-text-sm);
+}
+
+.t-breadcrumb-list {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.t-breadcrumb-item {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  color: var(--t-muted);
+}
+
+/* The separator is drawn, so a screen reader has nothing to read. */
+.t-breadcrumb-item + .t-breadcrumb-item::before {
+  content: "";
+  flex: none;
+  width: 0.4em;
+  height: 0.4em;
+  margin-inline: 0.5em 0.7em;
+  border-top: 0.125em solid currentColor;
+  border-right: 0.125em solid currentColor;
+  rotate: 45deg;
+  opacity: 0.7;
+}
+
+.t-breadcrumb:dir(rtl) .t-breadcrumb-item + .t-breadcrumb-item::before {
+  rotate: -135deg;
+}
+
+.t-breadcrumb-item > * {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: var(--t-control-h-sm);
+}
+
+.t-breadcrumb-item > a {
+  color: var(--t-link);
+}
+
+.t-breadcrumb-item > [aria-current="page"] {
+  color: var(--t-text);
+  font-weight: var(--t-label-weight);
+}
+
+/* The first item and the ellipsis keep their size; the first label has a cap instead. */
+.t-breadcrumb-item:first-child,
+.t-breadcrumb-more {
+  flex: none;
+}
+
+.t-breadcrumb-item:first-child > * {
+  max-width: var(--t-measure-2xs);
+}
+
+.t-breadcrumb-more {
+  display: none;
+}
+
+@container (max-width: 40rem) {
+  .t-breadcrumb-more {
+    display: flex;
+  }
+
+  .t-breadcrumb-item:not(:first-child, .t-breadcrumb-more):nth-last-child(n + 3) {
+    display: none;
+  }
+}
+
+@media (hover: hover) {
+  .t-breadcrumb-item > a:hover {
+    text-decoration: underline;
+  }
+}

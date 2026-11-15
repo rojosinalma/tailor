@@ -1,0 +1,153 @@
+.t-stepper {
+  container-type: inline-size;
+  min-width: 0;
+}
+
+.t-stepper-list {
+  display: flex;
+  gap: var(--t-space-3);
+}
+
+.t-stepper-step {
+  display: grid;
+  flex: 1 1 auto;
+  grid-template-columns: auto minmax(0, auto) 1fr;
+  align-items: start;
+  min-width: 0;
+}
+
+.t-stepper-step:last-child {
+  flex: 0 1 auto;
+}
+
+.t-stepper-marker {
+  display: inline-flex;
+  grid-area: 1 / 1;
+  align-items: center;
+  justify-content: center;
+  width: 2em;
+  height: 2em;
+  border: var(--t-border-w-strong) solid var(--t-border);
+  border-radius: var(--t-radius-pill);
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-label-weight);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-stepper-text {
+  display: flex;
+  flex-direction: column;
+  grid-area: 1 / 2;
+  min-width: 0;
+  padding-top: calc(var(--t-text-sm) - 0.5lh);
+  padding-inline-start: var(--t-space-2);
+  line-height: var(--t-leading-tight);
+}
+
+.t-stepper-label {
+  color: var(--t-muted);
+  font-weight: var(--t-label-weight);
+}
+
+.t-stepper-label > a {
+  color: var(--t-link);
+}
+
+.t-stepper-description {
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+/* The line to the next step. */
+.t-stepper-step:not(:last-child)::after {
+  content: "";
+  grid-area: 1 / 3;
+  min-width: var(--t-space-4);
+  height: var(--t-border-w-strong);
+  margin-top: calc(var(--t-text-sm) - var(--t-border-w-strong) / 2);
+  margin-inline-start: var(--t-space-2);
+  background: var(--t-border);
+}
+
+.t-stepper-step[data-state="done"]::after {
+  background: var(--t-accent);
+}
+
+.t-stepper-step[data-state="done"] .t-stepper-marker {
+  border-color: var(--t-accent-solid);
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+}
+
+.t-stepper-step[data-state="current"] .t-stepper-marker {
+  border-color: var(--t-accent);
+  color: var(--t-accent);
+}
+
+.t-stepper-step:not([data-state="upcoming"]) .t-stepper-label {
+  color: var(--t-text);
+}
+
+.t-stepper-step[data-state="current"] .t-stepper-label {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-stepper[data-orientation="vertical"] .t-stepper-list {
+  flex-direction: column;
+  gap: 0;
+}
+
+.t-stepper[data-orientation="vertical"] .t-stepper-step {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.t-stepper[data-orientation="vertical"] .t-stepper-step:not(:last-child) .t-stepper-text {
+  grid-row: 1 / span 2;
+  padding-bottom: var(--t-space-4);
+}
+
+.t-stepper[data-orientation="vertical"] .t-stepper-step:not(:last-child)::after {
+  grid-area: 2 / 1;
+  justify-self: center;
+  width: var(--t-border-w-strong);
+  height: auto;
+  min-width: 0;
+  min-height: var(--t-space-4);
+  margin: var(--t-space-1) 0;
+  align-self: stretch;
+}
+
+/* The same vertical form, for a horizontal stepper in a narrow container. */
+@container (max-width: 40rem) {
+  .t-stepper-list {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .t-stepper-step {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .t-stepper-step:not(:last-child) .t-stepper-text {
+    grid-row: 1 / span 2;
+    padding-bottom: var(--t-space-4);
+  }
+
+  .t-stepper-step:not(:last-child)::after {
+    grid-area: 2 / 1;
+    justify-self: center;
+    width: var(--t-border-w-strong);
+    height: auto;
+    min-width: 0;
+    min-height: var(--t-space-4);
+    margin: var(--t-space-1) 0;
+    align-self: stretch;
+  }
+}
+
+@media (hover: hover) {
+  .t-stepper-label > a:hover {
+    text-decoration: underline;
+  }
+}

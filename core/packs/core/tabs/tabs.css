@@ -1,0 +1,109 @@
+.t-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-4);
+  min-width: 0;
+}
+
+/* The tabs stay on one row. When they do not fit, the row scrolls sideways inside itself. */
+.t-tabs-list {
+  display: flex;
+  gap: var(--t-space-1);
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  box-shadow: inset 0 calc(-1 * var(--t-border-w)) var(--t-border);
+}
+
+.t-tabs-list > li {
+  display: flex;
+  flex: none;
+}
+
+.t-tab {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-height: var(--t-control-h-md);
+  padding: 0 var(--t-control-px);
+  color: var(--t-muted);
+  font-size: var(--t-text-base);
+  font-weight: var(--t-label-weight);
+  line-height: var(--t-leading-tight);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    color var(--t-motion-fast) var(--t-ease),
+    background-color var(--t-motion-fast) var(--t-ease),
+    box-shadow var(--t-motion-fast) var(--t-ease);
+}
+
+/* The list clips what sticks out, so the focus ring sits inside the tab. */
+.t-tab:focus-visible {
+  outline-offset: calc(-1 * var(--t-focus-w));
+}
+
+.t-tab[aria-selected="true"],
+.t-tab[aria-current="page"] {
+  color: var(--t-text);
+  box-shadow: inset 0 calc(-1 * var(--t-border-w-strong)) var(--t-accent);
+  /* The current tab starts in view without a script. */
+  /* biome-ignore lint/correctness/noUnknownProperty: a new property that browsers without it skip. */
+  scroll-initial-target: nearest;
+}
+
+.t-tab[aria-disabled="true"],
+.t-tab:disabled {
+  color: var(--t-disabled);
+  cursor: not-allowed;
+}
+
+.t-tab-count {
+  min-width: 1.5em;
+  padding: 0 var(--t-space-1);
+  border-radius: var(--t-radius-pill);
+  background: var(--t-hover);
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.t-tabs[data-variant="pills"] > .t-tabs-list {
+  box-shadow: none;
+}
+
+.t-tabs[data-variant="pills"] .t-tab {
+  border-radius: var(--t-radius-control);
+}
+
+.t-tabs[data-variant="pills"] .t-tab[aria-selected="true"],
+.t-tabs[data-variant="pills"] .t-tab[aria-current="page"] {
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+  box-shadow: none;
+}
+
+.t-tabs[data-variant="pills"] .t-tab:is([aria-selected="true"], [aria-current="page"]) .t-tab-count {
+  background: color-mix(in srgb, var(--t-on-accent) 20%, transparent);
+  color: var(--t-on-accent);
+}
+
+.t-tabs-panel {
+  min-width: 0;
+}
+
+@media (hover: hover) {
+  .t-tab:hover:not([aria-selected="true"], [aria-current="page"], [aria-disabled="true"], :disabled) {
+    color: var(--t-text);
+  }
+
+  .t-tabs[data-variant="pills"]
+    .t-tab:hover:not([aria-selected="true"], [aria-current="page"], [aria-disabled="true"], :disabled) {
+    background: var(--t-hover);
+  }
+}
