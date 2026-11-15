@@ -34,7 +34,7 @@ export default behaviour("page", {
     expect(await log.evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
     await log.focus();
     await log.press("End");
-    expect(await log.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+    await expect.poll(() => log.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
   },
   "a scroll page keeps its header while the body scrolls": async ({ example, expect }) => {
     const body = example("scroll");
