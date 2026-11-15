@@ -1,0 +1,94 @@
+/*
+ * Syntax colours: one theme for the hljs-* classes, used by the highlight, the code field and the JSON view.
+ * Only the guarded text tokens, so every colour stays readable on the code background in every palette.
+ */
+.hljs-keyword,
+.hljs-doctag,
+.hljs-selector-tag,
+.hljs-template-tag,
+.hljs-deletion {
+  color: var(--t-danger-text);
+}
+
+.hljs-string,
+.hljs-regexp,
+.hljs-char,
+.hljs-code,
+.hljs-addition {
+  color: var(--t-success-text);
+}
+
+.hljs-number,
+.hljs-literal,
+.hljs-symbol {
+  color: var(--t-warning-text);
+}
+
+.hljs-title,
+.hljs-section,
+.hljs-name {
+  color: var(--t-info-text);
+}
+
+.hljs-type,
+.hljs-built_in,
+.hljs-selector-pseudo {
+  color: var(--t-accent-text);
+}
+
+.hljs-attr,
+.hljs-attribute,
+.hljs-property,
+.hljs-variable,
+.hljs-template-variable,
+.hljs-selector-id,
+.hljs-selector-class,
+.hljs-selector-attr,
+.hljs-bullet,
+.hljs-link {
+  color: var(--t-link);
+}
+
+.hljs-comment,
+.hljs-quote,
+.hljs-meta,
+.hljs-tag {
+  color: var(--t-muted);
+}
+
+.hljs-comment,
+.hljs-quote,
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-section,
+.hljs-strong {
+  font-weight: var(--t-weight-bold);
+}
+
+/* Line numbers: a counter in its own table column, so they line up and stay out of a copied selection. */
+.t-highlight[data-line-numbers] code {
+  display: table;
+  min-width: 100%;
+  counter-reset: t-line;
+}
+
+.t-highlight-line {
+  display: table-row;
+}
+
+.t-highlight-line > span {
+  display: table-cell;
+}
+
+.t-highlight-line::before {
+  display: table-cell;
+  padding-inline-end: var(--t-space-3);
+  color: var(--t-muted);
+  text-align: end;
+  white-space: nowrap;
+  content: counter(t-line);
+  counter-increment: t-line;
+  user-select: none;
+}

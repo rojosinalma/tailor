@@ -1,0 +1,118 @@
+.t-code-field {
+  display: flex;
+  align-items: stretch;
+  width: 100%;
+  padding: 0;
+  overflow: hidden;
+  font-family: var(--t-font-mono);
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading);
+}
+
+.t-code-field:focus-within {
+  border-color: var(--t-accent);
+}
+
+.t-code-field:has(.t-code-field-input:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: var(--t-focus-offset);
+}
+
+.t-code-field:has(.t-code-field-input[aria-invalid="true"], .t-code-field-input[data-invalid]) {
+  border-color: var(--t-danger);
+}
+
+.t-code-field-gutter {
+  position: relative;
+  flex: none;
+  border-inline-end: var(--t-border-w) solid var(--t-border);
+  color: var(--t-muted);
+  user-select: none;
+}
+
+.t-code-field-gutter > span {
+  display: block;
+  height: 0;
+  padding: 0 var(--t-space-2) 0 var(--t-space-3);
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.t-code-field-numbers {
+  position: absolute;
+  inset: 0;
+  /* The extra space at the end lets the numbers follow the text area past its sideways scrollbar. */
+  padding: var(--t-space-2) var(--t-space-2) var(--t-space-6) var(--t-space-3);
+  overflow: hidden;
+  font: inherit;
+  text-align: end;
+}
+
+.t-code-field-editor {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+/* The colour layer and the text area lie on each other with the same metrics; the text area sets the size. */
+.t-code-field-colour,
+.t-code-field-input {
+  margin: 0;
+  padding: var(--t-space-2) var(--t-space-3);
+  border: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  white-space: pre;
+  overflow-wrap: normal;
+  tab-size: 2;
+}
+
+.t-code-field-colour {
+  position: absolute;
+  inset: 0;
+  /* It scrolls with the text area through the script, never by itself, so it shows no scrollbar. */
+  overflow: auto;
+  scrollbar-width: none;
+  color: var(--t-text);
+  pointer-events: none;
+}
+
+.t-code-field-input {
+  display: block;
+  width: 100%;
+  overflow: auto;
+  background: transparent;
+  color: transparent;
+  caret-color: var(--t-text);
+  resize: none;
+}
+
+/* The box shows the focus, so the text area itself needs no ring. */
+.t-code-field-input:focus-visible {
+  outline: none;
+}
+
+.t-code-field-input::placeholder {
+  color: var(--t-muted);
+}
+
+/* The selection lets the colours below show through. */
+.t-code-field-input::selection {
+  background: color-mix(in srgb, var(--t-selection) 70%, transparent);
+  color: transparent;
+}
+
+.t-code-field[data-disabled] .t-code-field-colour {
+  color: var(--t-disabled);
+}
+
+.t-code-field-input:disabled {
+  cursor: not-allowed;
+}
+
+/* A text field on a phone needs 16px text, or the browser zooms in on focus. */
+@media (pointer: coarse) {
+  .t-code-field {
+    font-size: max(var(--t-text-touch), var(--t-text-sm));
+  }
+}

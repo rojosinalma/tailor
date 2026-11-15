@@ -1,0 +1,7 @@
+{
+  "diffChanges": "Changes",
+  "diffLineAdded": "1 line added",
+  "diffLinesAdded": "{count} lines added",
+  "diffRemoved": "{count} removed",
+  "diffNoChanges": "No changes"
+}

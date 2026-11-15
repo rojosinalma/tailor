@@ -1,0 +1,79 @@
+.t-json-tree {
+  padding: var(--t-space-2);
+  font-family: var(--t-font-mono);
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading);
+}
+
+.t-json-item {
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 0 var(--t-space-1);
+  border-radius: var(--t-radius-control);
+}
+
+/* The key keeps its width; the value takes the rest and wraps. */
+.t-json-item > * {
+  flex: none;
+  white-space: pre;
+}
+
+.t-json-item > :last-child {
+  flex: 1;
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.t-json-item:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+.t-json-item[aria-expanded] {
+  cursor: pointer;
+}
+
+.t-json-toggle {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  width: 1.25em;
+  height: 1lh;
+  color: var(--t-muted);
+}
+
+.t-json-toggle .t-icon {
+  width: 0.75em;
+  height: 0.75em;
+  transition: transform var(--t-motion-fast) var(--t-ease);
+}
+
+.t-json-item[aria-expanded="true"] .t-json-toggle .t-icon {
+  transform: rotate(90deg);
+}
+
+.t-json-index,
+.t-json-count {
+  color: var(--t-muted);
+}
+
+.t-json-group {
+  margin-inline-start: calc(var(--t-space-1) + 0.6em);
+  padding-inline-start: var(--t-space-2);
+  border-inline-start: var(--t-border-w) solid var(--t-border);
+}
+
+@media (hover: hover) {
+  .t-json-item[aria-expanded]:hover {
+    background: var(--t-hover);
+  }
+}
+
+/* On a touch screen every row is a full touch target. */
+@media (pointer: coarse) {
+  .t-json-item {
+    align-items: center;
+    min-height: var(--t-touch);
+  }
+}

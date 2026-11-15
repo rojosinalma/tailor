@@ -1,0 +1,130 @@
+.t-diff {
+  container-type: inline-size;
+}
+
+.t-diff-body {
+  overflow-x: auto;
+  font-family: var(--t-font-mono);
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading);
+}
+
+/* The block clips its corners, so the focus ring of the lines sits inside. */
+.t-diff-body:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+/* Each layout is one grid, so the numbers of every line share a column width. */
+.t-diff-lines {
+  display: grid;
+  grid-template-columns: auto auto auto 1fr;
+  width: max-content;
+  min-width: 100%;
+  padding-block: var(--t-space-1);
+}
+
+.t-diff-lines[data-layout="split"] {
+  grid-template-columns: auto auto 1fr auto auto 1fr;
+  width: 100%;
+}
+
+.t-diff[data-mode="split"] .t-diff-lines[data-layout="unified"] {
+  display: none;
+}
+
+.t-diff-row,
+.t-diff-line {
+  display: grid;
+  grid-template-columns: subgrid;
+}
+
+.t-diff-row,
+.t-diff-hunk,
+.t-diff-line {
+  grid-column: 1 / -1;
+}
+
+.t-diff-row > .t-diff-line {
+  grid-column: span 3;
+  min-width: 0;
+}
+
+.t-diff-hunk {
+  padding: var(--t-space-1) var(--t-space-3);
+  background: color-mix(in srgb, var(--t-info) var(--t-tint-weak), transparent);
+  color: var(--t-info-text);
+  white-space: pre;
+}
+
+.t-diff-line[data-change="add"] {
+  background: color-mix(in srgb, var(--t-success) var(--t-tint-weak), transparent);
+}
+
+.t-diff-line[data-change="remove"] {
+  background: color-mix(in srgb, var(--t-danger) var(--t-tint-weak), transparent);
+}
+
+/* The empty half of a split row, across from a line that only one side has. */
+.t-diff-line:not([data-change]) {
+  background: var(--t-hover);
+}
+
+.t-diff-num {
+  padding-inline: var(--t-space-3) var(--t-space-1);
+  color: var(--t-muted);
+  text-align: end;
+  user-select: none;
+}
+
+.t-diff-sign {
+  padding-inline: var(--t-space-2);
+  user-select: none;
+}
+
+/* On a tint the tone text stays readable where the muted colour may not. */
+.t-diff-line[data-change="add"] .t-diff-num,
+.t-diff-line[data-change="add"] .t-diff-sign {
+  color: var(--t-success-text);
+}
+
+.t-diff-line[data-change="remove"] .t-diff-num,
+.t-diff-line[data-change="remove"] .t-diff-sign {
+  color: var(--t-danger-text);
+}
+
+.t-diff-text {
+  padding-inline-end: var(--t-space-3);
+  white-space: pre;
+}
+
+/* Side by side, each half wraps its long lines instead of scrolling. */
+.t-diff-row .t-diff-text {
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.t-diff-row > .t-diff-line + .t-diff-line {
+  border-inline-start: var(--t-border-w) solid var(--t-border);
+}
+
+.t-diff-empty {
+  padding: var(--t-space-3);
+  color: var(--t-muted);
+}
+
+/* In a narrow box the split view falls back to the unified one. */
+@container (max-width: 40rem) {
+  .t-diff[data-mode="split"] .t-diff-lines[data-layout="unified"] {
+    display: grid;
+  }
+
+  .t-diff-lines[data-layout="split"] {
+    display: none;
+  }
+}
+
+/* A header without a copy button keeps the height of the other code blocks. */
+.t-diff > .t-code-header {
+  min-height: calc(var(--t-control-h-sm) + var(--t-space-1) * 2);
+}
