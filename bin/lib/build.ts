@@ -7,6 +7,7 @@ import { type PaletteSpec, paletteCss } from "../../core/src/palette";
 import { type SkinSpec, skinCss } from "../../core/src/skins";
 import { buildShowcase } from "./build-showcase";
 import { gen } from "./gen";
+import { packVendor } from "./lint-css";
 import { at, ROOT } from "./paths";
 
 const scan = async (pattern: string): Promise<string[]> =>
@@ -52,11 +53,16 @@ export async function loadPalettes(): Promise<PaletteSpec[]> {
 async function buildCss(): Promise<void> {
   for (const pack of PACKS) {
     const files = await scan(`core/packs/${pack.id}/*/*.css`);
-    if (files.length === 0 && pack.id !== "core") continue;
+    const vendor = await packVendor(pack.id);
+    if (files.length === 0 && pack.id !== "core" && !vendor.css?.length) continue;
     const layer = pack.shell ? "t.shell" : "t.components";
     let css = "";
     if (pack.id === "core") for (const name of BASE_FILES) css += await read(`core/css/${name}.css`);
     else css += await read("core/css/layers.css");
+    // A library's own stylesheet goes in first, in a layer below the components, so the pack's styles win.
+    for (const vendorCss of vendor.css ?? []) {
+      css += `@layer t.vendor {\n${await read(`node_modules/${vendorCss}`)}\n}\n`;
+    }
     css += `@layer ${layer} {\n${(await Promise.all(files.map(read))).join("\n")}\n}\n`;
     await out(`dist/css/${pack.id === "core" ? "tailor" : `tailor-${pack.id}`}.css`, minifyCss(css));
   }

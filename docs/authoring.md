@@ -29,6 +29,11 @@ For a component `<id>` in the pack `<pack>`:
 | `html/src/<pack>/<id>.ts`            | The HTML kit script. Only when the spec says `html: "script"`                                     |
 | `checks/behaviour/<pack>/<id>.ts`    | Behaviour tests that run against both kits. Required for `html: "script"`                         |
 
+A pack that uses a library can have `core/packs/<pack>/vendor.json`: `css` lists stylesheets of the library
+(paths under `node_modules`) that the build puts before the pack's own, in a lower layer; `classPrefixes` lists
+the class prefixes of the library that the pack styles (they need no `t-` prefix). In the HTML kit, the pack's
+script bundles its library; in the React kit, the project installs it.
+
 `bun bin/lib/gen.ts` writes the generated files (`*.gen.ts`: registry, glyphs, texts, pack indexes) and reports
 what is missing. Nobody edits an index by hand. Model components: `button` (plain markup), `dialog` (overlay),
 `select` (a drawn control over a native one) in the pack `core`, and `date` in the pack `pickers`.

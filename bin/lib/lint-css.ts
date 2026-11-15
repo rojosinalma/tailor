@@ -416,7 +416,16 @@ export function definedTokens(): ReadonlySet<string> {
   return tokenNames;
 }
 
-export function lintCssText(file: string, css: string, kind: CssKind): Problem[] {
+/**
+ * `foreign` lists class prefixes of a library that the pack styles, from the pack's vendor.json
+ * (for example "hljs-" or "leaflet-"). Those classes need no "t-" prefix.
+ */
+export function lintCssText(
+  file: string,
+  css: string,
+  kind: CssKind,
+  foreign: readonly string[] = [],
+): Problem[] {
   const root = postcss.parse(css, { from: file });
   const { problems, allowed } = lintAllow(file, root);
   const add = (line: number, rule: string, message: string): void => {
@@ -465,6 +474,8 @@ export function lintCssText(file: string, css: string, kind: CssKind): Problem[]
       if (p.kind === "id") {
         if (kind !== "showcase")
           add(ruleLine(r, p.index), "id-selector", `id selector "#${p.name}": use a class`);
+      } else if (foreign.some((prefix) => p.name.startsWith(prefix))) {
+        // A class of a library that the pack styles.
       } else if (kind === "showcase" ? !/^(sc|t)-/.test(p.name) : !p.name.startsWith("t-")) {
         add(
           ruleLine(r, p.index),
@@ -494,12 +505,28 @@ export const cssFiles = async (): Promise<string[]> => [
 ];
 
 /** Lints the given files (paths relative to the repo root), or the default set. */
+/** What a pack takes from its libraries: stylesheets to put before its own, and class prefixes that it styles. */
+export interface PackVendor {
+  readonly css?: readonly string[];
+  readonly classPrefixes?: readonly string[];
+}
+
+export async function packVendor(pack: string): Promise<PackVendor> {
+  const file = Bun.file(at(`core/packs/${pack}/vendor.json`));
+  return (await file.exists()) ? ((await file.json()) as PackVendor) : {};
+}
+
+async function foreignPrefixes(file: string): Promise<readonly string[]> {
+  const match = /^core\/packs\/([^/]+)\//.exec(file);
+  return match?.[1] ? ((await packVendor(match[1])).classPrefixes ?? []) : [];
+}
+
 export async function lintCss(files?: string[]): Promise<Problem[]> {
   const list = files ?? (await cssFiles());
   const problems: Problem[] = [];
   for (const f of list) {
     const rel = relative(ROOT, at(f));
-    problems.push(...lintCssText(rel, await Bun.file(at(f)).text(), kindOf(rel)));
+    problems.push(...lintCssText(rel, await Bun.file(at(f)).text(), kindOf(rel), await foreignPrefixes(rel)));
   }
   return problems;
 }
