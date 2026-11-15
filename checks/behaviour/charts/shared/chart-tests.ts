@@ -69,6 +69,16 @@ export function chartTests(c: ChartCase): Record<string, BehaviourTest> {
       });
       await expect.poll(() => pixels(canvas)).not.toBe(before);
     },
+    "a change of skin redraws in the skin's font": async (context) => {
+      const { page, expect } = context;
+      const canvas = canvasOf(context);
+      await expect(canvas).toBeVisible();
+      const before = await pixels(canvas);
+      await page.evaluate(() => {
+        document.documentElement.dataset.skin = "webtui";
+      });
+      await expect.poll(() => pixels(canvas)).not.toBe(before);
+    },
     "the pointer over a point shows the values": async (context) => {
       const { example, expect } = context;
       const canvas = canvasOf(context);

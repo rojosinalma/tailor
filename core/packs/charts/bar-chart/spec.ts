@@ -7,7 +7,7 @@ export default defineComponent({
   pack: "charts",
   group: "display",
   description:
-    "Compares values across categories as grouped or stacked bars, upright or sideways, in the colours of the palette.",
+    "Compares values across categories as grouped or stacked bars, upright or sideways, in the colours of the palette. Categories are text: the caller formats dates and times.",
   root: "t-chart",
   parts: CHART_PARTS,
   props: { size: SIZES, tone: TONES },

@@ -14,6 +14,25 @@
   height: var(--t-measure-xs);
 }
 
+/* Out of the flow: the canvas's pixel size never holds the frame wider than its container. */
+.t-chart-canvas {
+  position: absolute;
+  inset: 0;
+}
+
+/*
+ * The hidden data table: a table is never narrower than its longest cell, so its cells wrap anywhere
+ * (t-sr-only says nowrap on the table) and it stays inside the chart however long the names are.
+ */
+.t-chart > table.t-sr-only {
+  inset-inline-start: 0;
+}
+
+.t-chart > table.t-sr-only :is(caption, th, td) {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .t-chart[data-size="sm"] .t-chart-frame {
   height: var(--t-measure-2xs);
 }
