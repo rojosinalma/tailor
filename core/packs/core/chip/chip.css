@@ -1,0 +1,91 @@
+.t-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--t-space-1);
+  max-width: 100%;
+  min-height: var(--t-control-h-sm);
+  padding: 0 var(--t-space-3);
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-pill);
+  background: var(--t-inset);
+  color: var(--t-text);
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading-tight);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.t-chip[data-tone] {
+  border-color: color-mix(in srgb, var(--t-tone) var(--t-tint-strong), transparent);
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint-weak), transparent);
+  color: color-mix(in srgb, var(--t-tone), var(--t-text) 55%);
+}
+
+.t-chip-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.t-chip:has(.t-chip-remove) {
+  padding-inline-end: 0;
+}
+
+.t-chip-remove {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--t-control-h-sm);
+  align-self: stretch;
+  border-radius: var(--t-radius-pill);
+  color: inherit;
+  font-size: var(--t-text-xs);
+}
+
+.t-chip-remove:disabled {
+  cursor: not-allowed;
+}
+
+button.t-chip {
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--t-motion-fast) var(--t-ease),
+    border-color var(--t-motion-fast) var(--t-ease);
+}
+
+button.t-chip:not([aria-pressed="true"]) > .t-chip-check {
+  display: none;
+}
+
+button.t-chip[aria-pressed="true"] {
+  border-color: var(--t-accent-solid);
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+}
+
+button.t-chip[data-tone][aria-pressed="true"] {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--t-tone), var(--t-text) 25%);
+  color: var(--t-on-tone);
+}
+
+button.t-chip[data-tone="accent"][aria-pressed="true"] {
+  background: var(--t-accent-solid);
+}
+
+.t-chip[data-disabled],
+button.t-chip:disabled {
+  border-color: var(--t-border);
+  background: var(--t-inset);
+  color: var(--t-disabled);
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  button.t-chip:hover:not(:disabled, [aria-pressed="true"]),
+  .t-chip-remove:hover:not(:disabled) {
+    background-image: linear-gradient(var(--t-hover), var(--t-hover));
+  }
+}

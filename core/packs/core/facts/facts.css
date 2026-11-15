@@ -1,0 +1,63 @@
+.t-facts {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  font-size: var(--t-text-sm);
+}
+
+.t-facts-row {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--t-space-4);
+  row-gap: var(--t-space-05);
+  padding: var(--t-space-2) 0;
+}
+
+.t-facts-row + .t-facts-row {
+  border-top: var(--t-border-w) solid var(--t-border);
+}
+
+.t-facts-row:first-child {
+  padding-top: 0;
+}
+
+.t-facts-row:last-child {
+  padding-bottom: 0;
+}
+
+.t-facts-key {
+  flex: 0 0 var(--t-measure-2xs);
+  min-width: 0;
+  color: var(--t-muted);
+}
+
+.t-facts-value {
+  flex: 1 1 var(--t-measure-2xs);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.t-facts-value[data-mono] {
+  font-family: var(--t-font-mono);
+}
+
+.t-facts[data-layout="columns"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(var(--t-measure-2xs), 100%), 1fr));
+  gap: var(--t-space-4);
+}
+
+.t-facts[data-layout="columns"] > .t-facts-row {
+  flex-direction: column;
+  padding: 0;
+  border: 0;
+}
+
+.t-facts[data-layout="columns"] .t-facts-key {
+  flex: none;
+  font-size: var(--t-text-xs);
+}
+
+.t-facts[data-layout="columns"] .t-facts-value {
+  flex: none;
+}

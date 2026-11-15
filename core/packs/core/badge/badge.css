@@ -1,0 +1,40 @@
+.t-badge {
+  /* Tone text pushed towards the text colour, so it stays readable on its own tint. */
+  --t-badge-fg: color-mix(in srgb, var(--t-tone), var(--t-text) 55%);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--t-space-1);
+  max-width: 100%;
+  min-height: 1.5em;
+  padding: 0 var(--t-space-2);
+  border: var(--t-border-w) solid transparent;
+  border-radius: var(--t-radius-pill);
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint-weak), transparent);
+  color: var(--t-badge-fg);
+  font-size: var(--t-text-xs);
+  font-weight: var(--t-label-weight);
+  line-height: var(--t-leading-tight);
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.t-badge-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.t-badge[data-variant="solid"] {
+  /* The tone pushed away from the canvas, so the canvas-coloured text on it stays readable. */
+  background: color-mix(in srgb, var(--t-tone), var(--t-text) 25%);
+  color: var(--t-on-tone);
+}
+
+.t-badge[data-variant="solid"][data-tone="accent"] {
+  background: var(--t-accent-solid);
+}
+
+.t-badge[data-variant="outline"] {
+  border-color: var(--t-badge-fg);
+  background: transparent;
+}

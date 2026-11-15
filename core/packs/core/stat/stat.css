@@ -1,0 +1,73 @@
+.t-stat {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-1);
+  min-width: var(--t-measure-2xs);
+  padding: var(--t-space-4);
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  background: var(--t-surface);
+  box-shadow: var(--t-card-shadow);
+}
+
+.t-stat-label {
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-label-weight);
+  text-transform: var(--t-label-transform);
+}
+
+.t-stat-value {
+  font-family: var(--t-font-heading);
+  font-size: var(--t-text-3xl);
+  font-weight: var(--t-heading-weight);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--t-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.t-stat[data-tone] > .t-stat-value {
+  color: color-mix(in srgb, var(--t-tone), var(--t-text) 30%);
+}
+
+.t-stat-sub {
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-stat-chart {
+  height: var(--t-space-7);
+  margin-top: auto;
+  padding-top: var(--t-space-2);
+}
+
+.t-stat[data-tone] > .t-stat-chart {
+  color: var(--t-tone);
+}
+
+.t-stat-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.t-stat-link:focus-visible {
+  outline: none;
+}
+
+.t-stat:has(.t-stat-link:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: var(--t-focus-offset);
+}
+
+@media (hover: hover) {
+  .t-stat:has(.t-stat-link):hover {
+    border-color: color-mix(in srgb, var(--t-border), var(--t-text) 30%);
+  }
+
+  .t-stat:has(.t-stat-link):hover .t-stat-link {
+    text-decoration: underline;
+  }
+}

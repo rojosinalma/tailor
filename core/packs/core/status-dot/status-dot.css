@@ -1,0 +1,27 @@
+.t-dot {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-width: 0;
+  vertical-align: middle;
+}
+
+.t-dot::before {
+  content: "";
+  flex: none;
+  width: 0.625em;
+  height: 0.625em;
+  border-radius: var(--t-radius-pill);
+  background: var(--t-tone);
+}
+
+.t-dot[data-pulse]::before {
+  animation: t-dot-pulse calc(var(--t-motion-base) * 10) var(--t-ease) infinite;
+}
+
+@keyframes t-dot-pulse {
+  50% {
+    opacity: 0.35;
+    scale: 0.8;
+  }
+}

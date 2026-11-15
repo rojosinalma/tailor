@@ -1,0 +1,17 @@
+.t-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.6em;
+  height: 1.6em;
+  padding: 0 var(--t-space-1);
+  border-radius: var(--t-radius-pill);
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint-weak), transparent);
+  color: color-mix(in srgb, var(--t-tone), var(--t-text) 55%);
+  font-size: var(--t-text-xs);
+  font-weight: var(--t-weight-bold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  white-space: nowrap;
+  vertical-align: middle;
+}

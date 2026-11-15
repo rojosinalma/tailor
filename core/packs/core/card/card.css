@@ -1,0 +1,116 @@
+.t-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  container-type: inline-size;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  background: var(--t-surface);
+  color: var(--t-text);
+  box-shadow: var(--t-card-shadow);
+}
+
+.t-card[data-tone] {
+  border-inline-start: calc(var(--t-border-w-strong) * 1.5) solid var(--t-tone);
+}
+
+.t-card[data-selected] {
+  border-color: var(--t-accent);
+  outline: var(--t-border-w) solid var(--t-accent);
+}
+
+.t-card-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--t-space-3);
+  row-gap: var(--t-space-1);
+  padding: var(--t-space-4) var(--t-space-4) 0;
+}
+
+.t-card-header:only-child,
+.t-card[data-padding="none"] > .t-card-header {
+  padding-bottom: var(--t-space-4);
+}
+
+.t-card[data-padding="none"] > .t-card-header:not(:only-child) {
+  border-bottom: var(--t-border-w) solid var(--t-border);
+}
+
+.t-card-title {
+  grid-column: 1;
+  font-size: var(--t-text-lg);
+}
+
+.t-card-description {
+  grid-column: 1;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-content: flex-end;
+  gap: var(--t-space-2);
+}
+
+.t-card-body {
+  flex: 1;
+  min-width: 0;
+  padding: var(--t-space-4);
+}
+
+.t-card[data-padding="none"] > .t-card-body {
+  padding: 0;
+}
+
+.t-card[data-padding="none"] > .t-card-body:last-child {
+  overflow: clip;
+  border-radius: 0 0 var(--t-radius-box) var(--t-radius-box);
+}
+
+.t-card-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--t-space-2);
+  padding: var(--t-space-3) var(--t-space-4);
+  border-top: var(--t-border-w) solid var(--t-border);
+}
+
+/* A clickable card: the title link covers the card; controls inside stay above it. */
+.t-card-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.t-card-link:focus-visible {
+  outline: none;
+}
+
+.t-card:has(.t-card-link:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: var(--t-focus-offset);
+}
+
+.t-card:has(.t-card-link) :is(a, button, input, select, textarea, summary, label):not(.t-card-link) {
+  position: relative;
+  z-index: 1;
+}
+
+@media (hover: hover) {
+  .t-card:has(.t-card-link):hover {
+    border-color: color-mix(in srgb, var(--t-border), var(--t-text) 30%);
+  }
+
+  .t-card:has(.t-card-link):hover .t-card-link {
+    text-decoration: underline;
+  }
+}
