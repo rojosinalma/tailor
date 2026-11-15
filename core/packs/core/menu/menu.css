@@ -16,7 +16,7 @@
 }
 
 .t-menu-item[data-tone] {
-  color: var(--t-tone);
+  color: var(--t-tone-text);
 }
 
 .t-menu-icon {

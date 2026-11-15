@@ -144,7 +144,7 @@ a.t-btn {
   .t-btn[data-variant="danger"]:hover:not(:disabled, [aria-disabled="true"]) {
     background: var(--t-danger);
     border-color: var(--t-danger);
-    color: var(--t-canvas);
+    color: var(--t-on-danger);
   }
 
   .t-btn[data-variant="ghost"]:hover:not(:disabled, [aria-disabled="true"]) {

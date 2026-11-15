@@ -27,8 +27,10 @@ export default defineExamples("context-menu", [
       <Cluster align="center">
         <ContextMenu label="Host actions" items={actions}>
           <Stack gap="1">
-            <AppLink to="#web-1">web-1</AppLink>
-            <span>web-1.example.com · 3 services</span>
+            <strong>web-1.example.com</strong>
+            <span>
+              Host <AppLink to="#web-1">web-1</AppLink> serves 3 services.
+            </span>
           </Stack>
         </ContextMenu>
         <Menu

@@ -37,9 +37,12 @@ export default behaviour("dialog", {
     await example("default").getByRole("button", { name: "Edit host" }).click();
     const dialog = page.getByRole("dialog", { name: "Edit host" });
     await expect(dialog).toBeVisible();
+    // Base UI moves the focus in, and back from its focus guards, a frame later: wait for it each time.
+    const inside = () => dialog.evaluate((el) => el.contains(document.activeElement));
+    await expect.poll(inside).toBe(true);
     for (let i = 0; i < 6; i++) {
       await page.keyboard.press("Tab");
-      expect(await dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+      await expect.poll(inside).toBe(true);
     }
   },
   "on a phone it takes the full screen": async ({ page, example, expect }) => {
