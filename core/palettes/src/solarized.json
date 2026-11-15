@@ -57,7 +57,7 @@
   ],
   "light": {
     "canvas": "#fdf6e3",
-    "inset": "#eee8d5",
+    "inset": "#f1ebd8",
     "surface": "#fefaf1",
     "selection": "#e3dfcf",
     "border": "#d3d3c5",

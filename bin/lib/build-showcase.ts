@@ -76,10 +76,9 @@ export async function buildShowcase(
   await rm(at(dist), { recursive: true, force: true });
   const theme = showcaseTheme(skins, palettes);
 
-  await Bun.write(
-    at("showcase/src/site.gen.json"),
-    `${JSON.stringify({ theme, components: specs.map(({ id, name, pack, group, description, html }) => ({ id, name, pack, group, description, html })) }, null, 2)}\n`,
-  );
+  const site = `${JSON.stringify({ theme, components: specs.map(({ id, name, pack, group, description, html }) => ({ id, name, pack, group, description, html })) }, null, 2)}\n`;
+  const siteFile = Bun.file(at("showcase/src/site.gen.json"));
+  if (!(await siteFile.exists()) || (await siteFile.text()) !== site) await Bun.write(siteFile, site);
 
   // The app and the React entry page.
   const entrypoints = [at("showcase/src/entry.tsx")];
