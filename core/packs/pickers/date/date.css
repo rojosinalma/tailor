@@ -1,0 +1,135 @@
+.t-date-trigger {
+  justify-content: space-between;
+  min-width: var(--t-measure-2xs);
+}
+
+.t-date-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-date-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--t-muted);
+}
+
+.t-date-popup {
+  min-width: 0;
+  padding: var(--t-space-2);
+}
+
+.t-calendar {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
+}
+
+.t-calendar-header {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-1);
+}
+
+.t-calendar-title {
+  flex: 1;
+  font-weight: var(--t-weight-medium);
+  text-align: center;
+}
+
+.t-calendar-nav,
+.t-calendar-day {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--t-control-h-sm);
+  height: var(--t-control-h-sm);
+  padding: 0;
+  border: var(--t-border-w) solid transparent;
+  border-radius: var(--t-radius-control);
+  background: transparent;
+  color: var(--t-text);
+  font: inherit;
+  cursor: pointer;
+  transition: background-color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-calendar-grid {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.t-calendar-grid th {
+  padding: 0 0 var(--t-space-1);
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  font-weight: var(--t-weight-normal);
+  text-align: center;
+}
+
+.t-calendar-grid td {
+  padding: 0;
+  text-align: center;
+}
+
+.t-calendar-day {
+  font-size: var(--t-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-calendar-day[data-outside] {
+  color: var(--t-muted);
+}
+
+.t-calendar-day[data-today] {
+  border-color: var(--t-accent);
+}
+
+.t-calendar-day[data-selected] {
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+  font-weight: var(--t-weight-medium);
+}
+
+.t-calendar-nav:active:not(:disabled),
+.t-calendar-day:active:not(:disabled, [data-selected]) {
+  background: var(--t-active);
+}
+
+.t-calendar-nav:disabled,
+.t-calendar-day:disabled {
+  color: var(--t-disabled);
+  cursor: not-allowed;
+}
+
+.t-calendar-day[data-selected]:disabled {
+  background: color-mix(in srgb, var(--t-disabled) 30%, transparent);
+}
+
+.t-calendar-footer {
+  display: flex;
+  justify-content: center;
+}
+
+@media (hover: hover) {
+  .t-calendar-nav:hover:not(:disabled),
+  .t-calendar-day:hover:not(:disabled, [data-selected]) {
+    background: var(--t-hover);
+  }
+}
+
+@media (max-width: 40rem) {
+  .t-date-popup {
+    display: flex;
+    justify-content: center;
+  }
+
+  .t-calendar-nav,
+  .t-calendar-day {
+    width: var(--t-touch);
+    height: var(--t-touch);
+  }
+}

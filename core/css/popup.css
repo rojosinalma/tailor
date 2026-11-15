@@ -1,0 +1,121 @@
+/* The surface that every popup shares: select lists, menus, popovers, pickers. A phone shows it as a bottom sheet. */
+@layer t.components {
+  .t-popup-positioner {
+    z-index: var(--t-z-popup);
+  }
+
+  /* The HTML kit puts the positioner in the top layer and sets its place. */
+  .t-popup-positioner[popover] {
+    position: fixed;
+  }
+
+  .t-popup {
+    min-width: max(var(--anchor-width, 0px), var(--t-measure-2xs));
+    max-width: min(var(--t-measure-sm), calc(100vw - var(--t-space-4)));
+    max-height: min(var(--available-height, 60dvh), var(--t-measure-sm));
+    padding: var(--t-space-1);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border: var(--t-border-w) solid var(--t-border);
+    border-radius: var(--t-radius-popup);
+    background: var(--t-surface);
+    color: var(--t-text);
+    box-shadow: var(--t-shadow-md);
+    transform-origin: var(--transform-origin, top);
+    transition:
+      opacity var(--t-motion-fast) var(--t-ease),
+      scale var(--t-motion-fast) var(--t-ease);
+  }
+
+  .t-popup:focus-visible {
+    outline: none;
+  }
+
+  .t-popup[data-starting-style],
+  .t-popup[data-ending-style] {
+    opacity: 0;
+    scale: 0.97;
+  }
+
+  @starting-style {
+    .t-popup-positioner[popover]:popover-open > .t-popup {
+      opacity: 0;
+      scale: 0.97;
+    }
+  }
+
+  .t-listbox {
+    display: flex;
+    flex-direction: column;
+    outline: none;
+  }
+
+  .t-option {
+    display: flex;
+    flex: none;
+    align-items: center;
+    gap: var(--t-space-2);
+    min-height: var(--t-control-h-sm);
+    padding: var(--t-space-1) var(--t-space-2);
+    border-radius: var(--t-radius-control);
+    outline: none;
+    cursor: default;
+    user-select: none;
+  }
+
+  .t-option[data-highlighted] {
+    background: var(--t-selection);
+  }
+
+  .t-option[aria-selected="true"] {
+    font-weight: var(--t-weight-medium);
+  }
+
+  .t-option[aria-disabled="true"],
+  .t-option[data-disabled] {
+    color: var(--t-disabled);
+  }
+
+  .t-option-check {
+    display: inline-flex;
+    flex: none;
+    width: var(--t-icon);
+    color: var(--t-accent);
+  }
+
+  .t-option-label {
+    flex: 1;
+    min-width: 0;
+  }
+
+  @media (max-width: 40rem) {
+    .t-popup-positioner {
+      position: fixed !important;
+      inset: auto 0 0 0 !important;
+      width: 100% !important;
+      transform: none !important;
+    }
+
+    .t-popup {
+      width: 100%;
+      max-width: none;
+      max-height: 70dvh;
+      padding: var(--t-space-2) var(--t-space-2) calc(var(--t-space-2) + var(--t-safe-bottom));
+      border-width: var(--t-border-w) 0 0;
+      border-radius: var(--t-radius-popup) var(--t-radius-popup) 0 0;
+      box-shadow: 0 0 0 100vmax var(--t-backdrop);
+      transform-origin: bottom;
+    }
+
+    .t-popup[data-starting-style],
+    .t-popup[data-ending-style] {
+      opacity: 1;
+      scale: 1;
+      translate: 0 100%;
+    }
+
+    .t-option {
+      min-height: var(--t-touch);
+    }
+  }
+}

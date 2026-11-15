@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2023",
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "verbatimModuleSyntax": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["bun"],
+    "paths": {
+      "@tailor/core/*": ["./core/src/*"],
+      "@tailor/packs/*": ["./core/packs/*"],
+      "@tailor/react/*": ["./react/src/*"],
+      "@tailor/html/*": ["./html/src/*"]
+    }
+  },
+  "include": ["core", "react", "html", "cli", "showcase", "checks", "bin"],
+  "exclude": ["**/node_modules", "**/dist"]
+}

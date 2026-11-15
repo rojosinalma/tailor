@@ -1,0 +1,7 @@
+.t-icon {
+  flex: none;
+  width: var(--t-icon);
+  height: var(--t-icon);
+  fill: currentColor;
+  vertical-align: -0.125em;
+}

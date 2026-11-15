@@ -1,0 +1,2 @@
+/* Cascade order of every tailor stylesheet. Styles outside these layers (a project's own CSS) always win. */
+@layer t.reset, t.tokens, t.base, t.components, t.shell, t.skin, t.palette, t.utilities;

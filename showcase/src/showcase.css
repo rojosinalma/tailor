@@ -1,0 +1,32 @@
+/* The showcase's own styles: the frame around the examples. Examples use tailor classes only. */
+.sc-entry {
+  padding: var(--t-space-4);
+}
+
+.sc-entry-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-5);
+}
+
+.sc-example {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.sc-example-title {
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-weight-medium);
+}
+
+.sc-example-note {
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.sc-example-body {
+  min-width: 0;
+}

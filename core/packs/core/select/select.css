@@ -1,0 +1,19 @@
+.t-select-trigger,
+select.t-select {
+  justify-content: space-between;
+  min-width: var(--t-measure-2xs);
+}
+
+.t-select-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-select-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--t-muted);
+}

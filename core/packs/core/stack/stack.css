@@ -1,0 +1,60 @@
+.t-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-3);
+  min-width: 0;
+}
+
+.t-stack > * {
+  flex-shrink: 0;
+}
+
+.t-stack[data-gap="0"],
+.t-cluster[data-gap="0"] {
+  gap: 0;
+}
+
+.t-stack[data-gap="1"],
+.t-cluster[data-gap="1"] {
+  gap: var(--t-space-1);
+}
+
+.t-stack[data-gap="2"],
+.t-cluster[data-gap="2"] {
+  gap: var(--t-space-2);
+}
+
+.t-stack[data-gap="4"],
+.t-cluster[data-gap="4"] {
+  gap: var(--t-space-4);
+}
+
+.t-stack[data-gap="5"],
+.t-cluster[data-gap="5"] {
+  gap: var(--t-space-5);
+}
+
+.t-stack[data-gap="6"],
+.t-cluster[data-gap="6"] {
+  gap: var(--t-space-6);
+}
+
+.t-stack[data-align="start"],
+.t-cluster[data-align="start"] {
+  align-items: flex-start;
+}
+
+.t-stack[data-align="center"],
+.t-cluster[data-align="center"] {
+  align-items: center;
+}
+
+.t-stack[data-align="end"],
+.t-cluster[data-align="end"] {
+  align-items: flex-end;
+}
+
+.t-stack[data-align="stretch"],
+.t-cluster[data-align="stretch"] {
+  align-items: stretch;
+}

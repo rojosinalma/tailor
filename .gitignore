@@ -1,4 +1,13 @@
 node_modules/
-consumers.json
-.DS_Store
+dist/
+.cache/
+*.gen.ts
+*.gen.json
 *.log
+.DS_Store
+.env
+*.pem
+*.key
+compose.override.yaml
+checks/.images/
+checks/.results/

@@ -1,0 +1,13 @@
+{
+  "name": "@tailor/checks",
+  "version": "2.0.0-dev.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "devDependencies": {
+    "@axe-core/playwright": "4.14.0",
+    "@playwright/test": "1.65.1",
+    "playwright": "1.65.1",
+    "postcss": "8.5.6"
+  }
+}

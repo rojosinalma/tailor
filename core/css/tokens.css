@@ -1,0 +1,203 @@
+/*
+ * Tokens: the only names that components, shells and skins size, space and colour with.
+ * Three groups: palette tokens (set by a palette), skin settings (set by a skin), derived tokens (set here).
+ */
+@layer t.tokens {
+  :root {
+    color-scheme: dark;
+
+    /* Palette tokens. A palette replaces every one of them; these are the fallback values. */
+    --t-canvas: #1d2021;
+    --t-inset: #171a1b;
+    --t-surface: #282828;
+    --t-selection: #3c3836;
+    --t-border: #504945;
+    --t-overlay-bg: #0d0e0f;
+    --t-text: #ebdbb2;
+    --t-muted: #a89984;
+    --t-disabled: #7c6f64;
+    --t-accent: #fabd2f;
+    --t-accent-solid: #fabd2f;
+    --t-on-accent: #1d2021;
+    --t-link: #83a598;
+    --t-success: #b8bb26;
+    --t-warning: #fe8019;
+    --t-danger: #fb6d5c;
+    --t-info: #83a598;
+    --t-hue-red: var(--t-danger);
+    --t-hue-orange: var(--t-warning);
+    --t-hue-yellow: var(--t-accent);
+    --t-hue-green: var(--t-success);
+    --t-hue-cyan: var(--t-info);
+    --t-hue-blue: var(--t-link);
+    --t-hue-purple: var(--t-accent);
+    --t-hue-pink: var(--t-accent);
+
+    /* Skin settings: typography. */
+    --t-font-sans:
+      system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Liberation Sans", Arial, sans-serif;
+    --t-font-mono: ui-monospace, "SF Mono", "Cascadia Code", Menlo, Consolas, "Liberation Mono", monospace;
+    --t-font-heading: var(--t-font-sans);
+    --t-text-xs: 0.75rem;
+    --t-text-sm: 0.8125rem;
+    --t-text-base: 0.9375rem;
+    --t-text-lg: 1.0625rem;
+    --t-text-xl: 1.25rem;
+    --t-text-2xl: 1.5rem;
+    --t-text-3xl: 1.875rem;
+    --t-leading: 1.5;
+    --t-leading-tight: 1.25;
+    --t-weight-normal: 400;
+    --t-weight-medium: 500;
+    --t-weight-bold: 600;
+    --t-heading-weight: var(--t-weight-bold);
+    --t-heading-style: normal;
+    --t-heading-transform: none;
+    --t-label-weight: var(--t-weight-medium);
+    --t-label-transform: none;
+    --t-tracking: normal;
+
+    /* Skin settings: shape. */
+    --t-radius-control: 0.375rem;
+    --t-radius-box: 0.5rem;
+    --t-radius-popup: var(--t-radius-box);
+    --t-radius-pill: 999px;
+    --t-radius-check: 0.25rem;
+    --t-border-w: 1px;
+    --t-border-w-strong: 2px;
+    --t-focus-w: 2px;
+    --t-focus-offset: 2px;
+    --t-focus-color: var(--t-accent);
+
+    /* Skin settings: depth. A shadow multiplies its opacity by the strength, which a light mode lowers. */
+    --t-shadow-strength: 1;
+    --t-shadow-sm: 0 1px 2px rgb(0 0 0 / calc(0.25 * var(--t-shadow-strength)));
+    --t-shadow-md: 0 4px 16px rgb(0 0 0 / calc(0.35 * var(--t-shadow-strength)));
+    --t-shadow-lg: 0 16px 48px rgb(0 0 0 / calc(0.45 * var(--t-shadow-strength)));
+    --t-card-shadow: none;
+
+    /* Skin settings: density. Every spacing step is a multiple of the unit. */
+    --t-space-unit: 0.25rem;
+    --t-skin-control-h-sm: 1.75rem;
+    --t-skin-control-h-md: 2.25rem;
+    --t-skin-control-h-lg: 2.75rem;
+    --t-control-px: calc(var(--t-space-unit) * 3);
+
+    /* Skin settings: motion. */
+    --t-skin-motion-fast: 120ms;
+    --t-skin-motion-base: 180ms;
+    --t-ease: cubic-bezier(0.2, 0, 0, 1);
+
+    /* Skin settings: button look. */
+    --t-btn-weight: var(--t-weight-medium);
+    --t-btn-transform: none;
+    --t-btn-shadow: none;
+
+    /* Derived: spacing scale. */
+    --t-space-05: calc(var(--t-space-unit) * 0.5);
+    --t-space-1: var(--t-space-unit);
+    --t-space-2: calc(var(--t-space-unit) * 2);
+    --t-space-3: calc(var(--t-space-unit) * 3);
+    --t-space-4: calc(var(--t-space-unit) * 4);
+    --t-space-5: calc(var(--t-space-unit) * 6);
+    --t-space-6: calc(var(--t-space-unit) * 8);
+    --t-space-7: calc(var(--t-space-unit) * 12);
+    --t-space-8: calc(var(--t-space-unit) * 16);
+
+    /* Derived: control heights. A touch screen gets at least the touch size. */
+    --t-touch: 2.75rem;
+    --t-text-touch: 1rem;
+    --t-control-h-sm: var(--t-skin-control-h-sm);
+    --t-control-h-md: var(--t-skin-control-h-md);
+    --t-control-h-lg: var(--t-skin-control-h-lg);
+
+    /* Derived: motion. It stops when the device asks for reduced motion. */
+    --t-motion-fast: var(--t-skin-motion-fast);
+    --t-motion-base: var(--t-skin-motion-base);
+
+    /* Derived: fixed measures for boxes that need an own width or height. */
+    --t-measure-2xs: 8rem;
+    --t-measure-xs: 12rem;
+    --t-measure-sm: 20rem;
+    --t-measure-md: 32rem;
+    --t-measure-lg: 48rem;
+    --t-measure-xl: 64rem;
+    --t-measure-prose: 70ch;
+    --t-icon: 1em;
+    --t-hairline: 1px;
+
+    /* Derived: layout metrics of the shells. */
+    --t-nav-h: 3.5rem;
+    --t-sidebar-w: 15rem;
+    --t-sidebar-w-collapsed: 3.5rem;
+    --t-panel-w: 20rem;
+    --t-gutter: clamp(var(--t-space-4), 3vw, var(--t-space-7));
+    --t-safe-top: env(safe-area-inset-top, 0px);
+    --t-safe-bottom: env(safe-area-inset-bottom, 0px);
+    --t-safe-left: env(safe-area-inset-left, 0px);
+    --t-safe-right: env(safe-area-inset-right, 0px);
+
+    /* Derived: stacking. */
+    --t-z-sticky: 10;
+    --t-z-overlay: 100;
+    --t-z-popup: 200;
+    --t-z-toast: 300;
+
+    /* Derived: colour mixes. */
+    --t-backdrop: color-mix(in srgb, var(--t-overlay-bg) 60%, transparent);
+    --t-tint-weak: 12%;
+    --t-tint: 20%;
+    --t-tint-strong: 32%;
+    --t-hover: color-mix(in srgb, var(--t-text) 8%, transparent);
+    --t-active: color-mix(in srgb, var(--t-text) 14%, transparent);
+
+    /* The tone of an element: one colour variable that every toned component reads. */
+    --t-tone: var(--t-text);
+    --t-on-tone: var(--t-canvas);
+  }
+
+  @media (pointer: coarse) {
+    :root {
+      --t-control-h-sm: max(var(--t-touch), var(--t-skin-control-h-sm));
+      --t-control-h-md: max(var(--t-touch), var(--t-skin-control-h-md));
+      --t-control-h-lg: max(var(--t-touch), var(--t-skin-control-h-lg));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      --t-motion-fast: 0ms;
+      --t-motion-base: 0ms;
+    }
+  }
+
+  [data-mode="light"] {
+    color-scheme: light;
+    --t-shadow-strength: 0.4;
+  }
+
+  [data-tone="neutral"] {
+    --t-tone: var(--t-muted);
+    --t-on-tone: var(--t-canvas);
+  }
+  [data-tone="accent"] {
+    --t-tone: var(--t-accent);
+    --t-on-tone: var(--t-on-accent);
+  }
+  [data-tone="success"] {
+    --t-tone: var(--t-success);
+    --t-on-tone: var(--t-canvas);
+  }
+  [data-tone="warning"] {
+    --t-tone: var(--t-warning);
+    --t-on-tone: var(--t-canvas);
+  }
+  [data-tone="danger"] {
+    --t-tone: var(--t-danger);
+    --t-on-tone: var(--t-canvas);
+  }
+  [data-tone="info"] {
+    --t-tone: var(--t-info);
+    --t-on-tone: var(--t-canvas);
+  }
+}

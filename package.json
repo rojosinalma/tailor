@@ -1,12 +1,29 @@
 {
   "name": "tailor",
-  "version": "0.11.1",
-  "description": "A design system with one component vocabulary, swappable skins, canonical palettes.",
+  "version": "2.0.0-dev.0",
+  "description": "A UI framework: standard shells and components, swappable skins, canonical palettes, for React and for plain HTML.",
   "license": "MIT",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "core",
+    "react",
+    "html",
+    "cli",
+    "showcase",
+    "checks"
+  ],
   "scripts": {
+    "gen": "bun checks/src/gen.ts",
     "build": "bun bin/build",
-    "verify": "bun bin/verify"
+    "check": "bun bin/check",
+    "format": "biome format --write .",
+    "typecheck": "bun run gen && tsc --noEmit"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.8",
+    "@types/bun": "1.3.5",
+    "knip": "6.45.1",
+    "typescript": "7.0.2"
   }
 }

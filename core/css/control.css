@@ -1,0 +1,87 @@
+/* The box that every field-like control shares: text inputs, select triggers, picker triggers. */
+@layer t.components {
+  .t-control {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--t-space-2);
+    min-width: 0;
+    min-height: var(--t-control-h-md);
+    padding: 0 var(--t-control-px);
+    border: var(--t-border-w) solid var(--t-border);
+    border-radius: var(--t-radius-control);
+    background: var(--t-inset);
+    color: var(--t-text);
+    font-size: var(--t-text-base);
+    line-height: var(--t-leading-tight);
+    text-align: start;
+    transition: border-color var(--t-motion-fast) var(--t-ease);
+  }
+
+  .t-control[data-size="sm"] {
+    min-height: var(--t-control-h-sm);
+    padding: 0 var(--t-space-2);
+    font-size: var(--t-text-sm);
+  }
+
+  .t-control[data-size="lg"] {
+    min-height: var(--t-control-h-lg);
+    padding: 0 var(--t-space-4);
+    font-size: var(--t-text-lg);
+  }
+
+  .t-control::placeholder,
+  .t-control [data-placeholder] {
+    color: var(--t-muted);
+  }
+
+  .t-control[data-popup-open],
+  .t-control[aria-expanded="true"],
+  input.t-control:focus,
+  textarea.t-control:focus {
+    border-color: var(--t-accent);
+  }
+
+  .t-control[aria-invalid="true"],
+  .t-control[data-invalid] {
+    border-color: var(--t-danger);
+  }
+
+  .t-control:disabled,
+  .t-control[data-disabled],
+  .t-control[aria-disabled="true"] {
+    color: var(--t-disabled);
+    cursor: not-allowed;
+  }
+
+  button.t-control {
+    cursor: pointer;
+  }
+
+  /* A native control that the HTML kit drew over stays in the form as the value holder, out of sight. */
+  .t-control[data-t-upgraded] {
+    position: absolute;
+    width: var(--t-hairline);
+    min-width: 0;
+    height: var(--t-hairline);
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  @media (hover: hover) {
+    .t-control:hover:not(:disabled, [data-disabled], [aria-disabled="true"], [data-popup-open], :focus) {
+      border-color: color-mix(in srgb, var(--t-border), var(--t-text) 30%);
+    }
+  }
+
+  /* A text field on a phone needs 16px text, or the browser zooms in on focus. */
+  @media (pointer: coarse) {
+    input.t-control,
+    textarea.t-control,
+    select.t-control {
+      font-size: max(var(--t-text-touch), var(--t-text-base));
+    }
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "@tailor/cli",
+  "version": "2.0.0-dev.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT"
+}

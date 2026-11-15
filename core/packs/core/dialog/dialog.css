@@ -1,0 +1,130 @@
+.t-dialog-backdrop,
+.t-dialog::backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--t-z-overlay);
+  background: var(--t-backdrop);
+  transition: opacity var(--t-motion-base) var(--t-ease);
+}
+
+.t-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: var(--t-z-overlay);
+  display: flex;
+  flex-direction: column;
+  width: min(var(--t-measure-md), calc(100vw - var(--t-space-6)));
+  height: fit-content;
+  max-height: calc(100dvh - var(--t-space-7));
+  margin: auto;
+  overflow: hidden;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-popup);
+  background: var(--t-surface);
+  color: var(--t-text);
+  box-shadow: var(--t-shadow-lg);
+  transition:
+    opacity var(--t-motion-base) var(--t-ease),
+    scale var(--t-motion-base) var(--t-ease),
+    display var(--t-motion-base) allow-discrete,
+    overlay var(--t-motion-base) allow-discrete;
+}
+
+dialog.t-dialog:not([open]) {
+  display: none;
+  opacity: 0;
+  scale: 0.97;
+}
+
+@starting-style {
+  dialog.t-dialog[open] {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+
+.t-dialog[data-starting-style],
+.t-dialog[data-ending-style] {
+  opacity: 0;
+  scale: 0.97;
+}
+
+.t-dialog-backdrop[data-starting-style],
+.t-dialog-backdrop[data-ending-style] {
+  opacity: 0;
+}
+
+.t-dialog[data-size="sm"] {
+  width: min(var(--t-measure-sm), calc(100vw - var(--t-space-6)));
+}
+
+.t-dialog[data-size="lg"] {
+  width: min(var(--t-measure-lg), calc(100vw - var(--t-space-6)));
+}
+
+.t-dialog-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--t-space-3);
+  padding: var(--t-space-3) var(--t-space-4);
+  border-bottom: var(--t-border-w) solid var(--t-border);
+}
+
+.t-dialog-title {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--t-text-lg);
+}
+
+.t-dialog-close {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--t-control-h-sm);
+  min-height: var(--t-control-h-sm);
+  border-radius: var(--t-radius-control);
+  color: var(--t-muted);
+}
+
+.t-dialog-close:active {
+  background: var(--t-active);
+}
+
+.t-dialog-body {
+  flex: 1;
+  min-height: 0;
+  padding: var(--t-space-4);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.t-dialog-footer {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--t-space-2);
+  padding: var(--t-space-3) var(--t-space-4);
+  border-top: var(--t-border-w) solid var(--t-border);
+}
+
+@media (hover: hover) {
+  .t-dialog-close:hover {
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+}
+
+/* A phone gives a form dialog the full screen. A short confirm stays a small box. */
+@media (max-width: 40rem) {
+  .t-dialog:not([data-variant="confirm"]) {
+    width: 100%;
+    height: 100%;
+    max-height: none;
+    padding: var(--t-safe-top) var(--t-safe-right) var(--t-safe-bottom) var(--t-safe-left);
+    border: 0;
+    border-radius: 0;
+  }
+}
