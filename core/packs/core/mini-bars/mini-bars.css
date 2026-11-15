@@ -1,0 +1,27 @@
+.t-minibars {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--t-space-05);
+  width: 100%;
+  height: var(--t-space-7);
+  overflow: hidden;
+  color: var(--t-accent);
+}
+
+.t-minibars[data-tone] {
+  color: var(--t-tone);
+}
+
+.t-minibars[data-size="sm"] {
+  height: var(--t-space-5);
+}
+
+/* A bar at 0 keeps a sliver, so its place stays visible. */
+.t-minibars-bar {
+  --t-value: 0%;
+  flex: 1 1 0;
+  min-width: 0;
+  height: max(var(--t-value), var(--t-border-w-strong));
+  border-radius: var(--t-radius-check) var(--t-radius-check) 0 0;
+  background: currentColor;
+}

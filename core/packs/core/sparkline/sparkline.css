@@ -1,0 +1,30 @@
+.t-sparkline {
+  display: block;
+  width: 100%;
+  height: var(--t-space-7);
+  overflow: visible;
+  color: var(--t-accent);
+}
+
+.t-sparkline[data-tone] {
+  color: var(--t-tone);
+}
+
+.t-sparkline[data-size="sm"] {
+  height: var(--t-space-5);
+}
+
+.t-sparkline-line {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: var(--t-border-w-strong);
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.t-sparkline-area {
+  fill: currentColor;
+  fill-opacity: var(--t-tint);
+  stroke: none;
+}

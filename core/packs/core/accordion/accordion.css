@@ -1,0 +1,77 @@
+.t-accordion {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border-block: var(--t-border-w) solid var(--t-border);
+}
+
+.t-accordion-item + .t-accordion-item {
+  border-top: var(--t-border-w) solid var(--t-border);
+}
+
+/* The React kit wraps the trigger in a heading: it keeps the trigger's look. */
+.t-accordion-header {
+  font: inherit;
+}
+
+.t-accordion-trigger {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-3);
+  width: 100%;
+  min-height: var(--t-control-h-lg);
+  padding: var(--t-space-2) var(--t-space-1);
+  font-weight: var(--t-weight-medium);
+  text-align: start;
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.t-accordion-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.t-accordion-title {
+  flex: 1;
+  min-width: 0;
+}
+
+.t-accordion-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--t-muted);
+  transition: rotate var(--t-motion-fast) var(--t-ease);
+}
+
+.t-accordion-item[data-open] .t-accordion-icon,
+.t-accordion-item[open] .t-accordion-icon {
+  rotate: 180deg;
+}
+
+.t-accordion-trigger[data-disabled],
+.t-accordion-trigger[aria-disabled="true"] {
+  color: var(--t-disabled);
+  cursor: not-allowed;
+}
+
+/* A <details> has no disabled state: its title takes no pointer and no focus. */
+summary.t-accordion-trigger[aria-disabled="true"] {
+  pointer-events: none;
+}
+
+.t-accordion-trigger[data-disabled] .t-accordion-icon,
+.t-accordion-trigger[aria-disabled="true"] .t-accordion-icon {
+  color: var(--t-disabled);
+}
+
+.t-accordion-panel {
+  padding: 0 var(--t-space-1) var(--t-space-4);
+  color: var(--t-text);
+}
+
+@media (hover: hover) {
+  .t-accordion-trigger:hover:not([data-disabled], [aria-disabled="true"]) {
+    background: var(--t-hover);
+  }
+}

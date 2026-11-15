@@ -1,0 +1,50 @@
+.t-hover-card {
+  color: var(--t-link);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 0.2em;
+}
+
+.t-hover-card[data-popup-open] {
+  text-decoration-style: solid;
+}
+
+.t-hover-card-positioner {
+  z-index: var(--t-z-popup);
+}
+
+.t-hover-card-positioner[popover] {
+  position: fixed;
+}
+
+/* Wins over the phone rules of .t-popup: a preview stays a small card next to its link. */
+.t-hover-card-positioner > .t-hover-card-popup {
+  width: max-content;
+  max-width: min(var(--t-measure-sm), calc(100vw - var(--t-space-4)));
+  max-height: min(var(--available-height, 60dvh), var(--t-measure-sm));
+  padding: var(--t-space-3);
+  border-width: var(--t-border-w);
+  border-radius: var(--t-radius-popup);
+  box-shadow: var(--t-shadow-md);
+  transform-origin: var(--transform-origin, top);
+}
+
+.t-hover-card-positioner > .t-hover-card-popup[data-starting-style],
+.t-hover-card-positioner > .t-hover-card-popup[data-ending-style] {
+  opacity: 0;
+  scale: 0.97;
+  translate: none;
+}
+
+@starting-style {
+  .t-hover-card-positioner[popover]:popover-open > .t-hover-card-popup {
+    opacity: 0;
+    scale: 0.97;
+  }
+}
+
+@media (hover: hover) {
+  .t-hover-card:hover {
+    text-decoration-style: solid;
+  }
+}

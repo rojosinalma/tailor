@@ -1,0 +1,66 @@
+.t-progress {
+  --t-progress: 0%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: var(--t-space-1) var(--t-space-3);
+  width: 100%;
+  font-size: var(--t-text-sm);
+}
+
+.t-progress-label {
+  min-width: 0;
+  font-weight: var(--t-label-weight);
+  text-transform: var(--t-label-transform);
+}
+
+.t-progress-value {
+  grid-column: 2;
+  color: var(--t-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-progress-track {
+  grid-column: 1 / -1;
+  height: var(--t-space-2);
+  overflow: hidden;
+  border-radius: var(--t-radius-pill);
+  background: var(--t-inset);
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-border);
+}
+
+.t-progress-fill {
+  width: var(--t-progress);
+  height: 100%;
+  border-radius: inherit;
+  background: var(--t-accent);
+  transition: width var(--t-motion-base) var(--t-ease);
+}
+
+.t-progress[data-tone] .t-progress-fill {
+  background: var(--t-tone);
+}
+
+.t-progress[data-size="sm"] .t-progress-track {
+  height: var(--t-space-1);
+}
+
+/* No value: a short bar that slides. Under reduced motion it stays a faint full bar. */
+.t-progress[data-indeterminate] .t-progress-fill {
+  width: 100%;
+  opacity: 0.35;
+  animation: t-progress-slide calc(var(--t-motion-base) * 8) var(--t-ease) infinite;
+}
+
+@keyframes t-progress-slide {
+  from {
+    width: 40%;
+    opacity: 1;
+    translate: -100% 0;
+  }
+  to {
+    width: 40%;
+    opacity: 1;
+    translate: 250% 0;
+  }
+}

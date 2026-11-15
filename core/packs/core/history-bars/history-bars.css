@@ -1,0 +1,18 @@
+.t-history {
+  display: flex;
+  gap: var(--t-space-05);
+  width: 100%;
+  height: var(--t-space-7);
+  overflow: hidden;
+}
+
+.t-history[data-size="sm"] {
+  height: var(--t-space-5);
+}
+
+.t-history-bar {
+  flex: 1 1 0;
+  min-width: 0;
+  border-radius: var(--t-radius-check);
+  background: var(--t-tone);
+}

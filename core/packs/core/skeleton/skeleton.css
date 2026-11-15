@@ -1,0 +1,67 @@
+/* A slow shimmer. Its duration follows the motion tokens, so it stops under reduced motion. */
+.t-skeleton,
+.t-skeleton-line {
+  display: block;
+  border-radius: var(--t-radius-control);
+  background: linear-gradient(90deg, var(--t-active) 30%, var(--t-hover) 50%, var(--t-active) 70%);
+  background-size: 300% 100%;
+  animation: t-skeleton-shimmer calc(var(--t-motion-base) * 9) linear infinite;
+}
+
+.t-skeleton:not([data-shape]) {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
+  width: 100%;
+  padding-block: 0.25lh;
+  background: none;
+  animation: none;
+}
+
+.t-skeleton-line {
+  height: 1em;
+}
+
+.t-skeleton-line:last-child:not(:first-child) {
+  width: 60%;
+}
+
+.t-skeleton[data-shape="box"] {
+  width: 100%;
+  height: var(--t-measure-2xs);
+  border-radius: var(--t-radius-box);
+}
+
+.t-skeleton[data-shape="box"][data-size="sm"] {
+  height: var(--t-space-8);
+}
+
+.t-skeleton[data-shape="box"][data-size="lg"] {
+  height: var(--t-measure-xs);
+}
+
+.t-skeleton[data-shape="circle"] {
+  flex: none;
+  width: var(--t-space-6);
+  height: var(--t-space-6);
+  border-radius: 50%;
+}
+
+.t-skeleton[data-shape="circle"][data-size="sm"] {
+  width: var(--t-space-5);
+  height: var(--t-space-5);
+}
+
+.t-skeleton[data-shape="circle"][data-size="lg"] {
+  width: var(--t-space-8);
+  height: var(--t-space-8);
+}
+
+@keyframes t-skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}

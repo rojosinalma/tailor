@@ -1,0 +1,58 @@
+.t-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--t-space-2);
+  width: 100%;
+  padding: var(--t-space-6) var(--t-space-4);
+  text-align: center;
+}
+
+/* Centred in the full width; the content keeps a short line. */
+.t-empty > * {
+  max-width: var(--t-measure-sm);
+}
+
+.t-empty-icon {
+  display: inline-flex;
+  margin-bottom: var(--t-space-1);
+  color: var(--t-muted);
+  font-size: var(--t-text-3xl);
+}
+
+.t-empty-title {
+  font-size: var(--t-text-lg);
+  font-weight: var(--t-heading-weight);
+  line-height: var(--t-leading-tight);
+}
+
+.t-empty-text {
+  color: var(--t-muted);
+}
+
+.t-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--t-space-2);
+  margin-top: var(--t-space-2);
+}
+
+.t-empty[data-size="sm"] {
+  gap: var(--t-space-1);
+  padding: var(--t-space-4) var(--t-space-3);
+  font-size: var(--t-text-sm);
+}
+
+.t-empty[data-size="sm"] /* Centred in the full width; the content keeps a short line. */
+.t-empty > * {
+  max-width: var(--t-measure-sm);
+}
+
+.t-empty-icon {
+  font-size: var(--t-text-xl);
+}
+
+.t-empty[data-size="sm"] .t-empty-title {
+  font-size: var(--t-text-base);
+}

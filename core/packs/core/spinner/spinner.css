@@ -1,0 +1,34 @@
+/* The ring is the ::before; the root holds the accessible text. It stops turning under reduced motion. */
+.t-spinner {
+  display: inline-flex;
+  flex: none;
+  width: var(--t-space-5);
+  height: var(--t-space-5);
+  color: inherit;
+  vertical-align: middle;
+}
+
+.t-spinner::before {
+  content: "";
+  flex: 1;
+  border: 0.15em solid currentColor;
+  border-block-start-color: transparent;
+  border-radius: 50%;
+  animation: t-spinner-turn calc(var(--t-motion-base) * 4) linear infinite;
+}
+
+.t-spinner[data-size="sm"] {
+  width: var(--t-space-4);
+  height: var(--t-space-4);
+}
+
+.t-spinner[data-size="lg"] {
+  width: var(--t-space-6);
+  height: var(--t-space-6);
+}
+
+@keyframes t-spinner-turn {
+  to {
+    rotate: 1turn;
+  }
+}
