@@ -25,8 +25,9 @@ const entries: Entry[] = [];
 let region: HTMLElement | null = null;
 let hovering = false;
 let focused = false;
+let away = false;
 
-const paused = (): boolean => hovering || focused;
+const paused = (): boolean => hovering || focused || away;
 
 function start(entry: Entry): void {
   if (entry.remaining <= 0 || paused()) return;
@@ -81,6 +82,7 @@ function getRegion(): HTMLElement {
     "aria-live": "polite",
     "aria-label": t("notifications"),
     tabindex: "-1",
+    popover: "manual",
   });
   element.addEventListener("pointerenter", () => {
     hovering = true;
@@ -98,14 +100,41 @@ function getRegion(): HTMLElement {
     focused = event.relatedTarget instanceof Node && element.contains(event.relatedTarget);
     sync();
   });
-  document.body.append(element);
+  // Like Base UI, the toasts wait while the window is in the background.
+  addEventListener("blur", () => {
+    away = true;
+    sync();
+  });
+  addEventListener("focus", () => {
+    away = false;
+    sync();
+  });
   region = element;
   return element;
+}
+
+/**
+ * The region lives in the top layer, above every dialog. A modal dialog makes the rest of the page inert,
+ * so while one is open the region moves into it, and it comes back to the body when the dialog closes.
+ */
+function lift(element: HTMLElement): void {
+  const host = [...document.querySelectorAll("dialog")].findLast((d) => d.matches(":modal")) ?? document.body;
+  if (element.parentElement !== host) {
+    hovering = false;
+    focused = false;
+    host.append(element);
+    if (host instanceof HTMLDialogElement)
+      host.addEventListener("close", () => lift(element), { once: true });
+  }
+  // Showing it again puts it on top of a dialog or popover that opened after it.
+  if (element.matches(":popover-open")) element.hidePopover();
+  element.showPopover();
 }
 
 /** Shows a short report of an outcome. It leaves by itself; a danger toast stays until it is closed. */
 export function toast(tone: Tone, message: string, options: ToastOptions = {}): void {
   const target = getRegion();
+  lift(target);
   const titleId = uid("t-toast-title");
   const textId = uid("t-toast-text");
   const closer = h(

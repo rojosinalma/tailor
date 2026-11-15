@@ -71,4 +71,17 @@ export default behaviour("drawer", {
     await expect(drawer).toBeVisible();
     expect((await drawer.boundingBox())?.height).toBeLessThanOrEqual(800 * 0.85 + 1);
   },
+  "a downward swipe on the header closes a bottom drawer": async ({ page, example, expect }) => {
+    await example("sides").getByRole("button", { name: "Share" }).click();
+    const drawer = page.getByRole("dialog", { name: "Share" });
+    await expect(drawer).toBeVisible();
+    const title = await drawer.locator(".t-drawer-title").boundingBox();
+    const height = (await drawer.boundingBox())?.height ?? 0;
+    const [x, y] = [(title?.x ?? 0) + 10, (title?.y ?? 0) + 5];
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    for (let step = 1; step <= 5; step++) await page.mouse.move(x, y + (height * step) / 10);
+    await page.mouse.up();
+    await expect(drawer).toBeHidden();
+  },
 });

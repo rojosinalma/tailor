@@ -52,6 +52,36 @@ export default behaviour("toast", {
     await toast.getByRole("button", { name: "Undo" }).click();
     await expect(toast).toBeHidden();
   },
+  "a toast from inside an open dialog shows above it and closes": async ({ page, example, expect }) => {
+    await example("default").getByRole("button", { name: "Edit host" }).click();
+    const dialog = page.getByRole("dialog", { name: "Edit host" });
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: "Apply" }).click();
+    const toast = page.locator(".t-toast", { hasText: "The changes to web-1 are applied." });
+    await expect(toast).toBeVisible();
+    const box = await toast.boundingBox();
+    const x = (box?.x ?? 0) + (box?.width ?? 0) / 2;
+    const y = (box?.y ?? 0) + (box?.height ?? 0) / 2;
+    expect(
+      await page.evaluate(({ px, py }) => document.elementFromPoint(px, py)?.closest(".t-toast") !== null, {
+        px: x,
+        py: y,
+      }),
+    ).toBe(true);
+    await toast.locator(".t-toast-close").click();
+    await expect(toast).toBeHidden();
+    await expect(dialog).toBeVisible();
+  },
+  "a toast waits while the window is in the background": async ({ page, example, expect }) => {
+    await example("default").getByRole("button", { name: "Save" }).click();
+    const toast = page.locator(".t-toast", { hasText: "The settings of web-1 are saved." });
+    await expect(toast).toBeVisible();
+    await page.evaluate(() => window.dispatchEvent(new Event("blur")));
+    await page.waitForTimeout(5000);
+    await expect(toast).toBeVisible();
+    await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+    await expect(toast).toBeHidden({ timeout: 6000 });
+  },
   "on a phone the region takes the full width": async ({ page, example, expect }) => {
     await page.setViewportSize({ width: 390, height: 800 });
     await example("default").getByRole("button", { name: "Save" }).click();

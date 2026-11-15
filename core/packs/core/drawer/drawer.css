@@ -90,6 +90,28 @@ dialog.t-drawer[data-side="bottom"]:not([open]),
   opacity: 0;
 }
 
+/* The grab handle of a bottom drawer, on touch screens. A downward swipe on it or on the header closes the sheet. */
+.t-drawer-handle {
+  display: none;
+}
+
+.t-drawer[data-swiping] {
+  transition: none;
+}
+
+@media (pointer: coarse) {
+  .t-drawer-handle {
+    display: block;
+    flex: none;
+    width: var(--t-space-7);
+    height: var(--t-space-1);
+    margin: var(--t-space-2) auto 0;
+    border-radius: var(--t-radius-pill);
+    background: var(--t-border-control);
+    touch-action: none;
+  }
+}
+
 .t-drawer-header {
   display: flex;
   flex: none;
@@ -97,6 +119,7 @@ dialog.t-drawer[data-side="bottom"]:not([open]),
   gap: var(--t-space-3);
   padding: var(--t-space-3) var(--t-space-4);
   border-bottom: var(--t-border-w) solid var(--t-border);
+  touch-action: none;
 }
 
 .t-drawer-title {

@@ -7,18 +7,18 @@
   width: 1.25em;
   height: 1.25em;
   border-radius: var(--t-radius-pill);
-  color: var(--t-tone);
+  color: var(--t-tone-text);
   vertical-align: -0.25em;
 }
 
 .t-help:active,
 .t-help[data-popup-open] {
-  background: color-mix(in srgb, var(--t-tone) 20%, transparent);
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint), transparent);
 }
 
 @media (hover: hover) {
   .t-help:hover {
-    background: color-mix(in srgb, var(--t-tone) 12%, transparent);
+    background: color-mix(in srgb, var(--t-tone) var(--t-tint-weak), transparent);
   }
 }
 
@@ -28,8 +28,8 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    width: var(--t-touch);
-    height: var(--t-touch);
+    width: calc(var(--t-touch) + var(--t-space-1));
+    height: calc(var(--t-touch) + var(--t-space-1));
     translate: -50% -50%;
   }
 }

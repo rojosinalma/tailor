@@ -2,6 +2,7 @@ import { defineExamples } from "../../examples";
 import { useIsStatic } from "../../kit";
 import { Button } from "../button/button";
 import { Cluster } from "../cluster/cluster";
+import { Dialog } from "../dialog/dialog";
 import { ToastRegion, type ToastTone, useToast } from "./toast";
 
 /** A button that shows a toast. The HTML kit uses the declarative hook. */
@@ -39,7 +40,7 @@ export default defineExamples("toast", [
   {
     id: "default",
     title: "Outcomes",
-    note: 'A danger toast stays until it is closed. Hover a toast to keep it. In the HTML kit a click on Undo fires a "t-toast-action" event on its trigger.',
+    note: 'A danger toast stays until it is closed. Hover a toast to keep it. In the HTML kit a click on Undo fires a "t-toast-action" event on its trigger. A toast from inside a dialog shows above it.',
     render: () => (
       <Cluster>
         <ToastRegion />
@@ -48,6 +49,9 @@ export default defineExamples("toast", [
         <Show tone="warning" label="Check disk" message="The disk of nas is 91% full." />
         <Show tone="danger" label="Deploy" title="The deploy failed" message="web-1 did not answer." />
         <Show tone="info" label="Archive web-1" message="web-1 is in the archive." action="Undo" />
+        <Dialog trigger={<Button>Edit host</Button>} title="Edit host">
+          <Show tone="success" label="Apply" message="The changes to web-1 are applied." />
+        </Dialog>
       </Cluster>
     ),
   },

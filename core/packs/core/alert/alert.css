@@ -1,4 +1,4 @@
-/* The tint stays weak: a stronger one drops the text below 4.5:1 in the palettes with the softest text. */
+/* Normal text over the tone: only the weak tint keeps it readable. */
 .t-alert {
   display: flex;
   align-items: flex-start;
@@ -7,7 +7,7 @@
   padding: var(--t-space-3) var(--t-space-4);
   border: var(--t-border-w) solid color-mix(in srgb, var(--t-tone) 45%, var(--t-border));
   border-radius: var(--t-radius-box);
-  background: color-mix(in srgb, var(--t-tone) 6%, var(--t-canvas));
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint-weak), var(--t-canvas));
   color: var(--t-text);
 }
 
@@ -16,7 +16,7 @@
   flex: none;
   align-items: center;
   height: calc(var(--t-leading) * 1em);
-  color: var(--t-tone);
+  color: var(--t-tone-text);
 }
 
 .t-alert-content {

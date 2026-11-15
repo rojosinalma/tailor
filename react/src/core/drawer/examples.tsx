@@ -53,9 +53,11 @@ export default defineExamples("drawer", [
     render: () => (
       <Drawer trigger={<Button>Deploy log</Button>} title="Deploy log of web-1" size="md">
         <Stack>
-          {Array.from({ length: 30 }, (_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: a fixed demo list
-            <p key={i}>Step {i + 1}: pulled the image example.com/web:2.4.1 and checked its signature.</p>
+          {Array.from(
+            { length: 30 },
+            (_, i) => `Step ${i + 1}: pulled the image example.com/web:2.4.1 and checked its signature.`,
+          ).map((line) => (
+            <p key={line}>{line}</p>
           ))}
         </Stack>
       </Drawer>

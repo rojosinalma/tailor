@@ -24,7 +24,7 @@ export default defineExamples("alert", [
       <Stack>
         {TONES.map((tone) => (
           <Alert key={tone} tone={tone}>
-            Tone {tone}: a message about the host web-1.
+            {`Tone ${tone}: a message about the host web-1.`}
           </Alert>
         ))}
       </Stack>

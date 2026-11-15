@@ -1,5 +1,5 @@
 import { defineExamples } from "../../examples";
-import { Stack } from "../stack/stack";
+import { Cluster } from "../cluster/cluster";
 import { Help } from "./help";
 
 export default defineExamples("help", [
@@ -19,7 +19,7 @@ export default defineExamples("help", [
     id: "tones",
     title: "Tones",
     render: () => (
-      <Stack>
+      <Cluster gap="5">
         <p>
           Retention <Help tone="accent">How long nas keeps a backup.</Help>
         </p>
@@ -32,7 +32,7 @@ export default defineExamples("help", [
             A backup older than 7 days is gone for good.
           </Help>
         </p>
-      </Stack>
+      </Cluster>
     ),
   },
 ]);

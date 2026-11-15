@@ -10,6 +10,8 @@ export default defineComponent({
   root: "t-drawer",
   parts: {
     "t-drawer-backdrop": "the dimmed layer behind the drawer",
+    "t-drawer-handle":
+      "the grab bar of a bottom drawer, on touch screens; a downward swipe on it or the header closes",
     "t-drawer-header": "title row with the close button",
     "t-drawer-title": "the title",
     "t-drawer-close": "the close button",

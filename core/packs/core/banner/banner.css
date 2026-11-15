@@ -1,4 +1,4 @@
-/* Same weak tint as the alert, for the same reason: the text keeps 4.5:1 in every palette. */
+/* Normal text over the tone: only the weak tint keeps it readable. */
 .t-banner {
   container-type: inline-size;
   display: flex;
@@ -8,14 +8,14 @@
   width: 100%;
   padding: var(--t-space-2) var(--t-space-4);
   border-bottom: var(--t-border-w) solid color-mix(in srgb, var(--t-tone) 45%, var(--t-border));
-  background: color-mix(in srgb, var(--t-tone) 6%, var(--t-canvas));
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint-weak), var(--t-canvas));
   color: var(--t-text);
 }
 
 .t-banner-icon {
   display: inline-flex;
   flex: none;
-  color: var(--t-tone);
+  color: var(--t-tone-text);
 }
 
 .t-banner-text {
