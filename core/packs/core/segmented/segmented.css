@@ -1,0 +1,93 @@
+.t-segmented {
+  --t-segmented-inner: calc(var(--t-space-05) + var(--t-border-w));
+  display: inline-flex;
+  gap: var(--t-space-05);
+  max-width: 100%;
+  min-width: 0;
+  padding: var(--t-space-05);
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-control);
+  background: var(--t-inset);
+  vertical-align: middle;
+}
+
+.t-segmented-option {
+  position: relative;
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: var(--t-space-1);
+  min-width: 0;
+  min-height: calc(var(--t-control-h-md) - var(--t-segmented-inner) * 2);
+  padding: 0 var(--t-space-3);
+  border: var(--t-border-w) solid transparent;
+  border-radius: calc(var(--t-radius-control) - var(--t-space-05));
+  color: var(--t-muted);
+  font-size: var(--t-text-base);
+  font-weight: var(--t-label-weight);
+  line-height: var(--t-leading-tight);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--t-motion-fast) var(--t-ease),
+    color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-segmented[data-size="sm"] > .t-segmented-option {
+  min-height: calc(var(--t-control-h-sm) - var(--t-segmented-inner) * 2);
+  padding: 0 var(--t-space-2);
+  font-size: var(--t-text-sm);
+}
+
+.t-segmented[data-size="lg"] > .t-segmented-option {
+  min-height: calc(var(--t-control-h-lg) - var(--t-segmented-inner) * 2);
+  padding: 0 var(--t-space-4);
+  font-size: var(--t-text-lg);
+}
+
+.t-segmented-option:is([data-checked], :has(:checked)) {
+  border-color: var(--t-border);
+  background: var(--t-surface);
+  color: var(--t-text);
+  box-shadow: var(--t-shadow-sm);
+}
+
+.t-segmented-option:has(:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: var(--t-focus-offset);
+}
+
+.t-segmented-option:is([data-disabled], :has(:disabled)) {
+  color: var(--t-disabled);
+  cursor: not-allowed;
+}
+
+.t-segmented-input {
+  position: absolute;
+  width: var(--t-hairline);
+  height: var(--t-hairline);
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  opacity: 0;
+}
+
+.t-segmented-icon {
+  display: inline-flex;
+  flex: none;
+}
+
+.t-segmented-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (hover: hover) {
+  .t-segmented-option:hover:not([data-checked], [data-disabled], :has(:checked, :disabled)) {
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+}

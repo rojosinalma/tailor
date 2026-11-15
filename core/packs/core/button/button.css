@@ -92,7 +92,7 @@
 }
 
 .t-btn:disabled,
-.t-btn[aria-disabled="true"] {
+.t-btn[aria-disabled="true"]:not([aria-busy="true"]) {
   border-color: var(--t-border);
   background: var(--t-inset);
   color: var(--t-disabled);
@@ -104,6 +104,32 @@
 .t-btn[data-variant="link"]:disabled {
   background: none;
   border-color: transparent;
+}
+
+a.t-btn {
+  text-decoration: none;
+}
+
+/* A loading button keeps its look; only the pointer and the spinner tell. */
+.t-btn[aria-busy="true"] {
+  cursor: progress;
+}
+
+.t-btn-spinner {
+  flex: none;
+  width: var(--t-icon);
+  height: var(--t-icon);
+  border: var(--t-border-w-strong) solid currentColor;
+  border-inline-end-color: transparent;
+  border-radius: 50%;
+  /* lint-allow: one full turn needs its own pace; the motion tokens are for transitions and drop to 0 for reduced motion */
+  animation: t-btn-spin 0.8s var(--t-ease) infinite;
+}
+
+@keyframes t-btn-spin {
+  to {
+    rotate: 1turn;
+  }
 }
 
 @media (hover: hover) {

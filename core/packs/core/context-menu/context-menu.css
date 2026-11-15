@@ -1,0 +1,11 @@
+.t-context-menu {
+  min-width: 0;
+}
+
+/* A long press opens the menu, so the phone's own text callout stays away. */
+@media (pointer: coarse) {
+  .t-context-menu {
+    -webkit-touch-callout: none;
+    user-select: none;
+  }
+}

@@ -1,0 +1,50 @@
+.t-btn-group {
+  display: inline-flex;
+  max-width: 100%;
+  min-width: 0;
+  vertical-align: middle;
+}
+
+.t-btn-group > .t-btn {
+  flex: 0 1 auto;
+  min-width: 0;
+  border-radius: 0;
+}
+
+.t-btn-group > .t-btn + .t-btn {
+  margin-inline-start: calc(var(--t-border-w) * -1);
+}
+
+.t-btn-group > .t-btn:first-child {
+  border-start-start-radius: var(--t-radius-control);
+  border-end-start-radius: var(--t-radius-control);
+}
+
+.t-btn-group > .t-btn:last-child {
+  border-start-end-radius: var(--t-radius-control);
+  border-end-end-radius: var(--t-radius-control);
+}
+
+/* The hovered or focused button draws its whole border over its neighbours. */
+.t-btn-group > .t-btn:focus-visible,
+.t-btn-group > .t-btn:hover {
+  position: relative;
+}
+
+.t-btn-group > .t-btn[data-icon-only] {
+  flex: none;
+}
+
+/* Text-only buttons are blocks so that their text can truncate; align-content keeps it centred. */
+.t-btn-group > .t-btn:not(:has(> .t-icon, > .t-btn-spinner)) {
+  display: block;
+  align-content: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.t-btn-group .t-btn-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
