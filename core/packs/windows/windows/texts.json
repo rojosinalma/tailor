@@ -1,0 +1,8 @@
+{
+  "windowMinimize": "Minimise",
+  "windowMaximize": "Maximise",
+  "windowRestore": "Restore",
+  "windowMove": "Move and resize",
+  "windowKeys": "Arrow keys move the window, Alt+arrow keys resize it, Shift takes a larger step, Enter maximises or restores it.",
+  "windowsTray": "Minimised windows"
+}

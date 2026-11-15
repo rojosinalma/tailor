@@ -1,0 +1,7 @@
+{
+  "dash": "dash-lg",
+  "close": "x-lg",
+  "windowMaximize": "fullscreen",
+  "windowRestore": "fullscreen-exit",
+  "windowDefault": "window"
+}

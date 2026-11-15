@@ -1,0 +1,291 @@
+/* The script sets --t-window-x, -y, -w, -h and -z on each window, in pixels from the top left corner. */
+.t-windows {
+  --t-windows-tray-h: calc(
+    var(--t-control-h-sm) +
+    var(--t-space-2) *
+    2 +
+    var(--t-space-05) *
+    2 +
+    var(--t-border-w) *
+    3
+  );
+  position: fixed;
+  inset: 0;
+  z-index: var(--t-z-overlay);
+  overflow: clip;
+  pointer-events: none;
+}
+
+.t-window {
+  --t-window-x: 0;
+  --t-window-y: 0;
+  --t-window-z: 1;
+  --t-window-w: min(var(--t-measure-md), 100%);
+  --t-window-h: min(var(--t-measure-sm), 100%);
+  --t-window-min-w: var(--t-measure-xs);
+  --t-window-min-h: var(--t-measure-2xs);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: var(--t-window-z);
+  display: flex;
+  flex-direction: column;
+  width: var(--t-window-w);
+  height: var(--t-window-h);
+  min-width: var(--t-window-min-w);
+  min-height: var(--t-window-min-h);
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-popup);
+  background: var(--t-surface);
+  color: var(--t-text);
+  box-shadow: var(--t-shadow-md);
+  translate: var(--t-window-x) var(--t-window-y);
+  pointer-events: auto;
+  transition:
+    opacity var(--t-motion-fast) var(--t-ease),
+    scale var(--t-motion-fast) var(--t-ease);
+}
+
+@starting-style {
+  .t-window {
+    opacity: 0;
+    scale: 0.98;
+  }
+}
+
+/* A minimised window keeps its layout, so its scroll positions and frames stay as they are. */
+.t-window[data-minimized] {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.t-window[data-maximized] {
+  top: var(--t-safe-top);
+  left: var(--t-safe-left);
+  width: calc(100% - var(--t-safe-left) - var(--t-safe-right));
+  height: calc(100% - var(--t-safe-top) - var(--t-safe-bottom));
+  min-width: 0;
+  min-height: 0;
+  translate: none;
+}
+
+/* The focused window: a stronger shadow and an accent line along the top of the bar. */
+.t-window[data-focused] {
+  box-shadow: var(--t-shadow-lg);
+}
+
+.t-window-bar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-width: 0;
+  padding: var(--t-space-1) var(--t-space-1) var(--t-space-1) var(--t-space-3);
+  border-bottom: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-popup) var(--t-radius-popup) 0 0;
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+}
+
+.t-window[data-focused] .t-window-bar {
+  box-shadow: inset 0 var(--t-border-w-strong) 0 var(--t-accent);
+}
+
+.t-window[data-dragging] .t-window-bar {
+  cursor: grabbing;
+}
+
+.t-window[data-maximized] .t-window-bar {
+  cursor: default;
+}
+
+.t-window-bar:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+.t-window-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--t-muted);
+}
+
+.t-window-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--t-text-base);
+  font-weight: var(--t-heading-weight);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-window-actions {
+  display: flex;
+  flex: none;
+  gap: var(--t-space-05);
+}
+
+.t-window-body {
+  flex: 1;
+  min-height: 0;
+  padding: var(--t-space-4);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.t-window-body:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+/* The handles sit behind the content: only their part outside the window takes the pointer. */
+.t-window-handle {
+  --t-window-grip: var(--t-space-3);
+  position: absolute;
+  z-index: -1;
+  touch-action: none;
+}
+
+.t-window-handle[data-handle="n"],
+.t-window-handle[data-handle="s"] {
+  right: 0;
+  left: 0;
+  height: var(--t-window-grip);
+  cursor: ns-resize;
+}
+
+.t-window-handle[data-handle="e"],
+.t-window-handle[data-handle="w"] {
+  top: 0;
+  bottom: 0;
+  width: var(--t-window-grip);
+  cursor: ew-resize;
+}
+
+.t-window-handle[data-handle^="n"] {
+  top: calc(var(--t-window-grip) / -2);
+}
+
+.t-window-handle[data-handle^="s"] {
+  bottom: calc(var(--t-window-grip) / -2);
+}
+
+.t-window-handle[data-handle$="e"] {
+  right: calc(var(--t-window-grip) / -2);
+}
+
+.t-window-handle[data-handle$="w"] {
+  left: calc(var(--t-window-grip) / -2);
+}
+
+.t-window-handle[data-handle="ne"],
+.t-window-handle[data-handle="nw"],
+.t-window-handle[data-handle="se"],
+.t-window-handle[data-handle="sw"] {
+  width: calc(var(--t-window-grip) * 1.5);
+  height: calc(var(--t-window-grip) * 1.5);
+}
+
+.t-window-handle[data-handle="ne"],
+.t-window-handle[data-handle="sw"] {
+  cursor: nesw-resize;
+}
+
+.t-window-handle[data-handle="nw"],
+.t-window-handle[data-handle="se"] {
+  cursor: nwse-resize;
+}
+
+.t-window[data-maximized] .t-window-handle {
+  display: none;
+}
+
+.t-windows-tray {
+  position: absolute;
+  right: calc(var(--t-space-4) + var(--t-safe-right));
+  bottom: calc(var(--t-space-4) + var(--t-safe-bottom));
+  z-index: var(--t-window-z);
+  display: flex;
+  flex-wrap: wrap-reverse;
+  justify-content: flex-end;
+  gap: var(--t-space-2);
+  max-width: calc(100% - var(--t-space-4) * 2);
+}
+
+.t-windows-bubble {
+  display: flex;
+  align-items: center;
+  max-width: var(--t-measure-xs);
+  padding: var(--t-space-05);
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-popup);
+  background: var(--t-surface);
+  box-shadow: var(--t-shadow-md);
+  pointer-events: auto;
+}
+
+.t-windows-bubble > .t-btn:first-child {
+  flex: 1;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.t-windows-bubble .t-btn-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (pointer: coarse) {
+  .t-window-handle {
+    --t-window-grip: var(--t-touch);
+  }
+}
+
+/* A phone shows each window as a full-screen sheet, with the tray as a row above the safe area. */
+@media (max-width: 40rem) {
+  .t-window,
+  .t-window[data-maximized] {
+    inset: 0;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    padding: var(--t-safe-top) var(--t-safe-right) var(--t-safe-bottom) var(--t-safe-left);
+    border: 0;
+    border-radius: 0;
+    translate: none;
+  }
+
+  .t-windows[data-tray] .t-window {
+    bottom: calc(var(--t-windows-tray-h) + var(--t-safe-bottom));
+    padding-bottom: 0;
+  }
+
+  .t-window-bar {
+    border-radius: 0;
+    cursor: default;
+  }
+
+  .t-window-handle,
+  .t-window-actions > [data-window-action="maximize"] {
+    display: none;
+  }
+
+  .t-windows-tray {
+    right: 0;
+    bottom: 0;
+    left: 0;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    max-width: none;
+    padding: var(--t-space-2) var(--t-space-2) calc(var(--t-space-2) + var(--t-safe-bottom));
+    overflow-x: auto;
+    border-top: var(--t-border-w) solid var(--t-border);
+    background: var(--t-surface);
+  }
+
+  .t-windows-bubble {
+    flex: none;
+    box-shadow: none;
+  }
+}
