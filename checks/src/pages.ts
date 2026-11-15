@@ -169,12 +169,19 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
     for (let j = i + 1; j < controls.length; j++) {
       const b = controls[j];
       if (!b || a.el.contains(b.el) || b.el.contains(a.el)) continue;
-      const w = Math.min(a.rect.right, b.rect.right) - Math.max(a.rect.left, b.rect.left);
-      const h = Math.min(a.rect.bottom, b.rect.bottom) - Math.max(a.rect.top, b.rect.top);
-      if (w > 4 && h > 4)
+      // A link that wraps has one box per line, so the boxes are compared line by line.
+      let worst: [number, number] | null = null;
+      for (const ra of a.el.getClientRects()) {
+        for (const rb of b.el.getClientRects()) {
+          const w = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
+          const h = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
+          if (w > 4 && h > 4 && (!worst || w * h > worst[0] * worst[1])) worst = [w, h];
+        }
+      }
+      if (worst)
         problems.push({
           rule: "overlap",
-          message: `${name(a.el)} and ${name(b.el)} overlap by ${Math.round(w)}×${Math.round(h)}px`,
+          message: `${name(a.el)} and ${name(b.el)} overlap by ${Math.round(worst[0])}×${Math.round(worst[1])}px`,
         });
     }
   }

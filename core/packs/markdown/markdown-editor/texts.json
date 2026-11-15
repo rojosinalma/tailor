@@ -1,0 +1,16 @@
+{
+  "mdWrite": "Write",
+  "mdPreview": "Preview",
+  "mdNothingToPreview": "Nothing to preview",
+  "mdFormatting": "Formatting",
+  "mdBold": "Bold",
+  "mdItalic": "Italic",
+  "mdLink": "Link",
+  "mdCode": "Code",
+  "mdBulletedList": "Bulleted list",
+  "mdNumberedList": "Numbered list",
+  "mdQuote": "Quote",
+  "mdHeading": "Heading",
+  "mdText": "text",
+  "mdUrl": "https://"
+}

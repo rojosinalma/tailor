@@ -1,0 +1,53 @@
+.t-md-editor {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.t-md-editor-write {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.t-md-editor-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--t-space-1);
+}
+
+.t-md-editor .t-textarea {
+  display: block;
+  width: 100%;
+  padding: var(--t-space-2) var(--t-control-px);
+  font-family: var(--t-font-mono);
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading);
+  resize: vertical;
+}
+
+.t-md-editor-preview {
+  min-width: 0;
+  min-height: 100%;
+  padding: var(--t-space-3) var(--t-space-4);
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  overflow-wrap: anywhere;
+}
+
+.t-md-editor-empty {
+  color: var(--t-muted);
+}
+
+.t-md-editor-split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--t-space-4);
+}
+
+/* The preview starts level with the text area, under the toolbar. */
+.t-md-editor-split > .t-md-editor-preview {
+  margin-block-start: calc(var(--t-control-h-sm) + var(--t-space-2));
+  min-height: 0;
+}

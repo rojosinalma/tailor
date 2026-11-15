@@ -1,0 +1,10 @@
+{
+  "formatBold": "type-bold",
+  "formatItalic": "type-italic",
+  "formatLink": "link-45deg",
+  "formatCode": "code",
+  "listBullet": "list-ul",
+  "listNumber": "list-ol",
+  "formatQuote": "quote",
+  "formatHeading": "type-h2"
+}
