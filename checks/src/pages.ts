@@ -109,15 +109,18 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
     }
     return true;
   };
+  const doc = document.documentElement;
   const allowsScrollX = (el: Element): boolean => {
     for (let node: Element | null = el; node; node = node.parentElement) {
       const overflow = getComputedStyle(node).overflowX;
       if (overflow === "auto" || overflow === "scroll") return true;
+      // Content that an ancestor clips shows no further than that ancestor.
+      const clips = node !== el && (overflow === "hidden" || overflow === "clip");
+      if (clips && node.getBoundingClientRect().right <= doc.clientWidth + 1) return true;
     }
     return false;
   };
 
-  const doc = document.documentElement;
   if (doc.scrollWidth > doc.clientWidth + 1) {
     problems.push({
       rule: "sideways-scroll",
