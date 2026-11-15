@@ -1,0 +1,4 @@
+/* A bar chart's swatch is a small bar. */
+.t-chart[data-kind="bar"] .t-chart-swatch {
+  border-radius: var(--t-radius-check);
+}

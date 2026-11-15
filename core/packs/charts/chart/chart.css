@@ -1,0 +1,100 @@
+/* The parts that every chart of the pack shares. The drawing itself takes its colours from ./dom.ts. */
+.t-chart {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.t-chart-frame {
+  position: relative;
+  min-width: 0;
+  height: var(--t-measure-xs);
+}
+
+.t-chart[data-size="sm"] .t-chart-frame {
+  height: var(--t-measure-2xs);
+}
+
+.t-chart[data-size="lg"] .t-chart-frame {
+  height: var(--t-measure-sm);
+}
+
+.t-chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--t-space-1);
+  min-width: 0;
+}
+
+.t-chart-legend-item {
+  max-width: 100%;
+  white-space: normal;
+  text-align: start;
+}
+
+.t-chart-legend-item[aria-pressed="false"] {
+  color: var(--t-muted);
+  text-decoration: line-through;
+}
+
+.t-chart-swatch {
+  --t-chart-color: currentColor;
+  flex: none;
+  width: 0.75em;
+  height: 0.75em;
+  border-radius: var(--t-radius-pill);
+  background: var(--t-chart-color);
+}
+
+.t-chart-legend-item[aria-pressed="false"] .t-chart-swatch {
+  opacity: 0.35;
+}
+
+/* Not a popup: it follows the pointer inside the frame and never becomes a bottom sheet. */
+.t-chart-tooltip {
+  position: absolute;
+  z-index: var(--t-z-popup);
+  display: grid;
+  gap: var(--t-space-1);
+  width: max-content;
+  max-width: min(var(--t-measure-xs), 100%);
+  padding: var(--t-space-2);
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-popup);
+  background: var(--t-surface);
+  color: var(--t-text);
+  box-shadow: var(--t-shadow-md);
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading-tight);
+  pointer-events: none;
+}
+
+.t-chart-tooltip-title {
+  font-weight: var(--t-weight-medium);
+}
+
+.t-chart-tooltip-rows {
+  display: grid;
+  gap: var(--t-space-1);
+}
+
+.t-chart-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-2);
+}
+
+.t-chart-tooltip-label {
+  flex: 1;
+  min-width: 0;
+  color: var(--t-muted);
+}
+
+.t-chart-tooltip-value {
+  font-weight: var(--t-weight-medium);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

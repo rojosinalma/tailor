@@ -1,0 +1,5 @@
+/* A line chart's swatch is a short line. */
+.t-chart[data-kind="line"] .t-chart-swatch {
+  width: 1em;
+  height: calc(var(--t-border-w-strong) * 2);
+}

@@ -1,0 +1,55 @@
+/* The legend sits beside the ring; in a narrow box it goes under it. */
+.t-chart[data-kind="donut"] {
+  flex-flow: row wrap;
+  align-items: center;
+  gap: var(--t-space-2) var(--t-space-5);
+}
+
+.t-chart[data-kind="donut"] > .t-chart-frame {
+  flex: none;
+  aspect-ratio: 1;
+}
+
+.t-chart[data-kind="donut"] > .t-chart-legend {
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+@container (max-width: 40rem) {
+  .t-chart[data-kind="donut"] > .t-chart-frame {
+    flex: 1 1 100%;
+    aspect-ratio: auto;
+  }
+
+  .t-chart[data-kind="donut"] > .t-chart-legend {
+    flex: 1 1 100%;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+.t-chart-center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  text-align: center;
+  line-height: var(--t-leading-tight);
+  pointer-events: none;
+}
+
+.t-chart-center-value {
+  font-size: var(--t-text-xl);
+  font-weight: var(--t-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-chart[data-size="sm"] .t-chart-center-value {
+  font-size: var(--t-text-base);
+}
+
+.t-chart-center-label {
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
