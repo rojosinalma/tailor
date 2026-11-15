@@ -1,0 +1,33 @@
+.t-toolbar {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-2) var(--t-space-3);
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.t-toolbar-start,
+.t-toolbar-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.t-toolbar-start {
+  flex: 1 1 auto;
+}
+
+.t-toolbar-end {
+  justify-content: flex-end;
+}
+
+@container (max-width: 40rem) {
+  .t-toolbar-end {
+    flex-basis: 100%;
+    justify-content: flex-start;
+  }
+}

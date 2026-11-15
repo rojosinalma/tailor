@@ -1,0 +1,109 @@
+/* The script sets --t-split-size on the root: the size of the first pane, in percent. */
+.t-split {
+  --t-split-size: 50%;
+  display: grid;
+  flex: 1;
+  grid-template-columns: var(--t-split-size) auto minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  /* A stacked row split: pane, gap, pane. */
+  grid-auto-rows: auto minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  container-type: inline-size;
+}
+
+.t-split[data-direction="column"] {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: var(--t-split-size) auto minmax(0, 1fr);
+}
+
+.t-split-pane {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+/* The handle takes a small gap; its line is thin, its hit area is wider. */
+.t-split-handle {
+  position: relative;
+  width: var(--t-space-3);
+  touch-action: none;
+  cursor: col-resize;
+  user-select: none;
+}
+
+.t-split[data-direction="column"] > .t-split-handle {
+  width: auto;
+  height: var(--t-space-3);
+  cursor: row-resize;
+}
+
+.t-split-handle::before,
+.t-split-handle::after {
+  position: absolute;
+  content: "";
+}
+
+.t-split-handle::before {
+  inset: 0 calc(50% - var(--t-hairline));
+  border-radius: var(--t-radius-pill);
+  background: var(--t-border);
+  transition: background-color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-split[data-direction="column"] > .t-split-handle::before {
+  inset: calc(50% - var(--t-hairline)) 0;
+}
+
+.t-split-handle::after {
+  inset: 0 calc(var(--t-space-1) * -1);
+  z-index: 1;
+}
+
+.t-split[data-direction="column"] > .t-split-handle::after {
+  inset: calc(var(--t-space-1) * -1) 0;
+}
+
+.t-split-handle:focus-visible {
+  outline-offset: 0;
+}
+
+.t-split-handle:focus-visible::before,
+.t-split-handle[data-dragging]::before {
+  background: var(--t-accent);
+}
+
+@media (hover: hover) {
+  .t-split-handle:hover::before {
+    background: var(--t-accent);
+  }
+}
+
+@media (pointer: coarse) {
+  .t-split-handle::after {
+    inset: 0 calc((var(--t-touch) - var(--t-space-3)) / -2);
+  }
+
+  .t-split[data-direction="column"] > .t-split-handle::after {
+    inset: calc((var(--t-touch) - var(--t-space-3)) / -2) 0;
+  }
+}
+
+/* A narrow row split stacks its panes, first above second, and hides the handle. */
+@container (max-width: 40rem) {
+  .t-split:not([data-direction="column"]) > .t-split-pane,
+  .t-split:not([data-direction="column"]) > .t-split-handle {
+    grid-column: 1 / -1;
+  }
+
+  .t-split:not([data-direction="column"]) > .t-split-handle {
+    width: auto;
+    height: var(--t-space-3);
+    visibility: hidden;
+  }
+}

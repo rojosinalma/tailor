@@ -1,0 +1,43 @@
+.t-grid {
+  --t-grid-min: var(--t-measure-xs);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--t-grid-min)), 1fr));
+  gap: var(--t-space-4);
+  min-width: 0;
+}
+
+.t-grid[data-min="2xs"] {
+  --t-grid-min: var(--t-measure-2xs);
+}
+
+.t-grid[data-min="sm"] {
+  --t-grid-min: var(--t-measure-sm);
+}
+
+.t-grid[data-min="md"] {
+  --t-grid-min: var(--t-measure-md);
+}
+
+.t-grid[data-gap="0"] {
+  gap: 0;
+}
+
+.t-grid[data-gap="1"] {
+  gap: var(--t-space-1);
+}
+
+.t-grid[data-gap="2"] {
+  gap: var(--t-space-2);
+}
+
+.t-grid[data-gap="3"] {
+  gap: var(--t-space-3);
+}
+
+.t-grid[data-gap="5"] {
+  gap: var(--t-space-5);
+}
+
+.t-grid[data-gap="6"] {
+  gap: var(--t-space-6);
+}

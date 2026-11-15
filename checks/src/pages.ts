@@ -20,6 +20,8 @@ const HEIGHT = 900;
 /** The pages show this moment, so a date or "2 hours ago" never changes an image. */
 const FIXED_NOW = new Date("2026-11-15T12:00:00Z");
 const TOUCH = 44;
+/** The accessibility target: WCAG 2.2 level AA. */
+const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
 export interface PagesOptions {
   readonly siteUrl: string;
@@ -328,7 +330,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
             }
           }
           if (options.axe && !touch) {
-            const { violations } = await new AxeBuilder({ page }).analyze();
+            const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
             for (const violation of violations) {
               const where = violation.nodes
                 .slice(0, 3)

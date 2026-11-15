@@ -1,0 +1,52 @@
+.t-list-detail {
+  display: grid;
+  flex: 1;
+  grid-template-columns: var(--t-measure-sm) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr);
+  gap: var(--t-space-4);
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  container-type: inline-size;
+}
+
+.t-list-detail-list,
+.t-list-detail-detail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-3);
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.t-list-detail-detail > .t-list-detail-back {
+  display: none;
+}
+
+/* The region scrolls, so a ring outside the button would be cut off. */
+.t-list-detail-back:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+/* Narrow: one view at a time, the list or the open detail with a back button. */
+@container (max-width: 40rem) {
+  .t-list-detail-list,
+  .t-list-detail-detail {
+    grid-row: 1;
+    grid-column: 1 / -1;
+  }
+
+  .t-list-detail:not([data-detail-open]) > .t-list-detail-detail,
+  .t-list-detail[data-detail-open] > .t-list-detail-list {
+    display: none;
+  }
+
+  .t-list-detail-detail > .t-list-detail-back {
+    display: inline-flex;
+    flex: none;
+    align-self: flex-start;
+  }
+}
