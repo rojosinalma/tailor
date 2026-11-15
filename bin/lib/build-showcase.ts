@@ -55,7 +55,7 @@ function page(options: {
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>${title}</title>
-<script>${prepaintScript(theme)}</script>
+<script>${prepaintScript(theme)}window.TAILOR_THEME=${JSON.stringify(theme).replaceAll("<", "\\u003c")};</script>
 <link rel="stylesheet" href="${rel}assets/all.css">
 <link rel="stylesheet" href="${rel}assets/showcase.css">
 </head>
@@ -150,7 +150,11 @@ export async function buildShowcase(
       createElement(
         StaticKit,
         null,
-        createElement(IconSprite, { href: "../tailor/icons.svg" }, createElement(EntrySections, { set })),
+        createElement(
+          IconSprite,
+          { href: "../tailor/icons.svg" },
+          createElement(EntrySections, { set, title: spec.name }),
+        ),
       ),
     );
     await out(

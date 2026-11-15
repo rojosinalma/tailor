@@ -146,9 +146,9 @@ export function prepaintScript(config: ThemeConfig): string {
   });
   return (
     `(function(c){var q=new URLSearchParams(location.search),g=function(n){try{return localStorage.getItem(c.k+"."+n)}catch(e){return null}},` +
-    `f=function(n,a){var v=[q.get(n),g(n),c.d[n]];for(var i=0;i<v.length;i++)if(v[i]&&a.indexOf(v[i])>-1)return v[i];return a[0]},` +
+    `f=function(n,a){var v=[q.get(n),g(n),c.d[n]];for(var i=0;i<v.length;i++)if(v[i]&&a.indexOf(v[i])>-1)return v[i];return a[0]||""},` +
     `s=f("skin",c.s),p=f("palette",c.p),m=f("mode",["dark","light"]);` +
-    `if(c.d.mode==="auto"&&!q.get("mode")&&!g("mode"))m=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";` +
+    `if(c.d.mode==="auto"&&[q.get("mode"),g("mode")].every(function(v){return v!=="dark"&&v!=="light"}))m=matchMedia("(prefers-color-scheme: light)").matches?"light":"dark";` +
     `var h=document.documentElement;h.dataset.skin=s;h.dataset.palette=p;h.dataset.mode=m;` +
     `if(c.b!==null)document.write('<link id="t-skin" rel="stylesheet" href="'+c.b+"skins/"+s+'.css"><link id="t-palette" rel="stylesheet" href="'+c.b+"palettes/"+p+'.css">')` +
     `})(${c});`

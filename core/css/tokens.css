@@ -12,6 +12,7 @@
     --t-surface: #282828;
     --t-selection: #3c3836;
     --t-border: #504945;
+    --t-border-control: #7c6f64;
     --t-overlay-bg: #0d0e0f;
     --t-text: #ebdbb2;
     --t-muted: #a89984;
@@ -19,11 +20,23 @@
     --t-accent: #fabd2f;
     --t-accent-solid: #fabd2f;
     --t-on-accent: #1d2021;
+    --t-focus: #fabd2f;
     --t-link: #83a598;
     --t-success: #b8bb26;
     --t-warning: #fe8019;
     --t-danger: #fb6d5c;
     --t-info: #83a598;
+
+    /* Guarded palette tokens: a tone as text that stays readable on every surface, and the text on a tone fill. */
+    --t-accent-text: var(--t-accent);
+    --t-success-text: var(--t-success);
+    --t-warning-text: var(--t-warning);
+    --t-danger-text: var(--t-danger);
+    --t-info-text: var(--t-info);
+    --t-on-success: var(--t-canvas);
+    --t-on-warning: var(--t-canvas);
+    --t-on-danger: var(--t-canvas);
+    --t-on-info: var(--t-canvas);
     --t-hue-red: var(--t-danger);
     --t-hue-orange: var(--t-warning);
     --t-hue-yellow: var(--t-accent);
@@ -67,7 +80,7 @@
     --t-border-w-strong: 2px;
     --t-focus-w: 2px;
     --t-focus-offset: 2px;
-    --t-focus-color: var(--t-accent);
+    --t-focus-color: var(--t-focus);
 
     /* Skin settings: depth. A shadow multiplies its opacity by the strength, which a light mode lowers. */
     --t-shadow-strength: 1;
@@ -151,8 +164,12 @@
     --t-hover: color-mix(in srgb, var(--t-text) 8%, transparent);
     --t-active: color-mix(in srgb, var(--t-text) 14%, transparent);
 
-    /* The tone of an element: one colour variable that every toned component reads. */
+    /*
+     * The tone of an element. A toned component reads these three and never names a tone itself:
+     * --t-tone for fills, lines and icons, --t-tone-text for text in the tone colour, --t-on-tone for text on a tone fill.
+     */
     --t-tone: var(--t-text);
+    --t-tone-text: var(--t-text);
     --t-on-tone: var(--t-canvas);
   }
 
@@ -178,26 +195,32 @@
 
   [data-tone="neutral"] {
     --t-tone: var(--t-muted);
+    --t-tone-text: var(--t-muted);
     --t-on-tone: var(--t-canvas);
   }
   [data-tone="accent"] {
-    --t-tone: var(--t-accent);
+    --t-tone: var(--t-accent-solid);
+    --t-tone-text: var(--t-accent-text);
     --t-on-tone: var(--t-on-accent);
   }
   [data-tone="success"] {
     --t-tone: var(--t-success);
-    --t-on-tone: var(--t-canvas);
+    --t-tone-text: var(--t-success-text);
+    --t-on-tone: var(--t-on-success);
   }
   [data-tone="warning"] {
     --t-tone: var(--t-warning);
-    --t-on-tone: var(--t-canvas);
+    --t-tone-text: var(--t-warning-text);
+    --t-on-tone: var(--t-on-warning);
   }
   [data-tone="danger"] {
     --t-tone: var(--t-danger);
-    --t-on-tone: var(--t-canvas);
+    --t-tone-text: var(--t-danger-text);
+    --t-on-tone: var(--t-on-danger);
   }
   [data-tone="info"] {
     --t-tone: var(--t-info);
-    --t-on-tone: var(--t-canvas);
+    --t-tone-text: var(--t-info-text);
+    --t-on-tone: var(--t-on-info);
   }
 }

@@ -9,6 +9,10 @@
   gap: var(--t-space-5);
 }
 
+.sc-entry-title {
+  font-size: var(--t-text-xl);
+}
+
 .sc-example {
   display: flex;
   flex-direction: column;
@@ -29,4 +33,14 @@
 
 .sc-example-body {
   min-width: 0;
+}
+
+/* A frame example gets a box with a height of its own: for pages, shells and parts that fill their parent. */
+.sc-example[data-display="frame"] .sc-example-body {
+  display: flex;
+  flex-direction: column;
+  height: var(--t-measure-md);
+  overflow: hidden;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
 }

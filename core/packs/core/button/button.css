@@ -39,13 +39,13 @@
 
 .t-btn[data-variant="danger"] {
   border-color: color-mix(in srgb, var(--t-danger) 55%, var(--t-border));
-  color: var(--t-danger);
+  color: var(--t-danger-text);
 }
 
 .t-btn[data-variant="danger"]:active:not(:disabled, [aria-disabled="true"]) {
   background: var(--t-danger);
   border-color: var(--t-danger);
-  color: var(--t-canvas);
+  color: var(--t-on-danger);
 }
 
 .t-btn[data-variant="ghost"] {
@@ -59,7 +59,6 @@
 }
 
 .t-btn[data-variant="link"] {
-  min-height: 0;
   padding: 0;
   background: none;
   border-color: transparent;

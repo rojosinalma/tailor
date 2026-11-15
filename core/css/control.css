@@ -7,7 +7,7 @@
     min-width: 0;
     min-height: var(--t-control-h-md);
     padding: 0 var(--t-control-px);
-    border: var(--t-border-w) solid var(--t-border);
+    border: var(--t-border-w) solid var(--t-border-control);
     border-radius: var(--t-radius-control);
     background: var(--t-inset);
     color: var(--t-text);
@@ -72,7 +72,7 @@
 
   @media (hover: hover) {
     .t-control:hover:not(:disabled, [data-disabled], [aria-disabled="true"], [data-popup-open], :focus) {
-      border-color: color-mix(in srgb, var(--t-border), var(--t-text) 30%);
+      border-color: color-mix(in srgb, var(--t-border-control), var(--t-text) 30%);
     }
   }
 
