@@ -27,9 +27,10 @@ export default defineComponent({
   group: "display",
   description:
     "A code block with syntax colours that follow the palette. Same header, copy button, scrolling and wrapping as the code block.",
+  /** The coloured <code> element inside a code block. */
   root: "t-highlight",
   parts: {
-    "t-code": "the block, from the code block; the root carries both classes",
+    "t-code": "the block around the root: a code block, with its header, copy button and scrolling",
     "t-highlight-line": "one line of code, when the block shows line numbers",
   },
   props: {

@@ -45,9 +45,21 @@ export default behaviour("json-view", {
     await expect(tree.getByRole("treeitem")).toHaveCount(2);
   },
   "the copy button copies the whole value as JSON": async ({ page, example, expect }) => {
-    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    // The system clipboard is shared by the tests that run at the same time: catch the copy in the page.
+    await page.evaluate(() => {
+      const holder = window as unknown as { copied?: string };
+      Object.defineProperty(navigator, "clipboard", {
+        value: {
+          writeText: async (text: string) => {
+            holder.copied = text;
+          },
+        },
+      });
+    });
     await example("response").getByRole("button", { name: "Copy" }).click();
-    const copied = JSON.parse(await page.evaluate(() => navigator.clipboard.readText())) as { total: number };
+    const copied = JSON.parse(
+      await page.evaluate(() => (window as unknown as { copied?: string }).copied ?? ""),
+    ) as { total: number };
     expect(copied.total).toBe(2);
   },
   "long strings wrap in a narrow page": async ({ page, example, expect }) => {

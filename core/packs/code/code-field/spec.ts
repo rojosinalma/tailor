@@ -7,7 +7,7 @@ export default defineComponent({
   pack: "code",
   group: "inputs",
   description:
-    "A small editor for short code or config, such as a query or a few env lines: monospace, coloured, Tab indents. It grows with its lines up to a height, then scrolls.",
+    "A small editor for short code or config, such as a query or a few env lines: monospace, coloured, Tab indents. It grows with its lines up to a height, then scrolls, and takes its label and messages from a Field.",
   root: "t-code-field",
   parts: {
     "t-code-field-gutter": "the column of line numbers, left out of a selection",
@@ -28,6 +28,7 @@ export default defineComponent({
     lineNumbers: ["true"],
     disabled: ["true"],
     readOnly: ["true"],
+    required: ["true"],
     invalid: ["true"],
   },
   html: "none",

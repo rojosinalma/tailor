@@ -50,6 +50,19 @@ export default behaviour("code-field", {
     await page.keyboard.type(" --");
     await expect(body).toContainText("54 characters");
   },
+  "inside a field it takes the label, the messages and the states": async ({ page, example, expect }) => {
+    const body = example("field");
+    const field = body.getByRole("textbox", { name: /Health query/ });
+    await expect(field).toHaveAttribute("name", "health");
+    await expect(field).toHaveAttribute("required", "");
+    await expect(field).toHaveAttribute("aria-invalid", "true");
+    await expect(field).toHaveAccessibleDescription(/Escape, then Tab.*every minute.*name a table/);
+    await expect(body.locator(".t-code-field")).toHaveAttribute("data-invalid", "");
+    await body.getByText("Health query").click();
+    await expect(field).toBeFocused();
+    await page.keyboard.press("Tab");
+    await expect(field).toHaveValue(/^ {2}SELECT/);
+  },
   "read only and disabled": async ({ page, example, expect }) => {
     const readOnly = example("read-only").getByRole("textbox", { name: "Environment" });
     await readOnly.focus();

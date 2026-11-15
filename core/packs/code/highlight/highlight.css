@@ -1,39 +1,32 @@
 /*
  * Syntax colours: one theme for the hljs-* classes, used by the highlight, the code field and the JSON view.
- * Only the guarded text tokens, so every colour stays readable on the code background in every palette.
+ * Only the readable text forms of the hues and tones, so every colour holds 4.5:1 in every palette.
  */
 .hljs-keyword,
 .hljs-doctag,
 .hljs-selector-tag,
-.hljs-template-tag,
-.hljs-deletion {
-  color: var(--t-danger-text);
+.hljs-template-tag {
+  color: var(--t-hue-purple-text);
 }
 
 .hljs-string,
 .hljs-regexp,
 .hljs-char,
-.hljs-code,
-.hljs-addition {
-  color: var(--t-success-text);
+.hljs-code {
+  color: var(--t-hue-green-text);
 }
 
 .hljs-number,
 .hljs-literal,
-.hljs-symbol {
-  color: var(--t-warning-text);
+.hljs-symbol,
+.hljs-bullet {
+  color: var(--t-hue-orange-text);
 }
 
 .hljs-title,
 .hljs-section,
 .hljs-name {
-  color: var(--t-info-text);
-}
-
-.hljs-type,
-.hljs-built_in,
-.hljs-selector-pseudo {
-  color: var(--t-accent-text);
+  color: var(--t-hue-blue-text);
 }
 
 .hljs-attr,
@@ -44,9 +37,28 @@
 .hljs-selector-id,
 .hljs-selector-class,
 .hljs-selector-attr,
-.hljs-bullet,
+.hljs-selector-pseudo {
+  color: var(--t-hue-cyan-text);
+}
+
+.hljs-type {
+  color: var(--t-hue-yellow-text);
+}
+
+.hljs-built_in {
+  color: var(--t-hue-pink-text);
+}
+
 .hljs-link {
   color: var(--t-link);
+}
+
+.hljs-deletion {
+  color: var(--t-danger-text);
+}
+
+.hljs-addition {
+  color: var(--t-success-text);
 }
 
 .hljs-comment,
@@ -68,7 +80,7 @@
 }
 
 /* Line numbers: a counter in its own table column, so they line up and stay out of a copied selection. */
-.t-highlight[data-line-numbers] code {
+.t-highlight[data-line-numbers] {
   display: table;
   min-width: 100%;
   counter-reset: t-line;

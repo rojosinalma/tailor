@@ -1,31 +1,20 @@
 import { check, copy } from "@tailor/core/glyphs.gen";
 import { t } from "@tailor/core/text";
-import { useEffect, useRef, useState } from "react";
+import { type ReactElement, useEffect, useRef, useState } from "react";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
 
 /** How long the copy button shows its check. */
 const COPIED_MS = 2000;
 
-export interface CodeBlockProps {
-  code: string;
-  /** Shown above the code, such as a file name. */
-  title?: string;
-  /** Wraps long lines instead of scrolling sideways. */
-  wrap?: boolean;
-  /** The accessible name of the code; defaults to the title. */
-  label?: string;
-}
-
-/** Preformatted code with a copy button. No syntax colouring. */
-export function CodeBlock({ code, title, wrap = false, label }: CodeBlockProps) {
-  const isStatic = useIsStatic();
+/** The copy button of a code block header: copies the text and shows a check for a moment. */
+export function CodeCopy({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(timer.current), []);
 
   const onCopy = (): void => {
-    navigator.clipboard.writeText(code).then(
+    navigator.clipboard.writeText(text).then(
       () => {
         setCopied(true);
         clearTimeout(timer.current);
@@ -37,29 +26,50 @@ export function CodeBlock({ code, title, wrap = false, label }: CodeBlockProps) 
   };
 
   return (
+    <button
+      type="button"
+      className="t-btn t-code-copy"
+      data-variant="ghost"
+      data-size="sm"
+      data-copied={copied ? "" : undefined}
+      onClick={onCopy}
+    >
+      <Glyph body={copied ? check : copy} />
+      <span className="t-btn-label" aria-live="polite">
+        {copied ? t("copied") : t("copy")}
+      </span>
+    </button>
+  );
+}
+
+export interface CodeBlockProps {
+  /** The code; the copy button copies it. */
+  code: string;
+  /** Shown above the code, such as a file name. */
+  title?: string;
+  /** Wraps long lines instead of scrolling sideways. */
+  wrap?: boolean;
+  /** The accessible name of the code; defaults to the title. */
+  label?: string;
+  /** The `<code>` element, for a component that renders the code itself (such as the highlight). */
+  children?: ReactElement;
+}
+
+/** Preformatted code with a copy button. No syntax colouring. */
+export function CodeBlock({ code, title, wrap = false, label, children }: CodeBlockProps) {
+  const isStatic = useIsStatic();
+  return (
     <div className="t-code" data-wrap={wrap ? "" : undefined} data-t={isStatic ? "code-block" : undefined}>
       <div className="t-code-header">
         {title ? <span className="t-code-title">{title}</span> : null}
-        <button
-          type="button"
-          className="t-btn t-code-copy"
-          data-variant="ghost"
-          data-size="sm"
-          data-copied={copied ? "" : undefined}
-          onClick={onCopy}
-        >
-          <Glyph body={copied ? check : copy} />
-          <span className="t-btn-label" aria-live="polite">
-            {copied ? t("copied") : t("copy")}
-          </span>
-        </button>
+        <CodeCopy text={code} />
       </div>
       {/* Code that scrolls sideways takes the focus, so the keyboard can scroll it. */}
       <pre
         className="t-code-pre"
         {...(wrap ? {} : { tabIndex: 0, role: "group", "aria-label": label ?? title ?? t("code") })}
       >
-        <code>{code}</code>
+        {children ?? <code>{code}</code>}
       </pre>
     </div>
   );

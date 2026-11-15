@@ -1,8 +1,8 @@
-import { Field } from "@base-ui/react/field";
 import { t } from "@tailor/core/text";
 import { lineCount, rowsFor, tabEdit } from "@tailor/packs/code/code-field/logic";
 import { highlightHtml, type Language } from "@tailor/packs/code/highlight/logic";
 import { type KeyboardEvent, useId, useRef, useState } from "react";
+import { useFieldControl } from "../../core/field/field";
 
 export interface CodeFieldProps {
   /** "auto" guesses the language; "text" shows the code without colours. */
@@ -21,6 +21,8 @@ export interface CodeFieldProps {
   lineNumbers?: boolean;
   disabled?: boolean;
   readOnly?: boolean;
+  required?: boolean;
+  /** Marks the value invalid; inside a Field, an error does the same. */
   invalid?: boolean;
   /** The accessible name, when no visible label names the field. */
   label?: string;
@@ -41,14 +43,25 @@ export function CodeField({
   maxRows = 12,
   placeholder,
   lineNumbers = false,
-  disabled = false,
+  disabled: ownDisabled = false,
   readOnly = false,
+  required,
   invalid = false,
   label,
 }: CodeFieldProps) {
   const [inner, setInner] = useState(defaultValue);
   const text = value ?? inner;
   const hint = useId();
+  // Inside a Field the label, the messages and the shared states come from the field.
+  const field = useFieldControl({
+    id,
+    name,
+    disabled: ownDisabled,
+    required,
+    "aria-invalid": invalid || undefined,
+    "aria-describedby": readOnly ? undefined : hint,
+  });
+  const disabled = field.disabled ?? false;
   const input = useRef<HTMLTextAreaElement>(null);
   const colour = useRef<HTMLPreElement>(null);
   const gutter = useRef<HTMLPreElement>(null);
@@ -92,7 +105,7 @@ export function CodeField({
       className="t-control t-code-field"
       data-line-numbers={lineNumbers ? "" : undefined}
       data-disabled={disabled ? "" : undefined}
-      data-invalid={invalid ? "" : undefined}
+      data-invalid={field["aria-invalid"] ? "" : undefined}
     >
       {lineNumbers ? (
         <div className="t-code-field-gutter" aria-hidden="true">
@@ -118,30 +131,22 @@ export function CodeField({
             }}
           />
         </pre>
-        <Field.Control
+        <textarea
+          {...field}
           className="t-code-field-input"
-          render={
-            <textarea
-              ref={input}
-              rows={rowsFor(text, rows, maxRows)}
-              wrap="off"
-              spellCheck={false}
-              autoCapitalize="off"
-              autoComplete="off"
-            />
-          }
+          ref={input}
+          rows={rowsFor(text, rows, maxRows)}
+          wrap="off"
+          spellCheck={false}
+          autoCapitalize="off"
+          autoComplete="off"
           value={text}
-          onValueChange={change}
+          onChange={(event) => change(event.target.value)}
           onKeyDown={onKeyDown}
           onScroll={onScroll}
-          name={name}
-          id={id}
           placeholder={placeholder}
-          disabled={disabled}
           readOnly={readOnly}
-          aria-invalid={invalid || undefined}
           aria-label={label}
-          aria-describedby={readOnly ? undefined : hint}
         />
       </div>
       {readOnly ? null : (

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Field } from "../../core/field/field";
 import { Stack } from "../../core/stack/stack";
 import { defineExamples } from "../../examples";
 import { Highlight } from "../highlight/highlight";
@@ -58,6 +59,21 @@ export default defineExamples("code-field", [
     id: "controlled",
     title: "Controlled",
     render: () => <Controlled />,
+  },
+  {
+    id: "field",
+    title: "In a field, with help and an error",
+    render: () => (
+      <Field
+        label="Health query"
+        help="Runs every minute against the hosts table."
+        error="The query must name a table."
+        required
+        name="health"
+      >
+        <CodeField language="sql" defaultValue="SELECT count(*)" lineNumbers />
+      </Field>
+    ),
   },
   {
     id: "invalid",

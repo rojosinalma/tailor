@@ -12,8 +12,8 @@ import {
   visibleNodes,
 } from "@tailor/packs/code/json-view/logic";
 import { type KeyboardEvent, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { CodeCopy } from "../../core/code-block/code-block";
 import { Glyph } from "../../glyph";
-import { CodeCopy } from "../highlight/highlight";
 
 export interface JsonViewProps {
   value: unknown;

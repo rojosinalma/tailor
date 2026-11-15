@@ -2,12 +2,22 @@ import { behaviour } from "../../src/behaviour";
 
 export default behaviour("code-block", {
   "the copy button copies the code and shows a check for a moment": async ({ page, example, expect }) => {
-    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    // The system clipboard is shared by the tests that run at the same time: catch the copy in the page.
+    await page.evaluate(() => {
+      const holder = window as unknown as { copied?: string };
+      Object.defineProperty(navigator, "clipboard", {
+        value: {
+          writeText: async (text: string) => {
+            holder.copied = text;
+          },
+        },
+      });
+    });
     const body = example("titled");
     const button = body.getByRole("button", { name: "Copy" });
     await button.click();
     await expect(body.getByRole("button", { name: "Copied" })).toHaveAttribute("data-copied", "");
-    const copied = await page.evaluate(() => navigator.clipboard.readText());
+    const copied = await page.evaluate(() => (window as unknown as { copied?: string }).copied ?? "");
     expect(copied).toContain("image: nginx:1.27");
     expect(copied.startsWith("services:")).toBe(true);
     await expect(body.getByRole("button", { name: "Copy" })).toBeVisible({ timeout: 4000 });

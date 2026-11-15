@@ -12,11 +12,21 @@ export default behaviour("highlight", {
     await expect(code.locator("[class^='hljs-']")).toHaveCount(0);
   },
   "the copy button copies the plain code": async ({ page, example, expect }) => {
-    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    // The system clipboard is shared by the tests that run at the same time: catch the copy in the page.
+    await page.evaluate(() => {
+      const holder = window as unknown as { copied?: string };
+      Object.defineProperty(navigator, "clipboard", {
+        value: {
+          writeText: async (text: string) => {
+            holder.copied = text;
+          },
+        },
+      });
+    });
     const body = example("line-numbers");
     await body.getByRole("button", { name: "Copy" }).click();
     await expect(body.getByRole("button", { name: "Copied" })).toHaveAttribute("data-copied", "");
-    const copied = await page.evaluate(() => navigator.clipboard.readText());
+    const copied = await page.evaluate(() => (window as unknown as { copied?: string }).copied ?? "");
     expect(copied.startsWith('import { readFile } from "node:fs/promises";')).toBe(true);
     expect(copied).not.toContain("hljs");
   },
