@@ -1,0 +1,30 @@
+.t-otp {
+  display: inline-flex;
+  gap: var(--t-space-2);
+  max-width: 100%;
+}
+
+.t-otp-input {
+  flex: 0 1 auto;
+  justify-content: center;
+  width: var(--t-control-h-md);
+  min-width: 2em;
+  padding: 0;
+  font-family: var(--t-font-mono);
+  font-size: var(--t-text-lg);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  caret-color: var(--t-accent);
+}
+
+.t-otp[data-size="sm"] > .t-otp-input {
+  width: var(--t-control-h-sm);
+  min-height: var(--t-control-h-sm);
+  font-size: var(--t-text-base);
+}
+
+.t-otp[data-size="lg"] > .t-otp-input {
+  width: var(--t-control-h-lg);
+  min-height: var(--t-control-h-lg);
+  font-size: var(--t-text-xl);
+}

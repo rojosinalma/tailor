@@ -205,3 +205,34 @@ export function formatDate(iso: string, locale?: string): string {
 export function formatLong(iso: string, locale?: string): string {
   return new Intl.DateTimeFormat(locale, { dateStyle: "full", timeZone: "UTC" }).format(toUtc(iso));
 }
+
+/** The first day of the month of a date. */
+export const monthOf = (iso: string): string => `${iso.slice(0, 7)}-01`;
+
+/**
+ * The first shown month after the focus moved, when `months` months show side by side:
+ * the view stays while the focus is inside it, else it moves just enough to show the focus.
+ */
+export function viewFor(view: string, focus: string, months = 1): string {
+  const first = monthOf(view);
+  const target = monthOf(focus);
+  if (target < first) return target;
+  if (target > addMonths(first, months - 1)) return addMonths(target, -(months - 1));
+  return first;
+}
+
+export interface RangeMarks {
+  readonly start: boolean;
+  readonly end: boolean;
+  /** Strictly between the start and the end. */
+  readonly inside: boolean;
+}
+
+/** How a day sits in a range from start to end (start ≤ end); an open range marks its start only. */
+export function rangeMarks(iso: string, start: string | null, end: string | null): RangeMarks {
+  return {
+    start: !!start && iso === start,
+    end: !!end && iso === end,
+    inside: !!start && !!end && iso > start && iso < end,
+  };
+}

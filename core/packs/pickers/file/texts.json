@@ -1,0 +1,10 @@
+{
+  "fileChoose": "Choose files",
+  "fileChooseOne": "Choose a file",
+  "fileDrop": "or drop them here",
+  "fileDropOne": "or drop it here",
+  "fileRemove": "Remove",
+  "fileWrongType": "is not an accepted file type",
+  "fileTooLarge": "is larger than",
+  "fileTooMany": "not added, the limit is"
+}

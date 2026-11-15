@@ -9,10 +9,13 @@ import {
   formatLong,
   monthGrid,
   monthLabel,
+  monthOf,
   moveByKey,
   parseIso,
+  rangeMarks,
   todayIso,
   toIso,
+  viewFor,
   weekdayNames,
 } from "./logic";
 
@@ -151,5 +154,36 @@ describe("names", () => {
     expect(monthLabel(2026, 10, "en-US")).toBe("November 2026");
     expect(formatDate("2026-11-15", "en-US")).toBe("Nov 15, 2026");
     expect(formatLong("2026-11-15", "en-US")).toBe("Sunday, November 15, 2026");
+  });
+});
+
+describe("views and ranges", () => {
+  test("the view moves only when the focus leaves the shown months", () => {
+    expect(monthOf("2026-11-15")).toBe("2026-11-01");
+    expect(viewFor("2026-11-01", "2026-11-30")).toBe("2026-11-01");
+    expect(viewFor("2026-11-01", "2026-12-01")).toBe("2026-12-01");
+    expect(viewFor("2026-11-01", "2026-12-01", 2)).toBe("2026-11-01");
+    expect(viewFor("2026-11-01", "2027-01-04", 2)).toBe("2026-12-01");
+    expect(viewFor("2026-11-01", "2026-10-31", 2)).toBe("2026-10-01");
+  });
+
+  test("marks the ends and the days between", () => {
+    expect(rangeMarks("2026-11-10", "2026-11-10", "2026-11-20")).toEqual({
+      start: true,
+      end: false,
+      inside: false,
+    });
+    expect(rangeMarks("2026-11-15", "2026-11-10", "2026-11-20")).toEqual({
+      start: false,
+      end: false,
+      inside: true,
+    });
+    expect(rangeMarks("2026-11-20", "2026-11-10", "2026-11-20")).toEqual({
+      start: false,
+      end: true,
+      inside: false,
+    });
+    expect(rangeMarks("2026-11-21", "2026-11-10", "2026-11-20").inside).toBe(false);
+    expect(rangeMarks("2026-11-15", "2026-11-10", null)).toEqual({ start: false, end: false, inside: false });
   });
 });

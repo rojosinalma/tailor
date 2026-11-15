@@ -9,15 +9,17 @@ import {
   isOutOfBounds,
   monthGrid,
   monthLabel,
+  monthOf,
   moveByKey,
   parseIso,
+  rangeMarks,
   todayIso,
+  viewFor,
   type WeekStart,
   weekdayNames,
 } from "@tailor/packs/pickers/date/logic";
 import type spec from "@tailor/packs/pickers/date/spec";
-import { type KeyboardEvent, useEffect, useRef, useState } from "react";
-import { useFieldControl } from "../../core/field/field";
+import { type KeyboardEvent, useEffect, useId, useRef, useState } from "react";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
 
@@ -30,6 +32,12 @@ export interface CalendarProps {
   /** 0 = Sunday, 1 = Monday. */
   weekStart?: WeekStart;
   locale?: string;
+  /** Marks a range: its ends and the days between. The end is null while the range is in progress. */
+  range?: { readonly start: string | null; readonly end: string | null };
+  /** Months shown side by side. */
+  months?: 1 | 2;
+  /** Runs when the pointer or the keyboard rests on a day: a range picker previews its range. */
+  onDayFocus?: (iso: string) => void;
 }
 
 /** A month calendar. Usable on its own; the DatePicker shows it in a popup. */
@@ -41,6 +49,9 @@ export function Calendar({
   max,
   weekStart = 1,
   locale,
+  range,
+  months = 1,
+  onDayFocus,
 }: CalendarProps) {
   const [inner, setInner] = useState<string | null>(defaultValue ?? null);
   const selected = value !== undefined ? value : inner;
@@ -48,9 +59,14 @@ export function Calendar({
   const bounds = { min, max, weekStart, today };
 
   const start = parseIso(selected) ?? parseIso(today);
-  const [focus, setFocus] = useState(() =>
+  const [focus, setFocusState] = useState(() =>
     start ? focusDay(start.year, start.month, selected, bounds) : today,
   );
+  const [view, setView] = useState(() => monthOf(focus));
+  const setFocus = (iso: string): void => {
+    setFocusState(iso);
+    setView((shown) => viewFor(shown, iso, months));
+  };
   // A new value from outside shows its month.
   const [seen, setSeen] = useState(selected);
   if (seen !== selected) {
@@ -66,10 +82,6 @@ export function Calendar({
     root.current?.querySelector<HTMLElement>(`[data-iso="${focus}"]`)?.focus();
   }, [focus]);
 
-  const view = parseIso(focus) ?? { year: 1970, month: 0, day: 1 };
-  const title = monthLabel(view.year, view.month, locale);
-  const weeks = monthGrid(view.year, view.month, bounds);
-
   const choose = (iso: string): void => {
     if (isOutOfBounds(iso, bounds)) return;
     if (value === undefined) setInner(iso);
@@ -78,8 +90,10 @@ export function Calendar({
   };
 
   const showMonth = (by: number): void => {
-    const next = parseIso(addMonths(focus, by));
-    if (next) setFocus(focusDay(next.year, next.month, selected, bounds));
+    const next = parseIso(addMonths(view, by));
+    if (!next) return;
+    setView(monthOf(addMonths(view, by)));
+    setFocusState(focusDay(next.year, next.month, selected, bounds));
   };
 
   const onKeyDown = (event: KeyboardEvent<HTMLTableElement>): void => {
@@ -89,63 +103,93 @@ export function Calendar({
     if (next === focus) return;
     moved.current = true;
     setFocus(next);
+    onDayFocus?.(next);
   };
+
+  const shown = Array.from({ length: months }, (_, i) => parseIso(addMonths(view, i)) ?? start);
+  const names = weekdayNames(locale, weekStart);
 
   return (
     <div className="t-calendar" ref={root}>
-      <div className="t-calendar-header">
-        <button
-          type="button"
-          className="t-calendar-nav"
-          aria-label={t("previous")}
-          onClick={() => showMonth(-1)}
-        >
-          <Glyph body={chevronLeft} />
-        </button>
-        <div className="t-calendar-title" aria-live="polite">
-          {title}
-        </div>
-        <button type="button" className="t-calendar-nav" aria-label={t("next")} onClick={() => showMonth(1)}>
-          <Glyph body={chevronRight} />
-        </button>
+      <div className="t-calendar-months">
+        {shown.map((month, index) => {
+          if (!month) return null;
+          const title = monthLabel(month.year, month.month, locale);
+          const nav = (by: -1 | 1) =>
+            (by === -1 ? index === 0 : index === months - 1) ? (
+              <button
+                type="button"
+                className="t-calendar-nav"
+                aria-label={t(by === -1 ? "previous" : "next")}
+                onClick={() => showMonth(by)}
+              >
+                <Glyph body={by === -1 ? chevronLeft : chevronRight} />
+              </button>
+            ) : (
+              <span className="t-calendar-nav" aria-hidden="true" />
+            );
+          return (
+            <div className="t-calendar-month" key={title}>
+              <div className="t-calendar-header">
+                {nav(-1)}
+                <div className="t-calendar-title" aria-live="polite">
+                  {title}
+                </div>
+                {nav(1)}
+              </div>
+              {/* biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: the APG date picker grid: a table with role grid, the days are its buttons. */}
+              <table className="t-calendar-grid" role="grid" aria-label={title} onKeyDown={onKeyDown}>
+                <thead>
+                  <tr>
+                    {names.map((name) => (
+                      <th key={name.long} scope="col" abbr={name.long}>
+                        {name.short}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {monthGrid(month.year, month.month, bounds).map((week) => (
+                    <tr key={week[0]?.iso}>
+                      {week.map((day) => {
+                        // Side by side months show each day once.
+                        if (day.outside && months > 1) return <td key={day.iso} />;
+                        const marks = rangeMarks(day.iso, range?.start ?? null, range?.end ?? null);
+                        const picked = day.iso === selected || marks.start || marks.end;
+                        return (
+                          // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole lint/a11y/useFocusableInteractive: the focusable part of the cell is its day button.
+                          <td key={day.iso} role="gridcell" aria-selected={picked || marks.inside}>
+                            <button
+                              type="button"
+                              className="t-calendar-day"
+                              data-iso={day.iso}
+                              tabIndex={day.iso === focus ? 0 : -1}
+                              aria-label={formatLong(day.iso, locale)}
+                              data-selected={picked ? "" : undefined}
+                              data-range-start={marks.start ? "" : undefined}
+                              data-range-end={marks.end ? "" : undefined}
+                              data-in-range={marks.inside ? "" : undefined}
+                              data-today={day.today ? "" : undefined}
+                              data-outside={day.outside ? "" : undefined}
+                              disabled={day.disabled}
+                              onClick={() => choose(day.iso)}
+                              onPointerEnter={
+                                onDayFocus && !day.disabled ? () => onDayFocus(day.iso) : undefined
+                              }
+                            >
+                              {day.day}
+                            </button>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        })}
       </div>
-      {/* biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole: the APG date picker grid: a table with role grid, the days are its buttons. */}
-      <table className="t-calendar-grid" role="grid" aria-label={title} onKeyDown={onKeyDown}>
-        <thead>
-          <tr>
-            {weekdayNames(locale, weekStart).map((name) => (
-              <th key={name.long} scope="col" abbr={name.long}>
-                {name.short}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {weeks.map((week) => (
-            <tr key={week[0]?.iso}>
-              {week.map((day) => (
-                // biome-ignore lint/a11y/noNoninteractiveElementToInteractiveRole lint/a11y/useFocusableInteractive: the focusable part of the cell is its day button.
-                <td key={day.iso} role="gridcell" aria-selected={day.iso === selected}>
-                  <button
-                    type="button"
-                    className="t-calendar-day"
-                    data-iso={day.iso}
-                    tabIndex={day.iso === focus ? 0 : -1}
-                    aria-label={formatLong(day.iso, locale)}
-                    data-selected={day.iso === selected ? "" : undefined}
-                    data-today={day.today ? "" : undefined}
-                    data-outside={day.outside ? "" : undefined}
-                    disabled={day.disabled}
-                    onClick={() => choose(day.iso)}
-                  >
-                    {day.day}
-                  </button>
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
       <div className="t-calendar-footer">
         <button
           type="button"
@@ -160,6 +204,23 @@ export function Calendar({
       </div>
     </div>
   );
+}
+
+/** The accessible name of a trigger that shows a value: the label, then the shown text. */
+export function useValueName(
+  aria: { readonly "aria-label"?: string; readonly "aria-labelledby"?: string },
+  text: string,
+): { trigger: { "aria-label"?: string; "aria-labelledby"?: string }; valueId: string } {
+  const valueId = useId();
+  const label = aria["aria-label"];
+  const labelledBy = aria["aria-labelledby"];
+  return {
+    valueId,
+    trigger: {
+      "aria-label": label ? `${label}: ${text}` : undefined,
+      "aria-labelledby": labelledBy ? `${labelledBy} ${valueId}` : undefined,
+    },
+  };
 }
 
 export interface DatePickerProps {
@@ -198,12 +259,14 @@ export function DatePicker({
   ...aria
 }: DatePickerProps) {
   const isStatic = useIsStatic();
-  const field = useFieldControl({ id, name, disabled });
   const [open, setOpen] = useState(false);
   const [inner, setInner] = useState<string | null>(defaultValue ?? null);
   const trigger = useRef<HTMLButtonElement>(null);
   const popup = useRef<HTMLDivElement>(null);
   const dataSize = size === "md" ? undefined : size;
+  const current = value !== undefined ? value : inner;
+  const shown = parseIso(current) && current ? formatDate(current, locale) : null;
+  const named = useValueName(aria, shown ?? placeholder);
 
   if (isStatic) {
     return (
@@ -215,17 +278,16 @@ export function DatePicker({
         data-placeholder={placeholder}
         data-week-start={weekStart === 1 ? undefined : weekStart}
         data-locale={locale}
-        {...field}
+        name={name}
+        id={id}
         defaultValue={value ?? defaultValue}
         min={min}
         max={max}
+        disabled={disabled}
         {...aria}
       />
     );
   }
-
-  const current = value !== undefined ? value : inner;
-  const shown = parseIso(current) && current ? formatDate(current, locale) : null;
 
   return (
     <Popover.Root open={open} onOpenChange={setOpen}>
@@ -235,21 +297,18 @@ export function DatePicker({
         className="t-control t-date-trigger"
         aria-haspopup="dialog"
         data-size={dataSize}
-        id={field.id}
-        disabled={field.disabled}
-        aria-invalid={field["aria-invalid"]}
-        aria-describedby={field["aria-describedby"]}
-        aria-required={field.required}
-        {...aria}
+        id={id}
+        disabled={disabled}
+        {...named.trigger}
       >
-        <span className="t-date-value" data-placeholder={shown ? undefined : ""}>
+        <span className="t-date-value" id={named.valueId} data-placeholder={shown ? undefined : ""}>
           {shown ?? placeholder}
         </span>
         <span className="t-date-icon">
           <Glyph body={calendar} />
         </span>
       </Popover.Trigger>
-      <input type="hidden" name={field.name} value={current ?? ""} />
+      <input type="hidden" name={name} value={current ?? ""} />
       <Popover.Portal>
         <Popover.Positioner className="t-popup-positioner" sideOffset={4} align="start">
           <Popover.Popup

@@ -28,6 +28,19 @@
   gap: var(--t-space-2);
 }
 
+.t-calendar-months {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--t-space-4);
+}
+
+.t-calendar-month {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
+}
+
 .t-calendar-header {
   display: flex;
   align-items: center;
@@ -88,13 +101,22 @@
   border-color: var(--t-accent);
 }
 
+.t-calendar-day[data-in-range] {
+  border-radius: 0;
+  background: color-mix(in srgb, var(--t-accent) var(--t-tint), transparent);
+}
+
 .t-calendar-day[data-selected] {
   background: var(--t-accent-solid);
   color: var(--t-on-accent);
   font-weight: var(--t-weight-medium);
 }
 
-.t-calendar-nav:active:not(:disabled),
+span.t-calendar-nav {
+  cursor: default;
+}
+
+.t-calendar-nav:active:not(:disabled, span),
 .t-calendar-day:active:not(:disabled, [data-selected]) {
   background: var(--t-active);
 }
@@ -115,7 +137,7 @@
 }
 
 @media (hover: hover) {
-  .t-calendar-nav:hover:not(:disabled),
+  .t-calendar-nav:hover:not(:disabled, span),
   .t-calendar-day:hover:not(:disabled, [data-selected]) {
     background: var(--t-hover);
   }

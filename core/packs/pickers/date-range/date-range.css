@@ -1,0 +1,61 @@
+.t-date-range {
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.t-date-range-trigger {
+  justify-content: space-between;
+  min-width: var(--t-measure-xs);
+  max-width: 100%;
+}
+
+.t-date-range-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-date-range-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--t-muted);
+}
+
+.t-date-range-popup {
+  display: flex;
+  gap: var(--t-space-3);
+  min-width: 0;
+  max-width: calc(100vw - var(--t-space-4));
+  padding: var(--t-space-2);
+}
+
+.t-date-range-presets {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-05);
+  min-width: 0;
+  padding-inline-end: var(--t-space-3);
+  border-inline-end: var(--t-border-w) solid var(--t-border);
+}
+
+.t-date-range-presets > .t-btn {
+  justify-content: flex-start;
+}
+
+@media (max-width: 40rem) {
+  .t-date-range-popup {
+    flex-direction: column;
+    align-items: center;
+    max-width: none;
+  }
+
+  .t-date-range-presets {
+    flex-flow: row wrap;
+    justify-content: center;
+    padding: 0 0 var(--t-space-2);
+    border-inline-end: 0;
+    border-block-end: var(--t-border-w) solid var(--t-border);
+  }
+}

@@ -1,0 +1,80 @@
+.t-time-picker {
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.t-time-trigger {
+  justify-content: space-between;
+  min-width: var(--t-measure-2xs);
+  max-width: 100%;
+}
+
+.t-time-value {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-time-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--t-muted);
+}
+
+.t-time-popup {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.t-time-columns {
+  display: flex;
+  justify-content: center;
+  gap: var(--t-space-1);
+}
+
+.t-time-column {
+  position: relative;
+  display: flex;
+  flex: 1 0 auto;
+  flex-direction: column;
+  min-width: 3.5em;
+  max-height: calc(var(--t-control-h-sm) * 7);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: var(--t-radius-control);
+  scrollbar-width: thin;
+}
+
+.t-time-column:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+.t-time-column > .t-option {
+  justify-content: center;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.t-time-column .t-option-label {
+  text-align: center;
+}
+
+.t-time-column > .t-option[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+@media (hover: hover) {
+  .t-time-column > .t-option:hover:not([aria-disabled="true"], [data-highlighted]) {
+    background: var(--t-hover);
+  }
+}
+
+@media (max-width: 40rem) {
+  .t-time-column {
+    max-width: var(--t-measure-2xs);
+    max-height: calc(var(--t-touch) * 5);
+  }
+}

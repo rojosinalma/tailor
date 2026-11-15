@@ -1,0 +1,97 @@
+.t-rating {
+  --t-rating-size: var(--t-control-h-md);
+  display: inline-flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+  font-size: var(--t-text-lg);
+}
+
+.t-rating[data-size="sm"] {
+  --t-rating-size: var(--t-control-h-sm);
+  font-size: var(--t-text-base);
+}
+
+.t-rating[data-size="lg"] {
+  --t-rating-size: var(--t-control-h-lg);
+  font-size: var(--t-text-2xl);
+}
+
+.t-rating-star {
+  --t-rating-on: 0;
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--t-rating-size);
+  min-height: var(--t-rating-size);
+  border-radius: var(--t-radius-control);
+  cursor: pointer;
+}
+
+/* A star is filled when it or a later star is picked. */
+.t-rating-star:is(
+  [data-checked],
+  [data-filled],
+  :has(:checked),
+  :has(~ [data-checked]),
+  :has(~ .t-rating-star :checked)
+) {
+  --t-rating-on: 1;
+}
+
+.t-rating-star:has(:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: calc(var(--t-focus-offset) * -1);
+}
+
+.t-rating[data-readonly] > .t-rating-star {
+  cursor: default;
+}
+
+.t-rating[data-disabled] > .t-rating-star {
+  cursor: not-allowed;
+}
+
+.t-rating-input {
+  position: absolute;
+  width: var(--t-hairline);
+  height: var(--t-hairline);
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  opacity: 0;
+}
+
+.t-rating-glyph {
+  display: grid;
+  color: var(--t-warning);
+}
+
+.t-rating-glyph > * {
+  grid-area: 1 / 1;
+  transition: opacity var(--t-motion-fast) var(--t-ease);
+}
+
+.t-rating-glyph > :first-child {
+  color: var(--t-border-control);
+  opacity: calc(1 - var(--t-rating-on));
+}
+
+.t-rating-glyph > :last-child {
+  opacity: var(--t-rating-on);
+}
+
+.t-rating[data-disabled] .t-rating-glyph {
+  color: var(--t-disabled);
+}
+
+@media (hover: hover) {
+  .t-rating:not([data-readonly], [data-disabled]):hover > .t-rating-star {
+    --t-rating-on: 0;
+  }
+
+  .t-rating:not([data-readonly], [data-disabled]) > .t-rating-star:is(:hover, :has(~ .t-rating-star:hover)) {
+    --t-rating-on: 1;
+  }
+}

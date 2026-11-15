@@ -1,0 +1,80 @@
+.t-swatches {
+  --t-swatches-size: var(--t-control-h-md);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--t-space-1);
+  min-width: 0;
+}
+
+.t-swatches[data-size="sm"] {
+  --t-swatches-size: var(--t-control-h-sm);
+}
+
+.t-swatches[data-size="lg"] {
+  --t-swatches-size: var(--t-control-h-lg);
+}
+
+.t-swatches-option {
+  --t-swatch: var(--t-muted);
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--t-swatches-size);
+  height: var(--t-swatches-size);
+  border: var(--t-border-w) solid var(--t-border-control);
+  border-radius: 50%;
+  background: var(--t-swatch);
+  cursor: pointer;
+  transition: box-shadow var(--t-motion-fast) var(--t-ease);
+}
+
+.t-swatches-option:is([data-checked], :has(:checked)) {
+  box-shadow:
+    0 0 0 var(--t-border-w-strong) var(--t-canvas),
+    0 0 0 calc(var(--t-border-w-strong) * 2) var(--t-text);
+}
+
+.t-swatches-option:has(:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: calc(var(--t-focus-offset) + var(--t-border-w-strong) * 2);
+}
+
+.t-swatches-option:is([data-disabled], :has(:disabled)) {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.t-swatches-input {
+  position: absolute;
+  width: var(--t-hairline);
+  height: var(--t-hairline);
+  margin: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  opacity: 0;
+}
+
+/* The check sits on its own disc, so it reads on any colour. */
+.t-swatches-check {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 55%;
+  height: 55%;
+  border-radius: 50%;
+  background: var(--t-canvas);
+  color: var(--t-text);
+  font-size: calc(var(--t-swatches-size) * 0.35);
+}
+
+.t-swatches-option:is([data-checked], :has(:checked)) > .t-swatches-check {
+  display: inline-flex;
+}
+
+@media (hover: hover) {
+  .t-swatches-option:hover:not([data-checked], [data-disabled], :has(:checked, :disabled)) {
+    box-shadow: 0 0 0 var(--t-border-w-strong) var(--t-border-control);
+  }
+}

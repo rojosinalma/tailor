@@ -1,0 +1,150 @@
+.t-color-picker {
+  display: inline-flex;
+  max-width: 100%;
+}
+
+.t-color-picker-trigger {
+  max-width: 100%;
+}
+
+.t-color-picker-swatch,
+.t-color-swatch {
+  --t-swatch: transparent;
+  flex: none;
+  border: var(--t-border-w) solid var(--t-border-control);
+  border-radius: var(--t-radius-check);
+  background: var(--t-swatch);
+}
+
+.t-color-picker-swatch {
+  width: 1.25em;
+  height: 1.25em;
+}
+
+.t-color-picker-swatch[data-none] {
+  background: linear-gradient(to top right, transparent 44%, var(--t-danger) 44% 56%, transparent 56%);
+}
+
+.t-color-picker-value {
+  min-width: 0;
+  overflow: hidden;
+  font-family: var(--t-font-mono);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-color-picker-popup {
+  --t-color-hue: 0;
+  --t-color-x: 0;
+  --t-color-y: 1;
+  --t-swatch: transparent;
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-3);
+  width: var(--t-measure-xs);
+  min-width: 0;
+  padding: var(--t-space-3);
+}
+
+.t-color-area,
+.t-color-hue {
+  position: relative;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.t-color-area {
+  aspect-ratio: 3 / 2;
+  border-radius: var(--t-radius-control);
+  /* lint-allow: the area shows real colours: black and white over the pure hue, never theme colours */
+  background:
+    linear-gradient(to top, #000, transparent),
+    linear-gradient(to right, #fff, hsl(calc(var(--t-color-hue) * 1deg) 100% 50%));
+}
+
+.t-color-hue {
+  height: var(--t-space-3);
+  border-radius: var(--t-radius-pill);
+  /* lint-allow: the hue track shows the colour wheel, never theme colours */
+  background: linear-gradient(to right, #f00, #ff0, #0f0, #0ff, #00f, #f0f, #f00);
+}
+
+.t-color-area-thumb,
+.t-color-hue-thumb {
+  position: absolute;
+  width: var(--t-space-4);
+  height: var(--t-space-4);
+  border: var(--t-border-w-strong) solid var(--t-canvas);
+  border-radius: 50%;
+  box-shadow: 0 0 0 var(--t-border-w) var(--t-text);
+  translate: -50% -50%;
+}
+
+.t-color-area-thumb {
+  top: calc(var(--t-color-y) * 100%);
+  left: calc(var(--t-color-x) * 100%);
+  background: var(--t-swatch);
+}
+
+.t-color-hue-thumb {
+  top: 50%;
+  left: calc(var(--t-color-hue) / 360 * 100%);
+  /* lint-allow: the thumb shows the pure hue it stands on */
+  background: hsl(calc(var(--t-color-hue) * 1deg) 100% 50%);
+}
+
+.t-color-picker-row {
+  display: flex;
+  gap: var(--t-space-2);
+}
+
+.t-color-hex {
+  flex: 1;
+  width: 0;
+  min-width: 0;
+  font-family: var(--t-font-mono);
+}
+
+.t-color-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--t-space-1);
+}
+
+.t-color-swatch {
+  width: var(--t-control-h-sm);
+  height: var(--t-control-h-sm);
+  padding: 0;
+  cursor: pointer;
+}
+
+.t-color-swatch[aria-pressed="true"] {
+  outline: var(--t-border-w-strong) solid var(--t-text);
+  outline-offset: var(--t-border-w);
+}
+
+@media (max-width: 40rem) {
+  .t-color-picker-popup {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .t-color-area {
+    aspect-ratio: 2 / 1;
+  }
+
+  .t-color-hue {
+    height: var(--t-space-5);
+  }
+
+  .t-color-area-thumb,
+  .t-color-hue-thumb {
+    width: var(--t-space-5);
+    height: var(--t-space-5);
+  }
+
+  .t-color-swatch {
+    width: var(--t-touch);
+    height: var(--t-touch);
+  }
+}
