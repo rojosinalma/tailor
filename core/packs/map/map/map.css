@@ -1,0 +1,240 @@
+/* The frame. Leaflet makes it the map container; its panes stack inside it only. */
+.t-map {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  height: var(--t-measure-sm);
+  max-height: 70dvh;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  background: var(--t-inset);
+  color: var(--t-text);
+  font-family: inherit;
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading);
+  isolation: isolate;
+}
+
+.t-map:focus-visible {
+  outline-offset: var(--t-focus-offset);
+}
+
+.t-map[data-size="sm"] {
+  height: var(--t-measure-xs);
+}
+
+.t-map[data-size="lg"] {
+  height: var(--t-measure-md);
+}
+
+.t-map[data-size="fill"] {
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+  max-height: none;
+}
+
+/* A light tile set reads as a dark map in dark mode. */
+[data-mode="dark"] .t-map:not([data-tile-filter="none"]) .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.85);
+}
+
+/* Controls: a vertical stack of icon buttons in the top end corner. */
+.t-map .leaflet-control {
+  margin: var(--t-space-2);
+}
+
+.t-map-controls {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--t-radius-control);
+  box-shadow: var(--t-shadow-sm);
+}
+
+.t-map-controls > .t-btn {
+  border-radius: 0;
+}
+
+.t-map-controls > .t-btn + .t-btn {
+  margin-block-start: calc(var(--t-border-w) * -1);
+}
+
+.t-map-controls > .t-btn:first-child {
+  border-start-start-radius: var(--t-radius-control);
+  border-start-end-radius: var(--t-radius-control);
+}
+
+.t-map-controls > .t-btn:last-child {
+  border-end-start-radius: var(--t-radius-control);
+  border-end-end-radius: var(--t-radius-control);
+}
+
+.t-map-controls > .t-btn:focus-visible {
+  position: relative;
+}
+
+/* The credit of the tile provider: small, muted, always shown. */
+.t-map .leaflet-control-attribution {
+  margin: 0;
+  padding: 0 var(--t-space-1);
+  border-start-start-radius: var(--t-radius-control);
+  background: var(--t-surface);
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  line-height: var(--t-leading);
+}
+
+.t-map .leaflet-control-attribution a {
+  color: var(--t-link);
+  text-decoration: underline;
+}
+
+/* Markers: the hit box is a control height, the drawn shape sits in it. */
+.t-map-marker {
+  display: grid;
+  place-items: center;
+  width: var(--t-control-h-sm);
+  height: var(--t-control-h-sm);
+  border-radius: 50%;
+  translate: -50% -50%;
+}
+
+.t-map-marker:not([data-tone]),
+.t-map-path:not([data-tone]) {
+  --t-tone: var(--t-accent-solid);
+  --t-on-tone: var(--t-on-accent);
+}
+
+.t-map-marker-shape {
+  display: grid;
+  place-items: center;
+  width: var(--t-space-4);
+  height: var(--t-space-4);
+  border-radius: 50%;
+  background: var(--t-tone);
+  color: var(--t-on-tone);
+  box-shadow:
+    0 0 0 var(--t-border-w-strong) var(--t-canvas),
+    var(--t-shadow-sm);
+}
+
+/* A pin: a drop whose tip stands on the point, with the icon upright in its head. */
+.t-map-marker[data-shape="pin"] {
+  translate: -50% calc(-50% - var(--t-space-6) * 0.71);
+}
+
+.t-map-marker[data-shape="pin"] .t-map-marker-shape {
+  width: var(--t-space-6);
+  height: var(--t-space-6);
+  border-radius: 50% 50% 50% 0;
+  font-size: var(--t-text-base);
+  rotate: -45deg;
+}
+
+.t-map-marker[data-shape="pin"] .t-icon {
+  rotate: 45deg;
+}
+
+.t-map-marker[aria-expanded="true"] .t-map-marker-shape {
+  box-shadow:
+    0 0 0 var(--t-border-w-strong) var(--t-text),
+    var(--t-shadow-sm);
+}
+
+.t-map-here {
+  width: var(--t-space-4);
+  height: var(--t-space-4);
+  border-radius: 50%;
+  background: var(--t-info);
+  box-shadow: 0 0 0 var(--t-border-w-strong) var(--t-canvas);
+  translate: -50% -50%;
+}
+
+.t-map-path {
+  stroke: var(--t-tone);
+  stroke-width: calc(var(--t-border-w-strong) * 1.5);
+}
+
+.t-map .leaflet-zoom-box {
+  border: var(--t-border-w-strong) dashed var(--t-accent-solid);
+  background: color-mix(in srgb, var(--t-accent-solid) 20%, transparent);
+}
+
+/* The card of a selected marker, in the popup look. Its tip points at the marker's shape. */
+.t-map .leaflet-popup {
+  margin-bottom: calc(var(--t-space-3) * 0.71 + var(--t-space-2) + var(--t-space-1));
+}
+
+.t-map .leaflet-popup[data-shape="pin"] {
+  margin-bottom: calc(var(--t-space-3) * 0.71 + var(--t-space-6) * 1.21 + var(--t-space-1));
+}
+
+.t-map .leaflet-popup-content-wrapper {
+  padding: 0;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-popup);
+  background: var(--t-surface);
+  color: var(--t-text);
+  box-shadow: var(--t-shadow-md);
+  text-align: start;
+}
+
+.t-map .leaflet-popup-content {
+  min-height: 0;
+  margin: 0;
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading);
+}
+
+.t-map .leaflet-popup-tip-container {
+  width: var(--t-space-6);
+  height: var(--t-space-3);
+  margin-top: calc(var(--t-border-w) * -1);
+  margin-left: calc(var(--t-space-6) / -2);
+}
+
+.t-map .leaflet-popup-tip {
+  width: var(--t-space-3);
+  height: var(--t-space-3);
+  padding: 0;
+  margin: calc(var(--t-space-3) / -2) auto 0;
+  border: var(--t-border-w) solid var(--t-border);
+  background: var(--t-surface);
+  box-shadow: none;
+}
+
+.t-map-popup {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: var(--t-space-1);
+  width: max-content;
+  max-width: var(--t-measure-xs);
+  padding: var(--t-space-1) var(--t-space-1) var(--t-space-2) var(--t-space-3);
+  outline: none;
+}
+
+.t-map-popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-1);
+  min-width: 0;
+  padding-block-start: calc((var(--t-control-h-sm) - 1lh) / 2);
+  overflow-wrap: anywhere;
+}
+
+.t-map-popup p {
+  margin: 0;
+}
+
+.t-map-popup-title {
+  font-weight: var(--t-weight-medium);
+}
+
+a.t-map-popup-title {
+  color: var(--t-link);
+}
+
+.t-map-popup-body {
+  color: var(--t-muted);
+}

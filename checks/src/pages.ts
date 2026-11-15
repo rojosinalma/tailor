@@ -231,10 +231,11 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
 async function settle(page: Page): Promise<void> {
   await page.evaluate(async () => {
     await document.fonts.ready;
+    // Every image is loaded and decoded, also the ones a script added, such as map tiles.
     await Promise.all(
-      [...document.images]
-        .filter((img) => !img.complete)
-        .map((img) => new Promise((done) => img.addEventListener("load", done, { once: true }))),
+      [...document.images].map((img) =>
+        img.complete && img.naturalWidth === 0 ? null : img.decode().catch(() => null),
+      ),
     );
     await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => done(null))));
   });
