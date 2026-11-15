@@ -134,7 +134,10 @@ export default defineComponent({
 2. Examples use tailor components and layout parts only. No own classes, no styles.
 3. Every interactive example has an accessible name.
 4. Sample data is neutral: `web-1`, `nas`, `alice`, `example.com`.
-5. `display: "frame"` gives the example a page of its own: for shells, layouts and parts that fill the screen.
+5. `display: "frame"` gives the example a box with a height: for pages, shells and parts that fill their parent.
+   `width: "sm" | "md"` gives it a narrow box, to show how the component adapts to its container.
+6. Dates in examples are fixed dates near 2026-11-15, never "now": the image check holds the clock at
+   2026-11-15 12:00 UTC, so a page looks the same on every day.
 
 ## 9. Behaviour tests
 

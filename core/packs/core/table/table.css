@@ -1,0 +1,193 @@
+.t-table-wrap {
+  container: t-table / inline-size;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  overflow: clip;
+}
+
+.t-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: var(--t-text-base);
+  line-height: var(--t-leading-tight);
+}
+
+.t-table caption {
+  padding: var(--t-space-2) var(--t-space-3);
+  border-bottom: var(--t-border-w) solid var(--t-border);
+  font-weight: var(--t-weight-bold);
+  text-align: start;
+}
+
+.t-table th,
+.t-table td {
+  padding: var(--t-space-2) var(--t-space-3);
+  border-bottom: var(--t-border-w) solid var(--t-border);
+  text-align: start;
+  vertical-align: middle;
+}
+
+.t-table thead th {
+  background: var(--t-inset);
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-label-weight);
+  text-transform: var(--t-label-transform);
+  white-space: nowrap;
+}
+
+.t-table tbody th {
+  font-weight: var(--t-weight-medium);
+}
+
+.t-table tbody tr:last-child > * {
+  border-bottom: 0;
+}
+
+.t-table tbody tr:nth-child(even) {
+  background: color-mix(in srgb, var(--t-text) 4%, transparent);
+}
+
+/* The start edge of every row; a toned row colours it. */
+.t-table tr > :first-child {
+  border-inline-start: var(--t-border-w-strong) solid transparent;
+}
+
+.t-table tbody tr[data-tone] > :first-child {
+  border-inline-start-color: var(--t-tone);
+}
+
+.t-table [data-kind="num"] {
+  font-variant-numeric: tabular-nums;
+  text-align: end;
+  white-space: nowrap;
+}
+
+.t-table [data-kind="actions"],
+.t-table [data-kind="icon"] {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.t-table [data-kind="actions"] {
+  text-align: end;
+}
+
+.t-table th[data-width="2xs"] {
+  width: var(--t-measure-2xs);
+}
+
+.t-table th[data-width="xs"] {
+  width: var(--t-measure-xs);
+}
+
+.t-table th[data-width="sm"] {
+  width: var(--t-measure-sm);
+}
+
+.t-table[data-density="compact"] {
+  font-size: var(--t-text-sm);
+}
+
+.t-table[data-density="compact"] th,
+.t-table[data-density="compact"] td {
+  padding: var(--t-space-1) var(--t-space-2);
+}
+
+.t-table-wrap:has(> .t-table[data-narrow="scroll"]) {
+  overflow-x: auto;
+}
+
+@media (hover: hover) {
+  .t-table tbody tr:hover {
+    background: var(--t-hover);
+  }
+}
+
+@container t-table (max-width: 64rem) {
+  .t-table [data-priority="low"] {
+    display: none;
+  }
+}
+
+@container t-table (max-width: 40rem) {
+  .t-table[data-narrow="scroll"] th,
+  .t-table[data-narrow="scroll"] td {
+    white-space: nowrap;
+  }
+
+  /* Cards: each row is a card, each cell a "label value" line. The header row stays for screen readers. */
+  .t-table:not([data-narrow]),
+  .t-table:not([data-narrow]) tbody,
+  .t-table:not([data-narrow]) tr {
+    display: block;
+  }
+
+  .t-table:not([data-narrow]) thead {
+    position: absolute;
+    width: var(--t-hairline);
+    height: var(--t-hairline);
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .t-table:not([data-narrow]) tbody tr {
+    padding: var(--t-space-3);
+    border-bottom: var(--t-border-w) solid var(--t-border);
+    border-inline-start: var(--t-border-w-strong) solid transparent;
+  }
+
+  .t-table:not([data-narrow]) tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  .t-table:not([data-narrow]) tbody tr[data-tone] {
+    border-inline-start-color: var(--t-tone);
+  }
+
+  .t-table:not([data-narrow]) tbody th,
+  .t-table:not([data-narrow]) tbody td {
+    display: flex;
+    gap: var(--t-space-3);
+    width: auto;
+    padding: var(--t-space-05) 0;
+    border: 0;
+    text-align: start;
+    white-space: normal;
+  }
+
+  .t-table:not([data-narrow]) tbody td > * {
+    min-width: 0;
+  }
+
+  .t-table:not([data-narrow]) tbody th {
+    padding-bottom: var(--t-space-2);
+    font-size: var(--t-text-lg);
+  }
+
+  .t-table:not([data-narrow]) tbody td::before {
+    content: attr(data-label);
+    flex: none;
+    width: 35%;
+    color: var(--t-muted);
+    font-size: var(--t-text-sm);
+  }
+
+  .t-table:not([data-narrow]) tbody td[data-kind="actions"] {
+    justify-content: flex-end;
+    padding-top: var(--t-space-2);
+  }
+
+  .t-table:not([data-narrow]) tbody td[data-kind="actions"]::before {
+    content: none;
+  }
+
+  .t-table:not([data-narrow]) caption {
+    display: block;
+  }
+
+  .t-table:not([data-narrow]) [data-priority="low"] {
+    display: none;
+  }
+}

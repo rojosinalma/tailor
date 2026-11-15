@@ -1,0 +1,23 @@
+.t-truncate {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-truncate[data-lines] {
+  display: -webkit-box;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+}
+
+.t-truncate[data-lines="2"] {
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.t-truncate[data-lines="3"] {
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+}

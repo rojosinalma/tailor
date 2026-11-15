@@ -1,0 +1,25 @@
+.t-kbd {
+  display: inline-block;
+  min-width: 1.75em;
+  padding: 0 var(--t-space-1);
+  border: var(--t-border-w) solid var(--t-border);
+  border-bottom-width: var(--t-border-w-strong);
+  border-radius: var(--t-radius-check);
+  background: var(--t-inset);
+  color: var(--t-text);
+  font-family: var(--t-font-mono);
+  font-size: 0.85em;
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.t-kbd-keys {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-05);
+  color: var(--t-muted);
+  font-family: inherit;
+  font-size: inherit;
+}

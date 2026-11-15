@@ -1,0 +1,85 @@
+.t-timeline {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.t-timeline-item {
+  display: flex;
+  gap: var(--t-space-3);
+}
+
+.t-timeline-marker {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: center;
+  width: var(--t-control-h-sm);
+  color: var(--t-muted);
+}
+
+.t-timeline-item[data-tone] .t-timeline-marker {
+  color: var(--t-tone);
+}
+
+/* The dot or icon sits on the first line of the title. */
+.t-timeline-marker > :first-child {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  height: calc(var(--t-text-base) * var(--t-leading-tight));
+}
+
+.t-timeline-marker > :first-child:empty::before {
+  content: "";
+  width: var(--t-space-2);
+  height: var(--t-space-2);
+  border-radius: var(--t-radius-pill);
+  background: currentColor;
+}
+
+.t-timeline-marker::after {
+  content: "";
+  flex: 1;
+  width: var(--t-border-w);
+  margin-block: var(--t-space-1);
+  background: var(--t-border);
+}
+
+.t-timeline-item:last-child .t-timeline-marker::after {
+  content: none;
+}
+
+.t-timeline-content {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: var(--t-space-2);
+  row-gap: var(--t-space-1);
+  min-width: 0;
+  padding-bottom: var(--t-space-5);
+}
+
+.t-timeline-item:last-child .t-timeline-content {
+  padding-bottom: 0;
+}
+
+.t-timeline-title {
+  min-width: 0;
+  font-weight: var(--t-weight-medium);
+  line-height: var(--t-leading-tight);
+}
+
+.t-timeline-time {
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-timeline-body {
+  flex-basis: 100%;
+  min-width: 0;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}

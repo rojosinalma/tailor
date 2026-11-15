@@ -1,0 +1,53 @@
+.t-code {
+  min-width: 0;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  background: var(--t-inset);
+  overflow: clip;
+}
+
+.t-code-header {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-2);
+  padding: var(--t-space-1) var(--t-space-1) var(--t-space-1) var(--t-space-3);
+  border-bottom: var(--t-border-w) solid var(--t-border);
+}
+
+.t-code-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--t-muted);
+  font-family: var(--t-font-mono);
+  font-size: var(--t-text-sm);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-code-copy {
+  margin-inline-start: auto;
+}
+
+.t-code-copy[data-copied] .t-icon {
+  color: var(--t-success);
+}
+
+.t-code-pre {
+  padding: var(--t-space-3);
+  overflow-x: auto;
+  font-family: var(--t-font-mono);
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading);
+  tab-size: 2;
+}
+
+/* The block clips its corners, so the focus ring of the code sits inside. */
+.t-code-pre:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+.t-code[data-wrap] .t-code-pre {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

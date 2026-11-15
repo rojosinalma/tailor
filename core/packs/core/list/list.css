@@ -1,0 +1,107 @@
+.t-list {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.t-list-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-3);
+  min-height: var(--t-control-h-lg);
+  padding: var(--t-space-2) var(--t-space-3);
+  border-radius: var(--t-radius-control);
+}
+
+.t-list:not([data-dividers="false"]) > .t-list-item {
+  border-radius: 0;
+}
+
+.t-list:not([data-dividers="false"]) > .t-list-item + .t-list-item {
+  border-top: var(--t-border-w) solid var(--t-border);
+}
+
+.t-list-item[aria-current],
+.t-list-item:has(> .t-list-content .t-list-link[aria-current]) {
+  background: var(--t-selection);
+}
+
+.t-list-leading,
+.t-list-trailing {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--t-space-2);
+}
+
+.t-list-leading {
+  color: var(--t-muted);
+  font-size: var(--t-text-lg);
+}
+
+.t-list-trailing {
+  max-width: 50%;
+  margin-inline-start: auto;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+/* Controls in the trailing part sit above the link that covers the row. */
+.t-list-trailing > * {
+  position: relative;
+  min-width: 0;
+}
+
+.t-list-content {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--t-space-05);
+  min-width: 0;
+}
+
+.t-list-title {
+  overflow: hidden;
+  font-weight: var(--t-weight-medium);
+  line-height: var(--t-leading-tight);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-list-link {
+  color: inherit;
+  outline: none;
+}
+
+.t-list-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+
+.t-list-item:has(.t-list-link:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+.t-list-description {
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+@media (hover: hover) {
+  .t-list-item:has(.t-list-link:not([aria-current])):hover {
+    background: var(--t-hover);
+  }
+
+  .t-list-item:has(.t-list-link):hover .t-list-title {
+    text-decoration: underline;
+  }
+}

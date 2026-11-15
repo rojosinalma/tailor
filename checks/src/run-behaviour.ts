@@ -44,6 +44,9 @@ export async function runBehaviour(
           viewport: suite.viewport ?? { width: 1280, height: 800 },
           reducedMotion: "reduce",
           colorScheme: "dark",
+          locale: "en-US",
+          timezoneId: "UTC",
+          permissions: ["clipboard-read", "clipboard-write"],
         });
         const page = await context.newPage();
         const errors: string[] = [];

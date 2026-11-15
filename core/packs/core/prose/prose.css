@@ -1,0 +1,119 @@
+/* The one stylesheet that styles plain elements: long text that comes as HTML, such as rendered Markdown. */
+.t-prose {
+  max-width: var(--t-measure-prose);
+  min-width: 0;
+  line-height: var(--t-leading);
+  overflow-wrap: break-word;
+}
+
+.t-prose > * + * {
+  margin-block-start: var(--t-space-4);
+}
+
+.t-prose > :is(h1, h2, h3, h4) + * {
+  margin-block-start: var(--t-space-2);
+}
+
+.t-prose > * + :is(h1, h2, h3, h4) {
+  margin-block-start: var(--t-space-6);
+}
+
+.t-prose h1 {
+  font-size: var(--t-text-3xl);
+}
+
+.t-prose h2 {
+  font-size: var(--t-text-2xl);
+}
+
+.t-prose h3 {
+  font-size: var(--t-text-xl);
+}
+
+.t-prose h4 {
+  font-size: var(--t-text-lg);
+}
+
+.t-prose a {
+  color: var(--t-link);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+.t-prose strong {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-prose ul,
+.t-prose ol {
+  padding-inline-start: var(--t-space-5);
+}
+
+.t-prose ul {
+  list-style: disc;
+}
+
+.t-prose ol {
+  list-style: decimal;
+}
+
+.t-prose li + li,
+.t-prose li > :is(ul, ol) {
+  margin-block-start: var(--t-space-1);
+}
+
+.t-prose li::marker {
+  color: var(--t-muted);
+}
+
+.t-prose blockquote {
+  padding-inline-start: var(--t-space-4);
+  border-inline-start: var(--t-border-w-strong) solid var(--t-border);
+  color: var(--t-muted);
+}
+
+.t-prose :not(pre) > code {
+  padding: 0 var(--t-space-1);
+  border-radius: var(--t-radius-check);
+  background: var(--t-inset);
+  font-size: 0.875em;
+}
+
+.t-prose pre {
+  padding: var(--t-space-3);
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  background: var(--t-inset);
+  font-size: var(--t-text-sm);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.t-prose table {
+  width: 100%;
+  font-size: var(--t-text-sm);
+}
+
+.t-prose th,
+.t-prose td {
+  padding: var(--t-space-1) var(--t-space-2);
+  border-bottom: var(--t-border-w) solid var(--t-border);
+  text-align: start;
+  vertical-align: top;
+  overflow-wrap: anywhere;
+}
+
+.t-prose th {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-prose img {
+  height: auto;
+  border-radius: var(--t-radius-box);
+}
+
+.t-prose hr {
+  height: var(--t-border-w);
+  border: 0;
+  background: var(--t-border);
+}
