@@ -1,0 +1,39 @@
+.t-shell[data-shell="bare"] > .t-shell-bar {
+  min-height: calc(var(--t-control-h-lg) + var(--t-safe-top));
+  border-bottom: 0;
+  background: none;
+}
+
+/* Center: the brand and the content in one column in the middle; the column scrolls when it is taller. */
+.t-shell[data-shell="bare"][data-align="center"] > .t-shell-main {
+  padding: calc(var(--t-gutter) + var(--t-safe-top)) calc(var(--t-gutter) + var(--t-safe-right))
+    var(--t-gutter) calc(var(--t-gutter) + var(--t-safe-left));
+  overflow-y: auto;
+}
+
+.t-bare-column {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--t-space-5);
+  width: min(100%, var(--t-measure-sm));
+  margin: auto;
+}
+
+.t-bare-column > .t-shell-brand {
+  align-self: center;
+}
+
+.t-shell[data-shell="bare"] > .t-shell-footer {
+  justify-content: center;
+  padding-block: var(--t-space-2) calc(var(--t-space-2) + var(--t-safe-bottom));
+  border-top: 0;
+  background: none;
+  text-align: center;
+}
+
+.t-shell[data-shell="bare"] > .t-shell-footer > .t-shell-facts {
+  flex: 0 1 auto;
+  justify-content: center;
+}

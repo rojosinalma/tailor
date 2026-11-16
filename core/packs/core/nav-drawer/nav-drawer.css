@@ -1,0 +1,51 @@
+/* The drawer look comes from t-drawer (side "start"); these rules lay out its content. */
+.t-nav-drawer {
+  touch-action: pan-y;
+}
+
+.t-nav-drawer > .t-drawer-header {
+  min-height: calc(var(--t-nav-h) + var(--t-border-w));
+  padding-block: 0;
+}
+
+.t-nav-drawer > .t-drawer-header > .t-shell-brand {
+  flex: 1 1 auto;
+}
+
+.t-nav-drawer-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-5);
+  padding: var(--t-space-3);
+}
+
+.t-nav-drawer-body > .t-shell-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-4);
+}
+
+.t-nav-drawer-body > .t-shell-actions {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0 var(--t-space-3);
+}
+
+.t-nav-drawer-footer {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-2) var(--t-space-4);
+  padding: var(--t-space-3) var(--t-space-4);
+  border-top: var(--t-border-w) solid var(--t-border);
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+/* Without the script the menu button is a link to the drawer: it shows as a panel while it is the target. */
+dialog.t-drawer.t-nav-drawer:target:not([open]) {
+  display: flex;
+  translate: none;
+}

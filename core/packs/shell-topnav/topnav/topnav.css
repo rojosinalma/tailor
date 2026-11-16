@@ -1,0 +1,56 @@
+/* The links sit in one row after the brand. The script measures them; without it the row scrolls sideways. */
+.t-shell[data-shell="topnav"] > .t-shell-bar {
+  gap: var(--t-space-4);
+}
+
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav {
+  display: flex;
+  flex: 1 1 0;
+  align-items: center;
+  align-self: stretch;
+  min-width: 0;
+}
+
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav > .t-shell-list {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--t-space-1);
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.t-shell[data-shell="topnav"]
+  > .t-shell-bar
+  > .t-shell-nav:not([data-t-upgraded])[data-t="topnav"]
+  > .t-shell-list {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav > .t-shell-list > li {
+  flex: none;
+}
+
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav .t-shell-link {
+  width: auto;
+}
+
+/* In a row every link shows its label, so a missing icon needs no letter box. */
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav .t-shell-icon:has(> .t-shell-initial) {
+  display: none;
+}
+
+/* The current link is marked by a line under it in place of the line at its start. */
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav .t-shell-link[aria-current="page"]::before,
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav .t-shell-link[data-current-section]::before {
+  inset: auto var(--t-space-2) 0;
+  width: auto;
+  height: var(--t-border-w-strong);
+}
+
+@container t-shell (max-width: 40rem) {
+  .t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav {
+    display: none;
+  }
+}

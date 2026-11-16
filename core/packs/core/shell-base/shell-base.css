@@ -1,0 +1,377 @@
+/*
+ * The frame that every shell shares. A shell is bound to the visible screen and never scrolls; the Page in
+ * its main region does. The root is a size container named t-shell: a shell that fills the screen is as
+ * wide as the viewport, so one set of @container t-shell rules gives the phone and tablet forms both on
+ * the screen and in a contained preview.
+ */
+html:has(> body > .t-shell:not([data-contained])),
+html:has(> body > * > .t-shell:not([data-contained])),
+body:has(> .t-shell:not([data-contained])),
+body:has(> * > .t-shell:not([data-contained])) {
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+.t-shell {
+  container: t-shell / inline-size;
+  position: relative;
+  display: grid;
+  grid-template: "bar" auto "main" minmax(0, 1fr) "footer" auto "bottom" auto / minmax(0, 1fr);
+  /* lint-allow: --t-viewport-h is set on <html> by the shell script from the visual viewport; tokens.css has no value for it */
+  height: var(--t-viewport-h, 100dvh);
+  min-width: 0;
+  /* clip, not hidden: nothing can scroll the frame, not even a focus or scrollIntoView. */
+  overflow: clip;
+  background: var(--t-canvas);
+  color: var(--t-text);
+}
+
+.t-shell[data-contained] {
+  height: 100%;
+}
+
+/* The skip link is out of sight until it has the focus. */
+.t-shell-skip {
+  position: absolute;
+  inset-block-start: calc(var(--t-space-2) + var(--t-safe-top));
+  inset-inline-start: calc(var(--t-space-2) + var(--t-safe-left));
+  z-index: var(--t-z-popup);
+  padding: var(--t-space-2) var(--t-space-3);
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-control);
+  background: var(--t-surface);
+  color: var(--t-link);
+  box-shadow: var(--t-shadow-md);
+}
+
+.t-shell-skip:not(:focus) {
+  width: var(--t-hairline);
+  height: var(--t-hairline);
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.t-shell-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-3);
+  min-width: 0;
+  min-height: calc(var(--t-nav-h) + var(--t-safe-top));
+  padding: var(--t-safe-top) calc(var(--t-gutter) + var(--t-safe-right)) 0
+    calc(var(--t-gutter) + var(--t-safe-left));
+  border-bottom: var(--t-border-w) solid var(--t-border);
+  background: var(--t-inset);
+}
+
+.t-shell-brand {
+  display: inline-flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-width: 0;
+  min-height: var(--t-control-h-md);
+  border-radius: var(--t-radius-control);
+  color: var(--t-text);
+  font-family: var(--t-font-heading);
+  font-size: var(--t-text-lg);
+  font-weight: var(--t-heading-weight);
+  line-height: var(--t-leading-tight);
+  text-decoration: none;
+}
+
+.t-shell-brand-mark {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  color: var(--t-accent-text);
+  font-size: 1.25em;
+}
+
+.t-shell-brand-mark > img {
+  display: block;
+  width: auto;
+  height: 1em;
+}
+
+.t-shell-brand-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The actions give up their space before the brand does. */
+.t-shell-actions {
+  display: flex;
+  flex: 0 4 auto;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--t-space-2);
+  min-width: 0;
+  margin-inline-start: auto;
+}
+
+.t-shell-actions > * {
+  min-width: 0;
+}
+
+/* Links. The current page is marked three ways: the selection colour, a heavier weight and a bar. */
+.t-shell-list,
+.t-shell-sub {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-05);
+  min-width: 0;
+}
+
+.t-shell-sub {
+  padding-inline-start: calc(var(--t-space-3) + 1.25em);
+}
+
+.t-shell-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-1);
+  min-width: 0;
+}
+
+.t-shell-group-label {
+  padding: 0 var(--t-space-3);
+  overflow: hidden;
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  font-weight: var(--t-label-weight);
+  letter-spacing: var(--t-tracking);
+  text-overflow: ellipsis;
+  text-transform: var(--t-label-transform);
+  white-space: nowrap;
+}
+
+.t-shell-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-2);
+  width: 100%;
+  min-width: 0;
+  min-height: var(--t-control-h-md);
+  padding: 0 var(--t-space-3);
+  border: 0;
+  border-radius: var(--t-radius-control);
+  background: none;
+  color: var(--t-muted);
+  font: inherit;
+  line-height: var(--t-leading-tight);
+  text-align: start;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--t-motion-fast) var(--t-ease),
+    color var(--t-motion-fast) var(--t-ease);
+}
+
+span.t-shell-link {
+  cursor: default;
+}
+
+.t-shell-link[aria-current="page"],
+.t-shell-link[data-current-section] {
+  color: var(--t-text);
+  font-weight: var(--t-weight-medium);
+}
+
+.t-shell-link[aria-current="page"] {
+  background: var(--t-selection);
+}
+
+.t-shell-link[aria-current="page"]::before,
+.t-shell-link[data-current-section]::before {
+  content: "";
+  position: absolute;
+  inset-block: var(--t-space-2);
+  inset-inline-start: 0;
+  width: var(--t-border-w-strong);
+  border-radius: var(--t-radius-pill);
+  background: var(--t-accent);
+}
+
+.t-shell-link[data-current-section]::before {
+  background: var(--t-border-control);
+}
+
+.t-shell-link:active:not(span) {
+  background: var(--t-active);
+}
+
+.t-shell-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.25em;
+  font-size: 1.1em;
+}
+
+.t-shell-initial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25em;
+  height: 1.25em;
+  border: var(--t-border-w) solid currentColor;
+  border-radius: var(--t-radius-check);
+  font-size: var(--t-text-xs);
+  font-weight: var(--t-weight-bold);
+  line-height: 1;
+}
+
+/* Sub-items keep their place in the list without a box for the missing icon. */
+.t-shell-sub .t-shell-icon:has(> .t-shell-initial) {
+  display: none;
+}
+
+.t-shell-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.t-shell-chevron {
+  display: inline-flex;
+  flex: none;
+  color: var(--t-muted);
+  transition: rotate var(--t-motion-fast) var(--t-ease);
+}
+
+.t-shell-link[aria-expanded="true"] > .t-shell-chevron {
+  rotate: 180deg;
+}
+
+.t-shell-main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: clip;
+  outline: none;
+}
+
+.t-shell-main > * {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+/*
+ * A page that scrolls keeps its body as a scrolling grid: page.css lets the fill rules reach every page.
+ * The body is positioned, so an absolute part inside it (a table's hidden head) scrolls with it.
+ */
+.t-shell-main .t-page > .t-page-body {
+  position: relative;
+}
+
+.t-shell-main .t-page:not([data-mode="fill"]) > .t-page-body {
+  display: grid;
+  gap: var(--t-space-5);
+  overflow-y: auto;
+}
+
+.t-shell-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-2) var(--t-space-4);
+  min-width: 0;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-shell-facts {
+  display: flex;
+  flex: 1 1 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-1) var(--t-space-4);
+  min-width: 0;
+}
+
+.t-shell-fact {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.t-shell-fact a {
+  color: var(--t-link);
+}
+
+.t-shell-theme {
+  display: flex;
+  flex: none;
+  align-items: center;
+  max-width: 100%;
+}
+
+/* The places of the parts in the frame. */
+.t-shell > .t-shell-bar {
+  grid-area: bar;
+}
+
+/* A footer row at the bottom of the frame: thin, facts at the start, theme controls at the end. */
+.t-shell > .t-shell-footer {
+  grid-area: footer;
+  padding: var(--t-space-1) calc(var(--t-gutter) + var(--t-safe-right))
+    calc(var(--t-space-1) + var(--t-safe-bottom)) calc(var(--t-gutter) + var(--t-safe-left));
+  border-top: var(--t-border-w) solid var(--t-border);
+  background: var(--t-inset);
+}
+
+.t-shell > .t-bottom-bar {
+  grid-area: bottom;
+}
+
+/* The menu button and the bottom bar belong to the phone form. */
+.t-shell .t-shell-menu-button,
+.t-shell .t-bottom-bar {
+  display: none;
+}
+
+@media (hover: hover) {
+  .t-shell-link:hover:not(span, [aria-current="page"]) {
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+}
+
+@container t-shell (max-width: 40rem) {
+  .t-shell-bar {
+    gap: var(--t-space-2);
+    padding-inline: calc(var(--t-space-2) + var(--t-safe-left)) calc(var(--t-space-2) + var(--t-safe-right));
+  }
+
+  .t-shell-bar:not(:has(> .t-shell-menu-button)) {
+    padding-inline-start: calc(var(--t-gutter) + var(--t-safe-left));
+  }
+
+  .t-shell .t-shell-menu-button {
+    display: inline-flex;
+    flex: none;
+  }
+
+  .t-shell .t-bottom-bar {
+    display: flex;
+  }
+
+  /* The drawer holds the footer facts and the theme controls. */
+  .t-shell:has(.t-shell-menu-button, .t-bottom-bar) > .t-shell-footer {
+    display: none;
+  }
+
+  .t-shell:not(:has(> .t-bottom-bar)) > .t-shell-main {
+    padding-bottom: var(--t-safe-bottom);
+  }
+}
