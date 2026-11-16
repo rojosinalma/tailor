@@ -7,7 +7,7 @@ import { at } from "./paths";
 const ids = (problems: { rule: string; line: number }[]) => problems.map((p) => [p.rule, p.line]);
 
 /** A scratch folder of skins, inside the project and removed afterwards. */
-const TMP = at(".agents/tmp", `lint-skins-${process.pid}`);
+const TMP = at(".cache", `lint-skins-${process.pid}`);
 afterAll(() => rmSync(TMP, { recursive: true, force: true }));
 
 const makeSkin = (id: string, files: Record<string, string>): string => {
