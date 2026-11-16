@@ -6,6 +6,9 @@ import { routePendingComponent } from "@tailor/react/core/loading-page/loading-p
 import { routeNotFoundComponent } from "@tailor/react/core/not-found/not-found";
 import { Search } from "@tailor/react/core/search/search";
 import type { NavGroup, NavItem } from "@tailor/react/core/shell-base/shell-base";
+import { OfflineBanner } from "@tailor/react/pwa/offline-banner/offline-banner";
+import { PwaInstall } from "@tailor/react/pwa/pwa-install/pwa-install";
+import { PwaUpdate } from "@tailor/react/pwa/pwa-update/pwa-update";
 import { SideNavShell } from "@tailor/react/shell-sidenav/sidenav/sidenav";
 import {
   createHashHistory,
@@ -87,12 +90,15 @@ function Frame() {
       footer={[
         { id: "version", label: "Version", value: VERSION },
         { id: "repository", value: "Source", to: REPOSITORY },
+        { id: "install", value: <PwaInstall /> },
       ]}
       theme={["skin", "palette", "mode"]}
       storageKey={SIDEBAR_KEY}
       // The site's links are many and named: icons alone cannot tell them apart, so a tablet starts open too.
       tabletCollapsed={false}
     >
+      <PwaUpdate />
+      <OfflineBanner />
       <Outlet />
     </SideNavShell>
   );

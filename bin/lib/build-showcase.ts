@@ -1,9 +1,10 @@
 /** Builds the showcase site into showcase/dist: the app, one page per component for each kit, and the assets. */
 import { cp, mkdir, rm } from "node:fs/promises";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
 import { Glob } from "bun";
 import { createElement, type ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { appIcon, buildManifest } from "../../core/packs/pwa/pwa/logic";
 import { withRequirements } from "../../core/src/packs";
 import type { PaletteSpec } from "../../core/src/palette";
 import type { SkinSpec } from "../../core/src/skins";
@@ -28,12 +29,30 @@ const minify = (css: string): string =>
     .replace(/\s*([{};])\s*/g, "$1")
     .trim();
 
+/** A built script and every file that it imports statically, directly or through another one, in the folder. */
+async function staticImports(folder: string, entry: string): Promise<string[]> {
+  const transpiler = new Bun.Transpiler({ loader: "js" });
+  const found = new Set<string>();
+  const visit = async (file: string): Promise<void> => {
+    if (found.has(file)) return;
+    found.add(file);
+    const { imports } = transpiler.scan(await Bun.file(join(folder, file)).text());
+    for (const { path, kind } of imports)
+      if (kind === "import-statement" && path.startsWith("./")) await visit(path.slice(2));
+  };
+  await visit(entry);
+  return [...found];
+}
+
 /** One static page of the showcase site for the HTML kit: its address under the site root and its content. */
 export interface StaticPage {
   readonly path: string;
   readonly title: string;
   readonly render: () => ReactNode;
 }
+
+const PWA_HEAD =
+  '\n<link rel="manifest" href="manifest.webmanifest" crossorigin="use-credentials">\n<link rel="icon" href="icon.svg" type="image/svg+xml">';
 
 export const DEFAULT_SKIN = "bootstrap";
 export const DEFAULT_PALETTE = "gruvbox";
@@ -55,8 +74,9 @@ function page(options: {
   body: string;
   scripts: string[];
   bodyClass: string;
+  head?: string;
 }): string {
-  const { title, rel, theme, body, scripts, bodyClass } = options;
+  const { title, rel, theme, body, scripts, bodyClass, head = "" } = options;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -65,7 +85,7 @@ function page(options: {
 <title>${title}</title>
 <script>${prepaintScript(theme)}window.TAILOR_THEME=${JSON.stringify(theme).replaceAll("<", "\\u003c")};</script>
 <link rel="stylesheet" href="${rel}assets/all.css">
-<link rel="stylesheet" href="${rel}assets/showcase.css">
+<link rel="stylesheet" href="${rel}assets/showcase.css">${head}
 </head>
 <body class="${bodyClass}">
 ${body}
@@ -162,6 +182,7 @@ export async function buildShowcase(
         body: '<div id="root"></div>',
         scripts: ["assets/main.js"],
         bodyClass: "sc-app",
+        head: PWA_HEAD,
       }),
     );
   }
@@ -238,6 +259,64 @@ export async function buildShowcase(
         scripts: scriptsFor(spec.pack, body),
         bodyClass: "sc-entry",
       }),
+    );
+  }
+
+  // The site as an installable app that opens with no network: the pwa pack, used on itself.
+  if (hasApp) {
+    const gruvbox = palettes.find((p) => p.id === DEFAULT_PALETTE);
+    const glyph = sets.bi?.icons.scissors?.body ?? "";
+    const colours = { canvas: gruvbox?.canvas ?? "#282828", accent: gruvbox?.accent ?? "#fabd2f" };
+    await out(`${dist}/icon.svg`, appIcon({ glyph, ...colours }));
+    await out(`${dist}/icon-maskable.svg`, appIcon({ glyph, ...colours, maskable: true }));
+    await out(
+      `${dist}/manifest.webmanifest`,
+      `${JSON.stringify(
+        buildManifest({
+          name: "tailor",
+          description: "Every shell and component of tailor, in every skin and palette.",
+          start: "./",
+          scope: "./",
+          icons: [
+            { src: "icon.svg", sizes: "any", type: "image/svg+xml" },
+            { src: "icon-maskable.svg", sizes: "any", type: "image/svg+xml", purpose: "maskable" },
+          ],
+          themeColor: colours.canvas,
+          backgroundColor: colours.canvas,
+        }),
+        null,
+        2,
+      )}\n`,
+    );
+    const { OfflinePage } = await import(at("react/src/core/offline-page/offline-page.tsx"));
+    const offline = renderToStaticMarkup(createElement(StaticKit, null, createElement(OfflinePage)));
+    await out(
+      `${dist}/offline.html`,
+      page({
+        title: "tailor",
+        rel: "",
+        theme,
+        body: offline,
+        scripts: ["tailor/tailor.js"],
+        bodyClass: "sc-page",
+      }),
+    );
+    // A new version for every build whose files differ, so an installed copy learns of the update.
+    // The shell is what the overview needs to open with no network: the app script and the chunks that it
+    // imports statically. A component page's examples load lazily and are cached at the first online visit.
+    const shell = [
+      "./",
+      "index.html",
+      "assets/all.css",
+      "assets/showcase.css",
+      ...(await staticImports(at(dist, "assets"), "main.js")).map((file) => `assets/${file}`),
+      "tailor/icons.svg",
+    ];
+    const hasher = new Bun.CryptoHasher("sha256");
+    for (const file of shell.slice(1)) hasher.update(await Bun.file(at(dist, file)).bytes());
+    await out(
+      `${dist}/sw.js`,
+      `importScripts("tailor/tailor-sw.js");\ntailorServiceWorker(${JSON.stringify({ version: hasher.digest("hex").slice(0, 12), shell, offline: "offline.html", spa: true })});\n`,
     );
   }
 

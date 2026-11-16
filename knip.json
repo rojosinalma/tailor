@@ -24,7 +24,8 @@
         "src/main.tsx",
         "src/pages/*.tsx",
         "src/static-pages.tsx",
-        "check.ts"
+        "check.ts",
+        "check-pwa.ts"
       ],
       "project": ["src/**/*.{ts,tsx}"]
     },

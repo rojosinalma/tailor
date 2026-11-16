@@ -46,20 +46,40 @@ interface WorkerScope {
 
 const scope = globalThis as unknown as WorkerScope;
 
+/** Files fetched at the same time during install. */
+const PRECACHE_CONCURRENCY = 4;
+
 async function keep(cache: Cache, key: Request | string, response: Response): Promise<void> {
   if (isCacheable(response)) await cache.put(key, response.clone());
 }
 
+/**
+ * Drops the body of a network answer that the page does not get, once it is kept. A body that nobody reads
+ * holds its connection, and the browser then stops answering the next requests.
+ */
+const discard = (network: Promise<Response>): Promise<void> =>
+  network.then((response) => response.body?.cancel()).catch(() => undefined);
+
+/** Fetches one file of the shell and reads its body to the end. */
+async function fetchWhole(file: string): Promise<readonly [string, Response]> {
+  const response = await fetch(file, { cache: "reload" });
+  // A sign-in redirect of an access proxy or an error page is never kept as the app.
+  if (!isCacheable(response)) {
+    await response.body?.cancel();
+    throw new Error(`tailor-sw: ${file} answered ${response.status}`);
+  }
+  const { status, statusText, headers } = response;
+  return [file, new Response(await response.blob(), { status, statusText, headers })];
+}
+
 async function precache(settings: WorkerSettings): Promise<void> {
   // Every file first, then the cache: a failed install leaves no cache behind.
-  const responses = await Promise.all(
-    precacheList(settings).map(async (file) => {
-      const response = await fetch(file, { cache: "reload" });
-      // A sign-in redirect of an access proxy or an error page is never kept as the app.
-      if (!isCacheable(response)) throw new Error(`tailor-sw: ${file} answered ${response.status}`);
-      return [file, response] as const;
-    }),
-  );
+  const queue = precacheList(settings).values();
+  const responses: (readonly [string, Response])[] = [];
+  const fetchAll = async (): Promise<void> => {
+    for (const file of queue) responses.push(await fetchWhole(file));
+  };
+  await Promise.all(Array.from({ length: PRECACHE_CONCURRENCY }, fetchAll));
   const cache = await caches.open(cacheName(settings.version));
   await Promise.all(responses.map(([file, response]) => cache.put(file, response)));
 }
@@ -81,7 +101,10 @@ async function networkFirst(event: FetchEvent, settings: WorkerSettings): Promis
   if (answer) return answer;
   for (const key of navigationFallbacks(event.request.url, settings)) {
     const cached = await cache.match(key, { ignoreSearch: key !== event.request.url });
-    if (cached) return cached;
+    if (cached) {
+      event.waitUntil(discard(network));
+      return cached;
+    }
   }
   return network;
 }
@@ -94,7 +117,7 @@ async function staleWhileRevalidate(event: FetchEvent, settings: WorkerSettings)
     return response;
   });
   if (!cached) return network;
-  event.waitUntil(network.catch(() => undefined));
+  event.waitUntil(discard(network));
   return cached;
 }
 
