@@ -1,0 +1,35 @@
+.t-query {
+  position: relative;
+  min-width: 0;
+}
+
+/* A refresh: a thin line moves along the top edge; under reduced motion it stands still. */
+.t-query-progress {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: var(--t-z-sticky);
+  height: var(--t-border-w-strong);
+  overflow: hidden;
+  background: color-mix(in srgb, var(--t-accent-solid) var(--t-tint), transparent);
+}
+
+.t-query-progress::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 30%;
+  background: var(--t-accent-solid);
+  animation: t-query-move calc(var(--t-motion-base) * 6) var(--t-ease) infinite;
+}
+
+@keyframes t-query-move {
+  from {
+    translate: -100% 0;
+  }
+
+  to {
+    translate: 340% 0;
+  }
+}

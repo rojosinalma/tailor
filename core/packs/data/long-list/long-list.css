@@ -1,0 +1,44 @@
+/* The box scrolls; the inner list holds the height of every row, the window the rows in view. */
+/* The script sets the sizes: the height of all rows, the space above the view, the height of a fixed row. */
+.t-long-list {
+  --t-long-list-size: auto;
+  --t-long-list-offset: 0;
+  --t-long-list-row: auto;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.t-long-list:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+/* The rows above the view are an empty space at the top of the list. */
+.t-long-list-inner {
+  height: var(--t-long-list-size);
+  padding-block-start: var(--t-long-list-offset);
+}
+
+.t-long-list-item {
+  min-width: 0;
+  padding: var(--t-space-2) var(--t-space-3);
+  border-bottom: var(--t-border-w) solid var(--t-border);
+  overflow-wrap: anywhere;
+}
+
+.t-long-list[data-fixed] .t-long-list-item {
+  display: flex;
+  align-items: center;
+  height: var(--t-long-list-row);
+  overflow: hidden;
+}
+
+.t-long-list-more {
+  display: flex;
+  justify-content: center;
+  padding: var(--t-space-3);
+  color: var(--t-muted);
+}

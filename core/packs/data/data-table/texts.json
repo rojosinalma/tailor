@@ -1,0 +1,12 @@
+{
+  "selectRow": "Select {name}",
+  "selectPage": "Select the rows on this page",
+  "selectedCount": "{count} selected",
+  "columns": "Columns",
+  "filterAll": "{column}: all",
+  "clearFilters": "Clear filters",
+  "noMatches": "Nothing matches",
+  "noMatchesText": "No row matches the search and the filters.",
+  "noRows": "No rows yet",
+  "descending": "Descending"
+}

@@ -1,0 +1,159 @@
+/* The log fills its parent: the bar on top, the lines scroll below it. */
+/* The React kit sets the height of all lines and the space above the view. */
+.t-log {
+  --t-log-size: auto;
+  --t-log-offset: 0;
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  background: var(--t-inset);
+  font-size: var(--t-text-sm);
+}
+
+.t-log,
+.t-log-lines {
+  font-family: var(--t-font-mono);
+  line-height: var(--t-leading);
+}
+
+.t-log-bar {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-2) var(--t-space-3);
+  padding: var(--t-space-2);
+  border-bottom: var(--t-border-w) solid var(--t-border);
+  background: var(--t-surface);
+  font-family: var(--t-font-sans);
+}
+
+.t-log-bar .t-search {
+  flex: 1 1 var(--t-measure-2xs);
+  width: auto;
+  max-width: var(--t-measure-sm);
+}
+
+.t-log-view {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.t-log-view:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+/* Without wrap the lines keep their length and the box scrolls sideways. */
+.t-log-lines {
+  width: max-content;
+  min-width: 100%;
+  height: var(--t-log-size);
+  padding-block-start: var(--t-log-offset);
+  white-space: normal;
+}
+
+.t-log[data-wrap] .t-log-lines {
+  width: auto;
+}
+
+.t-log-line {
+  display: flex;
+  gap: var(--t-space-3);
+  padding: 0 var(--t-space-3);
+  border-inline-start: var(--t-border-w-strong) solid transparent;
+  white-space: pre;
+}
+
+.t-log[data-wrap] .t-log-line {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.t-log-line[data-tone] {
+  border-inline-start-color: var(--t-tone);
+}
+
+.t-log-line[data-level="debug"] {
+  color: var(--t-muted);
+}
+
+.t-log-time {
+  flex: none;
+  color: var(--t-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-log-level {
+  flex: none;
+  width: 5ch;
+  color: var(--t-tone-text);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-log-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.t-log-text [data-fg="red"] {
+  color: var(--t-hue-red-text);
+}
+
+.t-log-text [data-fg="green"] {
+  color: var(--t-hue-green-text);
+}
+
+.t-log-text [data-fg="yellow"] {
+  color: var(--t-hue-yellow-text);
+}
+
+.t-log-text [data-fg="blue"] {
+  color: var(--t-hue-blue-text);
+}
+
+.t-log-text [data-fg="purple"] {
+  color: var(--t-hue-purple-text);
+}
+
+.t-log-text [data-fg="pink"] {
+  color: var(--t-hue-pink-text);
+}
+
+.t-log-text [data-fg="cyan"] {
+  color: var(--t-hue-cyan-text);
+}
+
+.t-log-text [data-fg="muted"],
+.t-log-text [data-dim]:not([data-fg]) {
+  color: var(--t-muted);
+}
+
+.t-log-text [data-bold] {
+  font-weight: var(--t-weight-bold);
+}
+
+/* A match: the highlight surface and a line under it, so it does not rest on colour alone. */
+.t-log-mark {
+  background: var(--t-selection);
+  color: var(--t-text);
+  text-decoration: underline;
+  text-decoration-color: var(--t-accent);
+  text-decoration-thickness: var(--t-border-w-strong);
+}
+
+.t-log-jump {
+  font-family: var(--t-font-sans);
+  position: absolute;
+  inset-block-end: var(--t-space-3);
+  inset-inline-end: var(--t-space-4);
+  box-shadow: var(--t-shadow-md);
+}

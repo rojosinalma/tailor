@@ -1,0 +1,159 @@
+/* The data table reuses the plain table (t-table, t-table-wrap); this file adds only what is new. */
+.t-data-table {
+  container: t-data-table / inline-size;
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-3);
+  min-width: 0;
+}
+
+/* The search takes the room that the filters leave, within a readable width. */
+.t-data-table .t-toolbar-start > .t-search {
+  flex: 1 1 var(--t-measure-2xs);
+  width: auto;
+  max-width: var(--t-measure-sm);
+}
+
+.t-data-table-sort {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--t-space-1);
+  color: inherit;
+  font: inherit;
+  text-transform: inherit;
+  white-space: nowrap;
+}
+
+/* The hit area covers the padding of the header cell; on a touch screen it reaches the touch size. */
+.t-data-table-sort::after {
+  content: "";
+  position: absolute;
+  inset: calc(var(--t-space-2) * -1) calc(var(--t-space-3) * -1);
+}
+
+.t-data-table-sort .t-icon {
+  flex: none;
+  width: 0.75em;
+  height: 0.75em;
+}
+
+.t-table th[aria-sort] {
+  color: var(--t-text);
+}
+
+.t-table th:not([aria-sort]) .t-data-table-sort .t-icon {
+  color: var(--t-muted);
+}
+
+.t-data-table-sort-index {
+  font-size: var(--t-text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-table [data-kind="num"] .t-data-table-sort {
+  flex-direction: row-reverse;
+}
+
+.t-data-table-check {
+  width: 1%;
+}
+
+/* The label covers the padding of the cell, so the whole cell is the hit area. */
+.t-data-table-check .t-check {
+  --t-check-pad: var(--t-space-2);
+  min-height: 0;
+  margin: calc(var(--t-space-2) * -1) calc(var(--t-space-3) * -1);
+  padding: var(--t-check-pad) var(--t-space-3);
+  vertical-align: middle;
+}
+
+.t-data-table tbody tr[data-selected] {
+  background: var(--t-selection);
+}
+
+.t-data-table-selection,
+.t-data-table-sortby,
+.t-data-table-size {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.t-data-table-selected {
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-label-weight);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-data-table-sortby {
+  display: none;
+}
+
+.t-data-table-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--t-space-2) var(--t-space-4);
+  min-width: 0;
+}
+
+.t-data-table-count,
+.t-data-table-size {
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-data-table-footer .t-pagination {
+  flex: 1 1 auto;
+}
+
+.t-data-table-footer .t-pagination-list {
+  justify-content: center;
+}
+
+@media (pointer: coarse) {
+  .t-data-table-sort {
+    min-height: calc(var(--t-touch) - var(--t-space-2) * 2 + var(--t-space-1));
+  }
+
+  .t-data-table-check .t-check {
+    --t-check-pad: calc((var(--t-touch) - 1lh) / 2);
+  }
+}
+
+@container t-data-table (max-width: 40rem) {
+  .t-data-table:not([data-narrow]) .t-data-table-sortby {
+    display: flex;
+  }
+}
+
+/* The card form: the header row goes, since its controls move into the toolbar, and the box sits at the end of the card. */
+@container t-table (max-width: 40rem) {
+  .t-data-table .t-table:not([data-narrow]) thead {
+    display: none;
+  }
+
+  .t-data-table .t-table:not([data-narrow]) tbody tr {
+    position: relative;
+  }
+
+  .t-data-table .t-table:not([data-narrow]) tbody td.t-data-table-check {
+    position: absolute;
+    inset-block-start: var(--t-space-3);
+    inset-inline-end: var(--t-space-3);
+    padding: 0;
+  }
+
+  .t-data-table .t-table:not([data-narrow]) tbody td.t-data-table-check::before {
+    content: none;
+  }
+
+  .t-data-table .t-table:not([data-narrow]) tbody tr:has(> .t-data-table-check) > th {
+    padding-inline-end: var(--t-space-6);
+  }
+}
