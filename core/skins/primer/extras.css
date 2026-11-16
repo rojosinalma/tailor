@@ -1,9 +1,84 @@
-/* Primer: subtle bordered buttons, a solid primary, danger that fills on hover, invisible buttons, inset-ringed fields. */
+/* Primer: flat bordered Boxes, subtle bordered buttons, a solid primary, danger that fills on hover, invisible
+   buttons, inset-ringed fields, UnderlineNav tabs, outline Labels, NavList and ActionList rows. */
 
-/* button */
+/* skin: the Box surface (the page colour in dark mode, the raised white in light mode), the neutral-muted
+   fill of Counters and tracks, and the neutral hover of invisible buttons and list rows */
+& {
+  --t-primer-box: var(--t-canvas);
+  --t-primer-btn: color-mix(in srgb, var(--t-text) 6%, var(--t-canvas));
+  --t-primer-neutral: color-mix(in srgb, var(--t-muted) 20%, transparent);
+  --t-primer-track: var(--t-surface);
+  --t-primer-underline: var(--t-hue-orange);
+  --t-hover: color-mix(in srgb, var(--t-muted) 16%, transparent);
+  --t-active: color-mix(in srgb, var(--t-muted) 24%, transparent);
+}
+
+&[data-mode="light"] {
+  --t-primer-box: var(--t-surface);
+  --t-primer-track: var(--t-inset);
+}
+
+/* shell-base: AppHeader bar, a canvas footer; NavList links in the text colour with muted icons */
+.t-shell > .t-shell-footer {
+  background: var(--t-canvas);
+}
+
+.t-shell-brand {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-shell-link {
+  color: var(--t-text);
+}
+
+.t-shell-icon,
+.t-shell-chevron {
+  color: var(--t-muted);
+}
+
+.t-shell-link[aria-current="page"] {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-shell-link[aria-current="page"] .t-shell-icon {
+  color: var(--t-text);
+}
+
+.t-shell-link:focus-visible {
+  outline-offset: calc(-1 * var(--t-focus-w));
+}
+
+/* topnav: UnderlineNav in the header, no fill on the current link, the coral underline */
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav .t-shell-link[aria-current="page"] {
+  background: none;
+}
+
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav .t-shell-link[aria-current="page"]::before {
+  background: var(--t-primer-underline);
+}
+
+/* sidenav: the NavList pane on the page colour, a divider line; the content header on the page colour */
+.t-shell[data-shell="sidenav"] > .t-shell-sidebar {
+  background: var(--t-canvas);
+}
+
+.t-shell[data-shell="sidenav"] > .t-shell-main > .t-page > .t-page-header {
+  background: var(--t-canvas);
+}
+
+/* pane: a Box */
+.t-pane {
+  background: var(--t-primer-box);
+}
+
+.t-pane-header {
+  background: var(--t-inset);
+}
+
+/* button: subtle fill, default border; the primary solid with a darker edge */
 .t-btn {
   border-color: var(--t-border);
-  background: color-mix(in srgb, var(--t-text) 6%, var(--t-canvas));
+  background: var(--t-primer-btn);
   color: var(--t-text);
 }
 
@@ -22,7 +97,7 @@
 }
 
 .t-btn[data-variant="primary"]:focus-visible {
-  outline-offset: 2px;
+  outline-offset: var(--t-focus-w);
 }
 
 .t-btn[data-variant="danger"] {
@@ -46,7 +121,7 @@
 }
 
 .t-btn[data-variant="ghost"]:active:not(:disabled, [aria-disabled="true"]) {
-  background: color-mix(in srgb, var(--t-muted) 24%, transparent);
+  background: var(--t-active);
 }
 
 .t-btn[data-variant="link"] {
@@ -59,7 +134,7 @@
 
 .t-btn:is(:disabled, [aria-disabled="true"]) {
   border-color: color-mix(in srgb, var(--t-border) 70%, transparent);
-  background: color-mix(in srgb, var(--t-text) 6%, var(--t-canvas));
+  background: var(--t-primer-btn);
   color: var(--t-disabled);
 }
 
@@ -90,7 +165,7 @@
   }
 
   .t-btn[data-variant="ghost"]:hover:not(:disabled, [aria-disabled="true"]) {
-    background: color-mix(in srgb, var(--t-muted) 16%, transparent);
+    background: var(--t-hover);
     color: var(--t-text);
   }
 
@@ -99,7 +174,59 @@
   }
 }
 
-/* control: the page background, an accent border with an inner ring while focused or open */
+/* segmented: SegmentedControl, a grey track with no edge, the chosen item the bordered knob in bold */
+.t-segmented {
+  border-color: transparent;
+  background: var(--t-primer-track);
+}
+
+.t-segmented-option {
+  color: var(--t-text);
+  font-weight: var(--t-weight-normal);
+}
+
+.t-segmented-option:is([data-checked], :has(:checked)) {
+  border-color: var(--t-border-control);
+  background: var(--t-primer-box);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-segmented-option:is([data-disabled], :has(:disabled)) {
+  color: var(--t-disabled);
+}
+
+.t-segmented-option:has(:focus-visible) {
+  outline-offset: calc(-1 * var(--t-focus-w));
+}
+
+/* popup + menu: the ActionMenu overlay; ActionList rows with a neutral hover, the chosen row with the bar */
+.t-option[data-highlighted] {
+  background: var(--t-hover);
+}
+
+.t-option[aria-selected="true"],
+.t-option[aria-checked="true"] {
+  font-weight: var(--t-weight-normal);
+}
+
+.t-option[aria-selected="true"] {
+  box-shadow: inset var(--t-border-w-strong) 0 0 var(--t-accent);
+}
+
+.t-option[aria-selected="true"]:dir(rtl) {
+  box-shadow: inset calc(-1 * var(--t-border-w-strong)) 0 0 var(--t-accent);
+}
+
+.t-option-check,
+.t-menu-check {
+  color: var(--t-text);
+}
+
+.t-option:active:not([aria-disabled="true"], [data-disabled]) {
+  background: var(--t-active);
+}
+
+/* control: the page colour, an accent edge with an inner ring while focused or open */
 .t-control {
   background: var(--t-canvas);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--t-border) 20%, transparent);
@@ -108,37 +235,225 @@
 .t-control[data-popup-open],
 .t-control[aria-expanded="true"],
 input.t-control:focus,
-textarea.t-control:focus {
+textarea.t-control:focus,
+.t-control:focus-within {
   border-color: var(--t-focus);
   box-shadow: inset 0 0 0 1px var(--t-focus);
 }
 
+.t-control:is([aria-invalid="true"], [data-invalid]):is(:focus, :focus-within) {
+  border-color: var(--t-danger);
+  box-shadow: inset 0 0 0 1px var(--t-danger);
+}
+
 input.t-control:focus-visible,
-textarea.t-control:focus-visible {
+textarea.t-control:focus-visible,
+.t-input-group:has(.t-input-native:focus-visible),
+.t-number:has(.t-number-input:focus-visible),
+.t-multi-select:has(.t-multi-select-input:focus-visible) {
   outline: none;
 }
 
-.t-control:is(:disabled, [data-disabled], [aria-disabled="true"]) {
+.t-control:is(:disabled, [data-disabled], [aria-disabled="true"]),
+.t-input-group:has(.t-input-native:disabled) {
   border-color: color-mix(in srgb, var(--t-border) 70%, transparent);
-  background: color-mix(in srgb, var(--t-text) 6%, var(--t-canvas));
+  background: var(--t-primer-btn);
   box-shadow: none;
 }
 
-/* popup: the ActionMenu overlay; ActionList items with a neutral hover and a plain check */
-.t-option[data-highlighted] {
-  background: color-mix(in srgb, var(--t-muted) 16%, transparent);
+/* input: the end action is an invisible icon button */
+@media (hover: hover) {
+  .t-input-action:hover:not(:disabled) {
+    background: var(--t-hover);
+  }
 }
 
-.t-option[aria-selected="true"] {
-  font-weight: var(--t-weight-normal);
-}
-
-.t-option-check {
+/* number: the steppers are fused secondary buttons */
+.t-number-step {
+  background: var(--t-primer-btn);
   color: var(--t-text);
 }
 
+/* check: 16px boxes on the page colour, accent-emphasis when checked */
+.t-check-input:not(
+  :checked,
+  :indeterminate,
+  [data-checked],
+  [data-indeterminate],
+  :disabled,
+  [data-disabled]
+),
+.t-radio-input:not(:checked, [data-checked], :disabled, [data-disabled]) {
+  background: var(--t-primer-box);
+}
+
+.t-check-input:focus-visible,
+.t-radio-input:focus-visible {
+  outline-offset: var(--t-focus-w);
+}
+
+@media (hover: hover) {
+  .t-check:hover
+    > .t-check-input:not(
+      :checked,
+      :indeterminate,
+      :disabled,
+      [data-checked],
+      [data-indeterminate],
+      [data-disabled]
+    ),
+  .t-radio:hover > .t-radio-input:not(:checked, :disabled, [data-checked], [data-disabled]) {
+    border-color: color-mix(in srgb, var(--t-border-control), var(--t-text) 30%);
+  }
+}
+
+/* switch: ToggleSwitch, a 6px-corner track with an edge and a bordered knob */
+.t-switch-input {
+  border-radius: var(--t-radius-control);
+  background: var(--t-primer-track);
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-border-control);
+}
+
+.t-switch-thumb,
+input.t-switch-input::before {
+  border: var(--t-border-w) solid var(--t-border-control);
+  border-radius: var(--t-radius-control);
+  background: var(--t-primer-box);
+}
+
+.t-switch-input:checked,
+.t-switch-input[data-checked] {
+  background: var(--t-accent-solid);
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-accent-solid);
+}
+
+.t-switch-input:checked::before,
+.t-switch-input[data-checked] > .t-switch-thumb {
+  border-color: var(--t-accent-solid);
+  background: var(--t-primer-box);
+}
+
+.t-switch-input:disabled,
+.t-switch-input[data-disabled] {
+  background: var(--t-inset);
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-border);
+}
+
+.t-switch-input:disabled::before,
+.t-switch-input[data-disabled] > .t-switch-thumb {
+  border-color: var(--t-border);
+  background: var(--t-inset);
+}
+
+.t-switch-input:focus-visible {
+  outline-offset: var(--t-focus-w);
+}
+
+/* slider: a thin neutral track, the knob on the page colour */
+.t-slider-track {
+  background: var(--t-primer-track);
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-border);
+}
+
+.t-slider-thumb {
+  background: var(--t-primer-box);
+}
+
+/* avatar: a hairline ring */
+.t-avatar {
+  box-shadow: 0 0 0 var(--t-border-w) color-mix(in srgb, var(--t-text) 15%, transparent);
+}
+
+/* badge: Label, an outline pill in the tone colour; the soft and outline forms are the same */
+.t-badge {
+  font-weight: var(--t-weight-medium);
+}
+
+.t-badge:not([data-variant]) {
+  border-color: var(--t-tone);
+  background: transparent;
+}
+
+.t-badge[data-tone="neutral"]:not([data-variant="solid"]),
+.t-badge:not([data-tone], [data-variant="solid"]) {
+  border-color: var(--t-border-control);
+  background: transparent;
+}
+
+/* card: a Box, flat and bordered; an edge-to-edge header is the Box-header band */
+.t-card,
+.t-stat {
+  background: var(--t-primer-box);
+}
+
+.t-card[data-padding="none"] > .t-card-header:not(:only-child) {
+  background: var(--t-inset);
+}
+
+.t-card-title {
+  font-weight: var(--t-weight-bold);
+}
+
+/* counter: CounterLabel, the secondary scheme in the text colour */
+.t-counter[data-tone="neutral"] {
+  color: var(--t-text);
+}
+
+/* kbd: the 6px key cap */
+.t-kbd {
+  border-color: var(--t-border-control);
+  border-radius: var(--t-radius-control);
+  box-shadow: inset 0 -1px 0 var(--t-border-control);
+}
+
+/* progress: ProgressBar, a neutral-muted track with no edge and 6px ends */
+.t-progress-track {
+  border-radius: var(--t-radius-control);
+  background: var(--t-primer-neutral);
+  box-shadow: none;
+}
+
+/* table: DataTable, a Box with a muted header row and plain row lines (no stripes) */
+.t-table-wrap {
+  background: var(--t-primer-box);
+}
+
+.t-table thead th {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-table tbody tr:nth-child(even) {
+  background: transparent;
+}
+
+/* timeline: a muted 2px rail */
+.t-timeline-title {
+  font-weight: var(--t-weight-bold);
+}
+
+/* tooltip: the inverted box with no edge */
+.t-tooltip {
+  border-color: transparent;
+  box-shadow: none;
+}
+
+/* prose: markdown-body, muted-fill inline code, a thick quote rule */
+.t-prose :not(pre) > code {
+  border-radius: var(--t-radius-control);
+}
+
+.t-prose blockquote {
+  border-inline-start-width: 0.25em;
+}
+
+/* alert: Flash, the tone icon on a faint tone fill */
+.t-alert-title {
+  font-weight: var(--t-weight-bold);
+}
+
 /* dialog: no rule above the footer; the close button is an invisible icon button */
-.t-dialog-title {
+.t-dialog-title,
+.t-drawer-title {
   font-weight: var(--t-weight-bold);
 }
 
@@ -146,26 +461,30 @@ textarea.t-control:focus-visible {
   border-top-color: transparent;
 }
 
-.t-dialog-close:active {
-  background: color-mix(in srgb, var(--t-muted) 24%, transparent);
+/* tabs: UnderlineNav, items in the text colour, the current one bold with the coral underline */
+.t-tab {
+  color: var(--t-text);
+  font-weight: var(--t-weight-normal);
 }
 
-@media (hover: hover) {
-  .t-dialog-close:hover {
-    background: color-mix(in srgb, var(--t-muted) 16%, transparent);
-  }
+.t-tab[aria-selected="true"],
+.t-tab[aria-current="page"] {
+  font-weight: var(--t-weight-bold);
+  box-shadow: inset 0 calc(-1 * var(--t-border-w-strong)) var(--t-primer-underline);
 }
 
-/* date: ActionList-style day cells */
+.t-tab:is([aria-disabled="true"], :disabled) {
+  color: var(--t-disabled);
+}
+
+.t-tabs[data-variant="pills"] .t-tab:is([aria-selected="true"], [aria-current="page"]) {
+  color: var(--t-on-accent);
+  box-shadow: none;
+}
+
+/* date: ActionList-style day cells, today in the accent text */
 .t-calendar-day[data-today]:not([data-selected]) {
   border-color: transparent;
   color: var(--t-accent-text);
   font-weight: var(--t-weight-bold);
-}
-
-@media (hover: hover) {
-  .t-calendar-nav:hover:not(:disabled),
-  .t-calendar-day:hover:not(:disabled, [data-selected]) {
-    background: color-mix(in srgb, var(--t-muted) 16%, transparent);
-  }
 }

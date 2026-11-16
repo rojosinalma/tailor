@@ -6,7 +6,7 @@
   "settings": {
     "font-sans": "-apple-system, BlinkMacSystemFont, \"Segoe UI\", \"Noto Sans\", Helvetica, Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"",
     "font-mono": "ui-monospace, SFMono-Regular, \"SF Mono\", Menlo, Consolas, \"Liberation Mono\", monospace",
-    "text-xs": "0.6875rem",
+    "text-xs": "0.75rem",
     "text-sm": "0.75rem",
     "text-base": "0.875rem",
     "text-lg": "1rem",
