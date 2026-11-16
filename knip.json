@@ -6,7 +6,7 @@
       "project": ["bin/**"]
     },
     "core": {
-      "entry": ["packs/*/*/spec.ts", "packs/**/*.test.ts", "src/*.ts"],
+      "entry": ["packs/*/*/spec.ts", "packs/**/*.test.ts", "src/*.ts", "packs/pwa/pwa/worker.ts"],
       "project": ["**/*.ts"]
     },
     "react": {

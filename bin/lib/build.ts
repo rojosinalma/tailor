@@ -89,6 +89,15 @@ async function buildHtmlKit(): Promise<void> {
     if (!output) throw new Error(`HTML kit: the pack ${pack.id} gave no output`);
     await out(`dist/html/${pack.id === "core" ? "tailor" : `tailor-${pack.id}`}.js`, await output.text());
   }
+  // The service worker of the pwa pack is a file of its own: an app serves it at its root.
+  const worker = at("core/packs/pwa/pwa/worker.ts");
+  if (await Bun.file(worker).exists()) {
+    const sw = await Bun.build({ entrypoints: [worker], format: "iife", target: "browser", minify: true });
+    const output = sw.outputs[0];
+    if (!sw.success || !output)
+      throw new AggregateError(sw.logs, "HTML kit: the service worker did not build");
+    await out("dist/html/tailor-sw.js", await output.text());
+  }
 }
 
 export async function build(options: { quiet?: boolean } = {}): Promise<void> {
