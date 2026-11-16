@@ -1,37 +1,142 @@
-/* Pico: solid secondary and primary buttons, filled fields with an accent border and ring, sectioned cards on a frosted page. */
+/* Pico: solid slate and primary buttons, filled fields with a focus ring, articles with a layered shadow and tinted header and footer, plain tables, a frosted modal backdrop. */
 
-/* button */
+/* shell: the header and footer sit on the page with a hairline; nav links are muted, the current one in the primary colour */
+.t-shell-bar,
+.t-shell > .t-shell-footer,
+.t-shell[data-shell="sidenav"] > .t-shell-sidebar {
+  background: var(--t-canvas);
+}
+
+.t-shell-brand:focus-visible,
+.t-shell-link:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+.t-shell-link[aria-current="page"] {
+  background: color-mix(in srgb, var(--t-accent) var(--t-tint-weak), transparent);
+  color: var(--t-accent-text);
+}
+
+.t-shell-link[aria-current="page"] .t-shell-icon,
+.t-shell-link[data-current-section] .t-shell-icon {
+  color: var(--t-accent-text);
+}
+
+.t-shell-link[aria-current="page"]::before {
+  background: var(--t-accent-solid);
+}
+
+.t-shell-link:active:not(span) {
+  background: var(--t-active);
+}
+
+.t-shell-fact a {
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--t-link) 50%, transparent);
+  text-underline-offset: 0.125em;
+}
+
+@media (hover: hover) {
+  .t-shell-link:hover:not(span, [aria-current="page"]) {
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+
+  .t-shell-brand:hover {
+    color: var(--t-accent-text);
+  }
+
+  .t-shell-fact a:hover {
+    text-decoration-color: var(--t-link);
+  }
+}
+
+@media (max-width: 40rem) {
+  .t-shell-sidebar > .t-shell-bar,
+  .t-shell-sidebar > .t-shell-actions {
+    background: var(--t-canvas);
+  }
+}
+
+/* sidenav: the page header is part of the page, not a bar */
+.t-shell[data-shell="sidenav"] > .t-shell-main > .t-page > .t-page-header {
+  background: var(--t-canvas);
+}
+
+/* pane: an article; header and footer a shade off the body */
+.t-pane {
+  border-color: color-mix(in srgb, var(--t-border) 60%, transparent);
+}
+
+.t-pane-header,
+.t-pane-footer {
+  background: color-mix(in srgb, var(--t-text) 3%, var(--t-surface));
+}
+
+&[data-mode="light"] .t-pane {
+  border-color: transparent;
+}
+
+/* split: a quiet handle that takes the primary colour */
+.t-split-handle:focus-visible::before,
+.t-split-handle[data-dragging]::before {
+  background: var(--t-accent-solid);
+}
+
+@media (hover: hover) {
+  .t-split-handle:hover::before {
+    background: var(--t-accent-solid);
+  }
+}
+
+/* button: the default is Pico's solid slate secondary, primary is the solid primary */
 .t-btn {
+  border-color: var(--t-selection);
+  background: var(--t-selection);
+  color: var(--t-text);
+  transition:
+    background-color var(--t-motion-fast) var(--t-ease),
+    border-color var(--t-motion-fast) var(--t-ease),
+    color var(--t-motion-fast) var(--t-ease),
+    box-shadow var(--t-motion-fast) var(--t-ease);
+}
+
+.t-btn:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: var(--t-border-control);
+  background: color-mix(in srgb, var(--t-selection) 70%, var(--t-canvas));
+}
+
+&[data-mode="light"] .t-btn {
   border-color: var(--t-muted);
   background: var(--t-muted);
   color: var(--t-canvas);
 }
 
-.t-btn:active:not(:disabled, [aria-disabled="true"]) {
-  border-color: color-mix(in srgb, var(--t-muted) 80%, var(--t-text));
-  background: color-mix(in srgb, var(--t-muted) 80%, var(--t-text));
+&[data-mode="light"] .t-btn:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: color-mix(in srgb, var(--t-muted) 75%, var(--t-text));
+  background: color-mix(in srgb, var(--t-muted) 75%, var(--t-text));
 }
 
 .t-btn[data-variant="primary"] {
-  border-color: var(--t-accent-solid);
+  border-color: transparent;
   background: var(--t-accent-solid);
   color: var(--t-on-accent);
 }
 
 .t-btn[data-variant="primary"]:active:not(:disabled, [aria-disabled="true"]) {
-  border-color: color-mix(in srgb, var(--t-accent-solid) 82%, var(--t-on-accent));
-  background: color-mix(in srgb, var(--t-accent-solid) 82%, var(--t-on-accent));
+  border-color: transparent;
+  background: color-mix(in srgb, var(--t-accent-solid) 78%, var(--t-on-accent));
 }
 
 .t-btn[data-variant="danger"] {
-  border-color: var(--t-danger);
+  border-color: transparent;
   background: var(--t-danger);
   color: var(--t-on-danger);
 }
 
 .t-btn[data-variant="danger"]:active:not(:disabled, [aria-disabled="true"]) {
-  border-color: color-mix(in srgb, var(--t-danger) 80%, var(--t-text));
-  background: color-mix(in srgb, var(--t-danger) 80%, var(--t-text));
+  border-color: transparent;
+  background: color-mix(in srgb, var(--t-danger) 78%, var(--t-on-danger));
 }
 
 .t-btn[data-variant="danger"]:focus-visible {
@@ -41,13 +146,12 @@
 .t-btn[data-variant="ghost"] {
   border-color: transparent;
   background: transparent;
-  color: var(--t-muted);
+  color: var(--t-text);
 }
 
 .t-btn[data-variant="ghost"]:active:not(:disabled, [aria-disabled="true"]) {
   border-color: transparent;
   background: var(--t-active);
-  color: var(--t-text);
 }
 
 .t-btn[data-variant="link"] {
@@ -59,31 +163,69 @@
   text-underline-offset: 0.125em;
 }
 
+.t-btn[data-variant="link"]:active:not(:disabled, [aria-disabled="true"]) {
+  border-color: transparent;
+  background: none;
+}
+
 .t-btn:is(:disabled, [aria-disabled="true"]) {
   opacity: 0.5;
 }
 
+.t-btn:disabled,
+.t-btn[aria-disabled="true"]:not([aria-busy="true"]) {
+  color: var(--t-text);
+}
+
+&[data-mode="light"] .t-btn:disabled,
+&[data-mode="light"] .t-btn[aria-disabled="true"]:not([aria-busy="true"]) {
+  color: var(--t-canvas);
+}
+
+.t-btn[data-variant="primary"]:disabled,
+.t-btn[data-variant="primary"][aria-disabled="true"]:not([aria-busy="true"]) {
+  color: var(--t-on-accent);
+}
+
+.t-btn[data-variant="danger"]:disabled,
+.t-btn[data-variant="danger"][aria-disabled="true"]:not([aria-busy="true"]) {
+  color: var(--t-on-danger);
+}
+
+.t-btn:is([data-variant="ghost"], [data-variant="link"]):disabled {
+  background: none;
+  color: var(--t-text);
+}
+
+.t-btn[data-variant="link"]:disabled {
+  color: var(--t-link);
+}
+
 @media (hover: hover) {
   .t-btn:hover:not(:disabled, [aria-disabled="true"]) {
-    border-color: color-mix(in srgb, var(--t-muted) 88%, var(--t-text));
-    background: color-mix(in srgb, var(--t-muted) 88%, var(--t-text));
+    border-color: var(--t-border-control);
+    background: var(--t-selection);
+  }
+
+  &[data-mode="light"] .t-btn:hover:not(:disabled, [aria-disabled="true"]) {
+    border-color: color-mix(in srgb, var(--t-muted) 85%, var(--t-text));
+    background: color-mix(in srgb, var(--t-muted) 85%, var(--t-text));
   }
 
   .t-btn[data-variant="primary"]:hover:not(:disabled, [aria-disabled="true"]) {
-    border-color: color-mix(in srgb, var(--t-accent-solid) 90%, var(--t-on-accent));
-    background: color-mix(in srgb, var(--t-accent-solid) 90%, var(--t-on-accent));
+    border-color: transparent;
+    background: color-mix(in srgb, var(--t-accent-solid) 88%, var(--t-on-accent));
   }
 
   .t-btn[data-variant="danger"]:hover:not(:disabled, [aria-disabled="true"]) {
-    border-color: color-mix(in srgb, var(--t-danger) 88%, var(--t-text));
-    background: color-mix(in srgb, var(--t-danger) 88%, var(--t-text));
+    border-color: transparent;
+    background: color-mix(in srgb, var(--t-danger) 88%, var(--t-on-danger));
     color: var(--t-on-danger);
   }
 
   .t-btn[data-variant="ghost"]:hover:not(:disabled, [aria-disabled="true"]) {
     border-color: transparent;
     background: var(--t-hover);
-    color: var(--t-text);
   }
 
   .t-btn[data-variant="link"]:hover:not(:disabled, [aria-disabled="true"]) {
@@ -93,7 +235,40 @@
   }
 }
 
-/* control: a filled box a shade off the page, the accent border and a soft ring while focused or open */
+/* button group: Pico's role="group", one slab with a hairline between the buttons */
+.t-btn-group > .t-btn + .t-btn {
+  border-inline-start-color: color-mix(in srgb, var(--t-canvas) 45%, transparent);
+}
+
+/* menu: the dropdown list, full-width rows with a soft hover */
+.t-menu-item[data-highlighted] {
+  background: var(--t-hover);
+}
+
+.t-menu-check {
+  color: var(--t-accent-text);
+}
+
+/* segmented: a group of buttons; the chosen one is the solid primary */
+.t-segmented {
+  border-color: var(--t-border-control);
+  background: color-mix(in srgb, var(--t-text) 4%, var(--t-canvas));
+}
+
+.t-segmented-option:is([data-checked], :has(:checked)) {
+  border-color: transparent;
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+  box-shadow: none;
+}
+
+.t-segmented-option {
+  transition:
+    background-color var(--t-motion-fast) var(--t-ease),
+    color var(--t-motion-fast) var(--t-ease);
+}
+
+/* control: a filled box a shade off the page, the primary border and a soft ring while focused or open */
 .t-control {
   background: color-mix(in srgb, var(--t-text) 4%, var(--t-canvas));
   transition:
@@ -101,14 +276,36 @@
     box-shadow var(--t-motion-fast) var(--t-ease);
 }
 
+/* Highlighted code keeps the inset its colours are guaranteed on. */
+.t-control.t-code-field {
+  background: var(--t-inset);
+}
+
+.t-control:is(.t-input, .t-textarea):read-only:not(:disabled) {
+  background: transparent;
+}
+
 .t-control[data-popup-open],
 .t-control[aria-expanded="true"],
 input.t-control:focus,
-textarea.t-control:focus {
-  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--t-focus) 50%, transparent);
+textarea.t-control:focus,
+.t-control:is(.t-input-group, .t-number, .t-multi-select, .t-code-field):focus-within {
+  border-color: var(--t-accent);
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--t-focus) 35%, transparent);
 }
 
-.t-control:is(:disabled, [data-disabled], [aria-disabled="true"]) {
+.t-control[aria-invalid="true"],
+.t-control[data-invalid],
+.t-control:has(.t-input-native[aria-invalid="true"], .t-number-input[aria-invalid="true"]) {
+  border-color: var(--t-danger);
+}
+
+.t-control[aria-invalid="true"]:focus,
+.t-control:has([aria-invalid="true"]):focus-within {
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--t-danger) 35%, transparent);
+}
+
+.t-control:disabled {
   color: var(--t-text);
   opacity: 0.5;
 }
@@ -119,32 +316,320 @@ textarea.t-control:focus {
 }
 
 .t-option[data-highlighted] {
-  background: color-mix(in srgb, var(--t-text) 7%, transparent);
+  background: var(--t-hover);
 }
 
-/* dialog: an article card with tinted header and footer over a frosted page */
-.t-dialog-backdrop,
-.t-dialog::backdrop {
-  background: color-mix(in srgb, var(--t-canvas) 75%, transparent);
-  backdrop-filter: blur(0.375em);
+.t-option-check {
+  color: var(--t-accent-text);
 }
 
-.t-dialog-header,
-.t-dialog-footer {
-  background: color-mix(in srgb, var(--t-text) 3%, var(--t-surface));
+/* field: plain labels, small helper text */
+.t-field-label {
+  font-weight: var(--t-weight-normal);
 }
 
-.t-dialog-title {
-  font-weight: var(--t-weight-bold);
+/* check: Pico's boxes with a heavier border, the primary fill when checked */
+.t-check-input,
+.t-radio-input {
+  border-width: var(--t-border-w-strong);
+  transition:
+    background-color var(--t-motion-fast) var(--t-ease),
+    border-color var(--t-motion-fast) var(--t-ease);
 }
 
-.t-dialog-close {
-  opacity: 0.6;
+.t-check-input:focus-visible,
+.t-radio-input:focus-visible {
+  outline-offset: 0;
+}
+
+/* switch: a pill track with a light thumb; the primary track when on */
+.t-switch-input {
+  background: var(--t-border-control);
+  transition: background-color var(--t-motion-fast) var(--t-ease);
+}
+
+&[data-mode="light"] .t-switch-thumb,
+&[data-mode="light"] input.t-switch-input::before {
+  background: var(--t-canvas);
+}
+
+.t-switch-input:checked,
+.t-switch-input[data-checked] {
+  background: var(--t-accent-solid);
+}
+
+.t-switch-input:checked::before,
+.t-switch-input[data-checked] > .t-switch-thumb {
+  background: var(--t-on-accent);
+}
+
+.t-switch-input:disabled,
+.t-switch-input[data-disabled] {
+  opacity: 0.5;
+}
+
+/* slider: a thin track and a solid primary thumb ringed in the page colour */
+.t-slider-thumb {
+  border-color: var(--t-canvas);
+  background: var(--t-accent-solid);
+}
+
+.t-slider-native::-webkit-slider-thumb {
+  border-color: var(--t-canvas);
+  background: var(--t-accent-solid);
+}
+
+.t-slider-native::-moz-range-thumb {
+  border-color: var(--t-canvas);
+  background: var(--t-accent-solid);
+}
+
+.t-slider[data-disabled] .t-slider-thumb {
+  border-color: var(--t-canvas);
+  background: var(--t-disabled);
+}
+
+/* accordion: details with a rule under each; the open summary goes quiet, hover takes the primary colour */
+.t-accordion {
+  border-top-color: transparent;
+}
+
+.t-accordion-trigger {
+  font-weight: var(--t-weight-normal);
+  transition: color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-accordion-item:is([data-open], [open]) .t-accordion-trigger:not(:focus-visible) {
+  color: var(--t-muted);
 }
 
 @media (hover: hover) {
-  .t-dialog-close:hover {
+  .t-accordion-trigger:hover:not([data-disabled], [aria-disabled="true"]) {
+    background: transparent;
+    color: var(--t-accent-text);
+  }
+
+  .t-accordion-item:is([data-open], [open])
+    .t-accordion-trigger:hover:not([data-disabled], [aria-disabled="true"]) {
+    color: var(--t-accent-text);
+  }
+}
+
+/* card: Pico's article; no border in light mode, the layered shadow, a tinted header and footer */
+.t-card:not([data-selected]),
+.t-stat {
+  border-color: color-mix(in srgb, var(--t-border) 60%, transparent);
+}
+
+.t-card[data-tone]:not([data-selected]) {
+  border-inline-start-color: var(--t-tone);
+}
+
+&[data-mode="light"] .t-card:not([data-selected]),
+&[data-mode="light"] .t-stat {
+  border-block-color: transparent;
+  border-inline-end-color: transparent;
+}
+
+&[data-mode="light"] .t-card:not([data-tone], [data-selected]),
+&[data-mode="light"] .t-stat {
+  border-inline-start-color: transparent;
+}
+
+.t-card[data-padding="none"] > .t-card-header,
+.t-card-footer {
+  background: color-mix(in srgb, var(--t-text) 3%, var(--t-surface));
+}
+
+.t-card[data-selected] {
+  box-shadow:
+    var(--t-card-shadow),
+    0 0 0 0.125rem color-mix(in srgb, var(--t-focus) 35%, transparent);
+}
+
+.t-card-link {
+  transition: color var(--t-motion-fast) var(--t-ease);
+}
+
+@media (hover: hover) {
+  .t-card:has(.t-card-link):hover,
+  .t-stat:has(.t-stat-link):hover {
+    border-color: var(--t-border-control);
+    box-shadow: var(--t-shadow-lg);
+  }
+
+  .t-card:has(.t-card-link):hover .t-card-link {
+    color: var(--t-accent-text);
+  }
+}
+
+/* code: Pico's code background, no frame */
+.t-code {
+  border-color: transparent;
+}
+
+/* kbd: Pico's inverted key */
+.t-kbd {
+  border-color: transparent;
+  background: var(--t-text);
+  color: var(--t-canvas);
+  font-weight: var(--t-weight-bold);
+}
+
+/* progress: a slim filled bar, no frame */
+.t-progress-track {
+  background: color-mix(in srgb, var(--t-text) 12%, transparent);
+  box-shadow: none;
+}
+
+.t-progress-fill {
+  background: var(--t-accent-solid);
+}
+
+/* prose: underlined links in the primary colour, Pico's quote bar and inline code */
+.t-prose a {
+  text-decoration-color: color-mix(in srgb, var(--t-link) 50%, transparent);
+  text-underline-offset: 0.125em;
+}
+
+.t-prose blockquote {
+  border-inline-start-width: 0.25rem;
+}
+
+.t-prose pre {
+  border-color: transparent;
+}
+
+@media (hover: hover) {
+  .t-prose a:hover {
+    text-decoration-color: var(--t-link);
+  }
+}
+
+/* table: plain semantic rows, a heavy line under the head, no box and no stripes */
+.t-table-wrap {
+  border-color: transparent;
+}
+
+.t-table thead th {
+  border-bottom-width: 0.1875rem;
+  background: transparent;
+  color: var(--t-text);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-table tbody tr:nth-child(even) {
+  background: transparent;
+}
+
+@media (hover: hover) {
+  .t-table tbody tr:hover {
+    background: var(--t-hover);
+  }
+}
+
+/* tooltip: inverted, no border */
+.t-tooltip {
+  border-color: transparent;
+  background: var(--t-text);
+  color: var(--t-canvas);
+  box-shadow: none;
+}
+
+/* dialog: an article in a frosted overlay; header and footer tinted */
+.t-dialog-backdrop,
+.t-dialog::backdrop,
+.t-drawer-backdrop,
+.t-drawer::backdrop {
+  background: color-mix(in srgb, var(--t-overlay-bg) 70%, transparent);
+  backdrop-filter: blur(0.375em);
+}
+
+&[data-mode="light"] .t-dialog-backdrop,
+&[data-mode="light"] .t-dialog::backdrop,
+&[data-mode="light"] .t-drawer-backdrop,
+&[data-mode="light"] .t-drawer::backdrop {
+  background: color-mix(in srgb, var(--t-inset) 75%, transparent);
+}
+
+.t-dialog {
+  border-color: transparent;
+}
+
+.t-dialog-header,
+.t-dialog-footer,
+.t-drawer-header,
+.t-drawer-footer {
+  background: color-mix(in srgb, var(--t-text) 3%, var(--t-surface));
+}
+
+.t-dialog-title,
+.t-drawer-title {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-dialog-close,
+.t-drawer-close {
+  opacity: 0.6;
+  transition: opacity var(--t-motion-fast) var(--t-ease);
+}
+
+@media (hover: hover) {
+  .t-dialog-close:hover,
+  .t-drawer-close:hover {
     background: transparent;
     opacity: 1;
   }
+}
+
+/* tabs: the chosen line tab takes the primary colour, as Pico's current nav link */
+.t-tab[aria-selected="true"],
+.t-tab[aria-current="page"] {
+  color: var(--t-accent-text);
+}
+
+.t-tabs[data-variant="pills"] .t-tab[aria-selected="true"],
+.t-tabs[data-variant="pills"] .t-tab[aria-current="page"] {
+  color: var(--t-on-accent);
+}
+
+/* bottom bar: on the page colour; the current icon on a primary tint */
+.t-bottom-bar {
+  background: var(--t-canvas);
+}
+
+.t-bottom-bar-item[aria-current="page"] > .t-bottom-bar-icon {
+  background: color-mix(in srgb, var(--t-accent) var(--t-tint), transparent);
+  color: var(--t-accent-text);
+}
+
+/* composer: a filled field box with Pico's focus ring */
+.t-composer-box {
+  background: color-mix(in srgb, var(--t-text) 4%, var(--t-canvas));
+  transition:
+    border-color var(--t-motion-fast) var(--t-ease),
+    box-shadow var(--t-motion-fast) var(--t-ease);
+}
+
+.t-composer-box:has(.t-composer-input:focus) {
+  box-shadow: 0 0 0 0.125rem color-mix(in srgb, var(--t-focus) 35%, transparent);
+}
+
+/* file: the drop zone is a filled box */
+.t-file-zone {
+  background: color-mix(in srgb, var(--t-text) 4%, var(--t-canvas));
+}
+
+/* markdown: task boxes like Pico's checkboxes */
+.t-markdown-box {
+  border-width: var(--t-border-w-strong);
+}
+
+/* windows: an article with a tinted title bar */
+.t-window {
+  border-color: color-mix(in srgb, var(--t-border) 60%, transparent);
+}
+
+.t-window-bar {
+  background: color-mix(in srgb, var(--t-text) 3%, var(--t-surface));
 }
