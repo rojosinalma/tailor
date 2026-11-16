@@ -119,19 +119,16 @@ export function consoleNav(href: Href, current?: DemoRoute["page"]): NavGroup[] 
 
 function Actions({ href }: { href: Href }) {
   return (
-    <>
-      <Search label="Search the console" placeholder="Search" size="sm" shortcut={false} />
-      <Menu
-        trigger={<Button variant="ghost" icon={<Avatar name="alice" size="sm" />} label="alice" />}
-        label="alice"
-        align="end"
-        items={[
-          { id: "settings", label: "Settings", to: href({ page: "settings" }) },
-          { type: "separator" },
-          { id: "sign-out", label: "Sign out" },
-        ]}
-      />
-    </>
+    <Menu
+      trigger={<Button variant="ghost" icon={<Avatar name="alice" size="sm" />} label="alice" />}
+      label="alice"
+      align="end"
+      items={[
+        { id: "settings", label: "Settings", to: href({ page: "settings" }) },
+        { type: "separator" },
+        { id: "sign-out", label: "Sign out" },
+      ]}
+    />
   );
 }
 
@@ -150,6 +147,7 @@ export function ConsoleFrame({
   const nav = consoleNav(href, current);
   const common = {
     brand: brand(href),
+    search: <Search label="Search the console" placeholder="Search" size="sm" shortcut={false} />,
     actions: <Actions href={href} />,
     footer: FOOTER,
     theme: ["skin", "palette", "mode"] as const,

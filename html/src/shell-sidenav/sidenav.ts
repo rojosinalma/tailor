@@ -1,7 +1,6 @@
 import { t } from "@tailor/core/text";
+import { formOf } from "../core/shell-base";
 import { register } from "../runtime";
-
-const TABLET_REM = 64;
 
 interface Stored {
   collapsed?: boolean;
@@ -25,7 +24,8 @@ function readStored(key: string | undefined): Stored {
 
 /**
  * The column of the side navigation shell: `<div class="t-shell-sidebar" data-t="sidenav">`. It collapses
- * the column, opens and closes the sections, and remembers both under data-storage-key.
+ * the column, opens and closes the sections, and remembers both under data-storage-key. On a tablet the column
+ * starts collapsed unless the stored state says otherwise or data-tablet-collapsed="off".
  */
 register("sidenav", (sidebar) => {
   const root = sidebar.closest<HTMLElement>(".t-shell");
@@ -39,8 +39,8 @@ register("sidenav", (sidebar) => {
       ".t-shell-nav .t-shell-link[aria-expanded]:not([data-t~='menu'])",
     ),
   ];
-  const rem = Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-  let collapsed = stored.collapsed ?? root.clientWidth <= TABLET_REM * rem;
+  const tablet = sidebar.dataset.tabletCollapsed !== "off" && formOf(root) !== "desktop";
+  let collapsed = stored.collapsed ?? tablet;
   const idOf = (button: HTMLElement): string => button.getAttribute("aria-controls") ?? "";
   const isOpen = (button: HTMLElement): boolean => stored.open?.includes(button.dataset.id ?? "") ?? false;
 

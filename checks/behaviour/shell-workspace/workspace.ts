@@ -1,6 +1,6 @@
 import type { Locator, Page } from "playwright";
 import { behaviour, expect } from "../../src/behaviour";
-import { fullScreen, skipLinkWorks } from "../core/shell-base";
+import { fullScreen, phoneSearchWorks, skipLinkWorks } from "../core/shell-base";
 
 const reload = async (page: Page): Promise<void> => {
   await page.reload();
@@ -135,10 +135,10 @@ export default behaviour("workspace", {
     const toggle = output.getByRole("button", { name: "Collapse the panel" });
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
     await toggle.click();
-    await expect(output.getByText("listening on :3000")).toBeHidden();
+    await expect(output.getByText("listening on :3000").first()).toBeHidden();
     await expect.poll(() => height(output)).toBeLessThan(60);
     await output.getByRole("button", { name: "Expand the panel" }).click();
-    await expect(output.getByText("listening on :3000")).toBeVisible();
+    await expect(output.getByText("listening on :3000").first()).toBeVisible();
   },
   "the layout is remembered after a reload": async ({ page, example }) => {
     const body = example("default");
@@ -236,10 +236,31 @@ export default behaviour("workspace", {
     const outputButton = body.getByRole("button", { name: "Output" });
     await outputButton.click();
     const output = page.getByRole("dialog", { name: "Output" });
-    await expect(output.getByText("listening on :3000")).toBeVisible();
+    await expect(output.getByText("listening on :3000").first()).toBeVisible();
     await output.getByRole("button", { name: "Close" }).click();
     await expect(output).toBeHidden();
     await expect(outputButton).toBeFocused();
+  },
+  "the phone form: the search folds into a button that opens it under the bar": async ({ page, example }) => {
+    await phoneSearchWorks(page, example("narrow"), "Search files");
+  },
+  "the rail's tooltips open at the start side": async ({ page, example }) => {
+    const details = example("default")
+      .getByRole("group", { name: "Panels" })
+      .getByRole("button", { name: "Details" });
+    await details.hover();
+    const tip = page.locator(".t-tooltip", { hasText: "Details" });
+    await expect(tip).toBeVisible();
+    const [t, b] = [await tip.boundingBox(), await details.boundingBox()];
+    expect((t?.x ?? 0) + (t?.width ?? 0)).toBeLessThanOrEqual(b?.x ?? 0);
+  },
+  "on a phone a side sheet takes the whole screen": async ({ page, example }) => {
+    await page.setViewportSize({ width: 390, height: 800 });
+    await example("narrow").getByRole("button", { name: "Menu" }).click();
+    const sheet = page.getByRole("dialog", { name: "Menu" });
+    await expect(sheet).toBeVisible();
+    await expect.poll(async () => (await sheet.boundingBox())?.x).toBe(0);
+    expect((await sheet.boundingBox())?.width).toBe(390);
   },
   "the skip link works": async ({ page, example }) => {
     await skipLinkWorks(page, example("default"));

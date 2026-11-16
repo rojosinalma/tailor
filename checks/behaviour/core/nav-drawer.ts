@@ -63,7 +63,7 @@ export default behaviour("nav-drawer", {
   "global actions sit under the links": async ({ page, example, expect }) => {
     await example("sections").getByRole("button", { name: "Menu" }).click();
     const drawer = page.getByRole("dialog", { name: "Menu" });
-    await expect(drawer.getByRole("searchbox", { name: "Search" })).toBeVisible();
+    await expect(drawer.getByRole("button", { name: "alice" })).toBeVisible();
     await expect(drawer.getByRole("link", { name: "Backups" })).toHaveAttribute("aria-current", "page");
   },
 });

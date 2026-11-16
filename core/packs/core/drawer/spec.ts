@@ -6,7 +6,7 @@ export default defineComponent({
   pack: "core",
   group: "feedback",
   description:
-    "A panel that slides in from an edge over the page, for details or filters next to the current view. On a phone a side drawer takes at most 85% of the width and a bottom drawer is a sheet.",
+    "A panel that slides in from an edge over the page, for details or filters next to the current view. On a phone a side drawer takes at most 85% of the width and a bottom drawer is a sheet. Size full takes the whole screen, for a region that becomes a drawer on a phone.",
   root: "t-drawer",
   parts: {
     "t-drawer-backdrop": "the dimmed layer behind the drawer",
@@ -18,6 +18,6 @@ export default defineComponent({
     "t-drawer-body": "the content, which scrolls when it is long",
     "t-drawer-footer": "the actions, at the end",
   },
-  props: { side: ["start", "end", "bottom"], size: ["sm", "md"] },
+  props: { side: ["start", "end", "bottom"], size: ["sm", "md", "full"] },
   html: "script",
 });

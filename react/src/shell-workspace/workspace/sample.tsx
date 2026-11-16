@@ -7,7 +7,6 @@ import { Facts } from "../../core/facts/facts";
 import { Field } from "../../core/field/field";
 import { Icon } from "../../core/icon/icon";
 import { Input } from "../../core/input/input";
-import { List, ListItem } from "../../core/list/list";
 import { Page } from "../../core/page/page";
 import { Pane } from "../../core/pane/pane";
 import { Search } from "../../core/search/search";
@@ -15,6 +14,8 @@ import type { FooterFact, NavItem, ShellBrand } from "../../core/shell-base/shel
 import { Stack } from "../../core/stack/stack";
 import { Switch } from "../../core/switch/switch";
 import { Timeline, TimelineItem } from "../../core/timeline/timeline";
+import { type LogLine, LogView } from "../../data/log-view/log-view";
+import { type TreeNode, TreeView } from "../../data/tree-view/tree-view";
 import type { WorkspaceBottom, WorkspacePanel } from "./workspace";
 
 export const WS_BRAND: ShellBrand = { name: "Files", icon: "bi:folder2-open", to: "#files" };
@@ -26,7 +27,7 @@ export const WS_NAV: NavItem[] = [
 
 export const WS_FOOTER: FooterFact[] = [{ id: "version", label: "Version", value: "2.4.1" }];
 
-export const WS_ACTIONS: ReactNode = (
+export const WS_SEARCH: ReactNode = (
   <Search label="Search files" placeholder="Search files" size="sm" shortcut={false} />
 );
 
@@ -41,24 +42,26 @@ const FILES = [
   { name: "upgrade.md", folder: "docs" },
 ];
 
-/** The file list of the sidebar, grouped by folder. */
+const TREE: TreeNode[] = ["web-1", "nas", "docs"].map((folder) => ({
+  id: folder,
+  label: folder,
+  icon: <Icon name="bi:folder2" />,
+  children: FILES.filter((file) => file.folder === folder).map((file) => ({
+    id: `${folder}/${file.name}`,
+    label: file.name,
+    icon: <Icon name="bi:file-earmark-text" />,
+    to: `#${folder}/${file.name}`,
+  })),
+}));
+
+/** The files of the sidebar, as a tree of folders with the open file selected. */
 export const WS_TREE: ReactNode = (
-  <Stack gap="3">
-    {["web-1", "nas", "docs"].map((folder) => (
-      <List key={folder} label={folder} dividers={false}>
-        <ListItem leading={<Icon name="bi:folder2" />} title={folder} />
-        {FILES.filter((file) => file.folder === folder).map((file) => (
-          <ListItem
-            key={file.name}
-            leading={<Icon name="bi:file-earmark-text" />}
-            title={file.name}
-            to={`#${folder}/${file.name}`}
-            selected={file.current}
-          />
-        ))}
-      </List>
-    ))}
-  </Stack>
+  <TreeView
+    label="Files"
+    nodes={TREE}
+    defaultExpanded={["web-1", "nas", "docs"]}
+    defaultSelected={[`web-1/${FILES.find((file) => file.current)?.name ?? ""}`]}
+  />
 );
 
 const COMPOSE = `services:
@@ -151,20 +154,24 @@ export const WS_PANELS: WorkspacePanel[] = [
   },
 ];
 
-const LOG = Array.from({ length: 24 }, (_, i) => {
-  const second = String(i * 2).padStart(2, "0");
-  const lines = [
-    "web  | starting nginx 1.27",
-    "db   | database system is ready to accept connections",
-    "api  | listening on :3000",
-    "web  | GET /health 200",
-  ];
-  return `11:48:${second} ${lines[i % lines.length]}`;
-}).join("\n");
+const OUTPUT = [
+  "web  | starting nginx 1.27",
+  "db   | database system is ready to accept connections",
+  "api  | listening on :3000",
+  "web  | GET /health 200",
+  "api  | slow answer from db in 640ms",
+];
+
+const LOG: LogLine[] = Array.from({ length: 24 }, (_, i) => ({
+  id: `out-${i}`,
+  time: `11:48:${String(i * 2).padStart(2, "0")}`,
+  level: i % 5 === 4 ? "warn" : "info",
+  text: OUTPUT[i % OUTPUT.length] ?? "",
+}));
 
 export const WS_BOTTOM: WorkspaceBottom = {
   label: "Output",
-  content: <CodeBlock code={LOG} label="Output" wrap />,
+  content: <LogView label="Container log" lines={LOG} />,
   actions: (
     <Button size="sm" variant="ghost">
       Clear

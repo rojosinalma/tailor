@@ -6,7 +6,7 @@ export default defineComponent({
   pack: "data",
   group: "display",
   description:
-    'A log: monospace lines with a time and a level, ANSI colours in the palette hues, a filter that marks matches, a copy button, and follow, which keeps the end in view until the user scrolls up. It fills its parent. HTML kit: <pre class="t-log" data-t="log" aria-label="…"> with the raw text, or <ol class="t-log" data-t="log"> with <li data-level="warn" data-time="10:00:01"> lines; data-wrap wraps long lines, data-follow="off" starts without follow, data-max-lines (default 2000) caps the lines. Append with element.append(…) and a t:append event, or window.Tailor.log(element).append(text). No virtualisation in the HTML kit.',
+    'A log: monospace lines with a time and a level, ANSI colours in the palette hues, a filter that marks matches, a copy button, and follow, which keeps the end in view until the user scrolls up. It fills its parent. HTML kit: <pre class="t-log" data-t="log" aria-label="…"> with the raw text, or <ol class="t-log" data-t="log"> with <li data-level="warn" data-time="10:00:01"> lines; data-wrap wraps long lines, data-follow="off" starts without follow, data-max-lines (default 2000) caps the lines. Append with element.append(…) and a t:append event, or window.Tailor.log(element).append(text, { time, level }); a button with data-t-append="#<log id>" and data-text (optional data-time, data-level) appends that line on click, with no script of its own. React renders every line up to 300 shown lines and only the lines in view above that; the HTML kit renders every line.',
   root: "t-log",
   parts: {
     "t-log-bar": "the filter, the follow switch and the copy button",

@@ -1,12 +1,12 @@
 import { defineExamples } from "../../examples";
 import {
   FilePage,
-  WS_ACTIONS,
   WS_BOTTOM,
   WS_BRAND,
   WS_FOOTER,
   WS_NAV,
   WS_PANELS,
+  WS_SEARCH,
   WS_SETTINGS,
   WS_TREE,
 } from "./sample";
@@ -24,7 +24,7 @@ export default defineExamples("workspace", [
         nav={WS_NAV}
         sidebar={WS_TREE}
         sidebarLabel="Files"
-        actions={WS_ACTIONS}
+        search={WS_SEARCH}
         footer={WS_FOOTER}
         panels={WS_PANELS}
         bottom={WS_BOTTOM}
@@ -78,6 +78,7 @@ export default defineExamples("workspace", [
         nav={WS_NAV}
         sidebar={WS_TREE}
         sidebarLabel="Files"
+        search={WS_SEARCH}
         footer={WS_FOOTER}
         panels={WS_PANELS}
         bottom={WS_BOTTOM}

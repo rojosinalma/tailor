@@ -6,7 +6,7 @@ export default defineComponent({
   pack: "shell-topnav",
   group: "shells",
   description:
-    'A frame with the brand, the links and the global actions in one top bar, and the footer facts in a thin row at the bottom. Links that do not fit go into "More"; a link with sub-items opens a menu. On a phone the links move into the navigation drawer or a bottom bar. Content: one Page.',
+    'A frame with the brand, the links and the global actions in one top bar, and the footer facts in a thin row at the bottom. Links that do not fit go into "More"; a link with sub-items opens a menu. On a phone the links move into the navigation drawer or a bottom bar, and the search (its own prop, not an action) folds into an icon button that opens it as a row under the bar, so the brand keeps its name. Content: one Page.',
   root: "t-shell",
   parts: {
     "t-topnav-more": 'the "More" menu at the end of the row, for the links that do not fit',
@@ -14,6 +14,7 @@ export default defineComponent({
   props: {
     brand: [],
     nav: [],
+    search: [],
     actions: [],
     footer: [],
     theme: ["skin", "palette", "mode"],

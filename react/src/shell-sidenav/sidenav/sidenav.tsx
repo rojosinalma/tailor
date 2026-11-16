@@ -2,7 +2,7 @@ import { sidebar } from "@tailor/core/glyphs.gen";
 import { t } from "@tailor/core/text";
 import { holdsCurrent, toGroups } from "@tailor/packs/core/shell-base/logic";
 import type spec from "@tailor/packs/shell-sidenav/sidenav/spec";
-import { useCallback, useId, useLayoutEffect, useState } from "react";
+import { useCallback, useId, useState } from "react";
 import { BottomBar } from "../../core/bottom-bar/bottom-bar";
 import { Button } from "../../core/button/button";
 import { Icon } from "../../core/icon/icon";
@@ -21,7 +21,11 @@ import {
   ShellFooter,
   ShellMain,
   ShellRoot,
+  ShellSearch,
+  ShellSearchButton,
   useCurrentPath,
+  useNarrowStart,
+  useShellSearch,
 } from "../../core/shell-base/shell-base";
 import { Tooltip } from "../../core/tooltip/tooltip";
 import { Glyph } from "../../glyph";
@@ -34,6 +38,11 @@ export interface SideNavShellProps extends ShellCommon {
   phoneNav?: (typeof spec.props.phoneNav)[number];
   /** Where the collapsed state and the open sections are remembered (localStorage). Default "tailor.sidenav"; `false` remembers nothing. */
   storageKey?: string | false;
+  /**
+   * The column starts collapsed on a tablet, unless the remembered state says otherwise. Default true; `false`
+   * for a navigation of many named links, which icons alone cannot tell apart.
+   */
+  tabletCollapsed?: boolean;
 }
 
 interface Stored {
@@ -42,8 +51,6 @@ interface Stored {
 }
 
 const DEFAULT_KEY = "tailor.sidenav";
-/** A column narrower than this, a tablet, starts collapsed. */
-const TABLET_REM = 64;
 
 function readStored(key: string | false): Stored {
   if (key === false || typeof localStorage === "undefined") return {};
@@ -60,14 +67,20 @@ function readStored(key: string | false): Stored {
   }
 }
 
-const isTablet = (root: HTMLElement): boolean =>
-  root.clientWidth <= TABLET_REM * Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-/** The collapsed state and the open sections, read once and written on every change. */
-function useSidebarState(key: string | false, groups: readonly NavGroup[], path: string | null) {
+/**
+ * The collapsed state and the open sections, read once and written on every change. Until the user or the
+ * stored state decides, a column that started on a tablet is collapsed when `tabletCollapsed`.
+ */
+function useSidebarState(
+  key: string | false,
+  groups: readonly NavGroup[],
+  path: string | null,
+  startCollapsed: boolean,
+) {
   const isStatic = useIsStatic();
   const [stored] = useState(() => (isStatic ? {} : readStored(key)));
-  const [collapsed, setCollapsed] = useState(stored.collapsed ?? false);
+  const [chosen, setChosen] = useState(stored.collapsed);
+  const collapsed = chosen ?? startCollapsed;
   const [open, setOpen] = useState<readonly string[]>(() => {
     const current = firstLevel(groups)
       .filter((item) => holdsCurrent(item, path))
@@ -83,10 +96,8 @@ function useSidebarState(key: string | false, groups: readonly NavGroup[], path:
   return {
     collapsed,
     open,
-    /** A tablet starts collapsed unless the stored state says otherwise. */
-    startCollapsed: stored.collapsed === undefined ? () => setCollapsed(true) : undefined,
     toggleCollapsed: (): void => {
-      setCollapsed(!collapsed);
+      setChosen(!collapsed);
       save({ collapsed: !collapsed, open: [...open] });
     },
     toggleSection: (id: string): void => {
@@ -163,10 +174,10 @@ function Section({ item, path, open, onToggle, subId, collapsed }: SectionProps 
 }
 
 function Link({ item, path, collapsed }: { item: NavItem; path: string | null; collapsed: boolean }) {
-  if (useIsStatic()) return <NavLink item={item} path={path} data-t="tooltip" />;
+  if (useIsStatic()) return <NavLink item={item} path={path} data-t="tooltip" data-tip-side="end" />;
   if (!collapsed) return <NavLink item={item} path={path} />;
   return (
-    <Tooltip text={item.label}>
+    <Tooltip text={item.label} side="end">
       <NavLink item={item} path={path} />
     </Tooltip>
   );
@@ -231,27 +242,24 @@ function CollapseToggle({ collapsed, onToggle }: { collapsed: boolean; onToggle:
 export function SideNavShell({
   brand,
   nav,
+  search,
   actions,
   footer = [],
   theme,
   phoneNav = "drawer",
   storageKey = DEFAULT_KEY,
+  tabletCollapsed = true,
   contained,
   children,
 }: SideNavShellProps) {
   const main = useId();
   const drawer = useNavDrawer();
+  const searchControl = useShellSearch();
   const path = useCurrentPath();
   const groups = toGroups<NavItem>(nav);
-  const state = useSidebarState(storageKey, groups, path);
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
-  const { startCollapsed } = state;
-
-  // Only once the root exists: a resize later never overrides what the user chose.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: startCollapsed changes on every render; the check runs once.
-  useLayoutEffect(() => {
-    if (root && startCollapsed && isTablet(root)) startCollapsed();
-  }, [root]);
+  const narrowStart = useNarrowStart(root);
+  const state = useSidebarState(storageKey, groups, path, tabletCollapsed && narrowStart);
 
   const drawerProps = { brand, nav, footer, theme, control: drawer };
   return (
@@ -266,14 +274,17 @@ export function SideNavShell({
         className="t-shell-sidebar"
         data-t={useIsStatic() ? "sidenav" : undefined}
         data-storage-key={storageKey === false ? undefined : storageKey}
+        data-tablet-collapsed={tabletCollapsed ? undefined : "off"}
       >
         <ShellBar>
           {phoneNav === "drawer" ? <NavDrawer {...drawerProps} /> : null}
           <ShellBrandLink brand={brand} />
+          {search ? <ShellSearchButton control={searchControl} /> : null}
           {groups.length > 0 ? (
             <CollapseToggle collapsed={state.collapsed} onToggle={state.toggleCollapsed} />
           ) : null}
         </ShellBar>
+        <ShellSearch control={searchControl}>{search}</ShellSearch>
         <ShellActions>{actions}</ShellActions>
         {groups.length > 0 ? <Groups groups={groups} path={path} state={state} /> : null}
         <ShellFooter facts={footer} theme={theme} />

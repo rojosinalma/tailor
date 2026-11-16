@@ -5,10 +5,9 @@ import { RouterProvider } from "@tanstack/react-router";
 import { createRoot } from "react-dom/client";
 import { THEME } from "./app/data";
 import { router } from "./app/router";
-import { adoptAddressTheme, openSidebarFirst } from "./app/state";
+import { adoptAddressTheme } from "./app/state";
 
 adoptAddressTheme();
-openSidebarFirst();
 
 const root = document.getElementById("root");
 if (root)

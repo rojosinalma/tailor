@@ -32,6 +32,8 @@ export interface LogLine {
 export interface LogViewProps {
   /** The accessible name of the log. */
   label: string;
+  /** The id of the log, for a button that appends a line in the HTML kit (data-t-append="#id"). */
+  id?: string;
   lines: readonly LogLine[];
   /** Starts with follow on: the view keeps the end in sight while lines arrive. */
   follow?: boolean;
@@ -42,6 +44,8 @@ export interface LogViewProps {
 }
 
 const ESTIMATE = 21;
+/** Up to this many shown lines every line renders: then the box scrolls exactly as the HTML kit's does. */
+const FLAT_MAX = 300;
 const COPIED_MS = 1500;
 /** How near the end, in px, still counts as at the end. */
 const END_SLACK = 4;
@@ -86,6 +90,7 @@ function Line({ shown, query }: { shown: Shown; query: string }) {
 /** A log that fills its parent, with follow, a filter, copy and ANSI colours. Only the lines in view render. */
 export function LogView({
   label,
+  id,
   lines,
   follow: startFollow = true,
   wrap = false,
@@ -106,6 +111,7 @@ export function LogView({
     return (
       <ol
         className="t-log"
+        id={id}
         data-t="log"
         aria-label={label}
         data-wrap={wrap ? "" : undefined}
@@ -119,16 +125,18 @@ export function LogView({
         ))}
       </ol>
     );
-  return <LiveLog label={label} all={all} startFollow={startFollow} wrap={wrap} />;
+  return <LiveLog label={label} id={id} all={all} startFollow={startFollow} wrap={wrap} />;
 }
 
 function LiveLog({
   label,
+  id,
   all,
   startFollow,
   wrap,
 }: {
   label: string;
+  id?: string;
   all: readonly Shown[];
   startFollow: boolean;
   wrap: boolean;
@@ -143,10 +151,11 @@ function LiveLog({
   useEffect(() => () => clearTimeout(timer.current), []);
 
   const shown = useMemo(() => all.filter((s) => matchesQuery(s.plain, query)), [all, query]);
+  const flat = shown.length <= FLAT_MAX;
   // A line that does not wrap is one line high: the skin's line height is the exact estimate.
   const [estimate, setEstimate] = useState(ESTIMATE);
   const virtual = useVirtualizer({
-    count: shown.length,
+    count: flat ? 0 : shown.length,
     getScrollElement: () => view.current,
     estimateSize: () => estimate,
     overscan: 12,
@@ -154,7 +163,9 @@ function LiveLog({
     measureElement: (element) => element.getBoundingClientRect().height,
     getItemKey: (index) => shown[index]?.line.id ?? index,
   });
-  const rows = virtual.getVirtualItems();
+  const rows = flat
+    ? shown.map((item, index) => ({ key: item.line.id, index, start: 0 }))
+    : virtual.getVirtualItems();
   const total = virtual.getTotalSize();
   const offset = rows[0]?.start ?? 0;
 
@@ -167,9 +178,16 @@ function LiveLog({
   }, [estimate, virtual]);
 
   useLayoutEffect(() => {
-    list.current?.style.setProperty("--t-log-size", `${total}px`);
-    list.current?.style.setProperty("--t-log-offset", `${offset}px`);
-  }, [total, offset]);
+    const style = list.current?.style;
+    if (!style) return;
+    if (flat) {
+      style.removeProperty("--t-log-size");
+      style.removeProperty("--t-log-offset");
+      return;
+    }
+    style.setProperty("--t-log-size", `${total}px`);
+    style.setProperty("--t-log-offset", `${offset}px`);
+  }, [flat, total, offset]);
 
   // While following, every change of the lines or of their sizes keeps the end in view.
   useLayoutEffect(() => {
@@ -178,6 +196,25 @@ function LiveLog({
     el.scrollTop = el.scrollHeight;
     lastTop.current = el.scrollTop;
   });
+
+  // A later layout (a font, the size of the box) moves the end: while following, the view keeps it in sight.
+  const following = useRef(follow);
+  following.current = follow;
+  useEffect(() => {
+    const [el, ol] = [view.current, list.current];
+    if (!el || !ol) return;
+    const observer = new ResizeObserver(() => {
+      // A skin with another line height: the sizes of the lines out of view are stale until measured again.
+      const height = Number.parseFloat(getComputedStyle(ol).lineHeight);
+      if (height > 0) setEstimate(height);
+      if (!following.current) return;
+      el.scrollTop = el.scrollHeight;
+      lastTop.current = el.scrollTop;
+    });
+    observer.observe(el);
+    observer.observe(ol);
+    return () => observer.disconnect();
+  }, []);
 
   const onScroll = (): void => {
     const el = view.current;
@@ -204,7 +241,7 @@ function LiveLog({
   };
 
   return (
-    <div className="t-log" data-wrap={wrap ? "" : undefined}>
+    <div className="t-log" id={id} data-wrap={wrap ? "" : undefined}>
       <div className="t-log-bar">
         <Search
           label={t("filter")}
@@ -238,7 +275,7 @@ function LiveLog({
                 data-index={row.index}
                 data-level={item.level}
                 data-tone={item.level ? LEVEL_TONE[item.level] : undefined}
-                ref={virtual.measureElement}
+                ref={flat ? undefined : virtual.measureElement}
               >
                 <Line shown={item} query={query} />
               </li>

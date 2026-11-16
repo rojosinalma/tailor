@@ -71,6 +71,16 @@ export default behaviour("drawer", {
     await expect(drawer).toBeVisible();
     expect((await drawer.boundingBox())?.height).toBeLessThanOrEqual(800 * 0.85 + 1);
   },
+  "size full takes the whole screen": async ({ page, example, expect }) => {
+    await page.setViewportSize({ width: 390, height: 800 });
+    await example("full").getByRole("button", { name: "Open the file list" }).click();
+    const drawer = page.getByRole("dialog", { name: "Files" });
+    await expect(drawer).toBeVisible();
+    await expect.poll(async () => (await drawer.boundingBox())?.x).toBe(0);
+    const box = await drawer.boundingBox();
+    expect(box?.width).toBe(390);
+    expect(box?.height).toBe(800);
+  },
   "a downward swipe on the header closes a bottom drawer": async ({ page, example, expect }) => {
     await example("sides").getByRole("button", { name: "Share" }).click();
     const drawer = page.getByRole("dialog", { name: "Share" });

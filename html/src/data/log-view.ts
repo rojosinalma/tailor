@@ -11,7 +11,7 @@ import {
   type Segment,
   stripAnsi,
 } from "@tailor/packs/data/log-view/logic";
-import { glyph, h, register } from "../runtime";
+import { glyph, h, once, register } from "../runtime";
 
 interface Raw {
   readonly text: string;
@@ -26,7 +26,8 @@ interface Record_ extends Raw {
 }
 
 interface LogApi {
-  append(text: string): void;
+  /** Appends the lines of the text; `time` and `level` go to each of them. */
+  append(text: string, line?: { time?: string; level?: string }): void;
 }
 
 const COPIED_MS = 1500;
@@ -215,11 +216,37 @@ register("log", (source) => {
     add(rawLines(fresh));
   });
 
-  const api: LogApi = { append: (text) => add(rawLines([document.createTextNode(text)])) };
+  const api: LogApi = {
+    append: (text, line = {}) =>
+      add(
+        rawLines([document.createTextNode(text)]).map((raw) => ({
+          ...raw,
+          time: line.time,
+          level: levelOf(line.level ?? ""),
+        })),
+      ),
+  };
   apis.set(source, api);
   apis.set(root, api);
   add(initial);
   setFollow(follow);
+  // A later layout (a font, the size of the box) moves the end: while following, the view keeps it in sight.
+  const keepEnd = new ResizeObserver(() => {
+    if (follow) toEnd();
+  });
+  keepEnd.observe(view);
+  keepEnd.observe(source);
+});
+
+/** A button with data-t-append="#id" appends its data-text, with data-time and data-level, to the log with that id. */
+once("log-append", () => {
+  document.addEventListener("click", (event) => {
+    const trigger =
+      event.target instanceof Element ? event.target.closest<HTMLElement>("[data-t-append]") : null;
+    const log = trigger ? document.querySelector(trigger.dataset.tAppend ?? "") : null;
+    if (!trigger || !log) return;
+    apis.get(log)?.append(trigger.dataset.text ?? "", trigger.dataset);
+  });
 });
 
 /** The page's handle on a log: `window.Tailor.log(element).append(text)`. */

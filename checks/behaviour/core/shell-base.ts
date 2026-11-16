@@ -51,6 +51,42 @@ export async function skipLinkWorks(page: Page, example: Locator): Promise<void>
   expect(first).toBe("Skip to content");
 }
 
+/**
+ * On a phone the search is an icon button and the brand keeps its whole name. The button opens the field as
+ * a row under the bar and gives it the focus; Escape in the empty field closes it and the focus goes back.
+ */
+export async function phoneSearchWorks(
+  page: Page,
+  example: Locator,
+  name = "Search the console",
+): Promise<void> {
+  const field = example.getByRole("searchbox", { name });
+  const button = example.getByRole("button", { name: "Search", exact: true });
+  const brand = example.locator(".t-shell-bar > .t-shell-brand .t-shell-brand-name");
+  // Places in the frame, so a scroll of the showcase page does not count.
+  const inFrame = (target: Locator) =>
+    target.evaluate((el) => {
+      const box = el.getBoundingClientRect();
+      const top = box.top - (el.closest(".t-shell")?.getBoundingClientRect().top ?? 0);
+      return { top, bottom: top + box.height };
+    });
+  await expect(field).toBeHidden();
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+  expect(await brand.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);
+  const before = await inFrame(brand);
+  await button.click();
+  await expect(field).toBeVisible();
+  await expect(field).toBeFocused();
+  await expect(button).toHaveAttribute("aria-expanded", "true");
+  const [after, row] = [await inFrame(brand), await inFrame(field)];
+  expect(after.top).toBe(before.top);
+  expect(row.top).toBeGreaterThanOrEqual(after.bottom);
+  await page.keyboard.press("Escape");
+  await expect(field).toBeHidden();
+  await expect(button).toBeFocused();
+  await expect(button).toHaveAttribute("aria-expanded", "false");
+}
+
 export default behaviour("shell-base", {
   "the skip link moves the focus to the main region": async ({ page, example }) => {
     await skipLinkWorks(page, example("frame"));

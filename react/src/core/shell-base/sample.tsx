@@ -55,12 +55,16 @@ const MORE_LABELS = [
   "Users",
 ];
 
-/** Many links, for the overflow of a top bar and a long sidebar. Some have no icon. */
+/** A short muted text after some of the labels: where the item lives. */
+const HINTS: Readonly<Record<string, string>> = { Volumes: "nas", Domains: "example.com" };
+
+/** Many links, for the overflow of a top bar and a long sidebar. Some have no icon, two have a hint. */
 export const MANY: NavItem[] = [
   ...NAV,
   ...MORE_LABELS.map((label, i) => ({
     id: label.toLowerCase().replace(/\s+/g, "-"),
     label,
+    hint: HINTS[label],
     to: `#${label.toLowerCase().replace(/\s+/g, "-")}`,
     ...(i % 3 === 0 ? {} : { icon: "bi:box-seam" as const }),
   })),
@@ -96,15 +100,13 @@ const USER_MENU = (
   />
 );
 
-export const ACTIONS: ReactNode = (
-  <>
-    <Search label="Search" placeholder="Search" size="sm" shortcut={false} />
-    {USER_MENU}
-  </>
+/** The search of the console: the shell's search prop, apart from the actions. */
+export const SEARCH: ReactNode = (
+  <Search label="Search the console" placeholder="Search" size="sm" shortcut={false} />
 );
 
-/** Actions for a phone: the user menu only. */
-export const COMPACT_ACTIONS: ReactNode = USER_MENU;
+/** The global actions: the user menu. Compact, so they stay in the bar on a phone. */
+export const ACTIONS: ReactNode = USER_MENU;
 
 interface Service {
   name: string;

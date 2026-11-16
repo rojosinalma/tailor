@@ -169,16 +169,3 @@ export const themeQuery = (state: ThemeState): string =>
   `skin=${encodeURIComponent(state.skin)}&palette=${encodeURIComponent(state.palette)}&mode=${state.mode}`;
 
 export const SIDEBAR_KEY = "tailor-showcase.sidenav";
-
-/**
- * The site's navigation is long and named, not a few icons: on a first visit the column starts open on a
- * tablet too. After that the shell keeps what the person chose.
- */
-export function openSidebarFirst(): void {
-  try {
-    if (localStorage.getItem(SIDEBAR_KEY) === null)
-      localStorage.setItem(SIDEBAR_KEY, JSON.stringify({ collapsed: false }));
-  } catch {
-    // Without storage the shell picks its own start.
-  }
-}

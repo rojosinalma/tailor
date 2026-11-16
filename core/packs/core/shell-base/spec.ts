@@ -24,8 +24,13 @@ export default defineComponent({
     "t-shell-icon": "the icon of a link",
     "t-shell-initial": "the first letter of the label, for a link without an icon",
     "t-shell-label": "the text of a link",
+    "t-shell-hint": "a short muted text after the label (NavItem.hint), such as a group or a pack",
     "t-shell-chevron": "the chevron of a link that opens its sub-items",
-    "t-shell-actions": "the global actions: search, user menu",
+    "t-shell-search":
+      'the search of the shell (the search prop, role="search"); on a phone it shows as a row under the bar while data-open',
+    "t-shell-search-button":
+      "the phone's search button: it opens the search row (aria-expanded, aria-controls); without the script a link to the row",
+    "t-shell-actions": "the global actions, such as a user menu",
     "t-shell-main": "the content region (main); it never scrolls, the Page inside does",
     "t-shell-footer": "the footer facts and the theme controls",
     "t-shell-facts": "the list of footer facts",

@@ -24,6 +24,24 @@ export default defineExamples("tooltip", [
     ),
   },
   {
+    id: "sides",
+    title: "On another side: at the end, below, at the start",
+    note: "For a control at an edge, such as a rail of icons at the end of the screen or a collapsed sidebar.",
+    render: () => (
+      <Cluster gap="2">
+        <Tooltip text="Notes" side="end">
+          <Button icon={<Icon name="bi:sticky" />} label="Notes" variant="ghost" />
+        </Tooltip>
+        <Tooltip text="Details" side="bottom">
+          <Button icon={<Icon name="bi:info-circle" />} label="Details" variant="ghost" />
+        </Tooltip>
+        <Tooltip text="History" side="start">
+          <Button icon={<Icon name="bi:clock-history" />} label="History" variant="ghost" />
+        </Tooltip>
+      </Cluster>
+    ),
+  },
+  {
     id: "long",
     title: "Long name",
     render: () => (

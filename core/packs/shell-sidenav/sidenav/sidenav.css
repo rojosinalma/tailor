@@ -7,15 +7,22 @@
 .t-shell[data-shell="sidenav"] {
   grid-template:
     "side bar actions" auto
+    "side search search" auto
     "side main main" minmax(0, 1fr)
     "side bottom bottom" auto
     / auto minmax(0, 1fr) auto;
 }
 
+/* The column: the brand row, the search and the actions side by side, the links, the footer. */
 .t-shell[data-shell="sidenav"] > .t-shell-sidebar {
   grid-area: side;
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template:
+    "bar bar" auto
+    "search actions" auto
+    "nav nav" minmax(0, 1fr)
+    "footer footer" auto
+    / minmax(0, 1fr) auto;
   width: calc(var(--t-sidebar-w) + var(--t-safe-left));
   min-height: 0;
   padding-inline-start: var(--t-safe-left);
@@ -30,7 +37,7 @@
 }
 
 .t-shell[data-shell="sidenav"] .t-shell-sidebar > .t-shell-bar {
-  flex: none;
+  grid-area: bar;
   gap: var(--t-space-1);
   padding: var(--t-safe-top) var(--t-space-2) 0 var(--t-space-3);
   background: none;
@@ -40,12 +47,32 @@
   flex: 1 1 auto;
 }
 
-/* The actions share one row; a field in it takes the free width. */
+/* The search and the actions share the row under the brand; either alone takes the whole row. */
+.t-shell[data-shell="sidenav"] .t-shell-sidebar > .t-shell-search {
+  grid-area: search;
+  padding: var(--t-space-3) var(--t-space-3) 0;
+}
+
 .t-shell[data-shell="sidenav"] .t-shell-sidebar > .t-shell-actions {
-  flex: none;
+  grid-area: actions;
   justify-content: flex-start;
   margin: 0;
   padding: var(--t-space-3) var(--t-space-3) 0;
+}
+
+@container t-shell (width > 40rem) {
+  .t-shell[data-shell="sidenav"] .t-shell-sidebar:not(:has(> .t-shell-actions)) > .t-shell-search,
+  .t-shell[data-shell="sidenav"] .t-shell-sidebar:not(:has(> .t-shell-search)) > .t-shell-actions {
+    grid-column: 1 / -1;
+  }
+
+  .t-shell[data-shell="sidenav"] .t-shell-sidebar:has(> .t-shell-actions) > .t-shell-search {
+    padding-inline-end: 0;
+  }
+
+  .t-shell[data-shell="sidenav"] .t-shell-sidebar:has(> .t-shell-search) > .t-shell-actions {
+    padding-inline-start: var(--t-space-2);
+  }
 }
 
 .t-shell[data-shell="sidenav"] .t-shell-sidebar > .t-shell-actions > .t-control {
@@ -53,8 +80,8 @@
 }
 
 .t-shell[data-shell="sidenav"] .t-shell-sidebar > .t-shell-nav {
+  grid-area: nav;
   display: flex;
-  flex: 1 1 auto;
   flex-direction: column;
   gap: var(--t-space-4);
   min-height: 0;
@@ -65,7 +92,7 @@
 }
 
 .t-shell[data-shell="sidenav"] .t-shell-sidebar > .t-shell-footer {
-  flex: none;
+  grid-area: footer;
   flex-wrap: wrap;
   padding: var(--t-space-3) var(--t-space-3) calc(var(--t-space-3) + var(--t-safe-bottom));
   border-top: var(--t-border-w) solid var(--t-border);
@@ -131,6 +158,7 @@
   }
 
   .t-shell[data-shell="sidenav"][data-collapsed] > .t-shell-sidebar > .t-shell-bar > .t-shell-brand,
+  .t-shell[data-shell="sidenav"][data-collapsed] > .t-shell-sidebar > .t-shell-search,
   .t-shell[data-shell="sidenav"][data-collapsed] > .t-shell-sidebar > .t-shell-actions,
   .t-shell[data-shell="sidenav"][data-collapsed] > .t-shell-sidebar > .t-shell-nav .t-shell-group-label,
   .t-shell[data-shell="sidenav"][data-collapsed] > .t-shell-sidebar > .t-shell-footer .t-shell-facts,
@@ -203,6 +231,26 @@
     padding: var(--t-safe-top) calc(var(--t-space-2) + var(--t-safe-right)) 0 0;
     border-bottom: var(--t-border-w) solid var(--t-border);
     background: var(--t-inset);
+  }
+
+  /* The open search is a row under the bar and the actions, as in a top bar: no line between them. */
+  /* Above the bar and the actions, so the focus ring of the field is not drawn under them. */
+  .t-shell[data-shell="sidenav"] .t-shell-sidebar > .t-shell-search {
+    position: relative;
+    z-index: 1;
+    grid-area: search;
+    padding: 0 calc(var(--t-space-2) + var(--t-safe-right)) calc((var(--t-nav-h) - var(--t-control-h-md)) / 2)
+      calc(var(--t-space-2) + var(--t-safe-left));
+    /* The column's look, which a skin gives the bar too: the row continues the bar in every skin. */
+    border-bottom: var(--t-border-w) solid;
+    border-color: inherit;
+    background: inherit;
+  }
+
+  .t-shell[data-shell="sidenav"]
+    .t-shell-sidebar:has(> .t-shell-search:is([data-open], :target))
+    > :is(.t-shell-bar, .t-shell-actions) {
+    border-bottom-color: transparent;
   }
 
   .t-shell[data-shell="sidenav"] .t-shell-sidebar > .t-shell-nav,

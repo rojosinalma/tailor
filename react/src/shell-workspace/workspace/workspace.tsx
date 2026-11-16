@@ -11,7 +11,6 @@ import {
 import { t } from "@tailor/core/text";
 import {
   lengthToPx,
-  nextRegion,
   parseLayout,
   resizeByKey,
   resizeByPointer,
@@ -39,20 +38,27 @@ import { Drawer } from "../../core/drawer/drawer";
 import { Icon, type IconName } from "../../core/icon/icon";
 import { Menu } from "../../core/menu/menu";
 import {
+  cycleRegions,
   type FooterFact,
   FooterFacts,
   type NavGroup,
   type NavItem,
   NavLists,
   ShellActions,
+  ShellBar,
   ShellBrandLink,
   type ShellCommon,
   ShellMain,
   ShellRoot,
+  ShellSearch,
+  ShellSearchButton,
   ShellTheme,
   type ShellThemePart,
   toGroups,
   useCurrentPath,
+  useNarrowStart,
+  useShellForm,
+  useShellSearch,
 } from "../../core/shell-base/shell-base";
 import { Tooltip } from "../../core/tooltip/tooltip";
 import { Glyph } from "../../glyph";
@@ -97,22 +103,13 @@ export interface WorkspaceShellProps extends ShellCommon {
 }
 
 const DEFAULT_KEY = "tailor.workspace";
-/** The widths of the root, in rem, at and under which the phone and the tablet forms show. */
-const PHONE_REM = 40;
-const TABLET_REM = 64;
 const SIDES: readonly WorkspaceSide[] = ["left", "right", "bottom"];
 const REGIONS =
   ":scope > :is(.t-shell-bar, .t-shell-sidebar, .t-shell-main, .t-workspace-panel, .t-workspace-bottom)";
 
-type Form = "desktop" | "tablet" | "phone";
 type Sizes = Record<WorkspaceSide, SplitBounds & { start: number }>;
 
 const rem = (): number => Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-function formOf(root: HTMLElement): Form {
-  const width = root.clientWidth / rem();
-  return width <= PHONE_REM ? "phone" : width <= TABLET_REM ? "tablet" : "desktop";
-}
 
 /** The least, starting and most size of each region, from the measure tokens. */
 function readSizes(root: HTMLElement): Sizes {
@@ -286,6 +283,7 @@ function phoneButton(
 /** The workspace shell: a top bar, a left sidebar, the centre, right panels behind a rail, a bottom panel. */
 export function WorkspaceShell({
   brand,
+  search,
   actions,
   footer = [],
   theme,
@@ -317,11 +315,12 @@ export function WorkspaceShell({
   const hasLeft = groups.length > 0 || sidebar !== undefined;
 
   const [root, setRoot] = useState<HTMLDivElement | null>(null);
-  const [form, setForm] = useState<Form>("desktop");
+  const form = useShellForm(root);
+  // A tablet or a phone starts with the sidebar and the default panel closed: both would lie over the centre.
+  const narrowStart = useNarrowStart(root);
+  const searchControl = useShellSearch();
   const [sizes, setSizes] = useState<Sizes | null>(null);
   const [layout, setLayout] = useState<WorkspaceLayout>(() => (isStatic ? {} : readLayout(storageKey)));
-  // A tablet or a phone starts with the sidebar and the default panel closed: both would lie over the centre.
-  const [narrowStart, setNarrowStart] = useState(false);
   const [ownSettings, setOwnSettings] = useState(false);
   const [sheet, setSheet] = useState<string | null>(null);
 
@@ -335,16 +334,8 @@ export function WorkspaceShell({
     [storageKey],
   );
 
-  // The form follows the width of the root. A tablet starts with the sidebar closed unless the stored layout says otherwise.
   useLayoutEffect(() => {
-    if (!root) return;
-    const first = formOf(root);
-    setForm(first);
-    setSizes(readSizes(root));
-    if (first !== "desktop") setNarrowStart(true);
-    const observer = new ResizeObserver(() => setForm(formOf(root)));
-    observer.observe(root);
-    return () => observer.disconnect();
+    if (root) setSizes(readSizes(root));
   }, [root]);
 
   // The sizes are custom properties on the root, read by the grid.
@@ -387,13 +378,7 @@ export function WorkspaceShell({
   const toggleLeft = (): void => update({ leftCollapsed: !leftCollapsed });
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
-    if (event.key !== "F6" || !root) return;
-    const regions = [...root.querySelectorAll<HTMLElement>(REGIONS)].filter((r) => r.checkVisibility());
-    const at = regions.findIndex((r) => r.contains(document.activeElement));
-    const next = regions[nextRegion(at, regions.length, event.shiftKey)];
-    if (!next) return;
-    event.preventDefault();
-    next.focus();
+    if (root) cycleRegions(root, event, REGIONS);
   };
 
   // Escape closes a region that lies over the centre: a floating panel, the tablet's sidebar.
@@ -455,6 +440,7 @@ export function WorkspaceShell({
       })}
       title={t("menu")}
       side="start"
+      size="full"
       {...sheetState("left")}
     >
       {/* biome-ignore lint/a11y/noStaticElementInteractions lint/a11y/useKeyWithClickEvents: the links inside take the keys; this only hears their clicks. */}
@@ -477,6 +463,7 @@ export function WorkspaceShell({
           : undefined
       }
       title={panel.label}
+      size="full"
       {...sheetState(panel.id)}
     >
       <div className="t-workspace-sheet" data-panel={panel.id}>
@@ -545,7 +532,7 @@ export function WorkspaceShell({
       data-left-collapsed={hasLeft && leftCollapsed ? "" : undefined}
       data-bottom-collapsed={bottom && bottomCollapsed ? "" : undefined}
     >
-      <header className="t-shell-bar" tabIndex={-1}>
+      <ShellBar tabIndex={-1}>
         {hasLeft ? (
           <Tooltip text={collapseLabel}>
             <Button
@@ -561,6 +548,8 @@ export function WorkspaceShell({
         ) : null}
         {isStatic || phone ? menuSheet : null}
         <ShellBrandLink brand={brand} />
+        <ShellSearch control={searchControl}>{search}</ShellSearch>
+        {search ? <ShellSearchButton control={searchControl} /> : null}
         <ShellActions>
           {actions}
           {hasLeft ? null : <ShellTheme parts={theme} />}
@@ -568,7 +557,7 @@ export function WorkspaceShell({
           {isStatic || phone ? panelSheets : null}
           {isStatic || phone ? bottomSheet : null}
         </ShellActions>
-      </header>
+      </ShellBar>
       {hasLeft && desktop ? (
         <aside
           className="t-shell-sidebar"
@@ -634,7 +623,7 @@ export function WorkspaceShell({
         // biome-ignore lint/a11y/useSemanticElements: a fieldset is for form fields; the rail is a group of toggle buttons.
         <div className="t-workspace-rail" role="group" aria-label={t("panels")}>
           {panels.map((panel) => (
-            <Tooltip key={panel.id} text={panel.label}>
+            <Tooltip key={panel.id} text={panel.label} side="start">
               {isStatic ? (
                 <ButtonLink
                   variant="ghost"

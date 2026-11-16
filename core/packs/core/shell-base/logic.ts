@@ -61,3 +61,23 @@ export function barItems<I>(items: readonly I[], max = 5): { shown: I[]; more: b
     ? { shown: items.slice(0, max - 1), more: true }
     : { shown: [...items], more: false };
 }
+
+/** The forms of a shell. Its root is as wide as the screen, or as its box in a preview. */
+export type ShellForm = "phone" | "tablet" | "desktop";
+
+/** The widths, in rem, at and under which the phone and the tablet forms show (the stylesheet's 40rem and 64rem). */
+export const PHONE_REM = 40;
+export const TABLET_REM = 64;
+
+/** The form of a shell whose root is `width` px wide, with `rem` px to the rem. */
+export function shellForm(width: number, rem: number): ShellForm {
+  const at = width / rem;
+  return at <= PHONE_REM ? "phone" : at <= TABLET_REM ? "tablet" : "desktop";
+}
+
+/** The region after (or before) the one at `index` in a cycle of `count`; from outside (-1), the first or last. */
+export function nextRegion(index: number, count: number, back: boolean): number {
+  if (count === 0) return -1;
+  if (index < 0) return back ? count - 1 : 0;
+  return (index + (back ? count - 1 : 1)) % count;
+}

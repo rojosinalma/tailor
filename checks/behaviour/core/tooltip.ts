@@ -33,6 +33,26 @@ export default behaviour("tooltip", {
     await page.mouse.move(5, 5);
     await expect(page.locator(".t-tooltip")).toBeHidden();
   },
+  "side puts it below, at the start or at the end of the control": async ({ page, example, expect }) => {
+    const body = example("sides");
+    const tip = page.locator(".t-tooltip");
+    const place = async (name: string) => {
+      const control = body.getByRole("button", { name });
+      await control.hover();
+      await expect(tip).toHaveText(name);
+      const [t, b] = [await tip.boundingBox(), await control.boundingBox()];
+      await page.mouse.move(5, 5);
+      await expect(tip).toBeHidden();
+      if (!t || !b) throw new Error("no box");
+      return { t, b };
+    };
+    const below = await place("Details");
+    expect(below.t.y).toBeGreaterThanOrEqual(below.b.y + below.b.height);
+    const start = await place("History");
+    expect(start.t.x + start.t.width).toBeLessThanOrEqual(start.b.x);
+    const end = await place("Notes");
+    expect(end.t.x).toBeGreaterThanOrEqual(end.b.x + end.b.width);
+  },
   "the control keeps its own name": async ({ example, expect }) => {
     await expect(example("default").getByRole("button", { name: "Remove" })).toHaveAttribute(
       "aria-label",

@@ -1,20 +1,40 @@
-import { chevronDown } from "@tailor/core/glyphs.gen";
+import { chevronDown, search as searchGlyph } from "@tailor/core/glyphs.gen";
 import type { Tone } from "@tailor/core/spec";
 import { t } from "@tailor/core/text";
-import { holdsCurrent, initial, isCurrent, toGroups } from "@tailor/packs/core/shell-base/logic";
+import {
+  holdsCurrent,
+  initial,
+  isCurrent,
+  nextRegion,
+  type ShellForm,
+  shellForm,
+  toGroups,
+} from "@tailor/packs/core/shell-base/logic";
 import type spec from "@tailor/packs/core/shell-base/spec";
 import { useRouter } from "@tanstack/react-router";
-import { type ComponentProps, type MouseEvent, type ReactNode, useEffect, useSyncExternalStore } from "react";
+import {
+  type ComponentProps,
+  type KeyboardEvent,
+  type MouseEvent,
+  type ReactNode,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
 import { AppLink } from "../../link";
+import { Button } from "../button/button";
 import { ConfirmRegion } from "../confirm/confirm";
 import { Counter } from "../counter/counter";
 import { Icon, type IconName } from "../icon/icon";
 import { ThemePickers, useHasTheme } from "../theme-pickers/theme-pickers";
 import { ToastRegion } from "../toast/toast";
 
-export { firstLevel, toGroups } from "@tailor/packs/core/shell-base/logic";
+export { firstLevel, type ShellForm, toGroups } from "@tailor/packs/core/shell-base/logic";
 
 /** One navigation link. With `items`, it is a section that holds one level of sub-items. */
 export interface NavItem {
@@ -28,6 +48,8 @@ export interface NavItem {
   exact?: boolean;
   /** Marks the page as current when no router can tell: plain pages and the HTML kit. */
   current?: boolean;
+  /** A short muted text after the label, such as the group or the pack of the page. */
+  hint?: string;
   /** A number next to the label, such as open issues. */
   counter?: number;
   counterTone?: Tone;
@@ -67,7 +89,13 @@ type ShellName = (typeof spec.props.shell)[number];
 /** The data that every shell takes. A shell draws everything from it; the app gives no markup but a Page. */
 export interface ShellCommon {
   brand: ShellBrand;
-  /** Global actions, such as a Search and a user Menu. On a phone they stay in the top bar: keep them compact (icon buttons, a short search). */
+  /**
+   * The search of the whole app, such as a Search field. It sits in the bar (or under the brand in a side
+   * column); on a phone it folds into an icon button that opens it as a row under the bar, so the brand keeps
+   * its name. Keep it out of `actions`.
+   */
+  search?: ReactNode;
+  /** Global actions, such as a user Menu. On a phone they stay in the top bar: keep them compact (icon buttons). */
   actions?: ReactNode;
   footer?: FooterFact[];
   /** The theme controls that the shell shows. Default ["mode"]. `false` shows none. */
@@ -164,9 +192,133 @@ export function ShellMain({ id, children }: { id: string; children: ReactNode })
   );
 }
 
-/** A top bar: the header of a shell. */
-export function ShellBar({ children }: { children: ReactNode }) {
-  return <header className="t-shell-bar">{children}</header>;
+/** A top bar: the header of a shell. Other props, such as tabIndex and ref, go to the header. */
+export function ShellBar({ children, ...rest }: Omit<ComponentProps<"header">, "className" | "style">) {
+  return (
+    <header className="t-shell-bar" {...rest}>
+      {children}
+    </header>
+  );
+}
+
+const rem = (): number => Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+/** The form of a shell from the width of its root (phone, tablet, desktop), in step with its size. Desktop until measured. */
+export function useShellForm(root: HTMLElement | null): ShellForm {
+  const [form, setForm] = useState<ShellForm>("desktop");
+  useLayoutEffect(() => {
+    if (!root) return;
+    const update = (): void => setForm(shellForm(root.clientWidth, rem()));
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(root);
+    return () => observer.disconnect();
+  }, [root]);
+  return form;
+}
+
+/**
+ * True when the root was a tablet or a phone at its first layout: a sidebar that would lie over the centre
+ * starts collapsed there. A resize later never changes it, so it never overrides what the user chose.
+ */
+export function useNarrowStart(root: HTMLElement | null): boolean {
+  const [narrow, setNarrow] = useState(false);
+  const measured = useRef(false);
+  useLayoutEffect(() => {
+    if (!root || measured.current) return;
+    measured.current = true;
+    if (shellForm(root.clientWidth, rem()) !== "desktop") setNarrow(true);
+  }, [root]);
+  return narrow;
+}
+
+/** F6 and Shift+F6 move the focus to the next or the previous visible region (the `regions` under the root). */
+export function cycleRegions(root: HTMLElement, event: KeyboardEvent<HTMLElement>, regions: string): void {
+  if (event.key !== "F6") return;
+  const shown = [...root.querySelectorAll<HTMLElement>(regions)].filter((r) => r.checkVisibility());
+  const at = shown.findIndex((r) => r.contains(document.activeElement));
+  const next = shown[nextRegion(at, shown.length, event.shiftKey)];
+  if (!next) return;
+  event.preventDefault();
+  next.focus();
+}
+
+/** The open state of a shell's search on a phone, shared by its button and its row. */
+export interface ShellSearchControl {
+  readonly id: string;
+  readonly open: boolean;
+  readonly setOpen: (open: boolean) => void;
+}
+
+export function useShellSearch(): ShellSearchControl {
+  const id = useId();
+  const [open, setOpen] = useState(false);
+  return { id, open, setOpen };
+}
+
+const focusField = (id: string): void =>
+  document.getElementById(id)?.querySelector<HTMLElement>("input, textarea, select")?.focus();
+
+/**
+ * The search of a shell in its place. On a phone it shows only while its button has opened it, as a row
+ * under the bar; Escape in an empty field closes it and the focus goes back to the button.
+ */
+export function ShellSearch({ control, children }: { control: ShellSearchControl; children?: ReactNode }) {
+  const isStatic = useIsStatic();
+  if (!children) return null;
+  // Before the field's own Escape (which clears it first): an empty field closes the row.
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
+    if (event.key !== "Escape" || !control.open) return;
+    if (event.target instanceof HTMLInputElement && event.target.value !== "") return;
+    control.setOpen(false);
+    document.querySelector<HTMLElement>(`[aria-controls="${CSS.escape(control.id)}"]`)?.focus();
+  };
+  return (
+    // biome-ignore lint/a11y/useSemanticElements: <search> is too new for every browser that tailor supports.
+    <div
+      className="t-shell-search"
+      id={control.id}
+      role="search"
+      data-open={!isStatic && control.open ? "" : undefined}
+      onKeyDownCapture={isStatic ? undefined : onKeyDown}
+    >
+      {children}
+    </div>
+  );
+}
+
+/** The phone's search button: it opens the search as a row under the bar and gives the field the focus. */
+export function ShellSearchButton({ control }: { control: ShellSearchControl }) {
+  if (useIsStatic())
+    return (
+      <a
+        className="t-btn t-shell-search-button"
+        data-variant="ghost"
+        data-icon-only=""
+        href={`#${control.id}`}
+        aria-label={t("search")}
+        aria-controls={control.id}
+        aria-expanded="false"
+      >
+        <Glyph body={searchGlyph} />
+      </a>
+    );
+  return (
+    <Button
+      className="t-shell-search-button"
+      variant="ghost"
+      icon={<Glyph body={searchGlyph} />}
+      label={t("search")}
+      aria-expanded={control.open}
+      aria-controls={control.id}
+      onClick={() => {
+        const next = !control.open;
+        control.setOpen(next);
+        // The row shows on the next paint; the field takes the focus then.
+        if (next) requestAnimationFrame(() => focusField(control.id));
+      }}
+    />
+  );
 }
 
 /** The global actions, at the end of a bar. */
@@ -228,6 +380,7 @@ export function NavContent({ item, chevron }: { item: NavItem; chevron?: boolean
     <>
       <NavIcon item={item} />
       <span className="t-shell-label">{item.label}</span>
+      {item.hint ? <span className="t-shell-hint">{item.hint}</span> : null}
       {item.counter === undefined ? null : <Counter value={item.counter} tone={item.counterTone} />}
       {chevron ? (
         <span className="t-shell-chevron">

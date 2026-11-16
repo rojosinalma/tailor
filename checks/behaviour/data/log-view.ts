@@ -22,22 +22,29 @@ export default behaviour("log-view", {
     await expect.poll(() => atEnd(view)).toBe(true);
     await expect(body.getByRole("button", { name: "Jump to end" })).toBeHidden();
   },
-  "new lines keep the view at the end while following": async ({ page, kit, example, expect }) => {
+  "Add a line appends one line and the view stays at the end while following": async ({
+    example,
+    expect,
+  }) => {
     const body = example("live");
     const view = body.getByRole("region", { name: "Live log" });
     const lines = body.locator(".t-log-line");
-    if (kit === "html")
-      await page.evaluate(() => {
-        const el = document.querySelector('[data-example="live"] .t-log-lines');
-        const tailor = (window as unknown as { Tailor: { log(e: Element): { append(t: string): void } } })
-          .Tailor;
-        if (el) for (let i = 0; i < 20; i++) tailor.log(el).append(`10:10:${10 + i} INFO appended ${i}`);
-      });
-    await expect(body.getByText(kit === "html" ? "appended 19" : "/api/items/34 ")).toBeVisible({
-      timeout: 10_000,
-    });
-    expect(await lines.count()).toBeGreaterThan(0);
+    await expect(lines).toHaveCount(30);
+    const add = body.getByRole("button", { name: "Add a line" });
+    for (let i = 0; i < 12; i++) await add.click();
+    await expect(lines).toHaveCount(42);
+    const last = lines.last();
+    await expect(last).toContainText("deploy of web-1 done in 42s");
+    await expect(last.locator(".t-log-time")).toHaveText("10:05:00");
+    await expect(last).toHaveAttribute("data-level", "info");
+    expect(await last.textContent()).not.toContain("\x1b");
     await expect.poll(() => atEnd(view)).toBe(true);
+  },
+  "a wrapped log of a few hundred lines renders every line, as the HTML kit does": async ({
+    example,
+    expect,
+  }) => {
+    await expect(example("wrap").locator(".t-log-line")).toHaveCount(80);
   },
   "the filter hides other lines and marks the matches": async ({ example, expect }) => {
     const body = example("default");

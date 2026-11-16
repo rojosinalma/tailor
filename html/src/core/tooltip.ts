@@ -1,7 +1,12 @@
-import { place } from "@tailor/core/position";
+import { place, type Side } from "@tailor/core/position";
 import { h, once, register } from "../runtime";
 
 const DELAY = 600;
+const SIDES: Readonly<Record<string, readonly [Side, Side]>> = {
+  bottom: ["bottom", "bottom"],
+  start: ["left", "right"],
+  end: ["right", "left"],
+};
 const CLOSE_DELAY = 100;
 
 let positioner: HTMLElement | null = null;
@@ -34,11 +39,14 @@ function show(target: HTMLElement): void {
   current = target;
   body.textContent = text;
   if (!box.matches(":popover-open")) box.showPopover();
+  // data-tip-side: [left-to-right, right-to-left] for each side; "top" without it.
+  const sides = SIDES[target.dataset.tipSide ?? ""] ?? ["top", "top"];
+  const side = sides[getComputedStyle(target).direction === "rtl" ? 1 : 0];
   const spot = place(
     target.getBoundingClientRect(),
     { width: box.offsetWidth, height: box.offsetHeight },
     { width: innerWidth, height: innerHeight },
-    { side: "top", align: "center", gap: 6 },
+    { side, align: "center", gap: 6 },
   );
   box.style.left = `${spot.x}px`;
   box.style.top = `${spot.y}px`;

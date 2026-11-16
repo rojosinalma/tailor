@@ -1,17 +1,8 @@
 import { register } from "../runtime";
 import "./dialog";
+import { toButton } from "./shell-base";
 
 const SWIPE = 48;
-
-/** A link that opens the drawer without the script becomes a button with it. */
-function toButton(link: HTMLAnchorElement): HTMLButtonElement {
-  const button = document.createElement("button");
-  button.type = "button";
-  for (const { name, value } of link.attributes) if (name !== "href") button.setAttribute(name, value);
-  button.append(...link.childNodes);
-  link.replaceWith(button);
-  return button;
-}
 
 /**
  * The navigation drawer: a <dialog data-t="dialog nav-drawer">. The dialog script opens and closes it;

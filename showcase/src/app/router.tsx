@@ -36,8 +36,9 @@ const matches = (spec: ComponentSpec, query: string): boolean =>
 
 const link = (spec: ComponentSpec): NavItem => ({
   id: spec.id,
+  label: spec.name,
   // The pack shows when it is not core; a shell's pack is its own name.
-  label: spec.pack === "core" || isShell(spec) ? spec.name : `${spec.name} · ${spec.pack}`,
+  hint: spec.pack === "core" || isShell(spec) ? undefined : spec.pack,
   to: isShell(spec) ? `/shells/${spec.id}` : `/components/${spec.id}`,
 });
 
@@ -74,7 +75,7 @@ function Frame() {
     <SideNavShell
       brand={{ name: "tailor", icon: "bi:scissors", to: "/" }}
       nav={siteNav(query)}
-      actions={
+      search={
         <Search
           label="Filter components"
           placeholder="Filter"
@@ -89,6 +90,8 @@ function Frame() {
       ]}
       theme={["skin", "palette", "mode"]}
       storageKey={SIDEBAR_KEY}
+      // The site's links are many and named: icons alone cannot tell them apart, so a tablet starts open too.
+      tabletCollapsed={false}
     >
       <Outlet />
     </SideNavShell>

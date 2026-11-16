@@ -63,4 +63,14 @@ export default defineExamples("drawer", [
       </Drawer>
     ),
   },
+  {
+    id: "full",
+    title: "The whole screen",
+    note: "For a region of an app that becomes a drawer on a phone, such as a side panel.",
+    render: () => (
+      <Drawer trigger={<Button>Open the file list</Button>} title="Files" side="start" size="full">
+        <p>compose.yaml, nginx.conf and backup.sh on web-1.</p>
+      </Drawer>
+    ),
+  },
 ]);

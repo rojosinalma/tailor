@@ -163,8 +163,8 @@
 
     /* Derived: layout metrics of the shells. */
     --t-nav-h: 3.5rem;
-    --t-sidebar-w: 15rem;
     --t-nav-item-h: var(--t-control-h-md);
+    --t-sidebar-w: 15rem;
     --t-sidebar-w-collapsed: 3.5rem;
     --t-panel-w: 20rem;
     --t-gutter: clamp(var(--t-space-4), 3vw, var(--t-space-7));

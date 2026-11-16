@@ -94,10 +94,3 @@ export function resizeByPointer(
 ): number {
   return clampSize(side === "left" ? pointer - edge : edge - pointer, bounds);
 }
-
-/** The region after (or before) the one at `index` in a cycle of `count`; from outside (-1), the first or last. */
-export function nextRegion(index: number, count: number, back: boolean): number {
-  if (count === 0) return -1;
-  if (index < 0) return back ? count - 1 : 0;
-  return (index + (back ? count - 1 : 1)) % count;
-}

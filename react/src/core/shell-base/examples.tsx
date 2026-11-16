@@ -1,7 +1,7 @@
 import { useId } from "react";
 import { defineExamples } from "../../examples";
 import { Stack } from "../stack/stack";
-import { ACTIONS, BRAND, FOOTER, GROUPS, NAV_IN_SECTION, ServicesPage } from "./sample";
+import { ACTIONS, BRAND, FOOTER, GROUPS, NAV_IN_SECTION, SEARCH, ServicesPage } from "./sample";
 import {
   FooterFacts,
   NavLists,
@@ -11,14 +11,20 @@ import {
   ShellFooter,
   ShellMain,
   ShellRoot,
+  ShellSearch,
+  ShellSearchButton,
+  useShellSearch,
 } from "./shell-base";
 
 function Frame() {
   const main = useId();
+  const search = useShellSearch();
   return (
     <ShellRoot shell="bare" mainId={main} contained>
       <ShellBar>
         <ShellBrandLink brand={BRAND} />
+        <ShellSearch control={search}>{SEARCH}</ShellSearch>
+        <ShellSearchButton control={search} />
         <ShellActions>{ACTIONS}</ShellActions>
       </ShellBar>
       <ShellMain id={main}>
@@ -32,8 +38,8 @@ function Frame() {
 export default defineExamples("shell-base", [
   {
     id: "frame",
-    title: "The parts of a frame: bar, brand, actions, main region, footer",
-    note: "Shells put these parts together; an app picks a shell instead. Tab once to see the skip link.",
+    title: "The parts of a frame: bar, brand, search, actions, main region, footer",
+    note: "Shells put these parts together; an app picks a shell instead. Tab once to see the skip link. In a narrow frame the search folds into its button.",
     display: "frame",
     render: () => <Frame />,
   },

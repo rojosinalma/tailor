@@ -6,7 +6,7 @@ export default defineComponent({
   pack: "shell-workspace",
   group: "shells",
   description:
-    "A frame for app-like work on items: a thin top bar, a left sidebar with the area links and the app's own content (a tree, a list), the centre, right panels behind a rail of icons, and a bottom panel. Sidebars and panels resize and collapse; the layout is remembered. Nothing scrolls as a page, only the regions do. On a phone the top bar opens each region as a sheet. Content: one Page with mode fill.",
+    "A frame for app-like work on items: a thin top bar, a left sidebar with the area links and the app's own content (a tree, a list), the centre, right panels behind a rail of icons, and a bottom panel. Sidebars and panels resize and collapse; the layout is remembered. Nothing scrolls as a page, only the regions do. On a phone the top bar opens each region as a sheet, and the search folds into an icon button that opens it as a row under the bar. Content: one Page with mode fill.",
   root: "t-shell",
   parts: {
     "t-shell-collapse": "the toggle in the top bar that shows and hides the left sidebar",
@@ -27,6 +27,7 @@ export default defineComponent({
   props: {
     brand: [],
     nav: [],
+    search: [],
     actions: [],
     footer: [],
     theme: ["skin", "palette", "mode"],

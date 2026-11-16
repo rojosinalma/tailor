@@ -1,5 +1,5 @@
 import { behaviour } from "../../src/behaviour";
-import { frameStays, skipLinkWorks } from "../core/shell-base";
+import { frameStays, phoneSearchWorks, skipLinkWorks } from "../core/shell-base";
 
 export default behaviour("topnav", {
   "the current link has aria-current; its section is marked": async ({ example, expect }) => {
@@ -82,6 +82,9 @@ export default behaviour("topnav", {
     await expect(
       page.getByRole("dialog", { name: "Menu" }).getByRole("link", { name: "Settings" }),
     ).toBeVisible();
+  },
+  "the phone form: the search folds into a button that opens it under the bar": async ({ page, example }) => {
+    await phoneSearchWorks(page, example("narrow"));
   },
   "the phone form on a real phone screen": async ({ page, example, expect }) => {
     await page.setViewportSize({ width: 390, height: 800 });

@@ -23,8 +23,8 @@
 }
 
 .t-shell[data-shell="workspace"] > .t-shell-bar {
+  --t-shell-bar-h: calc(var(--t-control-h-md) + var(--t-space-2));
   gap: var(--t-space-2);
-  min-height: calc(var(--t-control-h-md) + var(--t-space-2) + var(--t-safe-top));
   padding-inline: calc(var(--t-space-2) + var(--t-safe-left)) calc(var(--t-space-2) + var(--t-safe-right));
 }
 
@@ -321,7 +321,7 @@
   background: var(--t-accent);
 }
 
-/* The sheets on a phone: a side sheet takes the whole screen. */
+/* The sheets on a phone: a side sheet is a full-size drawer. */
 .t-workspace-sheet {
   display: flex;
   flex-direction: column;
@@ -348,13 +348,6 @@
 
   .t-workspace-handle[aria-orientation="horizontal"]::after {
     inset: calc((var(--t-touch) - var(--t-space-2)) / -2) 0;
-  }
-}
-
-@media (max-width: 40rem) {
-  .t-drawer:not([data-side="bottom"]):has(> .t-drawer-body > .t-workspace-sheet) {
-    width: 100%;
-    border-inline: 0;
   }
 }
 

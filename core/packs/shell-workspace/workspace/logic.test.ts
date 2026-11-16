@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { lengthToPx, nextRegion, parseLayout, resizeByKey, resizeByPointer } from "./logic";
+import { lengthToPx, parseLayout, resizeByKey, resizeByPointer } from "./logic";
 
 const bounds = { min: 192, max: 512 };
 
@@ -62,17 +62,4 @@ describe("pointer", () => {
     expect(resizeByPointer("bottom", 500, 800, bounds)).toBe(300);
   });
   test("stays inside the bounds", () => expect(resizeByPointer("left", 2000, 0, bounds)).toBe(512));
-});
-
-describe("regions", () => {
-  test("cycles forward and back", () => {
-    expect(nextRegion(0, 3, false)).toBe(1);
-    expect(nextRegion(2, 3, false)).toBe(0);
-    expect(nextRegion(0, 3, true)).toBe(2);
-  });
-  test("from outside goes to the first or the last", () => {
-    expect(nextRegion(-1, 3, false)).toBe(0);
-    expect(nextRegion(-1, 3, true)).toBe(2);
-    expect(nextRegion(-1, 0, false)).toBe(-1);
-  });
 });

@@ -20,7 +20,10 @@ import {
   ShellFooter,
   ShellMain,
   ShellRoot,
+  ShellSearch,
+  ShellSearchButton,
   useCurrentPath,
+  useShellSearch,
 } from "../../core/shell-base/shell-base";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
@@ -140,6 +143,7 @@ function Row({ nav, path }: { nav: readonly NavItem[]; path: string | null }) {
 export function TopNavShell({
   brand,
   nav,
+  search,
   actions,
   footer = [],
   theme,
@@ -149,6 +153,7 @@ export function TopNavShell({
 }: TopNavShellProps) {
   const main = useId();
   const drawer = useNavDrawer();
+  const searchControl = useShellSearch();
   const path = useCurrentPath();
   const drawerProps = { brand, nav, footer, theme, control: drawer };
   return (
@@ -157,6 +162,8 @@ export function TopNavShell({
         {phoneNav === "drawer" ? <NavDrawer {...drawerProps} /> : null}
         <ShellBrandLink brand={brand} />
         <Row nav={nav} path={path} />
+        <ShellSearch control={searchControl}>{search}</ShellSearch>
+        {search ? <ShellSearchButton control={searchControl} /> : null}
         <ShellActions>{actions}</ShellActions>
       </ShellBar>
       <ShellMain id={main}>{children}</ShellMain>

@@ -1,5 +1,15 @@
 import { expect, test } from "bun:test";
-import { barItems, holdsCurrent, initial, isCurrent, matches, type NavEntry, toGroups } from "./logic";
+import {
+  barItems,
+  holdsCurrent,
+  initial,
+  isCurrent,
+  matches,
+  type NavEntry,
+  nextRegion,
+  shellForm,
+  toGroups,
+} from "./logic";
 
 const items: NavEntry[] = [
   { id: "overview", label: "Overview", to: "/", exact: true },
@@ -46,4 +56,21 @@ test("the initial of a label", () => {
 test("a bottom bar shows five items, or four and More", () => {
   expect(barItems([1, 2, 3, 4, 5])).toEqual({ shown: [1, 2, 3, 4, 5], more: false });
   expect(barItems([1, 2, 3, 4, 5, 6])).toEqual({ shown: [1, 2, 3, 4], more: true });
+});
+
+test("the form follows the width of the root, the edges included", () => {
+  expect(shellForm(640, 16)).toBe("phone");
+  expect(shellForm(641, 16)).toBe("tablet");
+  expect(shellForm(1024, 16)).toBe("tablet");
+  expect(shellForm(1025, 16)).toBe("desktop");
+  expect(shellForm(1280, 20)).toBe("tablet");
+});
+
+test("regions cycle forward and back; from outside to the first or the last", () => {
+  expect(nextRegion(0, 3, false)).toBe(1);
+  expect(nextRegion(2, 3, false)).toBe(0);
+  expect(nextRegion(0, 3, true)).toBe(2);
+  expect(nextRegion(-1, 3, false)).toBe(0);
+  expect(nextRegion(-1, 3, true)).toBe(2);
+  expect(nextRegion(-1, 0, false)).toBe(-1);
 });

@@ -1,5 +1,5 @@
 import { behaviour } from "../../src/behaviour";
-import { frameStays, skipLinkWorks } from "../core/shell-base";
+import { frameStays, phoneSearchWorks, skipLinkWorks } from "../core/shell-base";
 
 export default behaviour("sidenav", {
   "the current link has aria-current; a section with the current page starts open": async ({
@@ -73,11 +73,16 @@ export default behaviour("sidenav", {
       "true",
     );
   },
-  "a tablet starts collapsed": async ({ page, example, expect }) => {
+  "a tablet starts collapsed, unless tabletCollapsed is false": async ({ page, example, expect }) => {
     await page.setViewportSize({ width: 820, height: 800 });
     await page.reload();
     await page.locator(".sc-example").first().waitFor();
     await expect(example("default").getByRole("button", { name: "Expand sidebar" })).toBeVisible();
+    await expect(example("many").getByRole("button", { name: "Collapse sidebar" })).toBeVisible();
+    await expect(example("many").getByRole("link", { name: "Volumes nas" })).toBeVisible();
+  },
+  "the phone form: the search folds into a button that opens it under the bar": async ({ page, example }) => {
+    await phoneSearchWorks(page, example("narrow"));
   },
   "the phone form: a top bar with the menu button opens the drawer": async ({ page, example, expect }) => {
     const body = example("narrow");

@@ -1,11 +1,11 @@
 import {
   ACTIONS,
   BRAND,
-  COMPACT_ACTIONS,
   FOOTER,
   GROUPS,
   MANY_GROUPS,
   NAV_IN_SECTION,
+  SEARCH,
   ServicesPage,
 } from "../../core/shell-base/sample";
 import { defineExamples } from "../../examples";
@@ -21,6 +21,7 @@ export default defineExamples("sidenav", [
       <SideNavShell
         brand={BRAND}
         nav={GROUPS}
+        search={SEARCH}
         actions={ACTIONS}
         footer={FOOTER}
         theme={["palette", "mode"]}
@@ -49,7 +50,8 @@ export default defineExamples("sidenav", [
   },
   {
     id: "many",
-    title: "A long list scrolls inside the column",
+    title: "A long list scrolls inside the column; hints after two labels",
+    note: "Many named links: with tabletCollapsed false the column starts open on a tablet too.",
     display: "frame",
     render: () => (
       <SideNavShell
@@ -57,6 +59,7 @@ export default defineExamples("sidenav", [
         nav={MANY_GROUPS}
         footer={FOOTER}
         storageKey="example.sidenav.many"
+        tabletCollapsed={false}
         contained
       >
         <ServicesPage />
@@ -82,7 +85,8 @@ export default defineExamples("sidenav", [
       <SideNavShell
         brand={BRAND}
         nav={GROUPS}
-        actions={COMPACT_ACTIONS}
+        search={SEARCH}
+        actions={ACTIONS}
         footer={FOOTER}
         storageKey={false}
         contained
@@ -101,7 +105,8 @@ export default defineExamples("sidenav", [
       <SideNavShell
         brand={BRAND}
         nav={GROUPS}
-        actions={COMPACT_ACTIONS}
+        search={SEARCH}
+        actions={ACTIONS}
         footer={FOOTER}
         phoneNav="bar"
         storageKey={false}

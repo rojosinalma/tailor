@@ -2,7 +2,6 @@ import { chevronDown, chevronUp } from "@tailor/core/glyphs.gen";
 import { t } from "@tailor/core/text";
 import {
   lengthToPx,
-  nextRegion,
   parseLayout,
   resizeByKey,
   resizeByPointer,
@@ -11,29 +10,13 @@ import {
   type WorkspaceLayout,
   type WorkspaceSide,
 } from "@tailor/packs/shell-workspace/workspace/logic";
+import { cycleRegions, formOf, toButton } from "../core/shell-base";
 import { glyph, register } from "../runtime";
 
-const PHONE_REM = 40;
-const TABLET_REM = 64;
 const REGIONS =
   ":scope > :is(.t-shell-bar, .t-shell-sidebar, .t-shell-main, .t-workspace-panel, .t-workspace-bottom)";
 
 const rem = (): number => Number.parseFloat(getComputedStyle(document.documentElement).fontSize);
-
-function formOf(root: HTMLElement): "desktop" | "tablet" | "phone" {
-  const width = root.clientWidth / rem();
-  return width <= PHONE_REM ? "phone" : width <= TABLET_REM ? "tablet" : "desktop";
-}
-
-/** A link that stands in for a button without the script becomes that button. */
-function toButton(link: HTMLAnchorElement): HTMLButtonElement {
-  const button = document.createElement("button");
-  button.type = "button";
-  for (const { name, value } of link.attributes) if (name !== "href") button.setAttribute(name, value);
-  button.append(...link.childNodes);
-  link.replaceWith(button);
-  return button;
-}
 
 /** Puts the nodes at the end of `to`, before its resize handle. */
 function moveInto(to: Element, nodes: Node[]): void {
@@ -219,16 +202,7 @@ register("workspace", (root) => {
     handle.addEventListener("pointercancel", end);
   }
 
-  // F6 and Shift+F6 move the focus from region to region.
-  root.addEventListener("keydown", (event) => {
-    if (event.key !== "F6") return;
-    const regions = [...root.querySelectorAll<HTMLElement>(REGIONS)].filter((r) => r.checkVisibility());
-    const at = regions.findIndex((r) => r.contains(document.activeElement));
-    const next = regions[nextRegion(at, regions.length, event.shiftKey)];
-    if (!next) return;
-    event.preventDefault();
-    next.focus();
-  });
+  cycleRegions(root, REGIONS);
 
   // The phone: each region's content moves into its sheet, and back on a wider screen.
   const sheet = (selector: string): HTMLElement | null =>

@@ -54,12 +54,14 @@ body:has(> * > .t-shell:not([data-contained])) {
   white-space: nowrap;
 }
 
+/* --t-shell-bar-h: the height of a bar's row; a shell with a thinner bar sets it. */
 .t-shell-bar {
+  --t-shell-bar-h: var(--t-nav-h);
   display: flex;
   align-items: center;
   gap: var(--t-space-3);
   min-width: 0;
-  min-height: calc(var(--t-nav-h) + var(--t-safe-top));
+  min-height: calc(var(--t-shell-bar-h) + var(--t-safe-top));
   padding: var(--t-safe-top) calc(var(--t-gutter) + var(--t-safe-right)) 0
     calc(var(--t-gutter) + var(--t-safe-left));
   border-bottom: var(--t-border-w) solid var(--t-border);
@@ -118,6 +120,27 @@ body:has(> * > .t-shell:not([data-contained])) {
   min-width: 0;
 }
 
+/* The search of the shell: in a bar it sits at the end, before the actions; the field fills it. */
+.t-shell-search {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.t-shell-search > * {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.t-shell-bar > .t-shell-search {
+  flex: 0 1 var(--t-measure-xs);
+  margin-inline-start: auto;
+}
+
+.t-shell-bar > .t-shell-search ~ .t-shell-actions {
+  margin-inline-start: 0;
+}
+
 /* Links. The current page is marked three ways: the selection colour, a heavier weight and a bar. */
 .t-shell-list,
 .t-shell-sub {
@@ -157,7 +180,7 @@ body:has(> * > .t-shell:not([data-contained])) {
   gap: var(--t-space-2);
   width: 100%;
   min-width: 0;
-  min-height: var(--t-control-h-md);
+  min-height: var(--t-nav-item-h);
   padding: 0 var(--t-space-3);
   border: 0;
   border-radius: var(--t-radius-control);
@@ -241,6 +264,16 @@ span.t-shell-link {
   text-overflow: ellipsis;
 }
 
+.t-shell-hint {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  font-weight: var(--t-weight-normal);
+  text-overflow: ellipsis;
+}
+
 .t-shell-chevron {
   display: inline-flex;
   flex: none;
@@ -319,10 +352,18 @@ span.t-shell-link {
   grid-area: bottom;
 }
 
-/* The menu button and the bottom bar belong to the phone form. */
+/* The menu button, the search button and the bottom bar belong to the phone form. */
 .t-shell .t-shell-menu-button,
+.t-shell .t-shell-search-button,
 .t-shell .t-bottom-bar {
   display: none;
+}
+
+/* A skin may set a smaller link height; a touch screen still gets the touch size. */
+@media (pointer: coarse) {
+  .t-shell-link {
+    min-height: max(var(--t-touch), var(--t-nav-item-h));
+  }
 }
 
 @media (hover: hover) {
@@ -342,9 +383,39 @@ span.t-shell-link {
     padding-inline-start: calc(var(--t-gutter) + var(--t-safe-left));
   }
 
-  .t-shell .t-shell-menu-button {
+  .t-shell .t-shell-menu-button,
+  .t-shell .t-shell-search-button {
     display: inline-flex;
     flex: none;
+  }
+
+  /*
+   * The search folds into its button, at the end of the bar before the actions. Open (or the target of the
+   * button's link, without the script), it is a second row of the bar: the first row keeps its place.
+   */
+  .t-shell-bar > .t-shell-search-button {
+    margin-inline-start: auto;
+  }
+
+  .t-shell .t-shell-search:not([data-open], :target) {
+    display: none;
+  }
+
+  .t-shell-bar:has(> .t-shell-search:is([data-open], :target)) {
+    flex-wrap: wrap;
+    row-gap: 0;
+    padding-bottom: calc((var(--t-shell-bar-h) - var(--t-control-h-md)) / 2);
+  }
+
+  /* The brand holds the first row at the bar's height, so nothing in it moves. */
+  .t-shell-bar:has(> .t-shell-search:is([data-open], :target)) > .t-shell-brand {
+    min-height: calc(var(--t-shell-bar-h) - var(--t-border-w));
+  }
+
+  .t-shell-bar > .t-shell-search {
+    flex: 1 0 100%;
+    order: 1;
+    margin: 0;
   }
 
   .t-shell .t-bottom-bar {

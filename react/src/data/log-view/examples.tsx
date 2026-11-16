@@ -1,5 +1,7 @@
 import type { Level } from "@tailor/packs/data/log-view/logic";
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { Button } from "../../core/button/button";
+import { Page } from "../../core/page/page";
 import { defineExamples } from "../../examples";
 import { type LogLine, LogView } from "./log-view";
 
@@ -43,24 +45,38 @@ const raw: LogLine[] = logLines(60).map((line) => ({
   text: `${line.time} ${line.level?.toUpperCase()} ${line.text}`,
 }));
 
-const LIVE_START = 30;
-const LIVE_MORE = 40;
+const LIVE_ID = "live-log";
+/** The line that "Add a line" appends, the same in both kits. */
+const ADDED = {
+  time: "10:05:00",
+  level: "info",
+  text: `${E}[32mOK${E}[0m deploy of web-1 done in 42s`,
+} as const;
 
+/** A button appends a line: React state here; in the HTML kit, data-t-append on the same button. */
 function Live() {
-  const [shown, setShown] = useState(() => logLines(LIVE_START));
-  useEffect(() => {
-    const id = setInterval(() => {
-      setShown((current) => {
-        if (current.length >= LIVE_START + LIVE_MORE) {
-          clearInterval(id);
-          return current;
-        }
-        return [...current, ...logLines(1, current.length)];
-      });
-    }, 700);
-    return () => clearInterval(id);
-  }, []);
-  return <LogView label="Live log" lines={shown} />;
+  const [shown, setShown] = useState(() => logLines(30));
+  const add = (): void => setShown((current) => [...current, { ...ADDED, id: `added-${current.length}` }]);
+  return (
+    <Page
+      title="Deploys"
+      mode="fill"
+      actions={
+        <Button
+          size="sm"
+          onClick={add}
+          data-t-append={`#${LIVE_ID}`}
+          data-text={ADDED.text}
+          data-time={ADDED.time}
+          data-level={ADDED.level}
+        >
+          Add a line
+        </Button>
+      }
+    >
+      <LogView label="Live log" id={LIVE_ID} lines={shown} />
+    </Page>
+  );
 }
 
 export default defineExamples("log-view", [
@@ -74,7 +90,7 @@ export default defineExamples("log-view", [
   {
     id: "live",
     title: "Lines that arrive",
-    note: "A new line every 0.7 s while follow is on keeps the view at the end.",
+    note: 'Each new line keeps the view at the end while follow is on. HTML kit: a button with data-t-append="#id" and data-text (data-time, data-level) appends to the log with that id.',
     display: "frame",
     render: () => <Live />,
   },

@@ -10,7 +10,11 @@
   min-width: 0;
   min-height: 0;
   height: 100%;
-  overflow: hidden;
+  /*
+   * No overflow clip: a rounded clip over the scrolling view paints its corners differently from one paint to
+   * the next. The bar rounds its own top corners; the padding keeps the lines off the bottom ones.
+   */
+  padding-bottom: calc(var(--t-radius-box) - var(--t-border-w));
   border: var(--t-border-w) solid var(--t-border);
   border-radius: var(--t-radius-box);
   background: var(--t-inset);
@@ -31,6 +35,8 @@
   gap: var(--t-space-2) var(--t-space-3);
   padding: var(--t-space-2);
   border-bottom: var(--t-border-w) solid var(--t-border);
+  border-radius: calc(var(--t-radius-box) - var(--t-border-w)) calc(var(--t-radius-box) - var(--t-border-w)) 0
+    0;
   background: var(--t-surface);
   font-family: var(--t-font-sans);
 }
