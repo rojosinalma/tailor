@@ -472,6 +472,10 @@ export function lintCssText(
   const shell = /^core\/packs\/shell-[^/]+\/([^/]+)\//.exec(file)?.[1];
   root.walkRules((r) => {
     if (inKeyframes(r)) return;
+    // A comment inside a selector is the trace of a bad merge of two edits: the rule no longer means what it says.
+    if (r.raws.selector?.raw.includes("/*")) {
+      add(ruleLine(r, 0), "selector-comment", "a comment inside a selector: the rule is broken");
+    }
     if (shell) {
       for (const selector of r.selectors) {
         if (selector.includes(`[data-shell="${shell}"]`) || selector.includes(`.t-${shell}`)) continue;

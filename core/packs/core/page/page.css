@@ -55,6 +55,8 @@
 }
 
 .t-page-body {
+  /* The scroll box holds its hidden parts (a native control behind a drawn one, text for screen readers). */
+  position: relative;
   display: grid;
   flex: 1;
   grid-template-columns: minmax(0, 1fr);

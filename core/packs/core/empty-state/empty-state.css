@@ -44,12 +44,7 @@
   font-size: var(--t-text-sm);
 }
 
-.t-empty[data-size="sm"] /* Centred in the full width; the content keeps a short line. */
-.t-empty > * {
-  max-width: var(--t-measure-sm);
-}
-
-.t-empty-icon {
+.t-empty[data-size="sm"] .t-empty-icon {
   font-size: var(--t-text-xl);
 }
 

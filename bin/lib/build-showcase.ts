@@ -186,9 +186,17 @@ export async function buildShowcase(
   // A page loads the scripts of its own pack, of the packs that one requires, and of any pack whose
   // component an example uses (the markup names it in data-t), as a project would.
   const built = new Set((await scan("dist/html/*.js")).map((f) => f.split("/").pop()));
+  // The pack of each behaviour, from the names that the HTML kit's scripts register.
+  const behaviourPack = new Map<string, string>();
+  for (const file of await scan("html/src/*/*.ts")) {
+    const pack = file.split("/")[2] ?? "";
+    for (const match of (await Bun.file(at(file)).text()).matchAll(/register\(\s*"([^"]+)"/g)) {
+      if (match[1]) behaviourPack.set(match[1], pack);
+    }
+  }
   const scriptsFor = (pack: string, body: string): string[] => {
     const used = new Set([...body.matchAll(/data-t="([^"]+)"/g)].flatMap((m) => (m[1] ?? "").split(/\s+/)));
-    const packs = specs.filter((s) => s.html === "script" && used.has(s.id)).map((s) => s.pack);
+    const packs = [...used].map((name) => behaviourPack.get(name)).filter((id) => id !== undefined);
     return withRequirements([pack, ...packs])
       .map((id) => (id === "core" ? "tailor.js" : `tailor-${id}.js`))
       .filter((file) => built.has(file))

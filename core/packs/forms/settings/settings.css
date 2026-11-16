@@ -66,6 +66,7 @@
 }
 
 .t-settings-content {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: var(--t-space-6);
