@@ -1,0 +1,56 @@
+/* The frame of every standard page: it fills its parent, keeps the page gutter and centres its content. */
+.t-status-page {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--t-gutter);
+}
+
+/* An auto margin centres the column and still lets a tall one scroll from its top. */
+.t-status-page-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--t-space-3);
+  width: 100%;
+  max-width: var(--t-measure-md);
+  margin: auto;
+  text-align: center;
+}
+
+.t-status-page-code {
+  color: var(--t-muted);
+  font-family: var(--t-font-heading);
+  font-size: calc(var(--t-text-3xl) * 2);
+  font-weight: var(--t-heading-weight);
+  line-height: 1;
+}
+
+.t-status-page-icon {
+  display: inline-flex;
+  color: var(--t-muted);
+  font-size: calc(var(--t-text-3xl) * 1.5);
+}
+
+.t-status-page-title {
+  font-size: var(--t-text-2xl);
+  line-height: var(--t-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.t-status-page-text {
+  max-width: var(--t-measure-sm);
+  color: var(--t-muted);
+}
+
+.t-status-page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--t-space-2);
+  margin-top: var(--t-space-2);
+}

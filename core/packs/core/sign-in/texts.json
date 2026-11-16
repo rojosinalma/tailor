@@ -1,0 +1,8 @@
+{
+  "email": "Email",
+  "username": "Username",
+  "password": "Password",
+  "keepSignedIn": "Keep me signed in",
+  "or": "or",
+  "fillInField": "Fill in this field."
+}

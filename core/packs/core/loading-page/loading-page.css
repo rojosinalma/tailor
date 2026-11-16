@@ -1,0 +1,64 @@
+/*
+ * The page shows only after its delay, so a fast load never flashes. The delay is not motion: it stays under
+ * reduced motion, where only the fade drops to nothing. A placeholder clips instead of scrolling.
+ */
+.t-status-page.t-loading-page {
+  overflow: hidden;
+  animation: t-loading-page-show var(--t-motion-base) var(--t-ease) both;
+  /* lint-allow: the delay before a pending page shows, a fixed time that reduced motion keeps */
+  animation-delay: 150ms;
+}
+
+.t-loading-page[data-delay="0"] {
+  animation-delay: 0ms;
+}
+
+.t-loading-page[data-delay="500"] {
+  /* lint-allow: the delay before a pending page shows, a fixed time that reduced motion keeps */
+  animation-delay: 500ms;
+}
+
+.t-loading-page[data-delay="1000"] {
+  /* lint-allow: the delay before a pending page shows, a fixed time that reduced motion keeps */
+  animation-delay: 1000ms;
+}
+
+.t-loading-page-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--t-space-3);
+  margin: auto;
+  color: var(--t-muted);
+}
+
+.t-loading-page-label {
+  font-size: var(--t-text-base);
+  font-weight: var(--t-weight-normal);
+}
+
+.t-loading-page-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-5);
+  width: 100%;
+  max-width: var(--t-measure-xl);
+  margin-inline: auto;
+}
+
+/* The title line and the toolbar line: short bars, not full lines. */
+.t-loading-page-skeleton > .t-skeleton:first-child {
+  max-width: var(--t-measure-xs);
+  font-size: var(--t-text-2xl);
+}
+
+.t-loading-page-skeleton > .t-skeleton:nth-child(2) {
+  max-width: var(--t-measure-sm);
+  font-size: var(--t-text-xl);
+}
+
+@keyframes t-loading-page-show {
+  from {
+    opacity: 0;
+  }
+}

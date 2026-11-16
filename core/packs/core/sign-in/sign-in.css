@@ -1,0 +1,32 @@
+.t-sign-in-box {
+  width: 100%;
+  max-width: var(--t-measure-sm);
+  margin: auto;
+}
+
+.t-sign-in-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--t-space-3);
+  text-align: center;
+}
+
+.t-sign-in-head .t-status-page-title {
+  font-size: var(--t-text-xl);
+}
+
+.t-sign-in-brand {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-width: 0;
+  font-weight: var(--t-heading-weight);
+  font-size: var(--t-text-lg);
+}
+
+.t-sign-in-footer {
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+  text-align: center;
+}
