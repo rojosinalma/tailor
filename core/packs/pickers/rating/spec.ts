@@ -14,5 +14,5 @@ export default defineComponent({
     "t-rating-glyph": "the empty and the filled star, stacked",
   },
   props: { size: SIZES },
-  html: "script",
+  html: "markup",
 });

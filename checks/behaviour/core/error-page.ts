@@ -2,7 +2,17 @@ import { behaviour } from "../../src/behaviour";
 
 export default behaviour("error-page", {
   "the details stay closed until asked for, with a copy button": async ({ page, example, expect }) => {
-    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    // The system clipboard is shared by the tests that run at the same time: catch the copy in the page.
+    await page.evaluate(() => {
+      const holder = window as unknown as { copied?: string };
+      Object.defineProperty(navigator, "clipboard", {
+        value: {
+          writeText: async (text: string) => {
+            holder.copied = text;
+          },
+        },
+      });
+    });
     const body = example("details");
     await expect(body.getByRole("heading", { level: 1 })).toHaveText("The hosts could not load");
     const message = body.getByText("Reference: req_7c41f0e2");
@@ -11,7 +21,9 @@ export default behaviour("error-page", {
     await expect(message).toBeVisible();
     await body.getByRole("button", { name: "Copy" }).click();
     await expect(body.getByRole("button", { name: "Copied" })).toBeVisible();
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toContain("req_7c41f0e2");
+    expect(await page.evaluate(() => (window as unknown as { copied?: string }).copied ?? "")).toContain(
+      "req_7c41f0e2",
+    );
   },
   "Home goes home": async ({ example, expect }) => {
     await expect(example("default").getByRole("link", { name: "Home" })).toHaveAttribute("href", "/");

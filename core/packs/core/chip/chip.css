@@ -46,7 +46,7 @@
   font-size: var(--t-text-xs);
 }
 
-.t-chip-remove:disabled {
+.t-chip-remove:is(:disabled, [aria-disabled="true"]) {
   cursor: not-allowed;
 }
 
@@ -84,7 +84,7 @@ button.t-chip:disabled {
 
 @media (hover: hover) {
   button.t-chip:hover:not(:disabled, [aria-pressed="true"]),
-  .t-chip-remove:hover:not(:disabled) {
+  .t-chip-remove:hover:not(:disabled, [aria-disabled="true"]) {
     background-image: linear-gradient(var(--t-hover), var(--t-hover));
   }
 }

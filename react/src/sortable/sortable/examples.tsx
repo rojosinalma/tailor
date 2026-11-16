@@ -3,6 +3,7 @@ import { Badge } from "../../core/badge/badge";
 import { Card } from "../../core/card/card";
 import { Chip } from "../../core/chip/chip";
 import { Stack } from "../../core/stack/stack";
+import { Table, type TableColumn } from "../../core/table/table";
 import { defineExamples } from "../../examples";
 import { Sortable, SortableGroup, SortableHandle, SortableItem, type SortableMove } from "./sortable";
 
@@ -37,24 +38,20 @@ function ListRows({ disabled = false }: { disabled?: boolean }) {
   );
 }
 
+const COLUMNS: readonly TableColumn<string>[] = [
+  { key: "order", header: "Order", kind: "actions" },
+  { key: "host", header: "Host" },
+  { key: "role", header: "Role" },
+  { key: "weight", header: "Weight", kind: "num" },
+];
+
 function TableRows() {
   const [items, setItems] = useState(HOSTS);
   return (
-    <div className="t-table-wrap">
-      <table className="t-table">
-        <caption>Failover order</caption>
-        <thead>
-          <tr>
-            <th scope="col" data-kind="actions">
-              Order
-            </th>
-            <th scope="col">Host</th>
-            <th scope="col">Role</th>
-            <th scope="col" data-kind="num">
-              Weight
-            </th>
-          </tr>
-        </thead>
+    <Table
+      caption="Failover order"
+      columns={COLUMNS}
+      body={
         <Sortable as="tbody" items={items} onReorder={setItems} label="Failover order">
           {items.map((id, index) => (
             <SortableItem key={id} id={id}>
@@ -69,8 +66,8 @@ function TableRows() {
             </SortableItem>
           ))}
         </Sortable>
-      </table>
-    </div>
+      }
+    />
   );
 }
 

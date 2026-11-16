@@ -89,9 +89,6 @@
 .t-tab[aria-current="page"] {
   color: var(--t-text);
   box-shadow: inset 0 calc(-1 * var(--t-border-w-strong)) var(--t-accent);
-  /* The current tab starts in view without a script. */
-  /* biome-ignore lint/correctness/noUnknownProperty: a new property that browsers without it skip. */
-  scroll-initial-target: nearest;
 }
 
 .t-tab[aria-disabled="true"],

@@ -1,8 +1,6 @@
-import { Slider as Base } from "@base-ui/react/slider";
-import { type ReactNode, useId } from "react";
+import { type CSSProperties, type ReactNode, useId, useState } from "react";
 import { useIsStatic } from "../../kit";
 import { useFieldControl } from "../field/field";
-
 export interface SliderProps {
   /** The visible label. */
   label: ReactNode;
@@ -18,7 +16,10 @@ export interface SliderProps {
   disabled?: boolean;
 }
 
-/** A value in a range, set by dragging or with the arrow keys. */
+/**
+ * A value in a range, set by dragging or with the arrow keys. Both kits draw a native range input: the browser
+ * gives the keys, the pointer and the hit area, and the two kits draw the same pixels.
+ */
 export function Slider({
   label,
   value,
@@ -35,63 +36,46 @@ export function Slider({
   const inputId = useId();
   // The slider carries its own label, so it takes only the name and the disabled state from a field.
   const field = useFieldControl({ name, disabled });
-
-  if (isStatic) {
-    const start = value ?? defaultValue ?? min;
-    return (
-      <div className="t-slider" data-t="slider">
-        <div className="t-slider-header">
-          <label className="t-slider-label" htmlFor={inputId}>
-            {label}
-          </label>
-          {showValue ? (
-            <output className="t-slider-value" htmlFor={inputId}>
-              {start}
-            </output>
-          ) : null}
-        </div>
-        <input
-          name={field.name}
-          disabled={field.disabled}
-          id={inputId}
-          type="range"
-          className="t-slider-native"
-          min={min}
-          max={max}
-          step={step}
-          defaultValue={start}
-        />
-      </div>
-    );
-  }
+  const [inner, setInner] = useState(defaultValue ?? min);
+  const current = value ?? inner;
+  // The track paints the fill from this fraction; the HTML kit's script sets the same.
+  const fill = { "--t-slider-value": max > min ? (current - min) / (max - min) : 0 } as CSSProperties;
+  const native = {
+    name: field.name,
+    disabled: field.disabled,
+    id: inputId,
+    type: "range",
+    className: "t-slider-native",
+    min,
+    max,
+    step,
+  };
 
   return (
-    <Base.Root
-      className="t-slider"
-      thumbAlignment="edge"
-      value={value}
-      defaultValue={defaultValue ?? (value === undefined ? min : undefined)}
-      onValueChange={(next: number | readonly number[]) => {
-        if (typeof next === "number") onValueChange?.(next);
-      }}
-      min={min}
-      max={max}
-      step={step}
-      name={field.name}
-      disabled={field.disabled}
-      aria-disabled={field.disabled ? true : undefined}
-    >
+    <div className="t-slider" data-t={isStatic ? "slider" : undefined} style={fill}>
       <div className="t-slider-header">
-        <Base.Label className="t-slider-label">{label}</Base.Label>
-        {showValue ? <Base.Value className="t-slider-value" /> : null}
+        <label className="t-slider-label" htmlFor={inputId}>
+          {label}
+        </label>
+        {showValue ? (
+          <output className="t-slider-value" htmlFor={inputId}>
+            {current}
+          </output>
+        ) : null}
       </div>
-      {/* The whole control takes the pointer, so it is the hit area of the thumb. */}
-      <Base.Control className="t-slider-control" data-t-hit="">
-        <Base.Track className="t-slider-track">
-          <Base.Indicator className="t-slider-fill" />
-          <Base.Thumb className="t-slider-thumb" />
-        </Base.Track>
-      </Base.Control>
-    </Base.Root>
+      {isStatic ? (
+        <input {...native} defaultValue={current} />
+      ) : (
+        <input
+          {...native}
+          value={current}
+          onChange={(event) => {
+            const next = event.currentTarget.valueAsNumber;
+            setInner(next);
+            onValueChange?.(next);
+          }}
+        />
+      )}
+    </div>
   );
 }

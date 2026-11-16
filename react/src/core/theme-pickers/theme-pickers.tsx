@@ -53,6 +53,14 @@ function themeFromPage(): Theme {
   return pageTheme;
 }
 
+/** True when a theme is at hand: a ThemeProvider above, or window.TAILOR_THEME. */
+export function useHasTheme(): boolean {
+  const theme = use(ThemeContext);
+  return (
+    theme !== null || pageTheme !== undefined || (typeof window !== "undefined" && !!window.TAILOR_THEME)
+  );
+}
+
 export interface ThemeValue extends ThemeState {
   set: Theme["set"];
   config: ThemeConfig;

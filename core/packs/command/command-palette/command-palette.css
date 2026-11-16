@@ -1,8 +1,6 @@
-/* The palette is a dialog near the top of the screen; on a phone it takes the full screen. */
+/* The palette is a dialog near the top of the screen (data-placement="top"); on a phone it takes the full screen. */
 .t-dialog.t-command {
   width: min(calc(var(--t-measure-md) + var(--t-measure-2xs)), calc(100vw - var(--t-space-6)));
-  max-height: 76dvh;
-  margin: 12dvh auto auto;
 }
 
 .t-command-search {
@@ -97,8 +95,6 @@
 @media (max-width: 40rem) {
   .t-dialog.t-command {
     width: 100%;
-    max-height: none;
-    margin: 0;
   }
 
   .t-command-search > .t-dialog-close {

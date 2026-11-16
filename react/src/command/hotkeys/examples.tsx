@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Button } from "../../core/button/button";
+import { Dialog } from "../../core/dialog/dialog";
 import { Fact, Facts } from "../../core/facts/facts";
 import { Field } from "../../core/field/field";
 import { Input } from "../../core/input/input";
@@ -63,6 +65,25 @@ function Registered() {
   );
 }
 
+/** "E" in the dialog fires while it is open; the page's "E" does not. */
+function DialogShortcut({ onRun }: { onRun: () => void }) {
+  useHotkey({ id: "edit-host", keys: "E", label: "Edit the host", run: onRun });
+  return <p>Press E to edit web-1.</p>;
+}
+
+function InDialog() {
+  const [last, setLast] = useState("none yet");
+  useHotkey({ id: "page-e", keys: "E", label: "Export", run: () => setLast("Export") });
+  return (
+    <Stack>
+      <p aria-live="polite">Last shortcut: {last}</p>
+      <Dialog trigger={<Button>Host web-1</Button>} title="Host web-1">
+        <DialogShortcut onRun={() => setLast("Edit the host")} />
+      </Dialog>
+    </Stack>
+  );
+}
+
 export default defineExamples("hotkeys", [
   {
     id: "registered",
@@ -71,6 +92,16 @@ export default defineExamples("hotkeys", [
     render: () => (
       <HotkeysProvider>
         <Registered />
+      </HotkeysProvider>
+    ),
+  },
+  {
+    id: "dialog",
+    title: "In a dialog",
+    note: "A shortcut registered inside a Dialog or Drawer fires only while it is open; the page's own do not.",
+    render: () => (
+      <HotkeysProvider>
+        <InDialog />
       </HotkeysProvider>
     ),
   },

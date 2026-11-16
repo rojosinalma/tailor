@@ -43,9 +43,10 @@ register("search", (root) => {
 
   input.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
+    // An empty field lets the Escape through, so a dialog around it closes, as in the React kit.
+    if (!input.value) return input.blur();
     event.preventDefault();
-    if (input.value) set("");
-    else input.blur();
+    set("");
   });
 
   once("search-shortcut", () => {

@@ -1,5 +1,5 @@
 import { t } from "@tailor/core/text";
-import { type ReactElement, useEffect, useId, useRef, useState } from "react";
+import { type ReactElement, useId, useRef, useState } from "react";
 import { Dialog } from "../../core/dialog/dialog";
 import { EmptyState } from "../../core/empty-state/empty-state";
 import { Search } from "../../core/search/search";
@@ -32,16 +32,9 @@ export function HotkeysHelp({ trigger }: HotkeysHelpProps) {
   const id = useId();
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
-  const body = useRef<HTMLDivElement>(null);
+  const filter = useRef<HTMLInputElement>(null);
   const list = useHotkeysList();
   useHotkey({ id: "hotkeys-help", keys: "Shift+?", label: t("hkHelpOpen"), run: () => setOpen(true) });
-
-  // The filter takes the focus once the dialog has placed it.
-  useEffect(() => {
-    if (!open) return;
-    const frame = requestAnimationFrame(() => body.current?.querySelector("input")?.focus());
-    return () => cancelAnimationFrame(frame);
-  }, [open]);
 
   const groups = groupsOf(list, text);
   return (
@@ -49,6 +42,7 @@ export function HotkeysHelp({ trigger }: HotkeysHelpProps) {
       trigger={trigger}
       title={t("hkHelpTitle")}
       size="lg"
+      initialFocus={filter}
       open={open}
       onOpenChange={(next) => {
         setOpen(next);
@@ -59,7 +53,6 @@ export function HotkeysHelp({ trigger }: HotkeysHelpProps) {
       {/* biome-ignore lint/a11y/noStaticElementInteractions: it only stops an Escape that the field handled. */}
       <div
         className="t-hotkeys-help"
-        ref={body}
         onKeyDown={(event) => {
           if (event.key === "Escape" && text) event.stopPropagation();
         }}
@@ -70,6 +63,7 @@ export function HotkeysHelp({ trigger }: HotkeysHelpProps) {
           value={text}
           onValueChange={setText}
           shortcut={false}
+          inputRef={filter}
         />
         {groups.length > 0 ? (
           <div className="t-hotkeys-help-groups">

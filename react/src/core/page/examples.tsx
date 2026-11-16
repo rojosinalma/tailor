@@ -36,7 +36,7 @@ const logs = (
       second={
         <Pane title="web-1" footer={<Button>Clear</Button>}>
           {Array.from({ length: 40 }, (_, i) => (
-            <p key={String(i)}>12:{String(i).padStart(2, "0")} GET /index.html 200 alice</p>
+            <p key={String(i)}>{`12:${String(i).padStart(2, "0")} GET /index.html 200 alice`}</p>
           ))}
         </Pane>
       }

@@ -162,7 +162,12 @@ export function CommandPalette({
       {trigger ? <Base.Trigger render={trigger} /> : null}
       <Base.Portal>
         <Base.Backdrop className="t-dialog-backdrop" />
-        <Base.Popup className="t-dialog t-command" aria-label={t("cmdTitle")} initialFocus={input}>
+        <Base.Popup
+          className="t-dialog t-command"
+          data-placement="top"
+          aria-label={t("cmdTitle")}
+          initialFocus={input}
+        >
           <div className="t-command-search">
             <div className="t-control t-input-group" data-size="lg">
               <span className="t-input-addon">

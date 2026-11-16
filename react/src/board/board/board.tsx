@@ -122,7 +122,13 @@ function CardView({ card, columns, onMoveTo, renderCard }: CardViewProps) {
       </Cluster>
     ) : undefined;
   const body = renderCard ? renderCard(card) : plain;
-  const shared = { description: card.description, actions, footer: card.footer, children: body };
+  const shared = {
+    description: card.description,
+    actions,
+    footer: card.footer,
+    headingLevel: 3 as const,
+    children: body,
+  };
   return (
     <div className="t-board-card">
       {card.to === undefined ? (

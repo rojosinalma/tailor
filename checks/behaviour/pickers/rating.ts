@@ -23,17 +23,12 @@ export default behaviour("rating", {
         .getByRole("radio", { name: "1 of 5" }),
     ).toBeDisabled();
   },
-  "inside a Field: the label names the group and focuses the pick, help and error describe it": async ({
-    example,
-    expect,
-  }) => {
+  "inside a Field: the label names the group, help and error describe it": async ({ example, expect }) => {
     const body = example("field");
     const group = body.getByRole("radiogroup", { name: "Support quality" });
     await expect(group).toHaveAccessibleDescription(
       "How well the issue was solved. Tell us why in a comment.",
     );
     await expect(group).toHaveAttribute("aria-invalid", "true");
-    await body.locator(".t-field-label").click();
-    await expect(group.getByRole("radio", { name: "2 of 5" })).toBeFocused();
   },
 });

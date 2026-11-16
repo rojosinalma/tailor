@@ -1,6 +1,6 @@
 import { Tabs as Base } from "@base-ui/react/tabs";
 import type spec from "@tailor/packs/core/tabs/spec";
-import { type ReactNode, useId, useLayoutEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { useIsStatic } from "../../kit";
 import { AppLink } from "../../link";
 import { Counter } from "../counter/counter";
@@ -61,6 +61,23 @@ export function Tabs({ label, tabs, value, defaultValue, onValueChange, variant 
   useLayoutEffect(() => {
     const tab = selected === undefined ? null : document.getElementById(`${id}-tab-${selected}`);
     if (list.current && tab) reveal(list.current, tab);
+  }, [id, selected]);
+
+  // Until another tab is chosen, the first tab stays in view from the start of the row whenever the sizes
+  // change (fonts, skin, width), as in the HTML kit.
+  const initial = useRef(selected);
+  useEffect(() => {
+    const element = list.current;
+    const tab =
+      initial.current === undefined ? null : document.getElementById(`${id}-tab-${initial.current}`);
+    if (!element || !tab || initial.current !== selected) return;
+    const observer = new ResizeObserver(() => {
+      element.scrollLeft = 0;
+      reveal(element, tab);
+    });
+    observer.observe(element);
+    observer.observe(tab);
+    return () => observer.disconnect();
   }, [id, selected]);
 
   if (isStatic) {

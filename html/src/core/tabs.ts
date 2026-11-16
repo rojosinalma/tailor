@@ -57,5 +57,15 @@ register("tabs", (root) => {
   });
 
   const first = tabs.find((tab) => tab.getAttribute("aria-selected") === "true") ?? tabs.find(enabled);
-  if (first) select(first);
+  if (!first) return;
+  select(first);
+  // Until another tab is chosen, the first tab stays in view from the start of the row whenever the sizes
+  // change (fonts, skin, width), as in the React kit.
+  const observer = new ResizeObserver(() => {
+    if (first.getAttribute("aria-selected") !== "true") return observer.disconnect();
+    list.scrollLeft = 0;
+    reveal(list, first);
+  });
+  observer.observe(list);
+  observer.observe(first);
 });

@@ -3,9 +3,9 @@ import { RadioGroup } from "@base-ui/react/radio-group";
 import { check } from "@tailor/core/glyphs.gen";
 import type spec from "@tailor/packs/pickers/swatch-picker/spec";
 import { type CSSProperties, useId } from "react";
+import { useFieldControl, useFieldGroup } from "../../core/field/field";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
-import { useFieldGroup } from "../date/date";
 
 export interface SwatchOption {
   readonly value: string;
@@ -32,8 +32,6 @@ export interface SwatchPickerProps {
   id?: string;
   "aria-describedby"?: string;
 }
-
-const FOCUS = "[role=radio][data-checked]|input:checked|[role=radio]|input";
 
 /** The colour of a swatch as the one custom property that its stylesheet reads. */
 const swatch = (option: SwatchOption): CSSProperties | undefined => {
@@ -70,18 +68,16 @@ export function SwatchPicker({
 }: SwatchPickerProps) {
   const isStatic = useIsStatic();
   const fallback = useId();
-  const group = useFieldGroup(
-    { id, name, disabled, required, "aria-describedby": describedBy },
-    label,
-    FOCUS,
-  );
-  const { field } = group;
+  const field = useFieldControl({ id, name, disabled, required, "aria-describedby": describedBy });
+  // Inside a Field, its label names the group.
+  const inField = useFieldGroup();
+  const labelledBy = label ? undefined : inField?.["aria-labelledby"];
   const dataSize = size === "md" ? undefined : size;
   const root = {
     className: "t-swatches",
     id: field.id,
     "aria-label": label,
-    "aria-labelledby": label ? undefined : group.labelledBy,
+    "aria-labelledby": labelledBy,
     "aria-describedby": field["aria-describedby"],
     "aria-invalid": field["aria-invalid"],
     "aria-required": field.required,
@@ -90,7 +86,7 @@ export function SwatchPicker({
 
   if (isStatic) {
     return (
-      <div role="radiogroup" data-t="swatches" {...root}>
+      <div role="radiogroup" {...root}>
         {options.map((option) => (
           <label className="t-swatches-option" key={option.value} style={swatch(option)}>
             <input
@@ -111,7 +107,6 @@ export function SwatchPicker({
 
   return (
     <RadioGroup
-      ref={group.ref}
       {...root}
       value={value}
       defaultValue={value === undefined ? defaultValue : undefined}

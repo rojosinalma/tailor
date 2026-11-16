@@ -25,10 +25,7 @@ export default behaviour("swatch-picker", {
         .getByRole("radio", { name: "Red" }),
     ).toBeDisabled();
   },
-  "inside a Field: the label names the group and focuses the pick, help and error describe it": async ({
-    example,
-    expect,
-  }) => {
+  "inside a Field: the label names the group, help and error describe it": async ({ example, expect }) => {
     const body = example("field");
     const group = body.getByRole("radiogroup", { name: "Tag colour" });
     await expect(group).toHaveAccessibleDescription(
@@ -36,7 +33,5 @@ export default behaviour("swatch-picker", {
     );
     await expect(group).toHaveAttribute("aria-invalid", "true");
     await expect(group).toHaveAttribute("aria-required", "true");
-    await body.locator(".t-field-label").click();
-    await expect(group.getByRole("radio", { name: "Red" })).toBeFocused();
   },
 });

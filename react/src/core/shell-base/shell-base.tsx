@@ -11,7 +11,7 @@ import { AppLink } from "../../link";
 import { ConfirmRegion } from "../confirm/confirm";
 import { Counter } from "../counter/counter";
 import { Icon, type IconName } from "../icon/icon";
-import { ThemePickers, useTheme } from "../theme-pickers/theme-pickers";
+import { ThemePickers, useHasTheme } from "../theme-pickers/theme-pickers";
 import { ToastRegion } from "../toast/toast";
 
 export { firstLevel, toGroups } from "@tailor/packs/core/shell-base/logic";
@@ -312,23 +312,19 @@ export function FooterFacts({ facts }: { facts: readonly FooterFact[] }) {
     <ul className="t-shell-facts">
       {facts.map((fact) => (
         <li className="t-shell-fact" key={fact.id}>
-          {fact.label ? `${fact.label} ` : null}
-          {fact.to === undefined ? fact.value : <AppLink to={fact.to}>{fact.value}</AppLink>}
+          {/* A plain value joins the label in one text node, as the static markup has it. */}
+          {fact.to === undefined && fact.label && typeof fact.value === "string" ? (
+            `${fact.label} ${fact.value}`
+          ) : (
+            <>
+              {fact.label ? `${fact.label} ` : null}
+              {fact.to === undefined ? fact.value : <AppLink to={fact.to}>{fact.value}</AppLink>}
+            </>
+          )}
         </li>
       ))}
     </ul>
   );
-}
-
-/** True when a theme is at hand: a ThemeProvider above, or window.TAILOR_THEME. */
-function useHasTheme(): boolean {
-  try {
-    // biome-ignore lint/correctness/useHookAtTopLevel: theme-pickers exports no way to ask for a theme; useTheme() throws without one, the same way on every render, so the hook order never changes.
-    useTheme();
-    return true;
-  } catch {
-    return false;
-  }
 }
 
 function LiveTheme({ parts }: { parts: readonly ShellThemePart[] }) {

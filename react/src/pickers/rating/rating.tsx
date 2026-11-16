@@ -4,9 +4,9 @@ import { star, starFill } from "@tailor/core/glyphs.gen";
 import { t } from "@tailor/core/text";
 import type spec from "@tailor/packs/pickers/rating/spec";
 import { useId } from "react";
+import { useFieldControl, useFieldGroup } from "../../core/field/field";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
-import { useFieldGroup } from "../date/date";
 
 export interface RatingProps {
   /** 1 to `max`; 0 or none for no rating yet. */
@@ -27,8 +27,6 @@ export interface RatingProps {
   "aria-describedby"?: string;
   size?: (typeof spec.props.size)[number];
 }
-
-const FOCUS = "[role=radio][data-checked]|input:checked|[role=radio]|input";
 
 const outOf = (n: number, max: number): string => `${n} ${t("of")} ${max}`;
 
@@ -58,16 +56,14 @@ export function Rating({
 }: RatingProps) {
   const isStatic = useIsStatic();
   const valueId = useId();
-  const group = useFieldGroup(
-    { id, name, disabled, required, "aria-describedby": describedBy },
-    label,
-    FOCUS,
-  );
-  const { field } = group;
+  const field = useFieldControl({ id, name, disabled, required, "aria-describedby": describedBy });
+  // Inside a Field, its label names the group.
+  const inField = useFieldGroup();
+  const labelledBy = label ? undefined : inField?.["aria-labelledby"];
   const named = {
     id: field.id,
     "aria-label": label,
-    "aria-labelledby": label ? undefined : group.labelledBy,
+    "aria-labelledby": labelledBy,
     "aria-describedby": field["aria-describedby"],
   };
   const dataSize = size === "md" ? undefined : size;
@@ -81,9 +77,7 @@ export function Rating({
         role="img"
         {...named}
         aria-label={label ? `${label}: ${outOf(current, stars.length)}` : undefined}
-        aria-labelledby={label || !group.labelledBy ? undefined : `${group.labelledBy} ${valueId}`}
-        data-t={isStatic ? "rating" : undefined}
-        data-value-id={isStatic ? valueId : undefined}
+        aria-labelledby={labelledBy ? `${labelledBy} ${valueId}` : undefined}
         data-size={dataSize}
         data-readonly=""
       >
@@ -104,7 +98,6 @@ export function Rating({
       <div
         className="t-rating"
         role="radiogroup"
-        data-t="rating"
         {...named}
         aria-invalid={field["aria-invalid"]}
         aria-required={field.required}
@@ -132,7 +125,6 @@ export function Rating({
 
   return (
     <RadioGroup
-      ref={group.ref}
       className="t-rating"
       {...named}
       aria-invalid={field["aria-invalid"]}

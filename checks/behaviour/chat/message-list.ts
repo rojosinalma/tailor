@@ -93,6 +93,17 @@ export default behaviour("message-list", {
     await expect(body.getByRole("log", { name: "Deploy of web-1" })).toHaveAttribute("aria-live", "polite");
   },
   "message actions show on focus": async ({ page, example, expect }) => {
+    // The system clipboard is shared by the tests that run at the same time: catch the copy in the page.
+    await page.evaluate(() => {
+      const holder = window as unknown as { copied?: string };
+      Object.defineProperty(navigator, "clipboard", {
+        value: {
+          writeText: async (text: string) => {
+            holder.copied = text;
+          },
+        },
+      });
+    });
     const body = example("thread");
     const message = body.getByRole("article", { name: "alice, 10:13 AM" });
     const toolbar = message.getByRole("toolbar", { name: "Message actions" });
@@ -100,14 +111,27 @@ export default behaviour("message-list", {
     await message.getByRole("button", { name: "Copy" }).focus();
     await expect(toolbar).toHaveCSS("opacity", "1");
     await page.keyboard.press("Enter");
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("Thanks, nice work!");
+    await expect
+      .poll(() => page.evaluate(() => (window as unknown as { copied?: string }).copied ?? ""))
+      .toBe("Thanks, nice work!");
   },
-  "a failed message offers Try again": async ({ example, expect }) => {
+  "a failed message offers Try again": async ({ page, example, expect }) => {
     const body = example("failed");
     const message = body.getByRole("article", { name: "You, 11:02 AM" });
     await expect(message).toContainText("Not sent");
+    // The sending state lasts a moment only: record it as it happens, not by polling for it.
+    await message.evaluate((el) => {
+      const seen = window as unknown as { states?: string[] };
+      seen.states = [];
+      new MutationObserver(() => seen.states?.push(el.getAttribute("data-state") ?? "")).observe(el, {
+        attributes: true,
+        attributeFilter: ["data-state"],
+      });
+    });
     await message.getByRole("button", { name: "Try again" }).click();
-    await expect(message).toHaveAttribute("data-state", "sending");
+    await expect
+      .poll(() => page.evaluate(() => (window as unknown as { states?: string[] }).states ?? []))
+      .toContain("sending");
     await expect(message).not.toHaveAttribute("data-state", /./);
     await expect(message.getByText("Not sent")).toHaveCount(0);
   },

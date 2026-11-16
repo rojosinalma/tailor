@@ -18,11 +18,11 @@ export default defineExamples("hover-card", [
     note: "Rest the pointer on the link or focus it with the Tab key. A touch screen follows the link.",
     render: () => (
       <p>
-        The site runs on{" "}
+        {"The site runs on "}
         <HoverCard to="#web-1" content={web1}>
           web-1
-        </HoverCard>{" "}
-        and keeps its backups on nas.
+        </HoverCard>
+        {" and keeps its backups on nas."}
       </p>
     ),
   },
@@ -31,7 +31,7 @@ export default defineExamples("hover-card", [
     title: "Long preview",
     render: () => (
       <p>
-        Owner:{" "}
+        {"Owner: "}
         <HoverCard
           to="#alice"
           content={

@@ -6,8 +6,12 @@ import { ThemePickers, ThemeProvider } from "./theme-pickers";
 
 const PALETTES = ["gruvbox", "nord", "dracula"];
 
-/** A theme config that matches the page: its own skin, and three palettes that every build has. */
+/**
+ * The page's own config when it has one, as the HTML kit's pickers use it; else one that matches the page:
+ * its own skin, and three palettes that every build has.
+ */
 function demoConfig(): ThemeConfig {
+  if (typeof window !== "undefined" && window.TAILOR_THEME) return window.TAILOR_THEME;
   const page = typeof document === "undefined" ? {} : document.documentElement.dataset;
   const palette = page.palette && PALETTES.includes(page.palette) ? page.palette : "gruvbox";
   return {

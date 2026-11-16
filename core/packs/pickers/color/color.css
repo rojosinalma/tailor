@@ -3,6 +3,13 @@
   max-width: 100%;
 }
 
+/* The native colour input, before the script draws the picker or when it fails: a wide swatch. */
+.t-color-picker > input[type="color"] {
+  width: calc(var(--t-control-h-md) * 2);
+  padding: var(--t-space-1);
+  cursor: pointer;
+}
+
 .t-color-picker-trigger {
   flex: 1;
   max-width: 100%;

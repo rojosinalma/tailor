@@ -32,5 +32,5 @@ export default defineComponent({
       "hue-pink",
     ],
   },
-  html: "script",
+  html: "markup",
 });

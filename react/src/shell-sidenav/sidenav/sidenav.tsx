@@ -142,6 +142,7 @@ function Section({ item, path, open, onToggle, subId, collapsed }: SectionProps 
   const menu = (
     <Menu
       label={item.label}
+      side="end"
       items={[{ type: "group", label: item.label, items: subs.map(asAction) }]}
       trigger={
         <button type="button" className="t-shell-link" aria-label={item.label} data-current-section={section}>

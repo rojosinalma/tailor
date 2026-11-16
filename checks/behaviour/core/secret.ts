@@ -15,11 +15,23 @@ export default behaviour("secret", {
     await expect(body.locator('[name="token"]')).toHaveValue("tok_4f2a9c81e7d3");
   },
   "the copy button copies the value and says so": async ({ page, example, expect }) => {
-    await page.context().grantPermissions(["clipboard-read", "clipboard-write"]);
+    // The system clipboard is shared by the tests that run at the same time: catch the copy in the page.
+    await page.evaluate(() => {
+      const holder = window as unknown as { copied?: string };
+      Object.defineProperty(navigator, "clipboard", {
+        value: {
+          writeText: async (text: string) => {
+            holder.copied = text;
+          },
+        },
+      });
+    });
     const body = example("default");
     await body.getByRole("button", { name: "Copy" }).click();
     await expect(body.getByRole("button", { name: "Copied" })).toBeVisible();
-    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("tok_4f2a9c81e7d3");
+    expect(await page.evaluate(() => (window as unknown as { copied?: string }).copied ?? "")).toBe(
+      "tok_4f2a9c81e7d3",
+    );
   },
   "a field without copyable has no copy button": async ({ example, expect }) => {
     await expect(example("password").getByRole("button", { name: "Copy" })).toHaveCount(0);

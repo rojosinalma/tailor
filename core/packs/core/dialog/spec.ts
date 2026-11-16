@@ -16,6 +16,6 @@ export default defineComponent({
     "t-dialog-body": "the content, which scrolls when it is long",
     "t-dialog-footer": "the actions, at the end",
   },
-  props: { size: SIZES },
+  props: { size: SIZES, placement: ["center", "top"] },
   html: "script",
 });

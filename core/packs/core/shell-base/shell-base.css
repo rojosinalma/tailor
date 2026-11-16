@@ -18,8 +18,7 @@ body:has(> * > .t-shell:not([data-contained])) {
   position: relative;
   display: grid;
   grid-template: "bar" auto "main" minmax(0, 1fr) "footer" auto "bottom" auto / minmax(0, 1fr);
-  /* lint-allow: --t-viewport-h is set on <html> by the shell script from the visual viewport; tokens.css has no value for it */
-  height: var(--t-viewport-h, 100dvh);
+  height: var(--t-viewport-h);
   min-width: 0;
   /* clip, not hidden: nothing can scroll the frame, not even a focus or scrollIntoView. */
   overflow: clip;
@@ -266,20 +265,6 @@ span.t-shell-link {
 .t-shell-main > * {
   flex: 1 1 auto;
   min-height: 0;
-}
-
-/*
- * A page that scrolls keeps its body as a scrolling grid: page.css lets the fill rules reach every page.
- * The body is positioned, so an absolute part inside it (a table's hidden head) scrolls with it.
- */
-.t-shell-main .t-page > .t-page-body {
-  position: relative;
-}
-
-.t-shell-main .t-page:not([data-mode="fill"]) > .t-page-body {
-  display: grid;
-  gap: var(--t-space-5);
-  overflow-y: auto;
 }
 
 .t-shell-footer {

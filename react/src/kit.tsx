@@ -1,4 +1,4 @@
-import { createContext, type ReactNode, use } from "react";
+import { createContext, type ReactNode, type RefObject, use } from "react";
 
 /**
  * The kit mode. "react" is the normal mode. "static" renders the markup that the HTML kit starts from:
@@ -27,3 +27,5 @@ export function isDevelopment(): boolean {
   const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
   return env !== undefined && env.NODE_ENV !== "production";
 }
+/** The popup element of the nearest Dialog or Drawer; null outside one. Shortcuts use it to know their overlay. */
+export const OverlayContext = createContext<RefObject<HTMLElement | null> | null>(null);

@@ -44,6 +44,18 @@ export default behaviour("hotkeys", {
     await page.keyboard.press("n");
     await expect(body.getByText("Last shortcut: Refresh the list")).toBeVisible();
   },
+  "inside a dialog only the dialog's shortcut fires": async ({ page, example, expect }) => {
+    const body = example("dialog");
+    await body.getByRole("button", { name: "Host web-1" }).click();
+    const dialog = page.getByRole("dialog", { name: "Host web-1" });
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("e");
+    await expect(body.getByText("Last shortcut: Edit the host")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await page.keyboard.press("e");
+    await expect(body.getByText("Last shortcut: Export")).toBeVisible();
+  },
   "the keys show Ctrl where Mod is written": async ({ example, expect }) => {
     const values = example("keys").getByRole("definition");
     await expect(values.first().locator("kbd kbd")).toHaveText(["Ctrl", "K"]);

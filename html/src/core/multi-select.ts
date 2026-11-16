@@ -78,17 +78,26 @@ register("multi-select", (element) => {
         class: "t-chip-remove",
         tabindex: "-1",
         "aria-label": t("removeItem").replace("{label}", option.label),
-        disabled: select.disabled,
+        // As Base UI: a disabled chip stays in the page's reading order, marked, not removed from it.
+        "aria-disabled": select.disabled ? "true" : undefined,
+        "data-disabled": select.disabled,
       },
       glyph(close),
     );
     const chip = h(
       "div",
-      { class: "t-chip", tabindex: "-1", "aria-label": option.label },
+      {
+        class: "t-chip",
+        tabindex: "-1",
+        "aria-label": option.label,
+        "aria-disabled": select.disabled ? "true" : undefined,
+        "data-disabled": select.disabled,
+      },
       h("span", { class: "t-chip-label" }, option.label),
       remove,
     );
     remove.addEventListener("click", () => {
+      if (select.disabled) return;
       unpick(option);
       input.focus();
     });

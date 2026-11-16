@@ -29,11 +29,16 @@ export default behaviour("otp", {
     await page.keyboard.press("End");
     await expect(body.getByRole("textbox", { name: "Character 3 of 6" })).toBeFocused();
   },
-  "a paste fills every box": async ({ page, example, expect }) => {
+  "a paste fills every box": async ({ example, expect }) => {
     const body = example("default");
-    await body.getByRole("textbox", { name: "Verification code" }).click();
-    await page.evaluate(() => navigator.clipboard.writeText("482 913"));
-    await page.keyboard.press("ControlOrMeta+V");
+    const first = body.getByRole("textbox", { name: "Verification code" });
+    await first.click();
+    // The system clipboard is shared by the tests that run at the same time: paste from the page.
+    await first.evaluate((el) => {
+      const data = new DataTransfer();
+      data.setData("text/plain", "482 913");
+      el.dispatchEvent(new ClipboardEvent("paste", { clipboardData: data, bubbles: true, cancelable: true }));
+    });
     await expect(body.locator('[name="code"]')).toHaveValue("482913");
     await expect(body.getByRole("textbox", { name: "Character 6 of 6" })).toBeFocused();
   },

@@ -9,7 +9,11 @@ register("menu", (trigger) => {
   const panel = document.getElementById(trigger.dataset.tMenu ?? "");
   if (!panel) return;
   const align = panel.dataset.align ?? "start";
+  // data-side="end" opens the menu beside the trigger, on the side where the line ends.
+  const rtl = getComputedStyle(trigger).direction === "rtl";
+  const side = panel.dataset.side === "end" ? (rtl ? "left" : "right") : "bottom";
   const menu = createMenu(panel, trigger, {
+    side,
     align: ALIGNS.includes(align) ? (align as Align) : "start",
     onClose: () => {
       trigger.setAttribute("aria-expanded", "false");

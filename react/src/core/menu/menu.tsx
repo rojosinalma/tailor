@@ -22,10 +22,12 @@ export interface MenuProps {
   items: readonly MenuItem[];
   /** How the menu lines up with its trigger. */
   align?: (typeof spec.props.align)[number];
+  /** "end" opens the menu beside its trigger, as from a collapsed sidebar. */
+  side?: (typeof spec.props.side)[number];
 }
 
 /** A list of actions that opens from a button. */
-export function Menu({ trigger, label, items, align = "start" }: MenuProps) {
+export function Menu({ trigger, label, items, align = "start", side = "bottom" }: MenuProps) {
   const id = useId();
   const isStatic = useIsStatic();
 
@@ -44,6 +46,7 @@ export function Menu({ trigger, label, items, align = "start" }: MenuProps) {
           role="menu"
           aria-label={label}
           data-align={align === "start" ? undefined : align}
+          data-side={side === "bottom" ? undefined : side}
           hidden
         >
           <MenuEntries items={items} />
@@ -56,7 +59,12 @@ export function Menu({ trigger, label, items, align = "start" }: MenuProps) {
     <Base.Root>
       <Base.Trigger render={trigger} />
       <Base.Portal>
-        <Base.Positioner className="t-popup-positioner" sideOffset={4} align={align}>
+        <Base.Positioner
+          className="t-popup-positioner"
+          sideOffset={4}
+          side={side === "end" ? "inline-end" : "bottom"}
+          align={align}
+        >
           <Base.Popup className="t-popup t-menu" aria-label={label}>
             <MenuEntries items={items} />
           </Base.Popup>

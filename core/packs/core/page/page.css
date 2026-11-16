@@ -76,15 +76,6 @@
   overflow: hidden;
 }
 
-/* The other actions: their buttons in a wide page, the "more" menu in a narrow one. */
-.t-page-secondary {
-  display: contents;
-}
-
-.t-page-more {
-  display: none;
-}
-
 .t-page[data-width="readable"] > .t-page-body > * {
   max-width: var(--t-measure-lg);
 }

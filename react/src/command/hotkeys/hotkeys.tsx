@@ -24,7 +24,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import { Kbd } from "../../core/kbd/kbd";
-import { isDevelopment } from "../../kit";
+import { isDevelopment, OverlayContext } from "../../kit";
 
 /** One registered shortcut, as the help view and the palette list it. */
 export interface HotkeyInfo {
@@ -94,7 +94,7 @@ class Registry {
 
 const RegistryContext = createContext<Registry | null>(null);
 /** The marker element of the dialog scope that a registration comes from. */
-const ScopeContext = createContext<RefObject<HTMLSpanElement | null> | null>(null);
+const ScopeContext = createContext<RefObject<HTMLElement | null> | null>(null);
 
 /** Holds the registry of the app's shortcuts. Put it once at the app root. */
 export function HotkeysProvider({ children }: { children: ReactNode }) {
@@ -110,7 +110,8 @@ const useRegistry = (): Registry => {
 
 /**
  * Marks the shortcuts registered below it as belonging to the dialog that holds it: they fire while
- * that dialog is open, when shortcuts from the page do not.
+ * that dialog is open, when shortcuts from the page do not. A core Dialog or Drawer does this by itself;
+ * use it in other overlays.
  */
 export function HotkeyScope({ children }: { children: ReactNode }) {
   const marker = useRef<HTMLSpanElement>(null);
@@ -155,7 +156,7 @@ export function useHotkey({
   allowInFields = false,
 }: UseHotkeyOptions) {
   const registry = useRegistry();
-  const scope = use(ScopeContext);
+  const scope = use(ScopeContext) ?? use(OverlayContext);
   const [token] = useState(() => Symbol(id));
   const action = useRef(run);
   action.current = run;

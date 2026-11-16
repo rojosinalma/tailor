@@ -49,9 +49,14 @@ export default behaviour("sidenav", {
     await link.hover();
     await expect(page.locator(".t-tooltip", { hasText: "Hosts" })).toBeVisible();
     await page.mouse.move(900, 700);
-    await body.getByRole("button", { name: "System" }).click();
+    const section = body.getByRole("button", { name: "System" });
+    await section.click();
     const menu = page.getByRole("menu", { name: "System" });
     await expect(menu.getByRole("menuitem", { name: "Logs" })).toBeVisible();
+    // The menu opens beside the collapsed column, not under its button.
+    const from = (await section.boundingBox())?.x ?? 0;
+    const width = (await section.boundingBox())?.width ?? 0;
+    expect((await menu.boundingBox())?.x ?? 0).toBeGreaterThanOrEqual(from + width);
     await page.keyboard.press("Escape");
     await page.reload();
     await page.locator(".sc-example").first().waitFor();

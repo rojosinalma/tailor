@@ -18,6 +18,6 @@ export default defineComponent({
     "t-menu-group": "items that belong together, under a label",
     "t-menu-group-label": "the label of a group",
   },
-  props: { align: ["start", "center", "end"], tone: ["danger"] },
+  props: { align: ["start", "center", "end"], side: ["bottom", "end"], tone: ["danger"] },
   html: "script",
 });

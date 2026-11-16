@@ -1,6 +1,15 @@
-/* --t-slider-value: the value as a fraction from 0 to 1; the HTML kit script sets it for the fill. */
+/*
+ * --t-slider-value: the value as a fraction from 0 to 1, set on the root by both kits. The rail paints the
+ * fill up to the thumb's centre, which runs from half a thumb in from the start to half a thumb from the end.
+ */
 .t-slider {
   --t-slider-value: 0;
+  --t-slider-fill: var(--t-accent-solid);
+  --t-slider-track-fill: linear-gradient(
+    to right,
+    var(--t-slider-fill) calc(var(--t-slider-value) * (100% - 1.125em) + 0.5625em),
+    var(--t-border-control) 0
+  );
   display: flex;
   flex-direction: column;
   gap: var(--t-space-1);
@@ -28,60 +37,15 @@
   font-variant-numeric: tabular-nums;
 }
 
-.t-slider-control {
-  display: flex;
-  align-items: center;
-  min-height: var(--t-control-h-sm);
-  touch-action: none;
-  cursor: pointer;
+.t-slider:has(.t-slider-native:disabled) {
+  --t-slider-fill: var(--t-disabled);
 }
 
-.t-slider-track {
-  position: relative;
-  width: 100%;
-  height: 0.375em;
-  border-radius: var(--t-radius-pill);
-  background: var(--t-border-control);
-}
-
-.t-slider-fill {
-  height: 100%;
-  border-radius: var(--t-radius-pill);
-  background: var(--t-accent-solid);
-}
-
-.t-slider-thumb {
-  width: 1.125em;
-  height: 1.125em;
-  border: var(--t-border-w-strong) solid var(--t-accent-solid);
-  border-radius: var(--t-radius-pill);
-  background: var(--t-surface);
-  box-shadow: var(--t-shadow-sm);
-}
-
-.t-slider-thumb:has(:focus-visible) {
-  outline: var(--t-focus-w) solid var(--t-focus-color);
-  outline-offset: var(--t-focus-offset);
-}
-
-.t-slider[data-disabled] .t-slider-control {
-  cursor: not-allowed;
-}
-
-.t-slider[data-disabled] .t-slider-fill {
-  background: var(--t-disabled);
-}
-
-.t-slider[data-disabled] .t-slider-thumb {
-  border-color: var(--t-disabled);
-}
-
-.t-slider[data-disabled] .t-slider-label,
 .t-slider:has(.t-slider-native:disabled) .t-slider-label {
   color: var(--t-disabled);
 }
 
-/* The HTML kit: a native range input drawn to the same look. */
+/* A native range input, drawn. */
 .t-slider-native {
   appearance: none;
   width: 100%;
@@ -99,21 +63,13 @@
 .t-slider-native::-webkit-slider-runnable-track {
   height: 0.375em;
   border-radius: var(--t-radius-pill);
-  background: linear-gradient(
-    to right,
-    var(--t-slider-fill) calc(var(--t-slider-value) * (100% - 1.125em) + 0.5625em),
-    var(--t-border-control) 0
-  );
+  background: var(--t-slider-track-fill);
 }
 
 .t-slider-native::-moz-range-track {
   height: 0.375em;
   border-radius: var(--t-radius-pill);
-  background: linear-gradient(
-    to right,
-    var(--t-slider-fill) calc(var(--t-slider-value) * (100% - 1.125em) + 0.5625em),
-    var(--t-border-control) 0
-  );
+  background: var(--t-slider-track-fill);
 }
 
 .t-slider-native::-webkit-slider-thumb {
@@ -148,11 +104,6 @@
   outline-offset: var(--t-focus-offset);
 }
 
-.t-slider-native {
-  --t-slider-fill: var(--t-accent-solid);
-}
-
 .t-slider-native:disabled {
-  --t-slider-fill: var(--t-disabled);
   cursor: not-allowed;
 }

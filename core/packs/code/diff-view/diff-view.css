@@ -56,6 +56,7 @@
   white-space: pre;
 }
 
+/* Normal text over a weak tint: the tint sits on the surface, not on the inset of the code box. */
 .t-diff-line[data-change="add"] {
   background: color-mix(in srgb, var(--t-success) var(--t-tint-weak), var(--t-surface));
 }

@@ -2,10 +2,11 @@
  * The open menu: its keyboard, pointer and item handling, shared by menu.ts and context-menu.ts.
  * Not a component of its own.
  */
-import type { Align } from "@tailor/core/position";
+import type { Align, Side } from "@tailor/core/position";
 import { createPopup } from "../popup";
 
 export interface MenuOptions {
+  readonly side?: Side;
   readonly align?: Align;
   readonly gap?: number;
   /** Runs after the menu closed, whatever closed it. */
@@ -29,7 +30,7 @@ export function createMenu(panel: HTMLElement, anchor: HTMLElement, options: Men
   panel.hidden = false;
   panel.tabIndex = -1;
   const popup = createPopup(anchor, panel, {
-    side: "bottom",
+    side: options.side ?? "bottom",
     align: options.align ?? "start",
     gap: options.gap,
     onClose: () => {

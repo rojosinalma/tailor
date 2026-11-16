@@ -35,7 +35,7 @@ function Hosts() {
       }
       detail={
         <Pane title={host}>
-          <p>{host} serves example.com. alice manages it.</p>
+          <p>{`${host} serves example.com. alice manages it.`}</p>
         </Pane>
       }
     />

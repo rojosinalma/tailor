@@ -1,6 +1,21 @@
 import { behaviour } from "../../src/behaviour";
 
 export default behaviour("dialog", {
+  "near the top without a header: the title names it, the field takes the focus": async ({
+    page,
+    example,
+    expect,
+  }) => {
+    await example("top").getByRole("button", { name: "Find a host" }).click();
+    const dialog = page.getByRole("dialog", { name: "Find a host" });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("button", { name: "Close" })).toHaveCount(0);
+    await expect(dialog.getByRole("searchbox", { name: "Host name" })).toBeFocused();
+    const box = await dialog.boundingBox();
+    expect(box?.y ?? 900).toBeLessThan(120);
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+  },
   "opens from its trigger and takes the focus": async ({ page, example, expect }) => {
     await example("default").getByRole("button", { name: "Edit host" }).click();
     const dialog = page.getByRole("dialog", { name: "Edit host" });

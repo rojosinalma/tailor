@@ -12,6 +12,8 @@ interface CardBase {
   /** A thin edge in the tone at the start. */
   tone?: (typeof spec.props.tone)[number];
   selected?: boolean;
+  /** The heading level of the title, to fit the page outline. Default 2. */
+  headingLevel?: 2 | 3 | 4;
   children?: ReactNode;
 }
 
@@ -38,8 +40,10 @@ export function Card({
   padding = "default",
   tone,
   selected,
+  headingLevel = 2,
   children,
 }: CardProps) {
+  const Heading = `h${headingLevel}` as const;
   const header = title !== undefined || description !== undefined || actions !== undefined;
   return (
     <div
@@ -51,7 +55,7 @@ export function Card({
       {header ? (
         <div className="t-card-header">
           {title !== undefined ? (
-            <h2 className="t-card-title">
+            <Heading className="t-card-title">
               {to !== undefined ? (
                 <AppLink to={to} className="t-card-link">
                   {title}
@@ -59,7 +63,7 @@ export function Card({
               ) : (
                 title
               )}
-            </h2>
+            </Heading>
           ) : null}
           {description !== undefined ? <p className="t-card-description">{description}</p> : null}
           {actions !== undefined ? <div className="t-card-actions">{actions}</div> : null}

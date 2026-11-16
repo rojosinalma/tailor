@@ -13,7 +13,7 @@ import {
   useRef,
 } from "react";
 import { Glyph } from "../../glyph";
-import { useIsStatic } from "../../kit";
+import { OverlayContext, useIsStatic } from "../../kit";
 
 export interface DrawerProps {
   /** The element that opens the drawer, usually a Button. Leave out for a drawer that the code opens. */
@@ -25,6 +25,8 @@ export interface DrawerProps {
   footer?: ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** The element that takes the focus on open. Default: the first focusable element. */
+  initialFocus?: RefObject<HTMLElement | null>;
   children?: ReactNode;
 }
 
@@ -74,11 +76,13 @@ export function Drawer({
   footer,
   open,
   onOpenChange,
+  initialFocus,
   children,
 }: DrawerProps) {
   const id = useId();
   const isStatic = useIsStatic();
   const actions = useRef<Base.Root.Actions | null>(null);
+  const popup = useRef<HTMLDivElement>(null);
   const swipe = useSwipe(actions);
   const bottom = side === "bottom";
   const handle = bottom ? <div className="t-drawer-handle" aria-hidden="true" /> : null;
@@ -118,16 +122,25 @@ export function Drawer({
       {trigger ? <Base.Trigger render={trigger} /> : null}
       <Base.Portal>
         <Base.Backdrop className="t-drawer-backdrop" />
-        <Base.Popup className="t-drawer" data-side={dataSide} data-size={dataSize} {...(bottom ? swipe : {})}>
-          {handle}
-          <header className="t-drawer-header">
-            <Base.Title className="t-drawer-title">{title}</Base.Title>
-            <Base.Close className="t-drawer-close" aria-label={t("close")}>
-              <Glyph body={close} />
-            </Base.Close>
-          </header>
-          <div className="t-drawer-body">{children}</div>
-          {footer ? <footer className="t-drawer-footer">{footer}</footer> : null}
+        <Base.Popup
+          ref={popup}
+          className="t-drawer"
+          data-side={dataSide}
+          data-size={dataSize}
+          initialFocus={initialFocus}
+          {...(bottom ? swipe : {})}
+        >
+          <OverlayContext value={popup}>
+            {handle}
+            <header className="t-drawer-header">
+              <Base.Title className="t-drawer-title">{title}</Base.Title>
+              <Base.Close className="t-drawer-close" aria-label={t("close")}>
+                <Glyph body={close} />
+              </Base.Close>
+            </header>
+            <div className="t-drawer-body">{children}</div>
+            {footer ? <footer className="t-drawer-footer">{footer}</footer> : null}
+          </OverlayContext>
         </Base.Popup>
       </Base.Portal>
     </Base.Root>

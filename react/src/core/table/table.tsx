@@ -16,10 +16,8 @@ export interface TableColumn<R> {
   render?: (row: R) => ReactNode;
 }
 
-export interface TableProps<R> {
+interface TableBase<R> {
   columns: readonly TableColumn<R>[];
-  rows: readonly R[];
-  rowKey: (row: R) => string;
   /** The title of the table, shown above it. */
   caption?: string;
   density?: (typeof spec.props.density)[number];
@@ -28,6 +26,20 @@ export interface TableProps<R> {
   /** A tone for the row: a thin toned edge at its start. */
   rowTone?: (row: R) => Tone | undefined;
 }
+
+export type TableProps<R> = TableBase<R> &
+  (
+    | { rows: readonly R[]; rowKey: (row: R) => string; body?: never }
+    | {
+        /**
+         * The body, in place of the generated one: a `<tbody>` (or a component that renders one) whose cells
+         * follow the columns, with `data-label` and `data-kind` as the generated cells have them.
+         */
+        body: ReactNode;
+        rows?: never;
+        rowKey?: never;
+      }
+  );
 
 const cellValue = <R,>(column: TableColumn<R>, row: R): ReactNode => {
   if (column.render) return column.render(row);
@@ -44,6 +56,7 @@ export function Table<R>({
   density = "default",
   narrow = "cards",
   rowTone,
+  body,
 }: TableProps<R>) {
   const captionId = useId();
   const title = columns.find((c) => (c.kind ?? "text") === "text");
@@ -75,28 +88,30 @@ export function Table<R>({
             ))}
           </tr>
         </thead>
-        <tbody>
-          {rows.map((row) => (
-            <tr key={rowKey(row)} data-tone={rowTone?.(row)}>
-              {columns.map((column) => {
-                const props = {
-                  "data-label": column.header,
-                  "data-kind": column.kind === "text" ? undefined : column.kind,
-                  "data-priority": column.priority === "low" ? "low" : undefined,
-                };
-                return column === title ? (
-                  <th key={column.key} {...props} scope="row">
-                    {cellValue(column, row)}
-                  </th>
-                ) : (
-                  <td key={column.key} {...props}>
-                    {cellValue(column, row)}
-                  </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
+        {body ?? (
+          <tbody>
+            {(rows ?? []).map((row) => (
+              <tr key={rowKey?.(row)} data-tone={rowTone?.(row)}>
+                {columns.map((column) => {
+                  const props = {
+                    "data-label": column.header,
+                    "data-kind": column.kind === "text" ? undefined : column.kind,
+                    "data-priority": column.priority === "low" ? "low" : undefined,
+                  };
+                  return column === title ? (
+                    <th key={column.key} {...props} scope="row">
+                      {cellValue(column, row)}
+                    </th>
+                  ) : (
+                    <td key={column.key} {...props}>
+                      {cellValue(column, row)}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        )}
       </table>
     </div>
   );

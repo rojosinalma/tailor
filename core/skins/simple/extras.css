@@ -19,7 +19,10 @@
   box-shadow: inset 0 0 0 var(--t-border-w) var(--t-border);
 }
 
-.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav .t-shell-link:is([aria-current="page"], [data-current-section]) {
+.t-shell[data-shell="topnav"]
+  > .t-shell-bar
+  > .t-shell-nav
+  .t-shell-link:is([aria-current="page"], [data-current-section]) {
   box-shadow: inset 0 0 0 var(--t-border-w) var(--t-accent);
 }
 
@@ -177,7 +180,14 @@
 }
 
 /* check, radio: boxes on the page background, filled with the accent when on */
-.t-check-input:not(:checked, [data-checked], :indeterminate, [data-indeterminate], :disabled, [data-disabled]),
+.t-check-input:not(
+  :checked,
+  [data-checked],
+  :indeterminate,
+  [data-indeterminate],
+  :disabled,
+  [data-disabled]
+),
 .t-radio-input:not(:checked, [data-checked], :disabled, [data-disabled]) {
   background: var(--t-canvas);
 }
