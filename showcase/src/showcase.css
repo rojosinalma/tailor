@@ -96,6 +96,11 @@
   width: 820px;
 }
 
+.sc-stage-inner[data-size="tablet-landscape"] {
+  /* lint-allow: the width of a tablet on its side, the point of the Size control */
+  width: 1180px;
+}
+
 .sc-stage-inner[data-size="desktop"] {
   /* lint-allow: the width of a desktop, the point of the Size control */
   width: 1440px;

@@ -8,13 +8,14 @@ import { THEME } from "./data";
 export const KITS = ["react", "html"] as const;
 export type Kit = (typeof KITS)[number];
 
-export const SIZES = ["fit", "phone", "tablet", "desktop"] as const;
+export const SIZES = ["fit", "phone", "tablet", "tablet-landscape", "desktop"] as const;
 export type Size = (typeof SIZES)[number];
 
 /** The device sizes of the Size control, in CSS pixels. */
 export const DEVICES: Readonly<Record<Exclude<Size, "fit">, { width: number; height: number }>> = {
   phone: { width: 390, height: 844 },
   tablet: { width: 820, height: 1180 },
+  "tablet-landscape": { width: 1180, height: 820 },
   desktop: { width: 1440, height: 900 },
 };
 

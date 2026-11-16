@@ -21,6 +21,7 @@ export const SIZE_OPTIONS = [
   { value: "fit", label: "Fit" },
   { value: "phone", label: "Phone 390" },
   { value: "tablet", label: "Tablet 820" },
+  { value: "tablet-landscape", label: "Tablet 1180" },
   { value: "desktop", label: "Desktop 1440" },
 ] as const;
 

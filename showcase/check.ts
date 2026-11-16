@@ -133,7 +133,12 @@ await test("search filters the navigation", async (page) => {
 });
 
 // 5. Each shell page shows its demo at the three sizes, and the demo's navigation works inside it.
-const DEVICES = { phone: [390, 844], tablet: [820, 1180], desktop: [1440, 900] } as const;
+const DEVICES = {
+  phone: [390, 844],
+  tablet: [820, 1180],
+  "tablet-landscape": [1180, 820],
+  desktop: [1440, 900],
+} as const;
 const shells = SPECS.filter((s) => isShell(s.pack));
 await pool(
   shells.flatMap((s) =>
@@ -193,7 +198,7 @@ for (const kit of ["react", "html"] as const)
   });
 
 // 6. No sideways scroll at a phone, a tablet and a desktop width.
-for (const width of [390, 820, 1440])
+for (const width of [390, 820, 1180, 1440])
   for (const hash of ["", "components/table", "shells/sidenav?size=desktop"])
     await test(
       `no sideways scroll at ${width} (${hash || "overview"})`,

@@ -14,10 +14,22 @@ import type { ComponentSpec } from "../../core/src/spec";
 import type { Kit } from "./behaviour";
 import { connectBrowser, FIXED_NOW, pool, WORKERS } from "./browser";
 
-/** The four widths of the checks: a phone, a tablet and two desktops. The first two are touch screens. */
-export const WIDTHS = [390, 820, 1440, 1920] as const;
-const TOUCH_WIDTHS: readonly number[] = [390, 820];
-const HEIGHT = 900;
+/**
+ * The screens of the checks: a phone, a tablet upright and on its side, and two desktops.
+ * The phone and the tablet are touch screens. An image is named by the width of its screen.
+ */
+const SCREENS = [
+  { width: 390, height: 844, touch: true },
+  { width: 820, height: 1180, touch: true },
+  { width: 1180, height: 820, touch: true },
+  { width: 1440, height: 900, touch: false },
+  { width: 1920, height: 1080, touch: false },
+] as const;
+export const WIDTHS: readonly number[] = SCREENS.map((screen) => screen.width);
+const TOUCH_WIDTHS: readonly number[] = SCREENS.filter((screen) => screen.touch).map(
+  (screen) => screen.width,
+);
+const heightOf = (width: number): number => SCREENS.find((screen) => screen.width === width)?.height ?? 900;
 const TOUCH = 44;
 /** The accessibility target: WCAG 2.2 level AA. */
 const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
@@ -380,7 +392,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
         const first = mine[0];
         if (!first) continue;
         const context: BrowserContext = await browser.newContext({
-          viewport: { width: first.width, height: HEIGHT },
+          viewport: { width: first.width, height: heightOf(first.width) },
           hasTouch: touch,
           isMobile: touch,
           reducedMotion: "reduce",
@@ -414,7 +426,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
               root.dataset.palette = palette;
               root.dataset.mode = mode;
             }, state);
-            await page.setViewportSize({ width: state.width, height: HEIGHT });
+            await page.setViewportSize({ width: state.width, height: heightOf(state.width) });
             await settle(page);
             const found = await page.evaluate(
               ([isTouch, size]) =>
