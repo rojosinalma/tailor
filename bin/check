@@ -86,6 +86,12 @@ const known = new Set(specs.map((s) => s.id));
 const only = scope.all ? undefined : new Set([...scope.components].filter((id) => known.has(id)));
 const everything = mode !== "change";
 
+// The build comes first: it writes the generated files that the types of the showcase need.
+await step("build", async () => {
+  await build({ quiet: true });
+  return true;
+});
+
 await Promise.all([
   step("lint and format", () => quiet($`bunx biome check .`.cwd(at(".")))),
   step("types", () => quiet($`bunx tsc --noEmit`.cwd(at(".")))),
@@ -95,10 +101,6 @@ await Promise.all([
   ...(everything ? [step("unused code", () => quiet($`bunx knip`.cwd(at("."))))] : []),
 ]);
 
-await step("build", async () => {
-  await build({ quiet: true });
-  return true;
-});
 
 if (everything) {
   // The release artifact: its React kit must compile on its own, and no pack may import past its requirements.
