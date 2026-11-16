@@ -74,4 +74,7 @@ export async function pool<T, R>(
   return results;
 }
 
+/** The moment that every checked page shows, so a date or "2 hours ago" never changes a result. */
+export const FIXED_NOW = new Date("2026-11-15T12:00:00Z");
+
 export const WORKERS = Math.max(4, Math.min(24, navigator.hardwareConcurrency - 4));

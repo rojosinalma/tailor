@@ -12,14 +12,12 @@ import type { Browser, BrowserContext, Page } from "playwright";
 import { at } from "../../bin/lib/paths";
 import type { ComponentSpec } from "../../core/src/spec";
 import type { Kit } from "./behaviour";
-import { connectBrowser, pool, WORKERS } from "./browser";
+import { connectBrowser, FIXED_NOW, pool, WORKERS } from "./browser";
 
 /** The four widths of the checks: a phone, a tablet and two desktops. The first two are touch screens. */
 export const WIDTHS = [390, 820, 1440, 1920] as const;
 const TOUCH_WIDTHS: readonly number[] = [390, 820];
 const HEIGHT = 900;
-/** The pages show this moment, so a date or "2 hours ago" never changes an image. */
-const FIXED_NOW = new Date("2026-11-15T12:00:00Z");
 const TOUCH = 44;
 /** The accessibility target: WCAG 2.2 level AA. */
 const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];

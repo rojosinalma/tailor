@@ -80,7 +80,9 @@ export default behaviour("message-list", {
   "messages of the same author group under one name and avatar, with day separators": async ({
     example,
     expect,
+    freezeTime,
   }) => {
+    await freezeTime();
     const body = example("thread");
     await expect(body.getByRole("article", { name: "bob, 10:01 AM" })).toHaveCount(2);
     await expect(body.getByRole("img", { name: "bob" })).toHaveCount(2);

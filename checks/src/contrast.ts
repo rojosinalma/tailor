@@ -4,7 +4,7 @@
  */
 import { AxeBuilder } from "@axe-core/playwright";
 import type { ComponentSpec } from "../../core/src/spec";
-import { connectBrowser, pool, WORKERS } from "./browser";
+import { connectBrowser, FIXED_NOW, pool, WORKERS } from "./browser";
 import type { PageProblem } from "./pages";
 
 /** The components a release checks in all 252 combinations. */
@@ -63,7 +63,7 @@ export async function runContrast(
       });
       const page = await context.newPage();
       try {
-        await page.clock.setFixedTime(new Date("2026-11-15T12:00:00Z"));
+        await page.clock.setFixedTime(FIXED_NOW);
         await page.goto(`${options.siteUrl}entry.html?id=${id}`);
         await page.locator(".sc-example").first().waitFor();
         for (const skin of skins) {

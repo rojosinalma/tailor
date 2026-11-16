@@ -3,7 +3,7 @@ import { Glob } from "bun";
 import { at, ROOT } from "../../bin/lib/paths";
 import type { ComponentSpec } from "../../core/src/spec";
 import { type BehaviourSuite, expect, type Kit } from "./behaviour";
-import { connectBrowser, pool, WORKERS } from "./browser";
+import { connectBrowser, FIXED_NOW, pool, WORKERS } from "./browser";
 
 export interface BehaviourFailure {
   readonly component: string;
@@ -62,6 +62,11 @@ export async function runBehaviour(
             kit,
             expect,
             example: (id) => page.locator(`.sc-example[data-example="${id}"] .sc-example-body`),
+            freezeTime: async () => {
+              await page.clock.setFixedTime(FIXED_NOW);
+              await page.reload();
+              await page.locator(".sc-example").first().waitFor();
+            },
           });
           if (errors.length > 0) throw new Error(`page errors: ${errors.join("; ")}`);
           return null;

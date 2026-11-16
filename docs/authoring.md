@@ -154,6 +154,9 @@ expect }) => { … } })`. Each test runs in a fresh page, once per kit.
 2. Cover: pointer use, keyboard use, focus on open and on close, the value in the form, disabled state, and
    the phone form where one exists (`page.setViewportSize({ width: 390, height: 800 })`).
 3. When the two kits differ, the HTML kit script changes to match Base UI.
+4. A test that reads "today" calls `await freezeTime()` first: it holds the page's date at 2026-11-15 12:00
+   UTC and loads the page again.
+5. A test never reads the system clipboard, which all tests share: it catches the copied text in the page.
 
 ## 10. Commands
 

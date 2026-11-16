@@ -13,6 +13,11 @@ export interface BehaviourContext {
   /** The body of one example on the page. */
   example(id: string): Locator;
   readonly expect: typeof expect;
+  /**
+   * Holds the page's date at 2026-11-15 12:00 UTC and loads the page again. For a test that reads "today".
+   * Timers keep running; only the date stands still.
+   */
+  freezeTime(): Promise<void>;
 }
 
 export type BehaviourTest = (context: BehaviourContext) => Promise<void>;
