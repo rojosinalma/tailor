@@ -30,14 +30,27 @@
     "core": {
       "name": "@tailor/core",
       "version": "2.0.0-dev.0",
+      "dependencies": {
+        "chart.js": "4.6.1",
+        "diff": "9.0.0",
+        "dompurify": "3.4.18",
+        "highlight.js": "11.12.0",
+        "leaflet": "1.9.4",
+        "marked": "18.2.0",
+      },
       "devDependencies": {
         "@iconify-json/bi": "1.2.7",
         "@iconify-json/simple-icons": "1.2.102",
+        "@types/leaflet": "1.9.21",
       },
     },
     "html": {
       "name": "@tailor/html",
       "version": "2.0.0-dev.0",
+      "dependencies": {
+        "chart.js": "4.6.1",
+        "dompurify": "3.4.18",
+      },
     },
     "react": {
       "name": "@tailor/react",
@@ -55,17 +68,12 @@
         "@tanstack/react-table": "9.3.1",
         "@tanstack/react-virtual": "3.14.26",
         "chart.js": "4.6.1",
-        "diff": "9.0.0",
         "dompurify": "3.4.18",
-        "highlight.js": "11.12.0",
-        "leaflet": "1.9.4",
-        "marked": "18.2.0",
         "react": "19.3.1",
         "react-dom": "19.3.1",
         "react-easy-crop": "6.2.5",
       },
       "devDependencies": {
-        "@types/leaflet": "1.9.21",
         "@types/react": "19.2.7",
         "@types/react-dom": "19.2.3",
       },
@@ -74,8 +82,14 @@
       "name": "@tailor/showcase",
       "version": "2.0.0-dev.0",
       "dependencies": {
+        "@tanstack/react-router": "1.170.46",
         "react": "19.3.1",
         "react-dom": "19.3.1",
+      },
+      "devDependencies": {
+        "@axe-core/playwright": "4.14.0",
+        "@playwright/test": "1.65.1",
+        "playwright": "1.65.1",
       },
     },
   },
