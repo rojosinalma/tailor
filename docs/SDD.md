@@ -173,3 +173,54 @@ Append-only. One line per decision: what, why.
 35. 2026-11-16 — Contrast was checked for every component in all 252 combinations of skin, palette and mode: 34,020 combinations, 0 problems.
 36. 2026-11-16 — The showcase is itself an installable app (the pwa pack, used on itself), with its own check against a real server (`showcase/check-pwa.ts`). The first version of the service worker passed its tests and never finished an install in real use: the tests answered its requests from memory. A worker test must use the real network path.
 37. 2026-11-16 — An installed app behind an access proxy (a proxy that sends every request without a session to a sign-in page on another origin, such as Cloudflare Access) was tested against a stand-in proxy: with a session the app installs; when the session is gone and the device is online, a navigation goes to the sign-in page; offline, the stored app opens; nothing of the sign-in page ever enters the cache. Limit: the test with the real proxy and a signed-in browser needs a person, so it was not run. A first install always needs a session.
+38. 2026-11-16 — The unused-code check also fails on an export or a type that nothing uses. Four were left at the release; they are gone.
+39. 2026-11-16 — The check builds before it checks types. On a fresh checkout the generated files of the showcase did not exist yet; the first nightly run and the first CI run found it.
+
+## 10. Measurements at 2.0.0
+
+Measured on the development machine (32 cores) with a warm image cache, unless a line says otherwise.
+
+### Weight (compressed)
+
+| What a page loads                                                                            | Size     | Limit    |
+| -------------------------------------------------------------------------------------------- | -------- | -------- |
+| HTML core: `tailor.css` 17.3 kB + one skin 2.3 kB + one palette 0.7 kB + `tailor.js` 17.2 kB | 37.6 kB  | 50 kB    |
+| React core: every component of the core pack with React, Base UI and the router              | 147.6 kB | 162.5 kB |
+
+| Pack                                                                              | Stylesheet              | HTML kit script                       |
+| --------------------------------------------------------------------------------- | ----------------------- | ------------------------------------- |
+| forms                                                                             | 1.6 kB                  | 8.2 kB                                |
+| pickers                                                                           | 2.7 kB                  | 11.9 kB                               |
+| data                                                                              | 2.3 kB                  | 9.4 kB                                |
+| charts                                                                            | 1.0 kB                  | 68.4 kB (Chart.js)                    |
+| code                                                                              | 1.9 kB                  | 26.3 kB (highlight.js, 16 languages)  |
+| markdown                                                                          | 0.8 kB                  | 28.4 kB (marked, DOMPurify)           |
+| map                                                                               | 3.9 kB (with Leaflet's) | 47.9 kB (Leaflet)                     |
+| media                                                                             | 2.2 kB                  | 3.3 kB                                |
+| pwa                                                                               | none                    | 3.6 kB, and the service worker 1.4 kB |
+| layouts                                                                           | none                    | 0.7 kB                                |
+| shells: topnav, sidenav, bare, workspace                                          | 0.4, 1.4, 0.4, 1.8 kB   | 1.0, 1.7, none, 3.8 kB                |
+| command, chat, sortable, board, calendar, tour, cropper, windows (React kit only) | 0.6 to 2.3 kB each      | none                                  |
+
+### Time
+
+| Check                                                                                             | Time  | Limit       |
+| ------------------------------------------------------------------------------------------------- | ----- | ----------- |
+| A change to one component (`bin/check`)                                                           | 4 s   | 10 s        |
+| A release (`bin/check --release`): 6,048 page states, 5,544 contrast combinations                 | 94 s  | 120 s       |
+| A release on a machine with no image cache                                                        | 196 s | not limited |
+| A full run (`bin/check --full`): 8,462 page states with every image, 34,020 contrast combinations | 335 s | not limited |
+
+The three slowest steps of a release: pages and images 45 s, contrast 24 s, behaviour in both kits 22 s
+(1,084 tests). The release check keeps 22 % of its limit.
+
+### Known limits
+
+1. A change that touches many components at once (a dozen and more) takes longer than 10 s: the change
+   check takes fresh images of every page of each of them.
+2. The two kits are compared with a small tolerance for drawing noise (decision 30), not pixel for pixel.
+3. The installed app behind an access proxy was tested against a stand-in, not with a signed-in browser
+   (decision 37).
+4. Right-to-left layouts are not covered. Texts are English until a project replaces them.
+5. In the HTML kit a pack gives what its row in `tailor list` says: the packs command, chat, sortable, board,
+   calendar, tour, cropper and windows are React only.

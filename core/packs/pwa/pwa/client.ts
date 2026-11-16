@@ -11,7 +11,7 @@ import {
   shouldCheckForUpdate,
 } from "./logic";
 
-export type { InstallSteps, PwaState } from "./logic";
+export type { PwaState } from "./logic";
 
 export interface PwaOptions {
   /** The address of the app's worker file, for example "/sw.js". Leave out for install and network only. */

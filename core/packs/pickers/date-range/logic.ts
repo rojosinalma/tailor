@@ -15,8 +15,6 @@ export interface RangePreset {
   readonly end: string;
 }
 
-export const EMPTY: DateRange = { start: null, end: null };
-
 /** Two days as a range, the earlier one first. */
 export const orderRange = (a: string, b: string): DateRange =>
   a <= b ? { start: a, end: b } : { start: b, end: a };

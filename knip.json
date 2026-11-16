@@ -40,8 +40,6 @@
   },
   "ignoreExportsUsedInFile": true,
   "rules": {
-    "exports": "off",
-    "types": "off",
     "duplicates": "off"
   },
   "ignoreDependencies": ["@iconify-json/bi", "@iconify-json/simple-icons", "axe-core"]

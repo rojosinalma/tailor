@@ -10,8 +10,6 @@ export const UNIT_SECONDS: Readonly<Record<DurationUnit, number>> = {
   days: 86400,
 };
 
-export const isUnit = (value: string): value is DurationUnit => DURATION_UNITS.some((unit) => unit === value);
-
 /** The given units in order from small to large, each once; all of them when none is valid. */
 export function orderUnits(units: readonly string[] | undefined): DurationUnit[] {
   const picked = DURATION_UNITS.filter((unit) => units?.includes(unit));

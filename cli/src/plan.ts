@@ -4,7 +4,7 @@
  */
 import { createHash } from "node:crypto";
 import { lstat, mkdir, readdir, realpath, rm, rmdir } from "node:fs/promises";
-import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
+import { dirname, isAbsolute, relative, resolve, sep } from "node:path";
 import { Problem } from "./errors";
 
 export const sha256 = (data: string | Uint8Array): string => createHash("sha256").update(data).digest("hex");
@@ -163,8 +163,3 @@ export async function applyPlan(
     else if (step.kind === "remove") await project.remove(step.path, stopAt(step.path));
   }
 }
-
-export const joinPath = (...parts: string[]): string =>
-  join(...parts)
-    .split(sep)
-    .join("/");
