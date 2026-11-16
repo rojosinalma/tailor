@@ -184,7 +184,9 @@ export function tokenPairs(c: PaletteColors, mode: Mode): [string, string][] {
   ];
   for (const tone of TEXT_TONES) {
     // Text in a tone colour also sits on tints of that tone, so those count as backgrounds too.
-    const tints = surfaces.map((surface) => mix(surface, c[tone], 0.2));
+    // The accent tone fills with the solid accent, so its text must hold on tints of both accents.
+    const bases = tone === "accent" && c.accent_solid ? [c.accent, c.accent_solid] : [c[tone]];
+    const tints = bases.flatMap((base) => surfaces.map((surface) => mix(surface, base, 0.2)));
     pairs.push([`--t-${tone}-text`, onSurfaces(c[tone], [...surfaces, ...tints])]);
   }
   for (const tone of FILL_TONES) {

@@ -84,6 +84,7 @@ test("the guarded tokens stay readable on every surface, in every palette and mo
       // Text in a tone colour on the tint (20%) of that tone, over every surface. Neutral is muted on muted.
       for (const [text, tone] of [
         ["muted", "muted"],
+        ["accent-text", "accent-solid"],
         ...["accent", "success", "warning", "danger", "info"].map((t) => [`${t}-text`, t]),
       ]) {
         for (const surface of ["canvas", "surface", "inset"]) {
