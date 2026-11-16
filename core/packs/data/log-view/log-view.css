@@ -24,7 +24,8 @@
 .t-log,
 .t-log-lines {
   font-family: var(--t-font-mono);
-  line-height: var(--t-leading);
+  /* lint-allow: a whole number of pixels per line, so a long list has the same row places in both kits */
+  line-height: round(calc(var(--t-leading) * 1em), 1px);
 }
 
 .t-log-bar {

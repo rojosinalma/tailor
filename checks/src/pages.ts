@@ -497,18 +497,29 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
           );
           await page.locator(".sc-example").first().waitFor();
           let dom = "";
+          let loaded = first.skin;
           const reactOnly =
             target.kit === "react" ? await page.locator('.sc-example[data-kit="react"]').count() : 0;
           for (const state of mine) {
             states++;
             const label = `${state.skin || "no skin"} ${state.palette} ${state.mode} ${state.width}px`;
+            await page.setViewportSize({ width: state.width, height: heightOf(state.width) });
+            if (state.skin !== loaded) {
+              // A skin changes sizes and fonts, so the page is loaded again in it, as a person would see it.
+              // Palettes and modes change colours only and switch in place.
+              await page.goto(
+                `${siteUrl}${target.url}${join}skin=${state.skin}&palette=${state.palette}&mode=${state.mode}`,
+              );
+              await page.locator(".sc-example").first().waitFor();
+              loaded = state.skin;
+              dom = "";
+            }
             await page.evaluate(({ skin, palette, mode }) => {
               const root = document.documentElement;
               root.dataset.skin = skin;
               root.dataset.palette = palette;
               root.dataset.mode = mode;
             }, state);
-            await page.setViewportSize({ width: state.width, height: heightOf(state.width) });
             await settle(page);
             const found = await page.evaluate(
               ([isTouch, size]) =>
