@@ -28,6 +28,12 @@ export default behaviour("list-page", {
     await body.getByRole("button", { name: "Clear filters" }).click();
     await expect(body.getByRole("rowheader").first()).toHaveText("api");
   },
+  "the no-matches example opens on a search that matches nothing": async ({ example, expect }) => {
+    const body = example("no-matches");
+    await expect(body.getByText("Nothing matches")).toBeVisible();
+    await body.getByRole("button", { name: "Clear filters" }).click();
+    await expect(body.getByRole("rowheader").first()).toHaveText("api");
+  },
   "selected rows show the bulk actions": async ({ example, expect }) => {
     const body = example("default");
     await body.getByRole("checkbox", { name: "Select api", exact: true }).check();

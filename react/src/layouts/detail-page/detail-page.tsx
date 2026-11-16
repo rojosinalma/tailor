@@ -166,8 +166,9 @@ export function DetailPageLayout() {
   return (
     <Page
       title={s.name}
-      // The state sits right under the name: it is the first thing people look for.
-      description={<StateLabel tone="warning">Degraded</StateLabel>}
+      // The state sits beside the name: it is the first thing people look for.
+      status={<StateLabel tone="warning">Degraded</StateLabel>}
+      description={`${s.image} on ${s.host}`}
       // The way back to the list, above the title.
       breadcrumb={<Breadcrumb items={[{ label: "Services", to: "#services" }, { label: s.name }]} />}
       primaryAction={
@@ -184,8 +185,9 @@ export function DetailPageLayout() {
       // A record reads best at a width the eye can follow; a wide screen keeps the rest free.
       width="readable"
     >
-      {/* The numbers that tell at a glance how the record is doing: two by two, one per row on a phone. */}
-      <Grid min="sm">
+      {/* The numbers that tell at a glance how the record is doing: one row at a readable width, two by two
+          on a phone. A fixed set: fit lets them fill the row. */}
+      <Grid min="2xs" fit>
         <Stat label="Uptime, 30 days" value="99.2%" sub="1 outage" />
         <Stat
           label="Requests per minute"
@@ -219,7 +221,7 @@ export function DetailPageLayout() {
             label: "Overview",
             content: (
               // Two cards side by side in a wide page, one under the other in a narrow one.
-              <Grid min="sm">
+              <Grid min="sm" fit>
                 <Card title="Details">
                   <Facts
                     items={[

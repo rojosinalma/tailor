@@ -203,6 +203,28 @@ function Checked() {
   );
 }
 
+/** The same rule as a pattern: the browser checks it, so both kits show the pattern message. */
+function Patterned() {
+  const form = useTailorForm<Account>({
+    defaultValues: { user: "" },
+    onSubmit: async (account) => ({ ok: true, message: `${account.user} can sign in.` }),
+  });
+  return (
+    <Form form={form} label="New user with a pattern">
+      <FormField
+        form={form}
+        name="user"
+        label="User name"
+        help="Start with a letter; use a-z, 0-9 and -."
+        required
+      >
+        {(control) => <Input {...control} pattern="[a-z][a-z0-9\-]*" autoComplete="off" />}
+      </FormField>
+      <FormActions form={form} submit="Add user" />
+    </Form>
+  );
+}
+
 export default defineExamples("form", [
   {
     id: "stack",
@@ -231,6 +253,12 @@ export default defineExamples("form", [
     title: "A check of its own",
     note: "A validator is a function, so it runs in the React kit only; the HTML kit checks the native rules.",
     render: () => <Checked />,
+  },
+  {
+    id: "pattern",
+    title: "A pattern",
+    note: "The input's pattern is a native rule, so both kits check it and show the pattern message; the help says the format.",
+    render: () => <Patterned />,
   },
   {
     id: "narrow",

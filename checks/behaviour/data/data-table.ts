@@ -8,6 +8,22 @@ const lastName = [...all].sort((a, b) => compareValues(b.name, a.name, "text"))[
 const stopped = all.filter((s) => s.status === "stopped").length;
 
 export default behaviour("data-table", {
+  "initial filters and search open the table on a filtered state": async ({ example, expect }) => {
+    const body = example("filtered");
+    await expect(body.getByRole("searchbox", { name: "Search", exact: true })).toHaveValue("worker");
+    await expect(body.getByRole("rowheader")).toHaveText(["worker-1"]);
+    await expect(body.getByRole("combobox", { name: "Status" })).toContainText("Degraded");
+  },
+  "an initial search that matches nothing says so; Clear filters shows every row": async ({
+    example,
+    expect,
+  }) => {
+    const body = example("no-matches");
+    await expect(body.getByText("Nothing matches")).toBeVisible();
+    await body.getByRole("button", { name: "Clear filters" }).click();
+    await expect(body.getByRole("rowheader")).toHaveCount(8);
+    await expect(body.getByRole("searchbox", { name: "Search", exact: true })).toHaveValue("");
+  },
   "a click on a header sorts up, then down, then not at all": async ({ example, expect }) => {
     const body = example("default");
     const header = body.getByRole("columnheader", { name: "Memory (MB)" });

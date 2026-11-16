@@ -108,26 +108,34 @@ function CardView({ card, columns, onMoveTo, renderCard }: CardViewProps) {
       <SortableHandle />
     </>
   );
-  const plain =
-    card.badges?.length || card.assignee ? (
-      <Cluster gap="2" justify="between">
+  // The actions sit in a row of their own at the end of the card, so the title keeps the full width.
+  const row = (
+    <div className="t-board-card-row">
+      {!renderCard && card.badges?.length ? (
         <Cluster gap="1">
-          {card.badges?.map((badge) => (
+          {card.badges.map((badge) => (
             <Badge key={badge.label} tone={badge.tone}>
               {badge.label}
             </Badge>
           ))}
         </Cluster>
-        {card.assignee ? <Avatar name={card.assignee} size="sm" /> : null}
-      </Cluster>
-    ) : undefined;
-  const body = renderCard ? renderCard(card) : plain;
+      ) : null}
+      <div className="t-board-card-actions">
+        {!renderCard && card.assignee ? <Avatar name={card.assignee} size="sm" /> : null}
+        {actions}
+      </div>
+    </div>
+  );
   const shared = {
     description: card.description,
-    actions,
     footer: card.footer,
     headingLevel: 3 as const,
-    children: body,
+    children: (
+      <>
+        {renderCard ? renderCard(card) : null}
+        {row}
+      </>
+    ),
   };
   return (
     <div className="t-board-card">

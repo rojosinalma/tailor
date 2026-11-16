@@ -99,8 +99,9 @@ export function DashboardPageLayout() {
         Its disk is 91% full. Backups stop when it reaches 95%.
       </Alert>
 
-      {/* The numbers that answer "is everything fine?" at a glance. Three fill a wide row; more wrap. */}
-      <Grid min="sm">
+      {/* The numbers that answer "is everything fine?" at a glance. A fixed set: fit lets the three fill a
+          wide row instead of leaving empty columns; on a narrow page they wrap. */}
+      <Grid min="sm" fit>
         <Stat label="Services running" value="12" sub="of 14" tone="success" to="#services" />
         <Stat
           label="Requests per minute"

@@ -91,9 +91,33 @@
   min-width: 0;
 }
 
-/* A card on a board is small: its title is body sized. */
+/* A card on a board is small: its title is body sized and has the full width. */
 .t-board-card .t-card-title {
   font-size: var(--t-text-base);
+  overflow-wrap: break-word;
+}
+
+.t-board-card .t-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-3);
+  padding-top: var(--t-space-2);
+}
+
+/* The last row of a card: the badges at the start; the avatar, the menu and the grip at the end. */
+.t-board-card-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.t-board-card-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-1);
+  margin-inline-start: auto;
 }
 
 @container (max-width: 40rem) {

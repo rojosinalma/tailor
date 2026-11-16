@@ -34,6 +34,21 @@ export default behaviour("code-block", {
     const page390 = await page.evaluate(() => document.documentElement.scrollWidth);
     expect(page390).toBeLessThanOrEqual(390);
   },
+  "without a title there is no header; the copy button sits at the top end corner": async ({
+    example,
+    expect,
+  }) => {
+    const body = example("wrap");
+    await expect(body.locator(".t-code-header")).toHaveCount(0);
+    const button = await body.getByRole("button", { name: "Copy" }).boundingBox();
+    const block = await body.locator(".t-code").boundingBox();
+    const pre = await body.locator("pre").boundingBox();
+    expect(button && block && pre).toBeTruthy();
+    if (!button || !block || !pre) return;
+    expect(button.y - block.y).toBeLessThan(12);
+    expect(block.x + block.width - (button.x + button.width)).toBeLessThan(12);
+    expect(pre.y - block.y).toBeLessThan(2);
+  },
   "wrapped code does not scroll": async ({ example, expect }) => {
     const pre = example("wrap").locator("pre");
     expect(await pre.evaluate((el) => el.scrollWidth <= el.clientWidth)).toBe(true);

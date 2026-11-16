@@ -7,8 +7,11 @@ import { useIsStatic } from "../../kit";
 /** How long the copy button shows its check. */
 const COPIED_MS = 2000;
 
-/** The copy button of a code block header: copies the text and shows a check for a moment. */
-export function CodeCopy({ text }: { text: string }) {
+/**
+ * The copy button of a code block: copies the text and shows a check for a moment. `iconOnly` hides its text
+ * (it stays its name), for the button that sits over the code.
+ */
+export function CodeCopy({ text, iconOnly = false }: { text: string; iconOnly?: boolean }) {
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   useEffect(() => () => clearTimeout(timer.current), []);
@@ -32,10 +35,11 @@ export function CodeCopy({ text }: { text: string }) {
       data-variant="ghost"
       data-size="sm"
       data-copied={copied ? "" : undefined}
+      data-icon-only={iconOnly ? "" : undefined}
       onClick={onCopy}
     >
       <Glyph body={copied ? check : copy} />
-      <span className="t-btn-label" aria-live="polite">
+      <span className={iconOnly ? "t-btn-label t-sr-only" : "t-btn-label"} aria-live="polite">
         {copied ? t("copied") : t("copy")}
       </span>
     </button>
@@ -60,10 +64,17 @@ export function CodeBlock({ code, title, wrap = false, label, children }: CodeBl
   const isStatic = useIsStatic();
   return (
     <div className="t-code" data-wrap={wrap ? "" : undefined} data-t={isStatic ? "code-block" : undefined}>
-      <div className="t-code-header">
-        {title ? <span className="t-code-title">{title}</span> : null}
-        <CodeCopy text={code} />
-      </div>
+      {/* With a title, a header bar holds it and the copy button; without one, the button sits over the code. */}
+      {title ? (
+        <div className="t-code-header">
+          <span className="t-code-title">{title}</span>
+          <CodeCopy text={code} />
+        </div>
+      ) : (
+        <div className="t-code-corner">
+          <CodeCopy text={code} iconOnly />
+        </div>
+      )}
       {/* Code that scrolls sideways takes the focus, so the keyboard can scroll it. */}
       <pre
         className="t-code-pre"

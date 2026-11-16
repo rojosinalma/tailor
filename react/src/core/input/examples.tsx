@@ -67,6 +67,16 @@ export default defineExamples("input", [
     ),
   },
   {
+    id: "pattern",
+    title: "A pattern",
+    note: "The value must match the pattern; in a form, a value that does not shows the pattern message. The help says the format.",
+    render: () => (
+      <Field label="Host name" help="Lower-case letters, digits and dashes.">
+        <Input name="host" pattern="[a-z0-9\-]+" defaultValue="web-1" autoComplete="off" />
+      </Field>
+    ),
+  },
+  {
     id: "field",
     title: "In a field, with an error",
     render: () => (

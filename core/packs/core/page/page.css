@@ -30,7 +30,23 @@
 }
 
 .t-page-title {
+  min-width: 0;
   font-size: var(--t-text-2xl);
+}
+
+/* The title with its state beside it; the state goes under the title when the row is too narrow. */
+.t-page-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-1) var(--t-space-3);
+  min-width: 0;
+}
+
+.t-page-status {
+  display: flex;
+  align-items: center;
+  min-width: 0;
 }
 
 .t-page-description {
@@ -74,6 +90,10 @@
   flex-direction: column;
   gap: var(--t-space-4);
   overflow: hidden;
+}
+
+.t-page[data-width="readable"] > .t-page-header {
+  max-width: calc(var(--t-measure-lg) + var(--t-gutter) * 2);
 }
 
 .t-page[data-width="readable"] > .t-page-body > * {

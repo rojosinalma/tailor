@@ -6,7 +6,7 @@ export default defineComponent({
   pack: "data",
   group: "display",
   description:
-    'A table for many rows: sorting, a search, column filters, pages, row selection with bulk actions and column visibility. It looks like the plain table and follows its narrow forms. HTML kit: a server-rendered t-table inside <div class="t-data-table" data-t="data-table" data-page-size="20">; th carry data-sort, data-filter and data-priority, cells may carry data-value, rows data-row-id; data-selectable adds the boxes and fires t:selection with the ids; buttons in a [data-t-bulk] slot show while rows are selected and fire t:bulk. Without the script the full table shows.',
+    'A table for many rows: sorting, a search, column filters, pages, row selection with bulk actions and column visibility. It looks like the plain table and follows its narrow forms. HTML kit: a server-rendered t-table inside <div class="t-data-table" data-t="data-table" data-page-size="20">; th carry data-sort, data-filter and data-priority, cells may carry data-value, rows data-row-id; data-initial-search on the root and data-filter-value on a th open it on a filtered state (React: initialSearch, initialFilters); data-selectable adds the boxes and fires t:selection with the ids; buttons in a [data-t-bulk] slot show while rows are selected and fire t:bulk. Without the script the full table shows.',
   root: "t-data-table",
   parts: {
     "t-data-table-sort": "the button in a sortable th; the th carries aria-sort",

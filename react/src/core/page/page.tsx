@@ -11,6 +11,8 @@ export type PageAction = MenuActionItem | MenuSeparatorItem;
 export interface PageProps {
   /** The one h1 of the page. */
   title: string;
+  /** The state of the record, beside the title: a StateLabel. */
+  status?: ReactNode;
   description?: ReactNode;
   /** A breadcrumb, shown above the title. */
   breadcrumb?: ReactNode;
@@ -22,7 +24,7 @@ export interface PageProps {
   moreActions?: readonly PageAction[];
   /** "scroll": the body scrolls. "fill": the body takes the free height and its children scroll alone. */
   mode?: (typeof spec.props.mode)[number];
-  /** "readable": the content keeps a width that reads well. */
+  /** "readable": the header and the content keep a width that reads well. */
   width?: (typeof spec.props.width)[number];
   children?: ReactNode;
 }
@@ -63,6 +65,7 @@ function MoreActions({ items }: { items: readonly PageAction[] }) {
 /** The container that fills a shell's content region. Its header stays; its body scrolls or fills. */
 export function Page({
   title,
+  status,
   description,
   breadcrumb,
   actions,
@@ -82,7 +85,14 @@ export function Page({
       <header className="t-page-header">
         {breadcrumb ? <div className="t-page-breadcrumb">{breadcrumb}</div> : null}
         <div className="t-page-heading">
-          <h1 className="t-page-title">{title}</h1>
+          {status ? (
+            <div className="t-page-title-row">
+              <h1 className="t-page-title">{title}</h1>
+              <span className="t-page-status">{status}</span>
+            </div>
+          ) : (
+            <h1 className="t-page-title">{title}</h1>
+          )}
           {description ? <p className="t-page-description">{description}</p> : null}
         </div>
         {actions || primaryAction || hasMore ? (

@@ -77,6 +77,20 @@ export default behaviour("board", {
     await board.getByRole("button", { name: "Add card to Backlog" }).click();
     expect((await titles(column(board, "Backlog"))).at(-1)).toMatch(/^New task/);
   },
+  "the card's menu and grip sit in a row of their own, under the title": async ({ example, expect }) => {
+    const card = example("default").locator(".t-board-card", {
+      hasText: "Move nas backups to the new bucket",
+    });
+    const title = await card.locator(".t-card-title").boundingBox();
+    const menu = await card.getByRole("button", { name: /^Move .* to…$/ }).boundingBox();
+    const grip = await card.getByRole("button", { name: /^Reorder / }).boundingBox();
+    const box = await card.boundingBox();
+    if (!title || !menu || !grip || !box) throw new Error("no boxes");
+    expect(menu.y).toBeGreaterThanOrEqual(title.y + title.height);
+    expect(Math.abs(menu.y - grip.y)).toBeLessThan(2);
+    // The title takes the width of the card, less its padding.
+    expect(title.width).toBeGreaterThan(box.width * 0.75);
+  },
   "a narrow box shows one column, picked with tabs, and the menu moves cards": async ({
     page,
     example,

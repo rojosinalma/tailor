@@ -84,9 +84,13 @@ export default behaviour("form-dialog", {
     const dialog = page.getByRole("dialog", { name: "Add service" });
     const box = await dialog.boundingBox();
     expect(box && box.width >= 389 && box.height >= 799).toBe(true);
-    const submit = dialog.getByRole("button", { name: "Add service" });
-    await submit.scrollIntoViewIfNeeded();
-    const button = await submit.boundingBox();
-    expect(button && button.x + button.width <= 390 && button.y + button.height <= 800).toBe(true);
+    // The buttons sit in the footer, outside the scrolling fields: in reach with no scroll.
+    for (const name of ["Add service", "Cancel"]) {
+      const button = await dialog.getByRole("button", { name }).boundingBox();
+      expect(button && button.x + button.width <= 390 && button.y + button.height <= 800).toBe(true);
+    }
+    await expect(
+      dialog.locator(".t-dialog-footer").getByRole("button", { name: "Add service" }),
+    ).toBeVisible();
   },
 });

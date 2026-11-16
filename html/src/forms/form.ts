@@ -257,7 +257,11 @@ register("form", (element) => {
     if (form.dataset.tSubmit !== "fetch") return;
     event.preventDefault();
     const submitter = event.submitter instanceof HTMLButtonElement ? event.submitter : null;
-    void send(submitter ?? form.querySelector<HTMLButtonElement>('button[type="submit"]'));
+    // The submit button may sit outside the form (form="<id>"), such as in a dialog footer.
+    const first = [...form.elements].find(
+      (item): item is HTMLButtonElement => item instanceof HTMLButtonElement && item.type === "submit",
+    );
+    void send(submitter ?? first ?? null);
   });
 
   // A drawn trigger that shows a value is named by its label and its value, so that its name holds what it

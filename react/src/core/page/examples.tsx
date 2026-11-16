@@ -5,6 +5,7 @@ import { Grid } from "../grid/grid";
 import { Pane } from "../pane/pane";
 import { Section } from "../section/section";
 import { Split } from "../split/split";
+import { StateLabel } from "../state-label/state-label";
 import { Toolbar } from "../toolbar/toolbar";
 import { Page, type PageAction } from "./page";
 
@@ -96,12 +97,15 @@ export default defineExamples("page", [
   },
   {
     id: "readable",
-    title: "Readable width, with a breadcrumb",
+    title: "Readable width, with a breadcrumb and a status",
+    note: "The header keeps the same width as the body, so the action stays near the title on a wide screen.",
     display: "frame",
     render: () => (
       <Page
         title="About nas"
+        status={<StateLabel tone="success">Online</StateLabel>}
         description="Notes on the storage host."
+        actions={<Button>Edit notes</Button>}
         breadcrumb={<Breadcrumb items={[{ label: "Hosts", to: "#hosts" }, { label: "nas" }]} />}
         width="readable"
       >

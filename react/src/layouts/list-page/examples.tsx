@@ -16,6 +16,13 @@ export default defineExamples("list-page", [
     ),
   },
   {
+    id: "no-matches",
+    title: "A search that matches nothing",
+    note: "The table keeps its toolbar and says that nothing matches, with Clear filters to show every row again.",
+    display: "frame",
+    render: () => <ListPageLayout initialSearch="nginx-old" />,
+  },
+  {
     id: "narrow",
     title: "On a phone",
     note: "The other page actions go into one menu, each row is a card, and sorting moves into Sort by.",

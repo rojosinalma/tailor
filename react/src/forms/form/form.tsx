@@ -64,6 +64,8 @@ interface Extra {
     Record<string, ((value: never, values: never) => string | undefined) | undefined>
   >;
   readonly element: RefObject<HTMLFormElement | null>;
+  /** The id of the form element: FormActions outside the form (in a dialog footer) reaches it by it. */
+  id: string;
   /** The fields in the order they render, which is the order on the page. */
   readonly fields: Map<string, FieldInfo>;
   failed: boolean;
@@ -118,6 +120,7 @@ function focusFirstInvalid(form: object): void {
 export function useTailorForm<V extends object>(options: TailorFormOptions<V>): TailorForm<V> {
   const toast = useToast();
   const element = useRef<HTMLFormElement>(null);
+  const id = useId();
   const [failed, setFailed] = useState(false);
   const fail = (): void => {
     setFailed(true);
@@ -154,6 +157,7 @@ export function useTailorForm<V extends object>(options: TailorFormOptions<V>): 
       element,
       fields: new Map(),
       failed,
+      id,
     });
   return form;
 }
@@ -166,17 +170,33 @@ export interface FormProps<V extends object> {
   action?: string;
   /** The accessible name of the form. */
   label?: string;
+  /**
+   * The id of the form element, for a button outside it: `<Button type="reset" form={id}>`. FormActions
+   * finds the form by itself, also in a dialog footer.
+   */
+  id?: string;
   children: ReactNode;
 }
 
 /** The <form>. It never reloads the page and shows no browser bubbles. */
-export function Form<V extends object>({ form, layout = "stack", action, label, children }: FormProps<V>) {
+export function Form<V extends object>({
+  form,
+  layout = "stack",
+  action,
+  label,
+  id,
+  children,
+}: FormProps<V>) {
   const isStatic = useIsStatic();
-  const { element } = extraOf(form);
+  const extra = extraOf(form);
+  const { element } = extra;
+  // The form renders before its actions, so FormActions in a dialog footer reads the id set here.
+  if (id !== undefined) extra.id = id;
   const dataLayout = layout === "stack" ? undefined : layout;
   if (isStatic) {
     return (
       <form
+        id={extra.id}
         className="t-form"
         data-t="form"
         data-layout={dataLayout}
@@ -198,6 +218,7 @@ export function Form<V extends object>({ form, layout = "stack", action, label, 
   return (
     <form
       ref={element}
+      id={extra.id}
       className="t-form"
       data-layout={dataLayout}
       noValidate
@@ -409,13 +430,16 @@ export interface FormActionsProps<V extends object> {
   children?: ReactNode;
 }
 
-/** The row of buttons at the end of the form. The submit button shows a spinner while the form sends. */
+/**
+ * The row of buttons at the end of the form. The submit button shows a spinner while the form sends. It
+ * may sit outside the form, such as in the footer of a dialog: its submit button names the form by its id.
+ */
 export function FormActions<V extends object>({ form, submit, children }: FormActionsProps<V>) {
   const sending = useStore(form.store, (state) => state.isSubmitting);
   return (
     <div className="t-form-actions">
       {children}
-      <Button type="submit" variant="primary" loading={sending}>
+      <Button type="submit" form={extraOf(form).id} variant="primary" loading={sending}>
         {submit}
       </Button>
     </div>

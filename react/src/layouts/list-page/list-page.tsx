@@ -157,8 +157,13 @@ export const SERVICE_ROWS: readonly ServiceRow[] = [
   },
 ];
 
+export interface ListPageLayoutProps {
+  /** Opens the list on a search, such as one that matches nothing. */
+  initialSearch?: string;
+}
+
 /** The list of services, with filters: the most common page of an app. */
-export function ListPageLayout() {
+export function ListPageLayout({ initialSearch }: ListPageLayoutProps) {
   const toast = useToast();
   const say = (message: string) => () => toast("info", message);
 
@@ -247,6 +252,7 @@ export function ListPageLayout() {
         selectable
         bulkActions={bulk}
         initialSort={[{ id: "name", desc: false }]}
+        initialSearch={initialSearch}
         pageSize={10}
       />
     </Page>

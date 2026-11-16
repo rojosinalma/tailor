@@ -18,6 +18,11 @@ export interface InputProps {
   readOnly?: boolean;
   required?: boolean;
   autoComplete?: string;
+  /**
+   * A regular expression that the whole value must match, such as "[a-z][a-z0-9-]*". A form shows its
+   * pattern message when it does not; say the format in the help text.
+   */
+  pattern?: string;
   inputMode?: HTMLAttributes<HTMLInputElement>["inputMode"];
   /** A glyph, icon or short text inside the box, before the text. */
   before?: ReactNode;
@@ -41,6 +46,7 @@ export function Input({
   readOnly,
   required,
   autoComplete,
+  pattern,
   inputMode,
   before,
   after,
@@ -57,6 +63,7 @@ export function Input({
     placeholder,
     readOnly,
     autoComplete,
+    pattern,
     inputMode,
     className: grouped ? "t-input-native" : "t-control t-input",
     "data-size": grouped ? undefined : dataSize,

@@ -146,6 +146,35 @@ export default defineExamples("data-table", [
     ),
   },
   {
+    id: "filtered",
+    title: "Opened on a filter",
+    note: "initialFilters and initialSearch: the table starts on the degraded services on web-2 whose name holds “worker”.",
+    render: () => (
+      <DataTable
+        label="Degraded workers on web-2"
+        columns={columns}
+        rows={few}
+        rowKey={(s) => s.id}
+        initialFilters={{ host: "web-2", status: "degraded" }}
+        initialSearch="worker"
+      />
+    ),
+  },
+  {
+    id: "no-matches",
+    title: "A filter that matches nothing",
+    note: "The table says so and offers Clear filters, which shows every row again.",
+    render: () => (
+      <DataTable
+        label="Services, no match"
+        columns={columns}
+        rows={few}
+        rowKey={(s) => s.id}
+        initialSearch="nothing-like-this"
+      />
+    ),
+  },
+  {
     id: "loading",
     title: "Loading",
     render: () => (

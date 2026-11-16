@@ -104,6 +104,10 @@ export interface DataTableProps<R extends RowData> {
   /** A search over the text columns. */
   search?: boolean;
   initialSort?: readonly SortKey[];
+  /** The search text at the start, to open the table on a filtered state. */
+  initialSearch?: string;
+  /** The column filters at the start: column key to value (a select filter takes an option value). */
+  initialFilters?: Readonly<Record<string, string>>;
   density?: (typeof spec.props.density)[number];
   /** Below 40rem: "cards" makes each row a card; "scroll" keeps the columns and scrolls sideways. */
   narrow?: (typeof spec.props.narrow)[number];
@@ -238,6 +242,7 @@ function StaticTable<R extends RowData>(props: DataTableProps<R> & { sort: reado
       data-page-sizes={pageSizes ? pageSizes.join(" ") : undefined}
       data-selectable={selectable ? "" : undefined}
       data-search={props.search === false ? "off" : undefined}
+      data-initial-search={props.search !== false && props.initialSearch ? props.initialSearch : undefined}
       data-narrow={narrow === "scroll" ? "scroll" : undefined}
     >
       {bulkActions?.length ? (
@@ -276,6 +281,9 @@ function StaticTable<R extends RowData>(props: DataTableProps<R> & { sort: reado
                     data-priority={priorityAttr(column.priority)}
                     data-sort={canSort(column) ? sortTypeOf(column, rows) : undefined}
                     data-filter={column.filter?.type}
+                    data-filter-value={
+                      column.filter ? props.initialFilters?.[column.key] || undefined : undefined
+                    }
                     aria-sort={ariaSort(key)}
                   >
                     {column.header}
@@ -319,8 +327,8 @@ export function DataTable<R extends RowData>(props: DataTableProps<R>) {
   const isStatic = useIsStatic();
   const initial: DataTableState = {
     sort: props.initialSort ?? [],
-    search: "",
-    filters: {},
+    search: props.initialSearch ?? "",
+    filters: props.initialFilters ?? {},
     page: 1,
     pageSize: props.pageSize ?? 20,
   };

@@ -1,4 +1,5 @@
 .t-code {
+  position: relative;
   min-width: 0;
   border: var(--t-border-w) solid var(--t-border);
   border-radius: var(--t-radius-box);
@@ -27,6 +28,24 @@
 
 .t-code-copy {
   margin-inline-start: auto;
+}
+
+/* Without a title there is no header: the copy button sits at the top end corner, over the code. */
+.t-code-corner {
+  position: absolute;
+  z-index: 1;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  display: flex;
+  padding: var(--t-space-1);
+  border-radius: 0 var(--t-radius-box);
+  background: var(--t-inset);
+}
+
+/* The code keeps clear of the button: room at the end of the lines and at least the button's height. */
+.t-code-corner ~ .t-code-pre {
+  min-height: calc(var(--t-control-h-sm) + var(--t-space-1) * 2);
+  padding-inline-end: calc(var(--t-control-h-sm) + var(--t-space-2));
 }
 
 .t-code-copy[data-copied] .t-icon {

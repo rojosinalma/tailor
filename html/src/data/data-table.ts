@@ -131,8 +131,13 @@ register("data-table", (root) => {
       const dir = c.th.getAttribute("aria-sort");
       return dir === "ascending" || dir === "descending" ? [{ id: c.id, desc: dir === "descending" }] : [];
     }),
-    search: "",
-    filters: {} as Record<string, string>,
+    // The server may open the table on a filtered state: data-initial-search, and data-filter-value on a th.
+    search: root.dataset.search === "off" ? "" : (root.dataset.initialSearch ?? ""),
+    filters: Object.fromEntries(
+      columns.flatMap((c) =>
+        c.filter && c.th.dataset.filterValue ? [[c.id, c.th.dataset.filterValue]] : [],
+      ),
+    ) as Record<string, string>,
     page: 1,
     pageSize: Number(root.dataset.pageSize) || 20,
   };
@@ -158,6 +163,7 @@ register("data-table", (root) => {
 
   if (root.dataset.search !== "off") {
     const [field, input] = searchField(t("search"), true);
+    input.value = state.search;
     input.addEventListener("input", () => {
       state.search = input.value;
       state.page = 1;
@@ -180,6 +186,7 @@ register("data-table", (root) => {
         [ANY, fill(t("filterAll"), { column: column.header })],
         ...choices,
       ]);
+      control.value = state.filters[column.id] || ANY;
       control.addEventListener("change", () => {
         const value = control.value === ANY ? "" : control.value;
         if ((state.filters[column.id] ?? "") === value) return;
@@ -194,6 +201,7 @@ register("data-table", (root) => {
       start.append(control);
     } else if (column.filter === "text") {
       const [field, input] = searchField(column.header, false);
+      input.value = state.filters[column.id] ?? "";
       input.addEventListener("input", () => {
         state.filters[column.id] = input.value;
         state.page = 1;

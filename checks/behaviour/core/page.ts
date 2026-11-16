@@ -25,6 +25,22 @@ export default behaviour("page", {
     await expect(menu).toBeHidden();
     await expect(more).toBeFocused();
   },
+  "the status sits beside the title; a readable header keeps to the body's width": async ({
+    page,
+    example,
+    expect,
+  }) => {
+    await page.setViewportSize({ width: 1920, height: 1000 });
+    const body = example("readable");
+    const title = await body.getByRole("heading", { level: 1, name: "About nas" }).boundingBox();
+    const status = await body.locator(".t-page-status").boundingBox();
+    expect(title && status && status.x > title.x + title.width && status.y < title.y + title.height).toBe(
+      true,
+    );
+    const action = await body.getByRole("button", { name: "Edit notes" }).boundingBox();
+    const section = await body.locator(".t-page-body > *").first().boundingBox();
+    expect(action && section && action.x + action.width <= section.x + section.width + 1).toBe(true);
+  },
   "a fill page never scrolls; its panes do": async ({ example, expect }) => {
     const body = example("fill");
     const page = body.locator(".t-page-body");

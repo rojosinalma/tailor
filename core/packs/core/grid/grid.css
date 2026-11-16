@@ -6,6 +6,11 @@
   min-width: 0;
 }
 
+/* A fixed set: the columns that stay empty collapse, so the children share the whole row. */
+.t-grid[data-fit] {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, var(--t-grid-min)), 1fr));
+}
+
 .t-grid[data-min="2xs"] {
   --t-grid-min: var(--t-measure-2xs);
 }

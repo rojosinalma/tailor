@@ -1,4 +1,4 @@
-import { type ReactElement, useState } from "react";
+import { type ReactElement, useId, useState } from "react";
 import { Button } from "../../core/button/button";
 import { Dialog, DialogClose } from "../../core/dialog/dialog";
 import { Icon } from "../../core/icon/icon";
@@ -60,6 +60,7 @@ async function addService(service: NewService): Promise<SubmitResult> {
  */
 export function AddServiceDialog({ trigger }: { trigger: ReactElement }) {
   const [open, setOpen] = useState(false);
+  const formId = useId();
   const form = useTailorForm<NewService>({
     defaultValues: NEW_SERVICE,
     onSubmit: async (service) => {
@@ -73,8 +74,26 @@ export function AddServiceDialog({ trigger }: { trigger: ReactElement }) {
     },
   });
   return (
-    <Dialog title="Add service" trigger={trigger} open={open} onOpenChange={setOpen}>
-      <Form form={form} action="/api/services" label="Add service">
+    <Dialog
+      title="Add service"
+      trigger={trigger}
+      open={open}
+      onOpenChange={setOpen}
+      // The buttons sit in the footer, outside the form, so they stay in reach while the fields scroll on a
+      // phone. They name the form by its id. Cancel first, the one primary button last; it shows a spinner
+      // while the form sends.
+      footer={
+        <FormActions form={form} submit="Add service">
+          {/* Cancel clears what was typed and the errors, and closes. */}
+          <DialogClose>
+            <Button type="reset" form={formId} onClick={() => form.reset()}>
+              Cancel
+            </Button>
+          </DialogClose>
+        </FormActions>
+      }
+    >
+      <Form form={form} id={formId} action="/api/services" label="Add service">
         {/* After a failed submit: the list of what to correct, with a link to each field. */}
         <FormSummary form={form} />
         {/* The one field that must be filled is marked; every other one has a sensible start value. */}
@@ -85,7 +104,8 @@ export function AddServiceDialog({ trigger }: { trigger: ReactElement }) {
           help="Lower-case letters, digits and dashes."
           required
         >
-          {(control) => <Input {...control} autoComplete="off" />}
+          {/* The pattern says the same as the help; both kits check it and show the pattern message. */}
+          {(control) => <Input {...control} pattern="[a-z0-9\-]+" autoComplete="off" />}
         </FormField>
         <FormField form={form} name="host" label="Host">
           {(control) => <Select {...control} options={SERVICE_HOSTS} />}
@@ -105,15 +125,6 @@ export function AddServiceDialog({ trigger }: { trigger: ReactElement }) {
         <FormField form={form} name="start" label="Start now" kind="toggle">
           {(control) => <Switch {...control} description="Otherwise it waits for the first deploy." />}
         </FormField>
-        {/* Cancel first, the one primary button last; it shows a spinner while the form sends. */}
-        <FormActions form={form} submit="Add service">
-          {/* Cancel clears what was typed and the errors, and closes. */}
-          <DialogClose>
-            <Button type="reset" onClick={() => form.reset()}>
-              Cancel
-            </Button>
-          </DialogClose>
-        </FormActions>
       </Form>
     </Dialog>
   );

@@ -152,6 +152,16 @@ export default behaviour("form", {
     const b = await example("grid").getByRole("textbox", { name: "Address" }).boundingBox();
     expect(a && b && b.y > a.y).toBe(true);
   },
+  "a pattern is checked in both kits and shows the pattern message": async ({ page, example, expect }) => {
+    const body = example("pattern");
+    const user = body.getByRole("textbox", { name: "User name" });
+    await user.fill("Alice");
+    await page.keyboard.press("Tab");
+    await expect(user).toHaveAttribute("aria-invalid", "true");
+    await expect(user).toHaveAccessibleDescription(/This value does not have the expected format/);
+    await user.fill("alice-2");
+    await expect(user).not.toHaveAttribute("aria-invalid", "true");
+  },
   "a check of its own runs on blur (React kit)": async ({ page, example, expect, kit }) => {
     if (kit === "html") return;
     const body = example("check");
