@@ -154,6 +154,8 @@
     --t-sidebar-w-collapsed: 3.5rem;
     --t-panel-w: 20rem;
     --t-gutter: clamp(var(--t-space-4), 3vw, var(--t-space-7));
+    /* The height of the visible screen. A shell's script keeps it in step with browser bars and the on-screen keyboard. */
+    --t-viewport-h: 100dvh;
     --t-safe-top: env(safe-area-inset-top, 0px);
     --t-safe-bottom: env(safe-area-inset-bottom, 0px);
     --t-safe-left: env(safe-area-inset-left, 0px);

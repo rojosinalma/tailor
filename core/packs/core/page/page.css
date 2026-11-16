@@ -67,20 +67,20 @@
 }
 
 /* Fill: the body takes exactly the free height and never scrolls; its children scroll alone. */
-.t-page[data-mode="fill"] > /* The other actions: their buttons in a wide page, the "more" menu in a narrow one. */
+.t-page[data-mode="fill"] > .t-page-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-4);
+  overflow: hidden;
+}
+
+/* The other actions: their buttons in a wide page, the "more" menu in a narrow one. */
 .t-page-secondary {
   display: contents;
 }
 
 .t-page-more {
   display: none;
-}
-
-.t-page-body {
-  display: flex;
-  flex-direction: column;
-  gap: var(--t-space-4);
-  overflow: hidden;
 }
 
 .t-page[data-width="readable"] > .t-page-body > * {

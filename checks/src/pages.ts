@@ -189,6 +189,27 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
     }
   }
 
+  // The boxes of an element as they show: one per line of a wrapped link, cut to every ancestor that clips or scrolls.
+  const shown = (el: Element): { left: number; right: number; top: number; bottom: number }[] => {
+    const boxes = [...el.getClientRects()].map((r) => ({
+      left: r.left,
+      right: r.right,
+      top: r.top,
+      bottom: r.bottom,
+    }));
+    for (let node = el.parentElement; node; node = node.parentElement) {
+      if (getComputedStyle(node).overflow === "visible") continue;
+      const clip = node.getBoundingClientRect();
+      for (const box of boxes) {
+        box.left = Math.max(box.left, clip.left);
+        box.right = Math.min(box.right, clip.right);
+        box.top = Math.max(box.top, clip.top);
+        box.bottom = Math.min(box.bottom, clip.bottom);
+      }
+    }
+    return boxes;
+  };
+
   for (let i = 0; i < controls.length; i++) {
     const a = controls[i];
     if (!a) continue;
@@ -197,8 +218,8 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
       if (!b || a.el.contains(b.el) || b.el.contains(a.el)) continue;
       // A link that wraps has one box per line, so the boxes are compared line by line.
       let worst: [number, number] | null = null;
-      for (const ra of a.el.getClientRects()) {
-        for (const rb of b.el.getClientRects()) {
+      for (const ra of shown(a.el)) {
+        for (const rb of shown(b.el)) {
           const w = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
           const h = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
           if (w > 4 && h > 4 && (!worst || w * h > worst[0] * worst[1])) worst = [w, h];
