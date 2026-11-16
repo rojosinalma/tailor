@@ -16,6 +16,7 @@ FROM nginxinc/nginx-unprivileged:1.27-alpine
 LABEL org.opencontainers.image.source="https://github.com/rojosinalma/tailor" \
       org.opencontainers.image.description="tailor: the showcase of every shell, component, skin and palette" \
       org.opencontainers.image.licenses="MIT"
+COPY showcase/site.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /src/showcase/dist /usr/share/nginx/html
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=3s CMD wget -q -O /dev/null http://127.0.0.1:8080/ || exit 1
