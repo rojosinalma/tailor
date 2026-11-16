@@ -29,30 +29,28 @@ The command copies the stylesheets into `public/tailor/`, the kit's source into 
 lines for `<head>` and the libraries to install. The kit runs in the browser and talks to any backend.
 
 ```tsx
-import { Button, Page, ThemeProvider, Stack, Stat, Grid } from "tailor/core";
+import { Button, Grid, Page, Stat } from "tailor/core";
 import { SideNavShell } from "tailor/shell-sidenav";
 import { Outlet } from "@tanstack/react-router";
 
 // The layout route: the shell, once. It takes data, not markup.
 export function AppLayout() {
   return (
-    <ThemeProvider config={window.TAILOR_THEME}>
-      <SideNavShell
-        brand={{ name: "Console", icon: "bi:box-seam" }}
-        nav={[
-          {
-            id: "main",
-            items: [
-              { id: "overview", label: "Overview", icon: "bi:speedometer2", to: "/", exact: true },
-              { id: "services", label: "Services", icon: "bi:hdd-stack", to: "/services", counter: 3 },
-            ],
-          },
-        ]}
-        footer={[{ id: "version", label: "Version", value: "1.4.0" }]}
-      >
-        <Outlet />
-      </SideNavShell>
-    </ThemeProvider>
+    <SideNavShell
+      brand={{ name: "Console", icon: "bi:box-seam" }}
+      nav={[
+        {
+          id: "main",
+          items: [
+            { id: "overview", label: "Overview", icon: "bi:speedometer2", to: "/", exact: true },
+            { id: "services", label: "Services", icon: "bi:hdd-stack", to: "/services", counter: 3 },
+          ],
+        },
+      ]}
+      footer={[{ id: "version", label: "Version", value: "1.4.0" }]}
+    >
+      <Outlet />
+    </SideNavShell>
   );
 }
 
@@ -72,10 +70,11 @@ export function OverviewPage() {
 1. **Router.** The kit uses TanStack Router: links (`AppLink`, the shells' navigation, `ButtonLink`) go
    through it and mark the current page. The standard pages give the route helpers
    `routeNotFoundComponent`, `routeErrorComponent` and `routePendingComponent`.
-2. **Theme.** `ThemeProvider` holds skin, palette and mode; `useTheme()` reads and sets them; the shells show
-   the theme controls (`theme={["skin", "palette", "mode"]}`, default `["mode"]`). The choice is kept across
-   visits. Code that draws on a canvas reads colours with `theme.color("accent")` and follows the `t:theme`
-   event; the charts and the map do this by themselves.
+2. **Theme.** The lines for `<head>` set the page's theme (`window.TAILOR_THEME`), and the kit reads it:
+   `useTheme()` gives skin, palette and mode and sets them; the shells show the theme controls
+   (`theme={["skin", "palette", "mode"]}`, default `["mode"]`). The choice is kept across visits. A
+   `ThemeProvider` is only for a config that comes from somewhere else. Code that draws on a canvas reads
+   colours from the theme and follows the `t:theme` event; the charts and the map do this by themselves.
 3. **Icons.** `<Icon name="bi:house" />` comes from the project's sprite. `tailor icons` builds the sprite
    from the names in the source.
 4. **Texts.** `setTexts({ close: "Schließen" })` replaces built-in texts.

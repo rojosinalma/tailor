@@ -18,6 +18,7 @@ import { checkWeight } from "../checks/src/weight";
 import { build, loadPalettes, loadSkins } from "./lib/build";
 import { DEFAULT_PALETTE, DEFAULT_SKIN } from "./lib/build-showcase";
 import { gen } from "./lib/gen";
+import { release } from "./lib/release";
 import { lintCss, report } from "./lib/lint-css";
 import { lintSkins } from "./lib/lint-skins";
 import { at } from "./lib/paths";
@@ -98,6 +99,14 @@ await step("build", async () => {
   await build({ quiet: true });
   return true;
 });
+
+if (everything) {
+  // The release artifact: its React kit must compile on its own, and no pack may import past its requirements.
+  await step("release artifact", async () => {
+    await release();
+    return true;
+  });
+}
 
 if (!failed || everything) {
   const skins = (await loadSkins()).map((s) => s.spec.id);

@@ -26,6 +26,7 @@ For a component `<id>` in the pack `<pack>`:
 | `core/packs/<pack>/<id>/logic.ts`    | Optional. Logic that both kits share. Plain TypeScript, no DOM, with `logic.test.ts`              |
 | `react/src/<pack>/<id>/<id>.tsx`     | The React component(s)                                                                            |
 | `react/src/<pack>/<id>/examples.tsx` | The showcase entry. Required: a component with no examples fails the build                        |
+| `react/src/<pack>/<id>/sample.tsx`   | Optional. Sample data that examples share. Like the examples, it is not part of a release         |
 | `html/src/<pack>/<id>.ts`            | The HTML kit script. Only when the spec says `html: "script"`                                     |
 | `checks/behaviour/<pack>/<id>.ts`    | Behaviour tests that run against both kits. Required for `html: "script"`                         |
 

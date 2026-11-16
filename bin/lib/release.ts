@@ -50,7 +50,8 @@ export function moduleTarget(module: string): string | undefined {
   if (parts[0] === "react" && parts[1] === "src") {
     if (parts.length === 3) return parts[2] === "examples" ? undefined : `react/kit/${parts[2]}`;
     if (parts.length === 4 && parts[3] === "index.gen") return `react/${parts[2]}/index`;
-    if (parts.at(-1) === "examples") return undefined;
+    // Examples and the sample data they share are showcase content, not part of the kit.
+    if (parts.at(-1) === "examples" || parts.at(-1) === "sample") return undefined;
     return `react/${dropGen(parts.slice(2).join("/"))}`;
   }
   if (parts[0] === "core" && parts[1] === "src" && parts.length === 3)
