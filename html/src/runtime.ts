@@ -9,10 +9,11 @@ interface Runtime {
   readonly behaviours: Map<string, Behaviour>;
   readonly done: WeakMap<Element, Set<string>>;
   readonly once: Set<string>;
+  ids: number;
 }
 
 const host = globalThis as { __tailor?: Runtime };
-if (!host.__tailor) host.__tailor = { behaviours: new Map(), done: new WeakMap(), once: new Set() };
+if (!host.__tailor) host.__tailor = { behaviours: new Map(), done: new WeakMap(), once: new Set(), ids: 0 };
 const runtime: Runtime = host.__tailor;
 
 function run(element: HTMLElement): void {
@@ -78,6 +79,5 @@ export function glyph(body: string): SVGSVGElement {
   return svg;
 }
 
-let counter = 0;
-export const uid = (prefix: string): string =>
-  `${prefix}-${++counter}-${Math.random().toString(36).slice(2, 6)}`;
+/** An id that no other element of the page has. The count is shared by every script file of the kit. */
+export const uid = (prefix: string): string => `${prefix}-${++runtime.ids}`;

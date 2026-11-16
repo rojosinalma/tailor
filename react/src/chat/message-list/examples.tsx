@@ -115,9 +115,16 @@ function Conversation() {
     started.current = true;
     stream(REPLY);
   });
+  // While the reply still arrives, a hidden marker tells the image check to wait for the end.
+  const arriving = !started.current || messages.some((m) => m.state === "streaming");
   return (
     <ChatView
-      messages={<MessageList label="Deploy of web-1" messages={messages} />}
+      messages={
+        <>
+          {arriving ? <span hidden data-sc-wait="" /> : null}
+          <MessageList label="Deploy of web-1" messages={messages} />
+        </>
+      }
       notices={
         <Notices
           label="Waiting for you"

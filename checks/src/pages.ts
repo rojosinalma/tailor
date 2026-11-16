@@ -372,6 +372,10 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
 }
 
 async function settle(page: Page): Promise<void> {
+  // An example that plays something over time (a reply that arrives) marks itself with data-sc-wait until it ends.
+  await page
+    .waitForFunction(() => !document.querySelector("[data-sc-wait]"), undefined, { timeout: 3000 })
+    .catch(() => null);
   await page.evaluate(async () => {
     await document.fonts.ready;
     // Every image is loaded and decoded, also the ones a script added, such as map tiles.
