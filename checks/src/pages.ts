@@ -31,6 +31,9 @@ const TOUCH_WIDTHS: readonly number[] = SCREENS.filter((screen) => screen.touch)
 );
 const heightOf = (width: number): number => SCREENS.find((screen) => screen.width === width)?.height ?? 900;
 const TOUCH = 44;
+/** What a dropped connection or a page that never arrived looks like in a page error. */
+const TRANSIENT = /ERR_NETWORK_CHANGED|ERR_CONNECTION|Timeout \d+ms exceeded/;
+
 /** The part of the accessibility engine that the check calls in the page. */
 interface AxeEngine {
   run(
@@ -485,143 +488,158 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
         const mine = all.filter((s) => TOUCH_WIDTHS.includes(s.width) === touch);
         const first = mine[0];
         if (!first) continue;
-        const context: BrowserContext = await browser.newContext({
-          viewport: { width: first.width, height: heightOf(first.width) },
-          hasTouch: touch,
-          isMobile: touch,
-          reducedMotion: "reduce",
-          colorScheme: "dark",
-          locale: "en-US",
-          timezoneId: "UTC",
-        });
-        await context.addInitScript({ content: `window.__inspect = ${inspect.toString()};` });
-        const page = await context.newPage();
-        const errors: string[] = [];
-        page.on("pageerror", (error) => errors.push(String(error)));
-        page.on("console", (message) => {
-          if (message.type() === "error") errors.push(message.text());
-        });
-        try {
-          await page.clock.setFixedTime(FIXED_NOW);
-          const join = target.url.includes("?") ? "&" : "?";
-          await page.goto(
-            `${siteUrl}${target.url}${join}skin=${first.skin}&palette=${first.palette}&mode=${first.mode}`,
-          );
-          await page.locator(".sc-example").first().waitFor();
-          let dom = "";
-          let loaded = first.skin;
-          const reactOnly =
-            target.kit === "react" ? await page.locator('.sc-example[data-kit="react"]').count() : 0;
-          for (const state of mine) {
-            states++;
-            const label = `${state.skin || "no skin"} ${state.palette} ${state.mode} ${state.width}px`;
-            await page.setViewportSize({ width: state.width, height: heightOf(state.width) });
-            if (state.skin !== loaded) {
-              // A skin changes sizes and fonts, so the page is loaded again in it, as a person would see it.
-              // Palettes and modes change colours only and switch in place.
-              await page.goto(
-                `${siteUrl}${target.url}${join}skin=${state.skin}&palette=${state.palette}&mode=${state.mode}`,
-              );
-              await page.locator(".sc-example").first().waitFor();
-              loaded = state.skin;
-              dom = "";
-            }
-            await page.evaluate(({ skin, palette, mode }) => {
-              const root = document.documentElement;
-              root.dataset.skin = skin;
-              root.dataset.palette = palette;
-              root.dataset.mode = mode;
-            }, state);
-            await settle(page);
-            const found = await page.evaluate(
-              ([isTouch, size]) =>
-                (window as unknown as { __inspect: typeof inspect }).__inspect(isTouch, size),
-              [touch, TOUCH] as const,
+        // A change in the machine's network (a container that starts somewhere) makes the browser drop its
+        // requests. A page that failed to load for that reason is opened once more; a real fault fails twice.
+        for (let attempt = 0; attempt < 2; attempt++) {
+          const local: PageProblem[] = [];
+          const context: BrowserContext = await browser.newContext({
+            viewport: { width: first.width, height: heightOf(first.width) },
+            hasTouch: touch,
+            isMobile: touch,
+            reducedMotion: "reduce",
+            colorScheme: "dark",
+            locale: "en-US",
+            timezoneId: "UTC",
+          });
+          await context.addInitScript({ content: `window.__inspect = ${inspect.toString()};` });
+          const page = await context.newPage();
+          const errors: string[] = [];
+          page.on("pageerror", (error) => errors.push(String(error)));
+          page.on("console", (message) => {
+            if (message.type() === "error") errors.push(message.text());
+          });
+          try {
+            await page.clock.setFixedTime(FIXED_NOW);
+            const join = target.url.includes("?") ? "&" : "?";
+            await page.goto(
+              `${siteUrl}${target.url}${join}skin=${first.skin}&palette=${first.palette}&mode=${first.mode}`,
             );
-            for (const problem of found)
-              problems.push({ page: `${target.kit}/${target.component}`, state: label, ...problem });
-            if (state.image) {
-              dom ||= sha(await page.evaluate(() => document.body.innerHTML));
-              const fingerprint = sha(
-                [version, stylesheets, dom, state.skin, state.palette, state.mode, state.width, touch].join(
-                  "|",
-                ),
-              );
-              const known = options.skipKnown ? cache[`${state.image}@${fingerprint}`] : undefined;
-              if (known) {
-                taken.set(state.image, known);
-                skipped++;
-              } else {
-                await repaint(page);
-                const png = await page.screenshot({ fullPage: true, animations: "disabled", caret: "hide" });
-                const hash = pixelHash(png);
-                taken.set(state.image, hash);
-                cache[`${state.image}@${fingerprint}`] = hash;
-                await writeFile(`checks/.images/${state.image}.png`, png);
+            await page.locator(".sc-example").first().waitFor();
+            let dom = "";
+            let loaded = first.skin;
+            const reactOnly =
+              target.kit === "react" ? await page.locator('.sc-example[data-kit="react"]').count() : 0;
+            for (const state of mine) {
+              states++;
+              const label = `${state.skin || "no skin"} ${state.palette} ${state.mode} ${state.width}px`;
+              await page.setViewportSize({ width: state.width, height: heightOf(state.width) });
+              if (state.skin !== loaded) {
+                // A skin changes sizes and fonts, so the page is loaded again in it, as a person would see it.
+                // Palettes and modes change colours only and switch in place.
+                await page.goto(
+                  `${siteUrl}${target.url}${join}skin=${state.skin}&palette=${state.palette}&mode=${state.mode}`,
+                );
+                await page.locator(".sc-example").first().waitFor();
+                loaded = state.skin;
+                dom = "";
               }
-              // Examples that only the React kit can show are left out of the image that the HTML kit is compared with.
-              if (reactOnly > 0) {
-                const shared = state.image.replace(/^react\//, "shared/");
-                const knownShared = options.skipKnown ? cache[`${shared}@${fingerprint}`] : undefined;
-                if (knownShared) {
-                  taken.set(shared, knownShared);
+              await page.evaluate(({ skin, palette, mode }) => {
+                const root = document.documentElement;
+                root.dataset.skin = skin;
+                root.dataset.palette = palette;
+                root.dataset.mode = mode;
+              }, state);
+              await settle(page);
+              const found = await page.evaluate(
+                ([isTouch, size]) =>
+                  (window as unknown as { __inspect: typeof inspect }).__inspect(isTouch, size),
+                [touch, TOUCH] as const,
+              );
+              for (const problem of found)
+                local.push({ page: `${target.kit}/${target.component}`, state: label, ...problem });
+              if (state.image) {
+                dom ||= sha(await page.evaluate(() => document.body.innerHTML));
+                const fingerprint = sha(
+                  [version, stylesheets, dom, state.skin, state.palette, state.mode, state.width, touch].join(
+                    "|",
+                  ),
+                );
+                const known = options.skipKnown ? cache[`${state.image}@${fingerprint}`] : undefined;
+                if (known) {
+                  taken.set(state.image, known);
+                  skipped++;
                 } else {
-                  await page
-                    .addStyleTag({ content: '.sc-example[data-kit="react"]{display:none}' })
-                    .then(async (tag) => {
-                      await repaint(page);
-                      const png = await page.screenshot({
-                        fullPage: true,
-                        animations: "disabled",
-                        caret: "hide",
+                  await repaint(page);
+                  const png = await page.screenshot({
+                    fullPage: true,
+                    animations: "disabled",
+                    caret: "hide",
+                  });
+                  const hash = pixelHash(png);
+                  taken.set(state.image, hash);
+                  cache[`${state.image}@${fingerprint}`] = hash;
+                  await writeFile(`checks/.images/${state.image}.png`, png);
+                }
+                // Examples that only the React kit can show are left out of the image that the HTML kit is compared with.
+                if (reactOnly > 0) {
+                  const shared = state.image.replace(/^react\//, "shared/");
+                  const knownShared = options.skipKnown ? cache[`${shared}@${fingerprint}`] : undefined;
+                  if (knownShared) {
+                    taken.set(shared, knownShared);
+                  } else {
+                    await page
+                      .addStyleTag({ content: '.sc-example[data-kit="react"]{display:none}' })
+                      .then(async (tag) => {
+                        await repaint(page);
+                        const png = await page.screenshot({
+                          fullPage: true,
+                          animations: "disabled",
+                          caret: "hide",
+                        });
+                        const hash = pixelHash(png);
+                        taken.set(shared, hash);
+                        cache[`${shared}@${fingerprint}`] = hash;
+                        await writeFile(`checks/.images/${shared}.png`, png);
+                        await tag.evaluate((node) => (node as Element).remove());
                       });
-                      const hash = pixelHash(png);
-                      taken.set(shared, hash);
-                      cache[`${shared}@${fingerprint}`] = hash;
-                      await writeFile(`checks/.images/${shared}.png`, png);
-                      await tag.evaluate((node) => (node as Element).remove());
-                    });
+                  }
                 }
               }
             }
-          }
-          if (options.axe && !touch) {
-            await page.addScriptTag({ path: at("node_modules/axe-core/axe.min.js") });
-            const violations = await page.evaluate(async (tags) => {
-              const axe = (window as unknown as { axe: AxeEngine }).axe;
-              const result = await axe.run(document, { runOnly: tags, resultTypes: ["violations"] });
-              return result.violations.map((v) => ({
-                id: v.id,
-                help: v.help,
-                targets: v.nodes.slice(0, 3).map((node) => node.target.join(" ")),
-              }));
-            }, AXE_TAGS);
-            for (const violation of violations) {
-              const where = violation.targets.join("; ");
-              problems.push({
-                page: `${target.kit}/${target.component}`,
-                state: "accessibility",
-                rule: `axe:${violation.id}`,
-                message: `${violation.help} (${where})`,
-              });
+            if (options.axe && !touch) {
+              await page.addScriptTag({ path: at("node_modules/axe-core/axe.min.js") });
+              const violations = await page.evaluate(async (tags) => {
+                const axe = (window as unknown as { axe: AxeEngine }).axe;
+                const result = await axe.run(document, { runOnly: tags, resultTypes: ["violations"] });
+                return result.violations.map((v) => ({
+                  id: v.id,
+                  help: v.help,
+                  targets: v.nodes.slice(0, 3).map((node) => node.target.join(" ")),
+                }));
+              }, AXE_TAGS);
+              for (const violation of violations) {
+                const where = violation.targets.join("; ");
+                local.push({
+                  page: `${target.kit}/${target.component}`,
+                  state: "accessibility",
+                  rule: `axe:${violation.id}`,
+                  message: `${violation.help} (${where})`,
+                });
+              }
             }
-          }
-          for (const error of errors)
-            problems.push({
+            for (const error of errors)
+              local.push({
+                page: `${target.kit}/${target.component}`,
+                state: "load",
+                rule: "page-error",
+                message: error,
+              });
+          } catch (error) {
+            local.push({
               page: `${target.kit}/${target.component}`,
               state: "load",
               rule: "page-error",
-              message: error,
+              message: error instanceof Error ? (error.message.split("\n")[0] ?? "") : String(error),
             });
-        } catch (error) {
-          problems.push({
-            page: `${target.kit}/${target.component}`,
-            state: "load",
-            rule: "page-error",
-            message: error instanceof Error ? (error.message.split("\n")[0] ?? "") : String(error),
-          });
-        } finally {
-          await context.close();
+          } finally {
+            await context.close();
+          }
+          const dropped = local.some(
+            (problem) => problem.rule === "page-error" && TRANSIENT.test(problem.message),
+          );
+          if (attempt === 0 && dropped) continue;
+          problems.push(...local);
+          break;
         }
       }
     });

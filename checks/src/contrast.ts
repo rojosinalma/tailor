@@ -4,7 +4,7 @@
  */
 import { at } from "../../bin/lib/paths";
 import type { ComponentSpec } from "../../core/src/spec";
-import { connectBrowser, FIXED_NOW, pool, WORKERS } from "./browser";
+import { connectBrowser, FIXED_NOW, openPage, pool, WORKERS } from "./browser";
 import { COLOURFUL } from "./colourful";
 import type { PageProblem } from "./pages";
 
@@ -49,8 +49,7 @@ export async function runContrast(
       const page = await context.newPage();
       try {
         await page.clock.setFixedTime(FIXED_NOW);
-        await page.goto(`${options.siteUrl}entry.html?id=${id}`);
-        await page.locator(".sc-example").first().waitFor();
+        await openPage(page, `${options.siteUrl}entry.html?id=${id}`);
         // The accessibility engine is put into the page once and run again for every combination.
         await page.addScriptTag({ path: AXE_SOURCE });
         for (const skin of skins) {

@@ -2,7 +2,7 @@
  * The browser for the checks: one pinned Chromium in a container, kept running between checks.
  * The checks connect to it, so every run uses the same browser build and the same fonts.
  */
-import { type Browser, chromium } from "playwright";
+import { type Browser, chromium, type Page } from "playwright";
 
 const PLAYWRIGHT_VERSION = "1.65.1";
 const IMAGE = `mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-noble`;
@@ -78,3 +78,19 @@ export async function pool<T, R>(
 export const FIXED_NOW = new Date("2026-11-15T12:00:00Z");
 
 export const WORKERS = Math.max(4, Math.min(24, navigator.hardwareConcurrency - 4));
+
+/**
+ * Opens a showcase page and waits for its examples. A change in the machine's network makes the browser
+ * drop its requests, so a page that did not arrive is opened once more.
+ */
+export async function openPage(page: Page, url: string): Promise<void> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      await page.goto(url);
+      await page.locator(".sc-example").first().waitFor({ timeout: 15_000 });
+      return;
+    } catch (error) {
+      if (attempt === 1) throw error;
+    }
+  }
+}

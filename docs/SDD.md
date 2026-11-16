@@ -175,6 +175,7 @@ Append-only. One line per decision: what, why.
 37. 2026-11-16 — An installed app behind an access proxy (a proxy that sends every request without a session to a sign-in page on another origin, such as Cloudflare Access) was tested against a stand-in proxy: with a session the app installs; when the session is gone and the device is online, a navigation goes to the sign-in page; offline, the stored app opens; nothing of the sign-in page ever enters the cache. Limit: the test with the real proxy and a signed-in browser needs a person, so it was not run. A first install always needs a session.
 38. 2026-11-16 — The unused-code check also fails on an export or a type that nothing uses. Four were left at the release; they are gone.
 39. 2026-11-16 — The check builds before it checks types. On a fresh checkout the generated files of the showcase did not exist yet; the first nightly run and the first CI run found it.
+40. 2026-11-16 — A page that failed to load because the machine's network changed is opened once more. The checks' browser shares the machine's network, and a container that starts elsewhere makes it drop its requests.
 
 ## 10. Measurements at 2.0.0
 
