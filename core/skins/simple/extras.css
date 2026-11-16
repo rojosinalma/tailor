@@ -1,4 +1,49 @@
-/* Simple.css: flat surfaces, 1px borders, one solid accent button, no shadows, accent text on hover. */
+/* Simple.css: flat surfaces on the page, 1px borders, one solid accent button, boxed details and notices, no shadows. */
+
+/* shell: bordered navigation links; the current and the hovered one in the accent */
+.t-shell-link[aria-current="page"] {
+  background: transparent;
+  color: var(--t-accent-text);
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-accent);
+}
+
+.t-shell-link[aria-current="page"]::before {
+  background: transparent;
+}
+
+.t-shell-link[data-current-section] {
+  color: var(--t-text);
+}
+
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav .t-shell-link:not(span) {
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-border);
+}
+
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav .t-shell-link:is([aria-current="page"], [data-current-section]) {
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-accent);
+}
+
+.t-shell[data-shell="topnav"] > .t-shell-bar > .t-shell-nav .t-shell-link[data-current-section]::before {
+  background: transparent;
+}
+
+.t-shell-link:active:not(span) {
+  background: transparent;
+  color: var(--t-accent-text);
+}
+
+@media (hover: hover) {
+  .t-shell-link:hover:not(span) {
+    background: transparent;
+    color: var(--t-accent-text);
+    box-shadow: inset 0 0 0 var(--t-border-w) var(--t-accent);
+  }
+}
+
+/* pane: a bordered box on the page background */
+.t-pane {
+  background: var(--t-canvas);
+}
 
 /* button */
 .t-btn {
@@ -57,6 +102,7 @@
   border-color: var(--t-selection);
   background: var(--t-selection);
   color: var(--t-muted);
+  cursor: not-allowed;
 }
 
 .t-btn:is([data-variant="ghost"], [data-variant="link"]):is(:disabled, [aria-disabled="true"]) {
@@ -96,13 +142,49 @@
   }
 }
 
-/* control: the page background inside a plain border */
+/* segmented: a bordered box on the page, the chosen option a solid accent block */
+.t-segmented {
+  border-color: var(--t-border);
+  background: var(--t-canvas);
+}
+
+.t-segmented-option:is([data-checked], :has(:checked)) {
+  border-color: var(--t-accent-solid);
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+}
+
+.t-segmented-option:is([data-checked], :has(:checked)):is([data-disabled], :has(:disabled)) {
+  border-color: var(--t-selection);
+  background: var(--t-selection);
+  color: var(--t-disabled);
+}
+
+@media (hover: hover) {
+  .t-segmented-option:hover:not([data-checked], :has(:checked), [data-disabled], :has(:disabled)) {
+    background: transparent;
+    color: var(--t-accent-text);
+  }
+}
+
+/* control: the page background inside a plain border; a disabled one sunk into the tint */
 .t-control {
   background: var(--t-canvas);
 }
 
 .t-control:is(:disabled, [data-disabled], [aria-disabled="true"]) {
-  background: var(--t-selection);
+  background: var(--t-inset);
+}
+
+/* check, radio: boxes on the page background, filled with the accent when on */
+.t-check-input:not(:checked, [data-checked], :indeterminate, [data-indeterminate], :disabled, [data-disabled]),
+.t-radio-input:not(:checked, [data-checked], :disabled, [data-disabled]) {
+  background: var(--t-canvas);
+}
+
+/* slider: a flat thumb on the page background */
+.t-slider-thumb {
+  background: var(--t-canvas);
 }
 
 /* popup: a flat box on the page background, the accent on the chosen option */
@@ -114,12 +196,150 @@
   color: var(--t-accent-text);
 }
 
+/* card, stat: Simple's article, a bordered box on the page background */
+.t-card,
+.t-stat {
+  background: var(--t-canvas);
+}
+
+/* table: a tinted header row in bold and zebra rows */
+.t-table thead th {
+  color: var(--t-text);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-table tbody tr:nth-child(even) {
+  background: var(--t-inset);
+}
+
+/* accordion: Simple's details summary in bold, a line under an open one */
+.t-accordion-trigger {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-accordion-item:is([data-open], [open]) .t-accordion-trigger {
+  border-bottom: var(--t-border-w) solid var(--t-border);
+}
+
+/* kbd: Simple's key, a plain frame with a heavier bottom line */
+.t-kbd {
+  border-color: var(--t-border-control);
+  background: transparent;
+}
+
+/* prose: an accent bar and italics on quotes, a tinted table head and zebra rows */
+.t-prose blockquote {
+  border-inline-start-color: var(--t-accent);
+  font-style: italic;
+}
+
+.t-prose th {
+  background: var(--t-inset);
+}
+
+.t-prose tbody tr:nth-child(even) {
+  background: var(--t-inset);
+}
+
+/* progress: Simple's progress, 5px corners instead of a pill */
+.t-progress-track {
+  border-radius: var(--t-radius-control);
+}
+
+/* tooltip: a flat bordered label on the page background */
+.t-tooltip {
+  border-color: var(--t-border);
+  background: var(--t-canvas);
+  color: var(--t-text);
+}
+
+&[data-mode="light"] .t-tooltip {
+  color: var(--t-text);
+}
+
+/* alert, banner: Simple's notice, a tinted box; the tone shows only in the icon and the border */
+.t-alert {
+  background: var(--t-inset);
+}
+
+.t-banner {
+  background: var(--t-inset);
+}
+
+/* toast: a flat notice on the page background */
+.t-toast {
+  background: var(--t-canvas);
+}
+
 /* dialog: the page background, one border, no shadow */
 .t-dialog {
   background: var(--t-canvas);
 }
 
+/* drawer, bottom sheet: the page background behind one border */
+.t-drawer {
+  background: var(--t-canvas);
+}
+
+/* tabs: the pills are Simple's bordered navigation links, the chosen one in the accent */
+.t-tab[aria-selected="true"],
+.t-tab[aria-current="page"] {
+  color: var(--t-accent-text);
+}
+
+.t-tabs[data-variant="pills"] .t-tab {
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-border);
+}
+
+.t-tabs[data-variant="pills"] .t-tab:is([aria-selected="true"], [aria-current="page"]) {
+  background: transparent;
+  color: var(--t-accent-text);
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-accent);
+}
+
+@media (hover: hover) {
+  .t-tab:hover:not([aria-disabled="true"], :disabled) {
+    background: transparent;
+    color: var(--t-accent-text);
+  }
+
+  .t-tabs[data-variant="pills"] .t-tab:hover:not([aria-disabled="true"], :disabled) {
+    box-shadow: inset 0 0 0 var(--t-border-w) var(--t-accent);
+  }
+}
+
+/* pagination: bordered page links, the current page a solid accent block */
+.t-pagination-page:not([aria-current="page"]) {
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-border);
+}
+
+@media (hover: hover) {
+  .t-pagination-page:hover:not([aria-current="page"]) {
+    background: transparent;
+    color: var(--t-accent-text);
+    box-shadow: inset 0 0 0 var(--t-border-w) var(--t-accent);
+  }
+}
+
+/* bottom bar: the current item in the accent, its icon framed instead of filled */
+.t-bottom-bar-item[aria-current="page"] {
+  color: var(--t-accent-text);
+  font-weight: var(--t-weight-normal);
+}
+
+.t-bottom-bar-item[aria-current="page"] > .t-bottom-bar-icon {
+  background: transparent;
+  box-shadow: inset 0 0 0 var(--t-border-w) var(--t-accent);
+}
+
 /* date: the chosen day in the accent, today in accent text */
 .t-calendar-day[data-today]:not([data-selected]) {
   color: var(--t-accent-text);
+}
+
+/* chart tooltip, file item, window: flat boxes on the page background like the popups */
+.t-chart-tooltip,
+.t-file-item,
+.t-window {
+  background: var(--t-canvas);
 }
