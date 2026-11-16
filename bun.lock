@@ -16,7 +16,7 @@
     },
     "checks": {
       "name": "@tailor/checks",
-      "version": "2.0.0-dev.0",
+      "version": "2.0.0",
       "devDependencies": {
         "@playwright/test": "1.65.1",
         "axe-core": "4.14.0",
@@ -25,11 +25,11 @@
     },
     "cli": {
       "name": "@tailor/cli",
-      "version": "2.0.0-dev.0",
+      "version": "2.0.0",
     },
     "core": {
       "name": "@tailor/core",
-      "version": "2.0.0-dev.0",
+      "version": "2.0.0",
       "dependencies": {
         "chart.js": "4.6.1",
         "diff": "9.0.0",
@@ -46,7 +46,7 @@
     },
     "html": {
       "name": "@tailor/html",
-      "version": "2.0.0-dev.0",
+      "version": "2.0.0",
       "dependencies": {
         "chart.js": "4.6.1",
         "dompurify": "3.4.18",
@@ -54,7 +54,7 @@
     },
     "react": {
       "name": "@tailor/react",
-      "version": "2.0.0-dev.0",
+      "version": "2.0.0",
       "dependencies": {
         "@base-ui/react": "1.9.0",
         "@dnd-kit/dom": "0.5.3",
@@ -80,7 +80,7 @@
     },
     "showcase": {
       "name": "@tailor/showcase",
-      "version": "2.0.0-dev.0",
+      "version": "2.0.0",
       "dependencies": {
         "@tanstack/react-router": "1.170.46",
         "react": "19.3.1",

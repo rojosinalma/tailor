@@ -9,7 +9,7 @@ them.
 
 - **Shells:** the frame of a UI, picked by name: top navigation, side navigation, a bare frame, a workspace.
   A shell takes data, not markup, and draws the navigation, the phone form and the theme controls.
-- **Components:** about a hundred, in packs, so a project carries only what it uses.
+- **Components:** 135, in 20 packs, so a project carries only what it uses.
 - **Skins and palettes:** six skins and 21 palettes, each palette in dark and light. They change at run time
   and the markup stays the same. Every skin works with every palette, and text stays readable in all of them.
 - **Two kits, one look:** a React kit (behaviour from Base UI, with TanStack Router, Table, Form, Virtual

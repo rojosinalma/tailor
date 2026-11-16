@@ -1,6 +1,6 @@
 {
   "name": "tailor",
-  "version": "2.0.0-dev.0",
+  "version": "2.0.0",
   "description": "A UI framework: standard shells and components, swappable skins, canonical palettes, for React and for plain HTML.",
   "license": "MIT",
   "private": true,

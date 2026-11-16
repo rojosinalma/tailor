@@ -2,7 +2,7 @@
 
 This project follows [semantic versioning](https://semver.org). Format: [Keep a Changelog](https://keepachangelog.com).
 
-## [2.0.0] — unreleased
+## [2.0.0] — 2026-11-16
 
 Version 2 is a new framework under the same name. It shares no markup, class names or commands with
 version 1, which stays on the branch `v1` and gets no new features.
@@ -14,9 +14,10 @@ version 1, which stays on the branch `v1` and gets no new features.
 - Six skins: Bootstrap, Luz, Primer, Pico, Simple, WebTUI. 21 palettes, each in dark and light, with guarded
   text colours that stay readable on every surface.
 - Two kits that share the stylesheets: a React kit and an HTML kit.
-- Shells: top navigation, side navigation, bare, workspace.
-- Components in packs: core, forms, pickers, data, command, charts, code, markdown, chat, sortable, board,
-  calendar, map, media, cropper, tour, pwa, windows.
+- Shells: top navigation, side navigation, bare, workspace. A shell takes data and draws the frame, the
+  phone form and the theme controls.
+- 135 components in packs: core, forms, pickers, data, command, charts, code, markdown, chat, sortable,
+  board, calendar, map, media, cropper, tour, pwa, windows, and layouts (six standard pages to copy).
 - A showcase of every shell, component and layout in every skin and palette.
 - The `tailor` command: `add`, `upgrade`, `remove`, `list`, `icons`.
 - Checks: stylesheet and skin rules, behaviour tests that run against both kits, page checks at four widths,

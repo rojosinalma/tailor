@@ -200,3 +200,18 @@ build on a violation.
    files in `core/skins/<id>/fonts/` and names them in `fonts`; no font comes from another server.
 4. A look that needs a new setting is a change to `core/src/skins.ts` and `core/css/tokens.css`, never a
    forbidden property in extras.
+5. Settings that give one component a system's shape, each with its default:
+
+   | Setting          | Controls                                               | Default                   |
+   | ---------------- | ------------------------------------------------------ | ------------------------- |
+   | `nav-item-h`     | The height of a shell's navigation link                | the medium control height |
+   | `spin-duration`  | One turn of a spinner; other loops are multiples of it | `720ms`                   |
+   | `btn-press`      | How far a button moves down while pressed              | `0`                       |
+   | `card-header-pb` | Bottom padding of a card header, for a header band     | `0`                       |
+   | `state-px`       | Inline padding of a state label, for a filled pill     | `0`                       |
+   | `pagination-gap` | The gap between page boxes; `0` joins them             | one spacing step          |
+   | `progress-h`     | The height of a progress track                         | two spacing steps         |
+   | `bar-label-size` | The label size of the bottom bar                       | the smallest text size    |
+   | `timeline-badge` | The size of a timeline marker                          | one line of text          |
+
+   Motion and spin times go to zero under reduced motion, whatever the skin sets.

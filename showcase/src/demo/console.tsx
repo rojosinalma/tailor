@@ -183,7 +183,7 @@ export function OverviewPage({ href }: { href: Href }) {
 function DeployTable({ rows }: { rows: typeof DEPLOYS }) {
   return (
     <Table
-      caption="Recent deploys"
+      caption="The latest version of each service"
       rows={rows}
       rowKey={(row) => row.id}
       columns={[
