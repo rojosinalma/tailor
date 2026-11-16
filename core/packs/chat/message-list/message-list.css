@@ -168,7 +168,7 @@
   margin-block-start: var(--t-space-2);
   border-radius: var(--t-radius-pill);
   background: var(--t-muted);
-  animation: t-messages-pulse calc(var(--t-motion-base) * 6) var(--t-ease) infinite alternate;
+  animation: t-messages-pulse calc(var(--t-spin) * 1.5) var(--t-ease) infinite alternate;
 }
 
 @keyframes t-messages-pulse {

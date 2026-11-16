@@ -5,7 +5,7 @@
   border-radius: var(--t-radius-control);
   background: linear-gradient(90deg, var(--t-active) 30%, var(--t-hover) 50%, var(--t-active) 70%);
   background-size: 300% 100%;
-  animation: t-skeleton-shimmer calc(var(--t-motion-base) * 9) linear infinite;
+  animation: t-skeleton-shimmer calc(var(--t-spin) * 2) linear infinite;
 }
 
 .t-skeleton:not([data-shape]) {

@@ -16,7 +16,7 @@
 }
 
 .t-dot[data-pulse]::before {
-  animation: t-dot-pulse calc(var(--t-motion-base) * 10) var(--t-ease) infinite;
+  animation: t-dot-pulse calc(var(--t-spin) * 2.5) var(--t-ease) infinite;
 }
 
 @keyframes t-dot-pulse {
