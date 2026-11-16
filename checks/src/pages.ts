@@ -244,10 +244,15 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
       if (label && (label.contains(el) || label.control === el)) return true;
       return hit.closest(".t-control, [data-t-hit]")?.contains(el) ?? false;
     };
+    const moved = new Map<Element, [number, number]>();
     for (const { el, rect } of controls) {
       // A link inside a line of text is exempt, as WCAG 2.5.8 allows.
       if (el.tagName === "A" && getComputedStyle(el).display === "inline") continue;
       if (rect.height >= touchSize - 0.5 && rect.width >= 24) continue;
+      // The probe scrolls the control into view. Every box it moves is put back afterwards.
+      for (let node = el.parentElement; node; node = node.parentElement) {
+        if (!moved.has(node)) moved.set(node, [node.scrollLeft, node.scrollTop]);
+      }
       el.scrollIntoView({ block: "center", inline: "center" });
       const now = el.getBoundingClientRect();
       const [cx, cy] = [now.left + now.width / 2, now.top + now.height / 2];
@@ -267,6 +272,7 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
         });
       }
     }
+    for (const [node, [left, top]] of moved) node.scrollTo(left, top);
     scrollTo(0, 0);
   }
   return problems;
