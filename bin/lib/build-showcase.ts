@@ -2,7 +2,7 @@
 import { cp, mkdir, rm } from "node:fs/promises";
 import { dirname } from "node:path";
 import { Glob } from "bun";
-import { createElement } from "react";
+import { createElement, type ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { withRequirements } from "../../core/src/packs";
 import type { PaletteSpec } from "../../core/src/palette";
@@ -27,6 +27,13 @@ const minify = (css: string): string =>
     .replace(/\s+/g, " ")
     .replace(/\s*([{};])\s*/g, "$1")
     .trim();
+
+/** One static page of the showcase site for the HTML kit: its address under the site root and its content. */
+export interface StaticPage {
+  readonly path: string;
+  readonly title: string;
+  readonly render: () => ReactNode;
+}
 
 export const DEFAULT_SKIN = "bootstrap";
 export const DEFAULT_PALETTE = "gruvbox";
@@ -82,8 +89,18 @@ export async function buildShowcase(
   if (!(await siteFile.exists()) || (await siteFile.text()) !== site) await Bun.write(siteFile, site);
 
   // The app and the React entry page.
+  // The entry page of the checks, the showcase app, and every other page of the site (showcase/src/pages/<name>.tsx).
   const entrypoints = [at("showcase/src/entry.tsx")];
-  if (await Bun.file(at("showcase/src/main.tsx")).exists()) entrypoints.push(at("showcase/src/main.tsx"));
+  const hasApp = await Bun.file(at("showcase/src/main.tsx")).exists();
+  if (hasApp) entrypoints.push(at("showcase/src/main.tsx"));
+  const sitePages = (await scan("showcase/src/pages/*.tsx")).map(
+    (f) =>
+      f
+        .split("/")
+        .pop()
+        ?.replace(/\.tsx$/, "") ?? "",
+  );
+  for (const name of sitePages) entrypoints.push(at(`showcase/src/pages/${name}.tsx`));
   const bundle = await Bun.build({
     entrypoints,
     outdir: at(dist, "assets"),
@@ -135,6 +152,33 @@ export async function buildShowcase(
     }),
   );
 
+  if (hasApp) {
+    await out(
+      `${dist}/index.html`,
+      page({
+        title: "tailor",
+        rel: "",
+        theme,
+        body: '<div id="root"></div>',
+        scripts: ["assets/main.js"],
+        bodyClass: "sc-app",
+      }),
+    );
+  }
+  for (const name of sitePages) {
+    await out(
+      `${dist}/${name}.html`,
+      page({
+        title: "tailor",
+        rel: "",
+        theme,
+        body: '<div id="root"></div>',
+        scripts: [`assets/${name}.js`],
+        bodyClass: "sc-page",
+      }),
+    );
+  }
+
   // HTML kit: one static page per component, rendered from the same examples in static mode.
   const { StaticKit } = await import(at("react/src/kit.tsx"));
   const { EntrySections } = await import(at("showcase/src/entry-sections.tsx"));
@@ -177,5 +221,35 @@ export async function buildShowcase(
         bodyClass: "sc-entry",
       }),
     );
+  }
+
+  // HTML kit: the site's own static pages (showcase/src/static-pages.tsx), such as a shell shown as a full UI
+  // with several pages that link to each other.
+  if (await Bun.file(at("showcase/src/static-pages.tsx")).exists()) {
+    const { staticPages } = (await import(at("showcase/src/static-pages.tsx"))) as {
+      staticPages: readonly StaticPage[];
+    };
+    for (const item of staticPages) {
+      const depth = item.path.split("/").length - 1;
+      const rel = "../".repeat(depth);
+      const body = renderToStaticMarkup(
+        createElement(
+          StaticKit,
+          null,
+          createElement(IconSprite, { href: `${rel}tailor/icons.svg` }, item.render()),
+        ),
+      );
+      await out(
+        `${dist}/${item.path}`,
+        page({
+          title: `${item.title} · tailor`,
+          rel,
+          theme,
+          body,
+          scripts: scriptsFor("core", body),
+          bodyClass: "sc-page",
+        }),
+      );
+    }
   }
 }

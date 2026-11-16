@@ -162,3 +162,5 @@ Append-only. One line per decision: what, why.
 24. 2026-11-16 — Tokyo Night light text and Solarized light sunken surface moved slightly (to #3358b0 and #f1ebd8). Text on the sunken surface was below 4.5:1.
 25. 2026-11-16 — Proof of the two-kit model: select, date picker and dialog passed one shared behaviour test set in both kits (44 tests) before any other component was written.
 26. 2026-11-16 — Proof of the image check: 371 page states with images took 3.5 s on 14 pages; about 130 ms per state for one worker, so a full run of some 5,000 states fits the two-minute limit with 24 workers.
+27. 2026-11-16 — The standard page layouts are a pack (`layouts`) that requires `core`, `forms` and `data`. A layout uses components of those packs, and a pack is how a project gets files.
+28. 2026-11-16 — Behaviour tests run with the real clock; a test that reads "today" holds the date itself. A date that stands still for the whole page breaks timing inside Base UI.

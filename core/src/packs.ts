@@ -207,6 +207,15 @@ export const PACKS: readonly PackSpec[] = [
     libraries: {},
     html: "none",
   }),
+  pack({
+    id: "layouts",
+    name: "Layouts",
+    description:
+      "Standard page layouts with sample content, to copy: list with filters, detail, settings, dashboard, form dialog, first run.",
+    requires: ["core", "forms", "data"],
+    libraries: {},
+    html: "full",
+  }),
 ];
 
 export const packById = (id: string): PackSpec | undefined => PACKS.find((p) => p.id === id);
