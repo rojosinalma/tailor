@@ -2,7 +2,11 @@
   "id": "luz",
   "name": "Luz",
   "about": "In the style of the Luz design system by d00m-gui.",
-  "source": { "name": "d00m-gui Luz", "url": "https://github.com/d00m-gui/luz", "license": "MIT" },
+  "source": {
+    "name": "d00m-gui Luz",
+    "url": "https://github.com/d00m-gui/luz",
+    "license": "MIT"
+  },
   "settings": {
     "heading-weight": "700",
     "label-weight": "600",
@@ -21,6 +25,10 @@
     "control-h-md": "2.375rem",
     "control-h-lg": "2.875rem",
     "control-px": "1rem",
-    "btn-weight": "500"
+    "btn-weight": "500",
+    "card-shadow": "var(--t-shadow-sm)",
+    "motion-fast": "150ms",
+    "motion-base": "200ms",
+    "ease": "cubic-bezier(0.4, 0, 0.2, 1)"
   }
 }

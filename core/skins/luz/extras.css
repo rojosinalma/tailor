@@ -1,105 +1,220 @@
-/* Luz: borderless soft fills, one solid primary, tinted tone fills, depth-shifted surfaces, a half-alpha focus outline. */
+/* Luz: soft tinted fills instead of outlines, raised surfaces one depth step from the page, pill badges, boxed field groups, segmented tabs, notice-style toasts. */
 
-/* button */
+/* shell: the bars sit one depth step above the page; the current link is a soft accent fill */
+.t-shell-bar,
+.t-shell > .t-shell-footer,
+.t-shell[data-shell="sidenav"] > .t-shell-sidebar {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+  background: var(--t-surface);
+}
+
+.t-shell-sidebar > .t-shell-bar {
+  background: none;
+}
+
+.t-shell-sidebar > .t-shell-footer {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+  background: none;
+}
+
+.t-shell-link {
+  transition:
+    background-color var(--t-motion-fast) var(--t-ease),
+    color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-shell-link[aria-current="page"] {
+  background: color-mix(in srgb, var(--t-accent) var(--t-tint), transparent);
+  color: var(--t-accent-text);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-shell-link[aria-current="page"]::before {
+  background: transparent;
+}
+
+.t-shell-link[data-current-section]::before {
+  background: color-mix(in srgb, var(--t-accent) 60%, transparent);
+}
+
+.t-shell-initial {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint), transparent);
+}
+
+/* bare shell: no bars at all */
+.t-shell[data-shell="bare"] > .t-shell-bar,
+.t-shell[data-shell="bare"] > .t-shell-footer {
+  background: none;
+}
+
+/* sidenav shell: the page head shares the sidebar's surface */
+.t-shell[data-shell="sidenav"] > .t-shell-main > .t-page > .t-page-header {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+@media (max-width: 40rem) {
+  .t-shell[data-shell="sidenav"] > .t-shell-sidebar,
+  .t-shell-sidebar > .t-shell-bar,
+  .t-shell-sidebar > .t-shell-actions {
+    border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+    background: var(--t-surface);
+  }
+}
+
+/* pane: a raised panel with a soft border */
+.t-pane,
+.t-pane-header,
+.t-pane-footer {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+/* split: a quiet handle that lights up in the accent */
+.t-split-handle::before {
+  background: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+@media (hover: hover) {
+  .t-split-handle:hover::before {
+    background: var(--t-accent);
+  }
+}
+
+/* button: borderless soft fills, one solid primary, tinted tones */
 .t-btn {
   border-color: transparent;
-  background: color-mix(in srgb, var(--t-muted) 20%, transparent);
-  color: var(--t-text);
+  background: var(--t-selection);
+  transition:
+    background-color var(--t-motion-fast) var(--t-ease),
+    color var(--t-motion-fast) var(--t-ease),
+    opacity var(--t-motion-fast) var(--t-ease);
 }
 
 .t-btn:active:not(:disabled, [aria-disabled="true"]) {
-  background: color-mix(in srgb, var(--t-muted) 34%, transparent);
+  background: color-mix(in srgb, var(--t-selection), var(--t-text) 12%);
 }
 
 .t-btn[data-variant="primary"] {
   border-color: transparent;
   background: var(--t-accent-solid);
-  color: var(--t-on-accent);
   font-weight: var(--t-weight-bold);
 }
 
 .t-btn[data-variant="primary"]:active:not(:disabled, [aria-disabled="true"]) {
-  background: color-mix(in srgb, var(--t-accent-solid) 84%, var(--t-on-accent));
+  background: color-mix(in srgb, var(--t-accent-solid), var(--t-on-accent) 22%);
 }
 
 .t-btn[data-variant="danger"] {
   border-color: transparent;
-  background: color-mix(in srgb, var(--t-danger) 18%, transparent);
-  color: color-mix(in srgb, var(--t-danger-text) 55%, var(--t-text));
+  background: color-mix(in srgb, var(--t-danger) 16%, transparent);
+  color: var(--t-danger-text);
 }
 
 .t-btn[data-variant="danger"]:active:not(:disabled, [aria-disabled="true"]) {
   border-color: transparent;
-  background: color-mix(in srgb, var(--t-danger) 34%, transparent);
-  color: color-mix(in srgb, var(--t-danger-text) 55%, var(--t-text));
+  background: var(--t-danger);
+  color: var(--t-on-danger);
 }
 
 .t-btn[data-variant="ghost"] {
   background: transparent;
-  color: var(--t-muted);
 }
 
 .t-btn[data-variant="ghost"]:active:not(:disabled, [aria-disabled="true"]) {
-  background: color-mix(in srgb, var(--t-text) 14%, transparent);
-  color: var(--t-text);
+  background: var(--t-active);
 }
 
 .t-btn[data-variant="link"] {
   background: none;
-  color: var(--t-link);
 }
 
-.t-btn:is(:disabled, [aria-disabled="true"]) {
-  opacity: 0.4;
+.t-btn:disabled,
+.t-btn[aria-disabled="true"]:not([aria-busy="true"]) {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--t-selection) 60%, transparent);
+  color: var(--t-disabled);
+}
+
+.t-btn[data-variant="ghost"]:disabled,
+.t-btn[data-variant="link"]:disabled {
+  background: none;
 }
 
 @media (hover: hover) {
   .t-btn:hover:not(:disabled, [aria-disabled="true"]) {
-    background: color-mix(in srgb, var(--t-muted) 28%, transparent);
+    background: color-mix(in srgb, var(--t-selection), var(--t-text) 7%);
   }
 
   .t-btn[data-variant="primary"]:hover:not(:disabled, [aria-disabled="true"]) {
-    background: color-mix(in srgb, var(--t-accent-solid) 92%, var(--t-on-accent));
+    background: color-mix(in srgb, var(--t-accent-solid), var(--t-on-accent) 12%);
   }
 
   .t-btn[data-variant="danger"]:hover:not(:disabled, [aria-disabled="true"]) {
     border-color: transparent;
-    background: color-mix(in srgb, var(--t-danger) 28%, transparent);
-    color: color-mix(in srgb, var(--t-danger-text) 55%, var(--t-text));
+    background: var(--t-danger);
+    color: var(--t-on-danger);
   }
 
   .t-btn[data-variant="ghost"]:hover:not(:disabled, [aria-disabled="true"]) {
-    background: color-mix(in srgb, var(--t-text) 8%, transparent);
-    color: var(--t-text);
+    background: var(--t-hover);
   }
 
   .t-btn[data-variant="link"]:hover:not(:disabled, [aria-disabled="true"]) {
     background: none;
-    color: color-mix(in srgb, var(--t-link) 70%, var(--t-text));
   }
 }
 
-/* control: one depth step below its surface, a soft border, the focus outline instead of a border change */
+/* segmented: a soft track; the chosen option is the solid accent */
+.t-segmented {
+  border-color: transparent;
+}
+
+.t-segmented-option {
+  transition:
+    background-color var(--t-motion-fast) var(--t-ease),
+    color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-segmented-option:is([data-checked], :has(:checked)) {
+  border-color: transparent;
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+  box-shadow: none;
+}
+
+@media (hover: hover) {
+  .t-segmented-option:hover:not([data-checked], [data-disabled], :has(:checked, :disabled)) {
+    background: var(--t-hover);
+    color: var(--t-text);
+  }
+}
+
+/* control: a soft border, the half-alpha focus outline instead of a border change */
 .t-control {
-  border-color: color-mix(in srgb, var(--t-border-control) 60%, var(--t-border));
-  background: color-mix(in srgb, var(--t-canvas) 91%, var(--t-text));
+  border-color: color-mix(in srgb, var(--t-border-control) 70%, var(--t-border));
+  transition:
+    border-color var(--t-motion-fast) var(--t-ease),
+    outline-color var(--t-motion-fast) var(--t-ease);
 }
 
 .t-control[data-popup-open],
 .t-control[aria-expanded="true"],
 input.t-control:focus,
-textarea.t-control:focus {
-  border-color: color-mix(in srgb, var(--t-border-control) 60%, var(--t-border));
-  outline: 2px solid color-mix(in srgb, var(--t-focus) 65%, transparent);
-  outline-offset: -1px;
+textarea.t-control:focus,
+.t-control.t-input-group:focus-within,
+.t-control.t-number:focus-within,
+.t-control.t-multi-select:focus-within {
+  border-color: color-mix(in srgb, var(--t-accent) 70%, var(--t-border-control));
 }
 
-.t-control:is([aria-invalid="true"], [data-invalid]) {
-  border-color: color-mix(in srgb, var(--t-danger) 60%, transparent);
+.t-control:is([aria-invalid="true"], [data-invalid]),
+.t-control.t-input-group:has(.t-input-native[aria-invalid="true"], .t-input-native[data-invalid]),
+.t-control.t-number:has(.t-number-input[aria-invalid="true"]) {
+  border-color: var(--t-danger);
 }
 
-.t-control:is(:disabled, [data-disabled], [aria-disabled="true"]) {
-  background: var(--t-canvas);
+.t-control[data-t-upgraded] {
+  border: 0;
 }
 
 @media (hover: hover) {
@@ -108,55 +223,403 @@ textarea.t-control:focus {
   }
 }
 
-/* popup: one depth step above the page, soft border; the chosen option in a tinted fill */
+/* popup: one depth step above the page, a soft border; the chosen option in a tinted fill */
 .t-popup {
   border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
-  background: color-mix(in srgb, var(--t-canvas) 94.5%, var(--t-text));
+}
+
+.t-option {
+  transition: background-color var(--t-motion-fast) var(--t-ease);
 }
 
 .t-option[aria-selected="true"] {
   background: color-mix(in srgb, var(--t-accent) 16%, transparent);
-  color: color-mix(in srgb, var(--t-accent-text) 55%, var(--t-text));
+  color: var(--t-accent-text);
 }
 
 .t-option[aria-selected="true"][data-highlighted] {
-  background: color-mix(in srgb, var(--t-accent) 26%, transparent);
+  background: color-mix(in srgb, var(--t-accent) var(--t-tint), transparent);
 }
 
 .t-option-check {
   color: inherit;
 }
 
-/* dialog: the depth surface with a soft border and a blurred page behind */
+/* menu: soft separators */
+.t-menu-separator {
+  background: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+/* number: soft step buttons */
+.t-number-step:first-child,
+.t-number-step:last-child {
+  border-color: color-mix(in srgb, var(--t-border-control) 50%, transparent);
+}
+
+/* search: the key hint as a soft key cap */
+.t-search-key {
+  border-color: transparent;
+  background: var(--t-hover);
+}
+
+/* check: soft boxes, the solid accent when checked */
+.t-check-input,
+.t-radio-input {
+  transition:
+    background-color var(--t-motion-fast) var(--t-ease),
+    border-color var(--t-motion-fast) var(--t-ease);
+}
+
+/* slider: a solid accent thumb on a soft track */
+.t-slider-track {
+  background: var(--t-selection);
+}
+
+.t-slider-thumb {
+  border-color: var(--t-surface);
+  background: var(--t-accent-solid);
+}
+
+.t-slider[data-disabled] .t-slider-thumb {
+  border-color: var(--t-surface);
+  background: var(--t-disabled);
+}
+
+/* badge: a pill with a soft fill and a faint ring in its tone */
+.t-badge {
+  border-color: color-mix(in srgb, var(--t-tone) 30%, transparent);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-badge[data-variant="solid"] {
+  border-color: transparent;
+}
+
+.t-badge[data-variant="outline"] {
+  border-color: color-mix(in srgb, var(--t-tone) 60%, transparent);
+}
+
+/* chip: a soft pill with no outline */
+.t-chip {
+  border-color: transparent;
+  background: var(--t-selection);
+}
+
+.t-chip[data-tone] {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint), transparent);
+}
+
+button.t-chip[aria-pressed="true"] {
+  border-color: transparent;
+  background: var(--t-accent-solid);
+}
+
+button.t-chip[data-tone][aria-pressed="true"] {
+  background: var(--t-tone);
+}
+
+.t-chip[aria-disabled="true"],
+button.t-chip:disabled {
+  border-color: transparent;
+  background: color-mix(in srgb, var(--t-selection) 60%, transparent);
+}
+
+/* card: the raised surface, a soft border and a soft shadow */
+.t-card,
+.t-card-footer,
+.t-card[data-padding="none"] > .t-card-header:not(:only-child),
+.t-stat {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+.t-card[data-tone] {
+  border-inline-start-color: var(--t-tone);
+}
+
+.t-card[data-selected] {
+  border-color: var(--t-accent);
+}
+
+@media (hover: hover) {
+  .t-card:has(.t-card-link):hover,
+  .t-stat:has(.t-stat-link):hover {
+    border-color: color-mix(in srgb, var(--t-accent) 50%, var(--t-border));
+  }
+}
+
+/* table: a rounded raised box, soft hairlines, no stripes */
+.t-table-wrap {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+  background: var(--t-surface);
+}
+
+.t-table caption,
+.t-table th,
+.t-table td {
+  border-bottom-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+.t-table thead th {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-table tbody tr:nth-child(even) {
+  background: none;
+}
+
+@media (hover: hover) {
+  .t-table tbody tr:hover,
+  .t-table tbody tr:nth-child(even):hover {
+    background: var(--t-hover);
+  }
+}
+
+/* list: soft dividers */
+.t-list:not([data-dividers="false"]) > .t-list-item + .t-list-item,
+.t-facts-row + .t-facts-row,
+.t-accordion,
+.t-accordion-item + .t-accordion-item {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+/* code-block: a sunken box with a soft border */
+.t-code,
+.t-code-header {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+/* kbd: a soft key cap */
+.t-kbd {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+  border-bottom-color: var(--t-border);
+}
+
+/* progress: a pill track with no ring */
+.t-progress-track {
+  background: var(--t-selection);
+  box-shadow: none;
+}
+
+/* separator: a soft line */
+.t-separator,
+.t-separator:has(> .t-separator-label)::before,
+.t-separator:has(> .t-separator-label)::after {
+  background: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+.t-separator:has(> .t-separator-label) {
+  background: none;
+}
+
+/* tooltip: a contrast chip, the text colour behind the page colour */
+.t-tooltip {
+  border-color: transparent;
+  background: var(--t-text);
+  color: var(--t-canvas);
+  font-weight: var(--t-weight-medium);
+}
+
+/* alert: luz's notice, the tone at a soft fill with the text in the tone */
+.t-alert,
+.t-banner,
+.t-notices-item {
+  border-color: color-mix(in srgb, var(--t-tone) 30%, transparent);
+  background: color-mix(in srgb, var(--t-tone) 12%, var(--t-canvas));
+  color: var(--t-tone-text);
+}
+
+.t-alert-close,
+.t-banner-close,
+:is(.t-alert, .t-banner, .t-notices-item, .t-toast) .t-btn[data-variant="ghost"] {
+  color: inherit;
+}
+
+@media (hover: hover) {
+  .t-alert-close:hover,
+  .t-banner-close:hover {
+    background: var(--t-hover);
+    color: inherit;
+  }
+}
+
+/* toast: a notice that floats, tinted all over instead of an edge stripe */
+.t-toast {
+  border-color: color-mix(in srgb, var(--t-tone) 30%, transparent);
+  border-inline-start-color: color-mix(in srgb, var(--t-tone) 30%, transparent);
+  background: color-mix(in srgb, var(--t-tone) 14%, var(--t-surface));
+  color: var(--t-tone-text);
+}
+
+.t-toast-icon {
+  color: var(--t-tone-text);
+}
+
+.t-toast-close {
+  color: inherit;
+}
+
+@media (hover: hover) {
+  .t-toast-close:hover {
+    background: var(--t-hover);
+    color: inherit;
+  }
+}
+
+/* dialog: the raised surface with a soft border and a blurred page behind */
 .t-dialog-backdrop,
-.t-dialog::backdrop {
+.t-dialog::backdrop,
+.t-drawer-backdrop,
+.t-drawer::backdrop {
   backdrop-filter: blur(0.125em);
 }
 
-.t-dialog {
-  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
-  background: color-mix(in srgb, var(--t-canvas) 94.5%, var(--t-text));
-}
-
+.t-dialog,
 .t-dialog-header,
-.t-dialog-footer {
+.t-dialog-footer,
+.t-drawer,
+.t-drawer-header,
+.t-drawer-footer {
   border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
 }
 
-.t-dialog-title {
+.t-dialog-title,
+.t-drawer-title {
   font-weight: var(--t-weight-bold);
+}
+
+/* tabs: segmented, the chosen tab a soft accent fill instead of a rail */
+.t-tabs-list {
+  box-shadow: none;
+}
+
+.t-tab {
+  border-radius: var(--t-radius-control);
+}
+
+.t-tab[aria-selected="true"],
+.t-tab[aria-current="page"] {
+  background: color-mix(in srgb, var(--t-accent) var(--t-tint), transparent);
+  color: var(--t-accent-text);
+  box-shadow: none;
+}
+
+.t-tabs[data-variant="pills"] .t-tab[aria-selected="true"],
+.t-tabs[data-variant="pills"] .t-tab[aria-current="page"] {
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+}
+
+@media (hover: hover) {
+  .t-tab:hover:not([aria-selected="true"], [aria-current="page"], [aria-disabled="true"], :disabled) {
+    background: var(--t-hover);
+  }
+}
+
+/* pagination: separate soft boxes, the current page solid */
+.t-pagination-page {
+  background: var(--t-selection);
+}
+
+.t-pagination-page[aria-current="page"] {
+  background: var(--t-accent-solid);
+}
+
+@media (hover: hover) {
+  .t-pagination-page:hover:not([aria-current="page"]) {
+    background: color-mix(in srgb, var(--t-selection), var(--t-text) 7%);
+  }
+}
+
+/* stepper: the current step in a soft accent ring */
+.t-stepper-step[data-state="current"] .t-stepper-marker {
+  background: color-mix(in srgb, var(--t-accent) var(--t-tint), transparent);
+}
+
+/* bottom-bar: the raised surface, the current item in a soft accent pill */
+.t-bottom-bar {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+  background: var(--t-surface);
+}
+
+.t-bottom-bar-item[aria-current="page"] > .t-bottom-bar-icon {
+  background: color-mix(in srgb, var(--t-accent) var(--t-tint), transparent);
+  color: var(--t-accent-text);
+}
+
+/* nav-drawer: a soft footer line */
+.t-nav-drawer-footer {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+/* board: soft column frames */
+.t-board-column {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+.t-board-column[data-tone] {
+  border-top-color: var(--t-tone);
+}
+
+/* calendar-view: soft grid lines */
+.t-calendar-view-month,
+.t-calendar-view-week,
+.t-calendar-view-day + .t-calendar-view-day,
+.t-calendar-view-weekgrid,
+.t-calendar-view-heads,
+.t-calendar-view-allday,
+.t-calendar-view-agenda-title {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+/* chart: the tooltip as a popup */
+.t-chart-tooltip {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+/* message-list: borderless bubbles, one depth step above the page */
+.t-messages-bubble {
+  border-color: transparent;
+}
+
+.t-messages-item[data-role="self"] .t-messages-bubble {
+  border-color: transparent;
+}
+
+.t-messages-item[data-state="sending"] .t-messages-bubble {
+  border-color: var(--t-border);
+}
+
+.t-messages-item[data-state="failed"] .t-messages-bubble {
+  border-color: var(--t-danger);
+}
+
+/* command-palette: soft lines */
+.t-command-search,
+.t-command-footer {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+/* map: a soft frame */
+.t-map {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
 }
 
 /* date: tinted hover and today, the solid primary for the chosen day */
 .t-calendar-day[data-today]:not([data-selected]) {
   border-color: transparent;
-  background: color-mix(in srgb, var(--t-accent) 16%, transparent);
-  color: color-mix(in srgb, var(--t-accent-text) 55%, var(--t-text));
+  background: color-mix(in srgb, var(--t-accent) var(--t-tint), transparent);
+  color: var(--t-accent-text);
 }
 
-@media (hover: hover) {
-  .t-calendar-nav:hover:not(:disabled),
-  .t-calendar-day:hover:not(:disabled, [data-selected]) {
-    background: color-mix(in srgb, var(--t-muted) 20%, transparent);
-  }
+/* file: a soft drop zone */
+.t-file-item {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
+}
+
+/* windows: soft frames */
+.t-window,
+.t-window-bar,
+.t-windows-bubble {
+  border-color: color-mix(in srgb, var(--t-border) 72%, transparent);
 }
