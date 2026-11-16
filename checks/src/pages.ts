@@ -7,7 +7,6 @@ import { createHash } from "node:crypto";
 import { mkdir } from "node:fs/promises";
 import { dirname } from "node:path";
 import { inflateSync } from "node:zlib";
-import { AxeBuilder } from "@axe-core/playwright";
 import type { Browser, BrowserContext, Page } from "playwright";
 import { at } from "../../bin/lib/paths";
 import type { ComponentSpec } from "../../core/src/spec";
@@ -32,6 +31,14 @@ const TOUCH_WIDTHS: readonly number[] = SCREENS.filter((screen) => screen.touch)
 );
 const heightOf = (width: number): number => SCREENS.find((screen) => screen.width === width)?.height ?? 900;
 const TOUCH = 44;
+/** The part of the accessibility engine that the check calls in the page. */
+interface AxeEngine {
+  run(
+    context: Document,
+    options: { runOnly: string[]; resultTypes: string[] },
+  ): Promise<{ violations: { id: string; help: string; nodes: { target: string[] }[] }[] }>;
+}
+
 /** The accessibility target: WCAG 2.2 level AA. */
 const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
@@ -579,12 +586,18 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
             }
           }
           if (options.axe && !touch) {
-            const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
+            await page.addScriptTag({ path: at("node_modules/axe-core/axe.min.js") });
+            const violations = await page.evaluate(async (tags) => {
+              const axe = (window as unknown as { axe: AxeEngine }).axe;
+              const result = await axe.run(document, { runOnly: tags, resultTypes: ["violations"] });
+              return result.violations.map((v) => ({
+                id: v.id,
+                help: v.help,
+                targets: v.nodes.slice(0, 3).map((node) => node.target.join(" ")),
+              }));
+            }, AXE_TAGS);
             for (const violation of violations) {
-              const where = violation.nodes
-                .slice(0, 3)
-                .map((n) => n.target.join(" "))
-                .join("; ");
+              const where = violation.targets.join("; ");
               problems.push({
                 page: `${target.kit}/${target.component}`,
                 state: "accessibility",
