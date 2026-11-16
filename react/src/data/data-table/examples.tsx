@@ -133,6 +133,7 @@ export default defineExamples("data-table", [
   },
   {
     id: "server",
+    kit: "react",
     title: "Server-side data",
     note: "With manual, the table shows the rows as they come and reports the sort, search, filters and page.",
     render: () => <Server />,

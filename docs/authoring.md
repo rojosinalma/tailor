@@ -141,7 +141,9 @@ export default defineComponent({
 4. Sample data is neutral: `web-1`, `nas`, `alice`, `example.com`.
 5. `display: "frame"` gives the example a box with a height: for pages, shells and parts that fill their parent.
    `width: "sm" | "md"` gives it a narrow box, to show how the component adapts to its container.
-6. Dates in examples are fixed dates near 2026-11-15, never "now": the image check holds the clock at
+6. `kit: "react"` marks an example that only the React kit can show (a callback, live data, a server mode).
+   The HTML kit's page leaves it out, and the kit parity check compares the two kits without it.
+7. Dates in examples are fixed dates near 2026-11-15, never "now": the image check holds the clock at
    2026-11-15 12:00 UTC, so a page looks the same on every day.
 
 ## 9. Behaviour tests

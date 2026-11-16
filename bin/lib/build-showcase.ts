@@ -206,7 +206,11 @@ export async function buildShowcase(
         createElement(
           IconSprite,
           { href: "../tailor/icons.svg" },
-          createElement(EntrySections, { set, title: spec.name }),
+          createElement(EntrySections, {
+            // An example that only the React kit can show is not on the HTML kit's page.
+            set: { ...set, examples: set.examples.filter((example) => example.kit !== "react") },
+            title: spec.name,
+          }),
         ),
       ),
     );
@@ -214,6 +218,7 @@ export async function buildShowcase(
     const filter =
       '<script>(function(){var q=new URLSearchParams(location.search),e=q.get("example");' +
       'if(e)document.querySelectorAll(".sc-example").forEach(function(s){if(s.dataset.example!==e)s.remove()});' +
+      "document.querySelectorAll('.sc-example[data-kit=\"react\"]').forEach(function(s){s.remove()});" +
       'if(q.get("embed"))document.body.classList.add("sc-embed")})()</script>';
 
     await out(

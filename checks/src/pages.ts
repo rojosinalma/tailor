@@ -403,6 +403,8 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
           );
           await page.locator(".sc-example").first().waitFor();
           let dom = "";
+          const reactOnly =
+            target.kit === "react" ? await page.locator('.sc-example[data-kit="react"]').count() : 0;
           for (const state of mine) {
             states++;
             const label = `${state.skin || "no skin"} ${state.palette} ${state.mode} ${state.width}px`;
@@ -440,6 +442,30 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
                 cache[`${state.image}@${fingerprint}`] = hash;
                 if (reference[state.image] !== hash)
                   await writeFile(`checks/.images/${state.image}.png`, png);
+              }
+              // Examples that only the React kit can show are left out of the image that the HTML kit is compared with.
+              if (reactOnly > 0) {
+                const shared = state.image.replace(/^react\//, "shared/");
+                const knownShared = options.skipKnown ? cache[`${shared}@${fingerprint}`] : undefined;
+                if (knownShared) {
+                  taken.set(shared, knownShared);
+                } else {
+                  await page
+                    .addStyleTag({ content: '.sc-example[data-kit="react"]{display:none}' })
+                    .then(async (tag) => {
+                      await repaint(page);
+                      const png = await page.screenshot({
+                        fullPage: true,
+                        animations: "disabled",
+                        caret: "hide",
+                      });
+                      const hash = pixelHash(png);
+                      taken.set(shared, hash);
+                      cache[`${shared}@${fingerprint}`] = hash;
+                      await writeFile(`checks/.images/${shared}.png`, png);
+                      await tag.evaluate((node) => (node as Element).remove());
+                    });
+                }
               }
             }
           }
@@ -487,7 +513,8 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
   const next: Record<string, string> = { ...reference };
   for (const [key, hash] of taken) {
     if (key.startsWith("html/")) {
-      const twin = taken.get(key.replace(/^html\//, "react/"));
+      const twin =
+        taken.get(key.replace(/^html\//, "shared/")) ?? taken.get(key.replace(/^html\//, "react/"));
       if (twin && twin !== hash) {
         problems.push({
           page: key,
@@ -498,6 +525,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
       }
       continue;
     }
+    if (key.startsWith("shared/")) continue;
     if (!(key in reference)) added.push(key);
     else if (reference[key] !== hash) changed.push(key);
     next[key] = hash;

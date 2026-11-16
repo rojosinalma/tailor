@@ -73,6 +73,7 @@ export default defineExamples("log-view", [
   },
   {
     id: "live",
+    kit: "react",
     title: "Lines that arrive",
     note: "A new line every 0.7 s while follow is on keeps the view at the end.",
     display: "frame",

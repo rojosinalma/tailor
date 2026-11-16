@@ -9,6 +9,11 @@ export interface Example {
   readonly render: () => ReactNode;
   /** "frame": the example needs a page of its own (shells, layouts, fill-mode parts). */
   readonly display?: "inline" | "frame";
+  /**
+   * "react": the example shows something that only the React kit can do (a callback, live data, a server
+   * mode). The HTML kit's page leaves it out.
+   */
+  readonly kit?: "react";
   /** A narrow box around the example, to show how the component adapts to its container. */
   readonly width?: "sm" | "md";
 }

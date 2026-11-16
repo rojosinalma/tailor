@@ -19,6 +19,7 @@ export function EntrySections({
           className="sc-example"
           data-example={example.id}
           data-display={example.display}
+          data-kit={example.kit}
           key={example.id}
         >
           <h2 className="sc-example-title">{example.title}</h2>
