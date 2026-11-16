@@ -100,6 +100,9 @@ export default defineComponent({
    truncate.
 10. An exception needs `/* lint-allow: <reason> */` on the line before the declaration.
 
+11. A shell's stylesheet names its shell in every selector (`.t-shell[data-shell="sidenav"] …`) or uses a
+    class of its own (`.t-sidenav-…`). A page can hold the stylesheets of several shells.
+
 ## 6. React kit rules
 
 1. One file exports the component and its props type. Types come from the spec. No `style` prop, no inline

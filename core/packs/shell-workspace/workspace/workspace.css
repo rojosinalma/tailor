@@ -1,0 +1,412 @@
+/*
+ * The workspace: a thin top bar over the left sidebar, the centre with the bottom panel under it, the right
+ * panel and the rail of panel buttons. Nothing scrolls as a whole; every region scrolls its own body. The
+ * script sets the sizes as --t-workspace-left, --t-workspace-right and --t-workspace-bottom on the root.
+ * The phone and tablet forms come from @container t-shell (the root is that container), so one set of rules
+ * serves the screen and a contained preview. Only rules that change position are written twice: the
+ * floating panel (by default, and for "push" on a tablet).
+ */
+.t-shell[data-shell="workspace"] {
+  --t-workspace-left: var(--t-sidebar-w);
+  --t-workspace-right: var(--t-measure-sm);
+  --t-workspace-bottom: var(--t-measure-xs);
+  grid-template:
+    "bar bar bar bar" auto
+    "left main right rail" minmax(var(--t-measure-2xs), 1fr)
+    "left bottom right rail" minmax(0, auto)
+    / auto minmax(0, 1fr) auto auto;
+}
+
+/* A region that F6 focuses shows the ring inside its edge. */
+.t-shell[data-shell="workspace"] > [tabindex="-1"]:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+.t-shell[data-shell="workspace"] > .t-shell-bar {
+  gap: var(--t-space-2);
+  min-height: calc(var(--t-control-h-md) + var(--t-space-2) + var(--t-safe-top));
+  padding-inline: calc(var(--t-space-2) + var(--t-safe-left)) calc(var(--t-space-2) + var(--t-safe-right));
+}
+
+.t-shell[data-shell="workspace"] > .t-shell-bar > .t-shell-brand {
+  padding-inline: var(--t-space-2);
+  font-size: var(--t-text-base);
+}
+
+/* The phone buttons belong to the phone form. */
+.t-workspace-phone {
+  display: none;
+}
+
+/* The left sidebar: the area links, the app's content (it scrolls alone), the footer row. */
+.t-shell[data-shell="workspace"] > .t-shell-sidebar {
+  grid-area: left;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: calc(var(--t-workspace-left) + var(--t-safe-left));
+  max-width: 50cqi;
+  min-height: 0;
+  padding-inline-start: var(--t-safe-left);
+  border-inline-end: var(--t-border-w) solid var(--t-border);
+  background: var(--t-inset);
+}
+
+.t-shell[data-shell="workspace"][data-left-collapsed] > .t-shell-sidebar {
+  display: none;
+}
+
+.t-shell[data-shell="workspace"] .t-shell-sidebar > .t-shell-nav,
+.t-workspace-sheet > .t-shell-nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-4);
+}
+
+/* The side navigation shell's column rules reach this sidebar too: these set every value they set. */
+.t-shell[data-shell="workspace"] > .t-shell-sidebar > .t-shell-nav {
+  flex: none;
+  max-height: 50%;
+  padding: var(--t-space-3);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.t-workspace-sidebar-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--t-space-2);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.t-shell-nav + .t-workspace-sidebar-body {
+  border-top: var(--t-border-w) solid var(--t-border);
+}
+
+/* The footer row: facts at the start, the theme controls and the gear at the end. */
+.t-shell[data-shell="workspace"] .t-shell-sidebar > .t-shell-footer,
+.t-workspace-sheet > .t-shell-footer {
+  flex: none;
+  flex-wrap: wrap;
+  gap: var(--t-space-2);
+  margin-top: auto;
+  padding: var(--t-space-2) var(--t-space-2) calc(var(--t-space-2) + var(--t-safe-bottom)) var(--t-space-3);
+  border-top: var(--t-border-w) solid var(--t-border);
+}
+
+.t-shell[data-shell="workspace"] .t-shell-footer > .t-shell-facts {
+  flex: 1 1 0;
+}
+
+.t-workspace-settings {
+  flex: none;
+}
+
+/* The centre: the app's content. A Page inside it fills it. */
+.t-shell[data-shell="workspace"] > .t-shell-main {
+  position: relative;
+}
+
+/* A Page in the centre keeps tight gutters, as the panels around it do. */
+.t-shell[data-shell="workspace"] > .t-shell-main > .t-page > .t-page-header {
+  padding: var(--t-space-4) var(--t-space-4) 0;
+}
+
+.t-shell[data-shell="workspace"] > .t-shell-main > .t-page > .t-page-body {
+  padding: var(--t-space-4);
+}
+
+/* The bottom panel: a header row and a body that scrolls. Its row never pushes the centre below its least height. */
+.t-workspace-bottom {
+  grid-area: bottom;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: var(--t-workspace-bottom);
+  max-height: 100%;
+  min-height: 0;
+  border-top: var(--t-border-w) solid var(--t-border);
+  background: var(--t-canvas);
+}
+
+.t-shell[data-bottom-collapsed] > .t-workspace-bottom {
+  height: auto;
+}
+
+.t-shell[data-bottom-collapsed] > .t-workspace-bottom > :is(.t-workspace-bottom-body, .t-workspace-handle) {
+  display: none;
+}
+
+.t-workspace-bottom-header,
+.t-workspace-panel-header {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: var(--t-space-1);
+  min-width: 0;
+  min-height: calc(var(--t-control-h-sm) + var(--t-space-2));
+  padding-block: var(--t-space-1);
+  padding-inline: var(--t-space-4) var(--t-space-1);
+  background: var(--t-inset);
+}
+
+.t-workspace-panel-header {
+  min-height: calc(var(--t-control-h-md) + var(--t-space-2));
+  border-bottom: var(--t-border-w) solid var(--t-border);
+}
+
+.t-shell:not([data-bottom-collapsed]) > .t-workspace-bottom > .t-workspace-bottom-header {
+  border-bottom: var(--t-border-w) solid var(--t-border);
+}
+
+.t-workspace-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-label-weight);
+  letter-spacing: var(--t-tracking);
+  text-overflow: ellipsis;
+  text-transform: var(--t-label-transform);
+  white-space: nowrap;
+}
+
+.t-workspace-panel-header > .t-workspace-title {
+  font-size: var(--t-text-base);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.t-workspace-bottom-header > .t-workspace-actions {
+  display: flex;
+  flex: 0 1 auto;
+  align-items: center;
+  gap: var(--t-space-1);
+  min-width: 0;
+}
+
+.t-workspace-bottom-body,
+.t-workspace-panel-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  padding: var(--t-space-3) var(--t-space-4);
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.t-workspace-panel-body {
+  padding: var(--t-space-4);
+}
+
+:is(.t-workspace-bottom-body, .t-workspace-panel-body, .t-workspace-sidebar-body):focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+/* The right panel. One is open at a time; by default it floats over the end of the centre. */
+.t-workspace-panel {
+  grid-area: right;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: var(--t-workspace-right);
+  max-width: 60cqi;
+  min-height: 0;
+  border-inline-start: var(--t-border-w) solid var(--t-border);
+  background: var(--t-surface);
+}
+
+.t-workspace-panel:not([data-open], :target) {
+  display: none;
+}
+
+.t-shell[data-shell="workspace"]:not([data-panel-mode="push"]) > .t-workspace-panel {
+  position: absolute;
+  grid-area: 2 / 2 / 4 / 3;
+  inset-block: 0;
+  inset-inline-end: 0;
+  z-index: var(--t-z-sticky);
+  box-shadow: var(--t-shadow-lg);
+}
+
+/* The rail: one icon button per panel. The open panel's button is pressed: the selection colour and a bar. */
+.t-workspace-rail {
+  grid-area: rail;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--t-space-1);
+  padding: var(--t-space-2) calc(var(--t-space-1) + var(--t-safe-right)) var(--t-safe-bottom) var(--t-space-1);
+  border-inline-start: var(--t-border-w) solid var(--t-border);
+  background: var(--t-inset);
+}
+
+.t-workspace-rail > .t-btn {
+  position: relative;
+  color: var(--t-muted);
+}
+
+.t-workspace-rail > .t-btn[aria-pressed="true"] {
+  background: var(--t-selection);
+  color: var(--t-text);
+}
+
+.t-workspace-rail > .t-btn[aria-pressed="true"]::after {
+  content: "";
+  position: absolute;
+  inset-block: var(--t-space-2);
+  inset-inline-start: calc(var(--t-space-1) * -1);
+  width: var(--t-border-w-strong);
+  border-radius: var(--t-radius-pill);
+  background: var(--t-accent);
+}
+
+/* A resize handle on the inner edge of a region: a thin line, a wider hit area. */
+.t-workspace-handle {
+  position: absolute;
+  z-index: 1;
+  touch-action: none;
+  user-select: none;
+}
+
+.t-workspace-handle[aria-orientation="vertical"] {
+  inset-block: 0;
+  width: var(--t-space-2);
+  cursor: col-resize;
+}
+
+.t-shell-sidebar > .t-workspace-handle {
+  inset-inline-end: calc(var(--t-space-1) * -1);
+}
+
+.t-workspace-panel > .t-workspace-handle {
+  inset-inline-start: calc(var(--t-space-1) * -1);
+}
+
+.t-workspace-bottom > .t-workspace-handle {
+  inset-inline: 0;
+  inset-block-start: calc(var(--t-space-1) * -1);
+  height: var(--t-space-2);
+  cursor: row-resize;
+}
+
+.t-workspace-handle::before,
+.t-workspace-handle::after {
+  content: "";
+  position: absolute;
+}
+
+.t-workspace-handle::before {
+  inset: 0 calc(50% - var(--t-hairline));
+  border-radius: var(--t-radius-pill);
+  transition: background-color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-workspace-handle[aria-orientation="horizontal"]::before {
+  inset: calc(50% - var(--t-hairline)) 0;
+}
+
+.t-workspace-handle::after {
+  inset: 0;
+}
+
+.t-workspace-handle:focus-visible {
+  outline-offset: 0;
+}
+
+.t-workspace-handle:focus-visible::before,
+.t-workspace-handle[data-dragging]::before {
+  background: var(--t-accent);
+}
+
+/* The sheets on a phone: a side sheet takes the whole screen. */
+.t-workspace-sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-4);
+  min-height: 100%;
+}
+
+.t-workspace-sheet > .t-shell-footer {
+  margin-inline: calc(var(--t-space-4) * -1);
+  margin-bottom: calc(var(--t-space-4) * -1);
+  padding-inline: var(--t-space-4);
+}
+
+@media (hover: hover) {
+  .t-workspace-handle:hover::before {
+    background: var(--t-accent);
+  }
+}
+
+@media (pointer: coarse) {
+  .t-workspace-handle[aria-orientation="vertical"]::after {
+    inset: 0 calc((var(--t-touch) - var(--t-space-2)) / -2);
+  }
+
+  .t-workspace-handle[aria-orientation="horizontal"]::after {
+    inset: calc((var(--t-touch) - var(--t-space-2)) / -2) 0;
+  }
+}
+
+@media (max-width: 40rem) {
+  .t-drawer:not([data-side="bottom"]):has(> .t-drawer-body > .t-workspace-sheet) {
+    width: 100%;
+    border-inline: 0;
+  }
+}
+
+/* Tablet: the sidebar opens over the centre, and every panel floats. */
+@container t-shell (max-width: 64rem) {
+  .t-shell[data-shell="workspace"] > .t-shell-sidebar {
+    position: absolute;
+    grid-area: 2 / 1 / 4 / 3;
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: var(--t-z-sticky);
+    max-width: 80cqi;
+    box-shadow: var(--t-shadow-lg);
+  }
+
+  .t-shell[data-shell="workspace"][data-panel-mode="push"] > .t-workspace-panel {
+    position: absolute;
+    grid-area: 2 / 2 / 4 / 3;
+    inset-block: 0;
+    inset-inline-end: 0;
+    z-index: var(--t-z-sticky);
+    box-shadow: var(--t-shadow-lg);
+  }
+}
+
+/* Phone: the top bar and the centre. The bar's buttons open each region as a sheet. */
+@container t-shell (max-width: 40rem) {
+  .t-shell[data-shell="workspace"]
+    > :is(.t-shell-sidebar, .t-workspace-bottom, .t-workspace-panel, .t-workspace-rail),
+  .t-shell[data-shell="workspace"] > .t-shell-bar > .t-shell-collapse {
+    display: none;
+  }
+
+  .t-shell[data-shell="workspace"] > .t-shell-bar .t-workspace-phone {
+    display: inline-flex;
+    flex: none;
+  }
+
+  .t-shell[data-shell="workspace"] > .t-shell-main {
+    padding-bottom: var(--t-safe-bottom);
+  }
+
+  /* Without the script a bar button is a link to its region, which then shows over the whole frame. */
+  .t-shell[data-shell="workspace"]:not([data-ready])
+    > :is(.t-shell-sidebar, .t-workspace-bottom, .t-workspace-panel):target {
+    position: fixed;
+    inset: 0;
+    z-index: var(--t-z-overlay);
+    display: flex;
+    width: auto;
+    max-width: none;
+    height: auto;
+    max-height: none;
+  }
+}

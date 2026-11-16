@@ -468,8 +468,20 @@ export function lintCssText(
     }
   });
 
+  // A shell's stylesheet styles only its own shell: a page can hold the stylesheets of several shells.
+  const shell = /^core\/packs\/shell-[^/]+\/([^/]+)\//.exec(file)?.[1];
   root.walkRules((r) => {
     if (inKeyframes(r)) return;
+    if (shell) {
+      for (const selector of r.selectors) {
+        if (selector.includes(`[data-shell="${shell}"]`) || selector.includes(`.t-${shell}`)) continue;
+        add(
+          ruleLine(r, 0),
+          "shell-scope",
+          `"${selector}" must name its shell: start it with .t-shell[data-shell="${shell}"]`,
+        );
+      }
+    }
     for (const p of selectorParts(r.selector)) {
       if (p.kind === "id") {
         if (kind !== "showcase")

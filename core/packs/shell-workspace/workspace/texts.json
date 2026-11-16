@@ -1,0 +1,9 @@
+{
+  "settings": "Settings",
+  "sidebar": "Sidebar",
+  "panels": "Panels",
+  "resizeSidebar": "Resize the sidebar",
+  "resizePanel": "Resize the panel",
+  "collapsePanel": "Collapse the panel",
+  "expandPanel": "Expand the panel"
+}
