@@ -133,7 +133,7 @@ function PanelContent({
       {footer.length > 0 || hasTheme ? (
         <div className="t-nav-drawer-footer">
           <FooterFacts facts={footer} />
-          <ShellTheme parts={theme} />
+          <ShellTheme parts={theme} layout="compact" />
         </div>
       ) : null}
     </>

@@ -44,6 +44,11 @@
   font-size: var(--t-text-sm);
 }
 
+/* The facts keep their own width: the theme controls share their row only when both fit, else they wrap. */
+.t-nav-drawer-footer > .t-shell-facts {
+  flex-basis: auto;
+}
+
 /* Without the script the menu button is a link to the drawer: it shows as a panel while it is the target. */
 dialog.t-drawer.t-nav-drawer:target:not([open]) {
   display: flex;

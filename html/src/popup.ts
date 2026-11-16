@@ -14,9 +14,14 @@ export interface Popup {
   open(): void;
   close(): void;
   isOpen(): boolean;
+  /** True for a node in this popup or in a popup opened from it, such as the list of a select in a popover. */
+  holds(node: Node): boolean;
 }
 
 const PHONE = "(max-width: 40rem)";
+
+/** The positioners of the open popups, the newest last: a popup opened from another one sits above it. */
+const stack: HTMLElement[] = [];
 
 /**
  * Shows a panel next to an anchor, in the top layer, kept inside the viewport.
@@ -45,13 +50,18 @@ export function createPopup(anchor: HTMLElement, panel: HTMLElement, options: Po
     panel.dataset.side = spot.side;
   };
 
+  const holds = (node: Node): boolean => {
+    const at = stack.indexOf(positioner);
+    return at < 0 ? positioner.contains(node) : stack.slice(at).some((open) => open.contains(node));
+  };
   const onPointerDown = (event: PointerEvent): void => {
     const target = event.target;
-    if (target instanceof Node && (positioner.contains(target) || anchor.contains(target))) return;
+    if (target instanceof Node && (holds(target) || anchor.contains(target))) return;
     close();
   };
+  // Escape closes the newest popup only.
   const onKeyDown = (event: KeyboardEvent): void => {
-    if (event.key !== "Escape") return;
+    if (event.key !== "Escape" || stack.at(-1) !== positioner) return;
     event.preventDefault();
     close();
     anchor.focus();
@@ -60,6 +70,7 @@ export function createPopup(anchor: HTMLElement, panel: HTMLElement, options: Po
   function close(): void {
     if (!open) return;
     open = false;
+    stack.splice(stack.indexOf(positioner), 1);
     positioner.hidePopover();
     positioner.remove();
     document.removeEventListener("pointerdown", onPointerDown, true);
@@ -74,6 +85,7 @@ export function createPopup(anchor: HTMLElement, panel: HTMLElement, options: Po
     open() {
       if (open) return;
       open = true;
+      stack.push(positioner);
       document.body.append(positioner);
       positioner.showPopover();
       update();
@@ -84,5 +96,6 @@ export function createPopup(anchor: HTMLElement, panel: HTMLElement, options: Po
     },
     close,
     isOpen: () => open,
+    holds,
   };
 }

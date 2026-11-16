@@ -15,3 +15,24 @@
 .t-theme-mode {
   flex: none;
 }
+
+/* Compact: one row that never wraps; the choice button gives way and its text truncates. */
+.t-theme-pickers[data-layout="compact"] {
+  flex-wrap: nowrap;
+}
+
+.t-theme-pickers-trigger {
+  flex: 0 1 auto;
+  justify-content: flex-start;
+  min-width: 0;
+}
+
+.t-theme-pickers-trigger > .t-icon {
+  flex: none;
+}
+
+.t-theme-pickers-trigger > .t-btn-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

@@ -2,6 +2,21 @@
 
 This project follows [semantic versioning](https://semver.org). Format: [Keep a Changelog](https://keepachangelog.com).
 
+## [2.1.0] — 2026-11-16
+
+### Added
+
+- `ThemePickers` takes `layout="compact"`: one button that shows the skin and the palette and opens them in a
+  popover, beside the mode button. The side navigation, the workspace sidebar and the navigation drawer use it,
+  so the theme controls take one row there instead of two or three.
+
+### Fixed
+
+- HTML kit: a popup opened from inside another popup (a select in a popover) no longer closes the outer one,
+  and Escape closes only the newest popup.
+- The checks build before they check types, open a page once more after a dropped connection, confirm an
+  unexpected picture with a second one, and wait for the focus in focus tests.
+
 ## [2.0.0] — 2026-11-16
 
 Version 2 is a new framework under the same name. It shares no markup, class names or commands with

@@ -31,7 +31,7 @@ import { Button } from "../button/button";
 import { ConfirmRegion } from "../confirm/confirm";
 import { Counter } from "../counter/counter";
 import { Icon, type IconName } from "../icon/icon";
-import { ThemePickers, useHasTheme } from "../theme-pickers/theme-pickers";
+import { ThemePickers, type ThemePickersProps, useHasTheme } from "../theme-pickers/theme-pickers";
 import { ToastRegion } from "../toast/toast";
 
 export { firstLevel, type ShellForm, toGroups } from "@tailor/packs/core/shell-base/logic";
@@ -326,19 +326,24 @@ export function ShellActions({ children }: { children?: ReactNode }) {
   return children ? <div className="t-shell-actions">{children}</div> : null;
 }
 
-/** The footer of a shell: the facts at the start, the theme controls at the end. Nothing when both are empty. */
+/**
+ * The footer of a shell: the facts at the start, the theme controls at the end. Nothing when both are empty.
+ * A footer in a narrow column takes the compact theme controls.
+ */
 export function ShellFooter({
   facts = [],
   theme,
+  themeLayout,
 }: {
   facts?: readonly FooterFact[];
   theme?: readonly ShellThemePart[] | false;
+  themeLayout?: ShellThemeLayout;
 }) {
   if (facts.length === 0 && (theme === false || theme?.length === 0)) return null;
   return (
     <footer className="t-shell-footer">
       <FooterFacts facts={facts} />
-      <ShellTheme parts={theme} />
+      <ShellTheme parts={theme} layout={themeLayout} />
     </footer>
   );
 }
@@ -480,25 +485,34 @@ export function FooterFacts({ facts }: { facts: readonly FooterFact[] }) {
   );
 }
 
-function LiveTheme({ parts }: { parts: readonly ShellThemePart[] }) {
+/** The layout of a shell's theme controls: `compact` where they sit in a narrow column. */
+export type ShellThemeLayout = NonNullable<ThemePickersProps["layout"]>;
+
+function LiveTheme({ parts, layout }: { parts: readonly ShellThemePart[]; layout?: ShellThemeLayout }) {
   if (!useHasTheme()) return null;
   return (
     <div className="t-shell-theme">
-      <ThemePickers parts={parts} />
+      <ThemePickers parts={parts} layout={layout} />
     </div>
   );
 }
 
 /** The theme controls of a shell. Without a theme on the page they show nothing. */
-export function ShellTheme({ parts }: { parts: readonly ShellThemePart[] | false | undefined }) {
+export function ShellTheme({
+  parts,
+  layout,
+}: {
+  parts: readonly ShellThemePart[] | false | undefined;
+  layout?: ShellThemeLayout;
+}) {
   const isStatic = useIsStatic();
   const shown = parts === undefined ? DEFAULT_THEME : parts;
   if (shown === false || shown.length === 0) return null;
   if (isStatic)
     return (
       <div className="t-shell-theme">
-        <ThemePickers parts={shown} />
+        <ThemePickers parts={shown} layout={layout} />
       </div>
     );
-  return <LiveTheme parts={shown} />;
+  return <LiveTheme parts={shown} layout={layout} />;
 }

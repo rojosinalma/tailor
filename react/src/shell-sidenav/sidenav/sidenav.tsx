@@ -287,7 +287,7 @@ export function SideNavShell({
         <ShellSearch control={searchControl}>{search}</ShellSearch>
         <ShellActions>{actions}</ShellActions>
         {groups.length > 0 ? <Groups groups={groups} path={path} state={state} /> : null}
-        <ShellFooter facts={footer} theme={theme} />
+        <ShellFooter facts={footer} theme={theme} themeLayout="compact" />
       </div>
       <ShellMain id={main}>{children}</ShellMain>
       {phoneNav === "bar" ? (

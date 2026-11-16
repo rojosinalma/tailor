@@ -222,7 +222,7 @@ function FooterRow({
   return (
     <footer className="t-shell-footer">
       <FooterFacts facts={facts} />
-      <ShellTheme parts={theme} />
+      <ShellTheme parts={theme} layout="compact" />
       {gearButton}
     </footer>
   );

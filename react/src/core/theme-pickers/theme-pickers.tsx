@@ -1,13 +1,16 @@
-import { moon, sun } from "@tailor/core/glyphs.gen";
+import { moon, palette as paletteGlyph, sun } from "@tailor/core/glyphs.gen";
 import { t } from "@tailor/core/text";
 import { createTheme, THEME_EVENT, type Theme, type ThemeConfig, type ThemeState } from "@tailor/core/theme";
-import { themeChoices } from "@tailor/packs/core/theme-pickers/logic";
+import { themeChoices, themeSummary } from "@tailor/packs/core/theme-pickers/logic";
 import type spec from "@tailor/packs/core/theme-pickers/spec";
 import { createContext, type ReactNode, use, useEffect, useState, useSyncExternalStore } from "react";
 import { Glyph } from "../../glyph";
 import { useIsStatic } from "../../kit";
 import { Button } from "../button/button";
+import { Field } from "../field/field";
+import { Popover } from "../popover/popover";
 import { Select } from "../select/select";
+import { Stack } from "../stack/stack";
 
 declare global {
   interface Window {
@@ -18,6 +21,8 @@ declare global {
 
 type ThemePart = (typeof spec.props.parts)[number];
 type ThemePickersSize = (typeof spec.props.size)[number];
+type ThemePickersLayout = (typeof spec.props.layout)[number];
+type ChoicePart = Exclude<ThemePart, "mode">;
 
 const ALL_PARTS: readonly ThemePart[] = ["skin", "palette", "mode"];
 
@@ -77,10 +82,15 @@ export interface ThemePickersProps {
   /** The controls to show, always in the order skin, palette, mode. */
   parts?: readonly ThemePart[];
   size?: ThemePickersSize;
+  /**
+   * `inline` (default): the selects and the mode button in one row that wraps. `compact`: one button that
+   * shows the skin and the palette and opens their selects in a popover, and the mode button beside it.
+   */
+  layout?: ThemePickersLayout;
 }
 
-/** The skin select, the palette select and the mode toggle, in one row that wraps. */
-export function ThemePickers({ parts = ALL_PARTS, size = "sm" }: ThemePickersProps) {
+/** The skin select, the palette select and the mode toggle: in one row that wraps, or compact. */
+export function ThemePickers({ parts = ALL_PARTS, size = "sm", layout = "inline" }: ThemePickersProps) {
   const shown = ALL_PARTS.filter((part) => parts.includes(part));
   if (useIsStatic()) {
     return (
@@ -89,38 +99,91 @@ export function ThemePickers({ parts = ALL_PARTS, size = "sm" }: ThemePickersPro
         data-t="theme-pickers"
         data-parts={shown.length === ALL_PARTS.length ? undefined : shown.join(" ")}
         data-size={size === "sm" ? undefined : size}
+        data-layout={layout === "inline" ? undefined : layout}
       />
     );
   }
-  return <LivePickers parts={shown} size={size} />;
+  return layout === "compact" ? (
+    <CompactPickers parts={shown} size={size} />
+  ) : (
+    <LivePickers parts={shown} size={size} />
+  );
+}
+
+function ModeButton({ size }: { size: ThemePickersSize }) {
+  const theme = useTheme();
+  return (
+    <Button
+      className="t-theme-mode"
+      variant="ghost"
+      size={size}
+      icon={<Glyph body={theme.mode === "dark" ? sun : moon} />}
+      label={theme.mode === "dark" ? t("lightMode") : t("darkMode")}
+      onClick={() => theme.set({ mode: theme.mode === "dark" ? "light" : "dark" })}
+    />
+  );
+}
+
+/** The select of a skin or a palette. Without `label`, a Field around it names it. */
+function ChoiceSelect({ part, size, label }: { part: ChoicePart; size?: ThemePickersSize; label?: string }) {
+  const theme = useTheme();
+  return (
+    <Select
+      options={themeChoices(theme.config, part)}
+      value={theme[part]}
+      onValueChange={(value) => theme.set({ [part]: value })}
+      size={size}
+      aria-label={label}
+    />
+  );
 }
 
 function LivePickers({ parts, size }: { parts: readonly ThemePart[]; size: ThemePickersSize }) {
-  const theme = useTheme();
   return (
     <div className="t-theme-pickers">
       {parts.map((part) =>
         part === "mode" ? (
-          <Button
-            key={part}
-            className="t-theme-mode"
-            variant="ghost"
-            size={size}
-            icon={<Glyph body={theme.mode === "dark" ? sun : moon} />}
-            label={theme.mode === "dark" ? t("lightMode") : t("darkMode")}
-            onClick={() => theme.set({ mode: theme.mode === "dark" ? "light" : "dark" })}
-          />
+          <ModeButton key={part} size={size} />
         ) : (
-          <Select
-            key={part}
-            options={themeChoices(theme.config, part)}
-            value={theme[part]}
-            onValueChange={(value) => theme.set({ [part]: value })}
-            size={size}
-            aria-label={t(part)}
-          />
+          <ChoiceSelect key={part} part={part} size={size} label={t(part)} />
         ),
       )}
+    </div>
+  );
+}
+
+function CompactPickers({ parts, size }: { parts: readonly ThemePart[]; size: ThemePickersSize }) {
+  const theme = useTheme();
+  const choices = parts.filter((part): part is ChoicePart => part !== "mode");
+  const names = themeSummary(theme.config, theme, choices);
+  return (
+    <div className="t-theme-pickers" data-layout="compact">
+      {choices.length > 0 ? (
+        <Popover
+          title={t("theme")}
+          side="top"
+          trigger={
+            <Button
+              className="t-theme-pickers-trigger"
+              variant="ghost"
+              size={size}
+              icon={<Glyph body={paletteGlyph} />}
+              label={`${t("theme")}: ${names.join(", ")}`}
+            >
+              {names.join(" · ") || t("theme")}
+            </Button>
+          }
+        >
+          <Stack>
+            {choices.map((part) => (
+              <Field key={part} label={t(part)}>
+                <ChoiceSelect part={part} />
+              </Field>
+            ))}
+          </Stack>
+        </Popover>
+      ) : null}
+      {parts.includes("mode") ? <ModeButton size={size} /> : null}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { themeChoices } from "./logic";
+import { themeChoices, themeSummary } from "./logic";
 
 const config = {
   key: "demo",
@@ -19,4 +19,11 @@ test("palettes are sorted by display name", () => {
 
 test("an id without a display name shows the id", () => {
   expect(themeChoices(config, "skin").map((c) => c.label)).toEqual(["plain", "round"]);
+});
+
+test("the summary names the shown parts in order, with display names", () => {
+  const state = { skin: "plain", palette: "nord" };
+  expect(themeSummary(config, state, ["skin", "palette"])).toEqual(["plain", "Nord"]);
+  expect(themeSummary(config, state, ["palette"])).toEqual(["Nord"]);
+  expect(themeSummary(config, { skin: "", palette: "nord" }, ["skin", "palette"])).toEqual(["Nord"]);
 });

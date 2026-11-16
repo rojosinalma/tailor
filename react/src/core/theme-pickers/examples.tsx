@@ -50,4 +50,18 @@ export default defineExamples("theme-pickers", [
       </Demo>
     ),
   },
+  {
+    id: "compact",
+    title: "Compact, for a narrow column",
+    note: "One button shows the skin and the palette and opens their selects; the mode button stays one click away.",
+    width: "sm",
+    render: () => (
+      <Demo>
+        <Stack>
+          <ThemePickers layout="compact" />
+          <ThemePickers layout="compact" parts={["palette", "mode"]} />
+        </Stack>
+      </Demo>
+    ),
+  },
 ]);

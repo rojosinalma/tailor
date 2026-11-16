@@ -46,6 +46,6 @@ register("popover", (trigger) => {
   // Focus that leaves for another control closes the popover, as a click outside does.
   panel.addEventListener("focusout", (event) => {
     const to = event.relatedTarget;
-    if (to instanceof Node && !popup.positioner.contains(to) && to !== trigger) popup.close();
+    if (to instanceof Node && !popup.holds(to) && to !== trigger) popup.close();
   });
 });
