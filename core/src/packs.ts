@@ -8,6 +8,8 @@ export interface PackSpec {
   readonly requires: readonly string[];
   /** Libraries the React kit needs for this pack, with their pinned versions. */
   readonly libraries: Readonly<Record<string, string>>;
+  /** Type packages a TypeScript project needs for those libraries, with their pinned versions. */
+  readonly devLibraries?: Readonly<Record<string, string>>;
   /** What the HTML kit provides: all of the pack, a named part of it, or nothing. */
   readonly html: "full" | "none" | { readonly partial: string };
   /** A shell pack holds one shell. */
@@ -29,6 +31,7 @@ export const PACKS: readonly PackSpec[] = [
       "@base-ui/react": "1.9.0",
       "@tanstack/react-router": "1.170.46",
     },
+    devLibraries: { "@types/react": "19.2.7", "@types/react-dom": "19.2.3" },
     html: "full",
   }),
   pack({
@@ -165,6 +168,7 @@ export const PACKS: readonly PackSpec[] = [
     description: "A map frame with controls that follow the palette.",
     requires: ["core"],
     libraries: { leaflet: "1.9.4" },
+    devLibraries: { "@types/leaflet": "1.9.21" },
     html: "full",
   }),
   pack({
@@ -196,7 +200,7 @@ export const PACKS: readonly PackSpec[] = [
     name: "PWA",
     description: "Install item, update notice, offline banner and offline data.",
     requires: ["core"],
-    libraries: { "@tanstack/react-query-persist-client": "5.107.1" },
+    libraries: { "@tanstack/react-query-persist-client": "5.107.1", "@tanstack/react-query": "5.107.1" },
     html: { partial: "install and offline frame" },
   }),
   pack({

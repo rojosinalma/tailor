@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "workspaces": {
     ".": {
-      "entry": ["bin/build", "bin/check", "bin/lib/*.ts"],
+      "entry": ["bin/build", "bin/check", "bin/tailor", "bin/lib/*.ts"],
       "project": ["bin/**"]
     },
     "core": {
@@ -21,6 +21,10 @@
       "entry": ["src/entry.tsx", "src/entry-sections.tsx"],
       "project": ["src/**/*.{ts,tsx}"]
     },
+    "cli": {
+      "entry": ["src/main.ts", "src/**/*.test.ts"],
+      "project": ["**/*.ts"]
+    },
     "checks": {
       "entry": ["src/*.ts", "behaviour/*/*.ts"],
       "project": ["**/*.ts"]
@@ -32,6 +36,5 @@
     "types": "off",
     "duplicates": "off"
   },
-  "ignoreDependencies": ["@iconify-json/bi", "@iconify-json/simple-icons"],
-  "ignoreWorkspaces": ["cli"]
+  "ignoreDependencies": ["@iconify-json/bi", "@iconify-json/simple-icons"]
 }

@@ -1,4 +1,25 @@
 #!/usr/bin/env bun
+/**
+ * Builds dist/.
+ *   --release   also writes the release artifact (dist/release/tailor-<version>/ and its .tgz)
+ *   --install   with --release: copies it into the local release store, where the tailor command finds it
+ */
 import { build } from "./lib/build";
+import { release } from "./lib/release";
+
+const args = process.argv.slice(2);
+const unknown = args.filter((a) => a !== "--release" && a !== "--install");
+if (unknown.length > 0 || (args.includes("--install") && !args.includes("--release"))) {
+  console.error("usage: bin/build [--release [--install]]");
+  process.exit(2);
+}
 
 await build();
+if (args.includes("--release")) {
+  const started = performance.now();
+  const result = await release({ install: args.includes("--install") });
+  console.log(
+    `release: ${result.files} files, ${(result.bytes / 1024).toFixed(0)} kB packed in ${Math.round(performance.now() - started)} ms → ${result.tgz}`,
+  );
+  if (result.installed) console.log(`release: installed in ${result.installed}`);
+}

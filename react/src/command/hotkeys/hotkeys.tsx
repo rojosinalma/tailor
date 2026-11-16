@@ -24,6 +24,7 @@ import {
   useSyncExternalStore,
 } from "react";
 import { Kbd } from "../../core/kbd/kbd";
+import { isDevelopment } from "../../kit";
 
 /** One registered shortcut, as the help view and the palette list it. */
 export interface HotkeyInfo {
@@ -51,7 +52,7 @@ class Registry {
 
   add(entry: Entry): () => void {
     const twin = entry.when ? this.#winner(entry) : undefined;
-    if (twin && process.env.NODE_ENV !== "production")
+    if (twin && isDevelopment())
       console.warn(
         `tailor: "${entry.keys}" is registered by "${twin.id}" and "${entry.id}"; "${entry.id}" wins.`,
       );

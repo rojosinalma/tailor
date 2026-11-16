@@ -18,3 +18,12 @@ export const useIsStatic = (): boolean => use(KitContext) === "static";
 export function cx(...parts: (string | false | null | undefined)[]): string {
   return parts.filter(Boolean).join(" ");
 }
+
+/**
+ * True in a development build. A bundler or a runtime gives `process.env.NODE_ENV`; a plain browser page
+ * has no `process`, and counts as production.
+ */
+export function isDevelopment(): boolean {
+  const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
+  return env !== undefined && env.NODE_ENV !== "production";
+}

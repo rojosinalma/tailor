@@ -5,6 +5,7 @@ import { cutout, nextPresent, position, scrollAboveSheet, settle } from "@tailor
 import type spec from "@tailor/packs/tour/tour/spec";
 import { type KeyboardEvent, type ReactNode, useId, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "../../core/button/button";
+import { isDevelopment } from "../../kit";
 
 export interface TourStep {
   /** The element the step points at: an element id, or a CSS selector. */
@@ -50,7 +51,7 @@ function findTarget(target: string): HTMLElement | null {
 }
 
 const warn = (message: string): void => {
-  if (typeof process !== "undefined" && process.env.NODE_ENV === "production") return;
+  if (!isDevelopment()) return;
   console.warn(message);
 };
 
