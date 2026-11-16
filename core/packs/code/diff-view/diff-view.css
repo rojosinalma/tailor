@@ -51,17 +51,17 @@
 
 .t-diff-hunk {
   padding: var(--t-space-1) var(--t-space-3);
-  background: color-mix(in srgb, var(--t-info) var(--t-tint-weak), transparent);
+  background: color-mix(in srgb, var(--t-info) var(--t-tint-weak), var(--t-surface));
   color: var(--t-info-text);
   white-space: pre;
 }
 
 .t-diff-line[data-change="add"] {
-  background: color-mix(in srgb, var(--t-success) var(--t-tint-weak), transparent);
+  background: color-mix(in srgb, var(--t-success) var(--t-tint-weak), var(--t-surface));
 }
 
 .t-diff-line[data-change="remove"] {
-  background: color-mix(in srgb, var(--t-danger) var(--t-tint-weak), transparent);
+  background: color-mix(in srgb, var(--t-danger) var(--t-tint-weak), var(--t-surface));
 }
 
 /* The empty half of a split row, across from a line that only one side has. */
