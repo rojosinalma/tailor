@@ -8,6 +8,8 @@ import { printProblems } from "./report";
 
 if (import.meta.main) {
   const args = process.argv.slice(2);
+  // --skin=<id> (repeatable) checks only those skins.
+  const skinArgs = args.filter((a) => a.startsWith("--skin=")).map((a) => a.slice("--skin=".length));
   const names = args.filter((a) => !a.startsWith("--"));
   const { specs } = await gen();
   const skins = (await loadSkins()).map((s) => s.spec.id);
@@ -22,6 +24,7 @@ if (import.meta.main) {
     defaultSkin: DEFAULT_SKIN,
     defaultPalette: DEFAULT_PALETTE,
     ...(names.length > 0 ? { only: new Set(names) } : {}),
+    ...(skinArgs.length > 0 ? { onlySkins: new Set(skinArgs) } : {}),
     images: args.includes("--images"),
     update: args.includes("--update-images"),
     sweep: args.includes("--sweep"),
