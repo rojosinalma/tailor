@@ -18,7 +18,14 @@
       "project": ["src/**/*.ts"]
     },
     "showcase": {
-      "entry": ["src/entry.tsx", "src/entry-sections.tsx"],
+      "entry": [
+        "src/entry.tsx",
+        "src/entry-sections.tsx",
+        "src/main.tsx",
+        "src/pages/*.tsx",
+        "src/static-pages.tsx",
+        "check.ts"
+      ],
       "project": ["src/**/*.{ts,tsx}"]
     },
     "cli": {

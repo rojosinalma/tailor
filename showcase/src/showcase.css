@@ -63,3 +63,76 @@
 .sc-embed .sc-example-note {
   display: none;
 }
+
+/* The site: a tab panel, the box of the Size control, and the frames of the HTML kit and the shell demos. */
+.sc-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-4);
+  min-width: 0;
+}
+
+.sc-stage {
+  display: flex;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.sc-stage-inner {
+  flex: none;
+  width: 100%;
+  min-width: 0;
+  margin-inline: auto;
+}
+
+.sc-stage-inner[data-size="phone"] {
+  /* lint-allow: the width of a phone, the point of the Size control */
+  width: 390px;
+}
+
+.sc-stage-inner[data-size="tablet"] {
+  /* lint-allow: the width of a tablet, the point of the Size control */
+  width: 820px;
+}
+
+.sc-stage-inner[data-size="desktop"] {
+  /* lint-allow: the width of a desktop, the point of the Size control */
+  width: 1440px;
+}
+
+.sc-isolated {
+  min-width: 0;
+}
+
+.sc-device {
+  flex: none;
+  margin-inline: auto;
+}
+
+.sc-device[data-fit] {
+  flex: 1;
+}
+
+.sc-frame {
+  display: block;
+  max-width: none;
+  border: 0;
+  background: var(--t-canvas);
+}
+
+.sc-frame[data-fit] {
+  width: 100%;
+}
+
+.sc-device .sc-frame {
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+}
+
+/* A shell demo that shows an example of its own: the example fills the screen. */
+.sc-demo-fill {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+}

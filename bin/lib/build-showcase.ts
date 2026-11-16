@@ -218,7 +218,6 @@ export async function buildShowcase(
     const filter =
       '<script>(function(){var q=new URLSearchParams(location.search),e=q.get("example");' +
       'if(e)document.querySelectorAll(".sc-example").forEach(function(s){if(s.dataset.example!==e)s.remove()});' +
-      "document.querySelectorAll('.sc-example[data-kit=\"react\"]').forEach(function(s){s.remove()});" +
       'if(q.get("embed"))document.body.classList.add("sc-embed")})()</script>';
 
     await out(
