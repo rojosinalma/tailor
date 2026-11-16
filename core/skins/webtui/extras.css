@@ -1,5 +1,89 @@
 /* WebTUI: a monospace character grid, square frames, bracketed buttons, inverse-video highlight. */
 
+/* shell-base: the bars are status lines; the current link is in inverse video, its section underlined */
+.t-shell-bar,
+.t-shell > .t-shell-footer {
+  border-color: var(--t-border-control);
+}
+
+.t-shell-brand {
+  color: var(--t-accent-text);
+}
+
+.t-shell-group-label::before {
+  content: "── " / "";
+}
+
+.t-shell-link[aria-current="page"],
+.t-shell-link:active:not(span) {
+  background: var(--t-text);
+  color: var(--t-canvas);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-shell-link[aria-current="page"]::before,
+.t-shell-link[data-current-section]::before {
+  content: none;
+}
+
+.t-shell-link[data-current-section] {
+  color: var(--t-text);
+  font-weight: var(--t-weight-bold);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.25em;
+}
+
+.t-shell-link[aria-current="page"] .t-counter {
+  background: var(--t-canvas);
+  color: var(--t-text);
+}
+
+@media (hover: hover) {
+  .t-shell-link:hover:not(span, [aria-current="page"]) {
+    background: var(--t-selection);
+    color: var(--t-text);
+  }
+}
+
+/* sidenav: the column is framed by a full line */
+.t-shell[data-shell="sidenav"] > .t-shell-sidebar {
+  border-color: var(--t-border-control);
+}
+
+/* page: the title is a heading line of a terminal document, "# Title" */
+.t-page-title::before {
+  content: "# " / "";
+  color: var(--t-muted);
+}
+
+/* section: "## Title" under the page title */
+.t-section-title::before {
+  content: "## " / "";
+  color: var(--t-muted);
+}
+
+/* pane: a framed box on the page background, the frame in the control line colour */
+.t-pane {
+  border-color: var(--t-border-control);
+  background: var(--t-canvas);
+}
+
+.t-pane-header,
+.t-pane-footer {
+  border-color: var(--t-border-control);
+}
+
+.t-pane-title {
+  color: var(--t-accent-text);
+}
+
+/* split: the handle is a square bar */
+.t-split-handle::before {
+  border-radius: 0;
+  background: var(--t-border-control);
+}
+
 /* button: [ label ] on the page, the primary a solid block; pressing inverts the colours */
 .t-btn {
   border-color: transparent;
@@ -7,17 +91,12 @@
   color: var(--t-text);
 }
 
-.t-btn:not([data-variant="link"], [data-variant="ghost"])::before {
-  content: "[";
+.t-btn:not([data-variant="link"], [data-variant="ghost"], [data-icon-only])::before {
+  content: "[" / "";
 }
 
-.t-btn:not([data-variant="link"], [data-variant="ghost"])::after {
-  content: "]";
-}
-
-.t-btn:active:not(:disabled, [aria-disabled="true"]) {
-  background: var(--t-text);
-  color: var(--t-canvas);
+.t-btn:not([data-variant="link"], [data-variant="ghost"], [data-icon-only])::after {
+  content: "]" / "";
 }
 
 .t-btn[data-variant="primary"] {
@@ -40,18 +119,18 @@
   text-decoration: underline;
 }
 
-.t-btn:is(
-  [data-variant="primary"],
-  [data-variant="danger"],
-  [data-variant="ghost"],
-  [data-variant="link"]
-):active:not(:disabled, [aria-disabled="true"]) {
+.t-btn:active:not(:disabled, [aria-disabled="true"]) {
   background: var(--t-text);
   color: var(--t-canvas);
 }
 
 .t-btn:focus-visible {
   text-decoration: underline;
+}
+
+.t-btn[aria-pressed="true"] {
+  background: var(--t-text);
+  color: var(--t-canvas);
 }
 
 .t-btn:is(:disabled, [aria-disabled="true"]) {
@@ -61,8 +140,16 @@
   text-decoration: line-through;
 }
 
+/* The loading mark: a turning corner of a square frame. */
+.t-btn-spinner {
+  border-color: transparent;
+  border-block-start-color: currentColor;
+  border-inline-start-color: currentColor;
+  border-radius: 0;
+}
+
 @media (hover: hover) {
-  .t-btn:hover:not(:disabled, [aria-disabled="true"]) {
+  .t-btn:hover:not(:disabled, [aria-disabled="true"], [aria-pressed="true"]) {
     background: var(--t-selection);
     color: var(--t-text);
   }
@@ -73,7 +160,6 @@
   }
 
   .t-btn[data-variant="danger"]:hover:not(:disabled, [aria-disabled="true"]) {
-    border-color: transparent;
     background: var(--t-danger);
     color: var(--t-on-danger);
   }
@@ -81,6 +167,42 @@
   .t-btn[data-variant="link"]:hover:not(:disabled, [aria-disabled="true"]) {
     background: transparent;
     color: var(--t-accent-text);
+  }
+}
+
+/* button-group: the buttons sit side by side as [a][b][c] */
+.t-btn-group > .t-btn:not([data-icon-only])::before {
+  content: "[\a0" / "";
+}
+
+.t-btn-group > .t-btn:not([data-icon-only])::after {
+  content: "\a0]" / "";
+}
+
+/* segmented: one framed strip, the chosen option in inverse video */
+.t-segmented {
+  background: transparent;
+}
+
+.t-segmented-option:is([data-checked], :has(:checked)) {
+  border-color: transparent;
+  background: var(--t-text);
+  color: var(--t-canvas);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-segmented-option:is([data-disabled], :has(:disabled)) {
+  text-decoration: line-through;
+}
+
+.t-segmented-option:is([data-checked], :has(:checked)):is([data-disabled], :has(:disabled)) {
+  background: var(--t-disabled);
+}
+
+@media (hover: hover) {
+  .t-segmented-option:hover:not([data-checked], [data-disabled], :has(:checked, :disabled)) {
+    background: var(--t-selection);
+    color: var(--t-text);
   }
 }
 
@@ -93,18 +215,47 @@
 
 .t-control[data-popup-open],
 .t-control[aria-expanded="true"],
+.t-control:focus-within,
 input.t-control:focus,
 textarea.t-control:focus {
+  border-color: transparent;
   border-bottom-color: var(--t-focus);
 }
 
-.t-control:is([aria-invalid="true"], [data-invalid]) {
+.t-control:is([aria-invalid="true"], [data-invalid]),
+.t-control:has([aria-invalid="true"], [data-invalid]) {
+  border-color: transparent;
   border-bottom-color: var(--t-danger);
 }
 
-.t-control:is(:disabled, [data-disabled], [aria-disabled="true"]) {
+.t-control:is(:disabled, [data-disabled], [aria-disabled="true"]),
+.t-control:has(:disabled) {
   background: var(--t-inset);
   text-decoration: line-through;
+}
+
+.t-input-native::placeholder {
+  color: var(--t-muted);
+}
+
+/* check: a square frame, a check mark in the accent when ticked (WebTUI "[✓]") */
+.t-check-input:is(:checked, [data-checked], :indeterminate, [data-indeterminate]) {
+  border-color: var(--t-accent-solid);
+  background: var(--t-inset);
+  color: var(--t-accent-text);
+}
+
+/* radio: a square frame with a square block for the chosen one */
+.t-radio-input:is(:checked, [data-checked]) {
+  border-color: var(--t-accent-solid);
+  background: var(--t-inset);
+  color: var(--t-accent-text);
+}
+
+/* switch: a square track and a square block */
+.t-switch-thumb,
+input.t-switch-input::before {
+  box-shadow: none;
 }
 
 /* popup: a framed box on the page background; the highlighted row in inverse video */
@@ -130,10 +281,200 @@ textarea.t-control:focus {
   text-decoration: line-through;
 }
 
-/* dialog: a double frame, the title in the accent, a [×] close */
+/* select */
+.t-select-icon {
+  color: var(--t-text);
+}
+
+/* accordion: rows split by full lines; the open row's title in bold */
+.t-accordion,
+.t-accordion-item + .t-accordion-item {
+  border-color: var(--t-border-control);
+}
+
+.t-accordion-item:is([open], [data-open]) .t-accordion-title {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-accordion-trigger:focus-visible .t-accordion-title {
+  text-decoration: underline;
+}
+
+@media (hover: hover) {
+  .t-accordion-trigger:hover:not([aria-disabled="true"]) {
+    background: var(--t-selection);
+  }
+}
+
+/* avatar: a character cell block */
+.t-avatar {
+  font-weight: var(--t-weight-bold);
+}
+
+/* badge: a solid or tinted block of its tone in bold */
+.t-badge {
+  font-weight: var(--t-weight-bold);
+}
+
+/* card: a WebTUI box — transparent, framed by a line in the control colour */
+.t-card {
+  border-color: var(--t-border-control);
+  background: transparent;
+}
+
+.t-card-header,
+.t-card-footer,
+.t-card[data-padding="none"] > .t-card-header:not(:only-child) {
+  border-color: var(--t-border-control);
+}
+
+.t-card-footer {
+  background: transparent;
+}
+
+.t-card-title {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-card[data-tone] {
+  border-inline-start-color: var(--t-tone);
+}
+
+.t-card[data-selected] {
+  border-color: var(--t-accent);
+  outline-color: var(--t-accent);
+}
+
+/* code-block: a sunken band, framed like a box */
+.t-code {
+  border-color: var(--t-border-control);
+}
+
+.t-code-header {
+  border-color: var(--t-border-control);
+}
+
+.t-code-title {
+  color: var(--t-accent-text);
+}
+
+/* counter: a bold number cell */
+.t-counter {
+  font-weight: var(--t-weight-bold);
+}
+
+/* kbd: a key cap in inverse colours */
+.t-kbd {
+  border-color: var(--t-border-control);
+  border-bottom-width: var(--t-border-w);
+  background: var(--t-selection);
+  color: var(--t-text);
+}
+
+/* list: rows split by full lines; the current row's title in bold */
+.t-list:not([data-dividers="false"]) > .t-list-item + .t-list-item {
+  border-color: var(--t-border-control);
+}
+
+.t-list-item[aria-current] .t-list-title,
+.t-list-item:has(> .t-list-content .t-list-link[aria-current]) .t-list-title {
+  font-weight: var(--t-weight-bold);
+}
+
+/* progress: a framed track, the fill in solid cells */
+.t-progress-track {
+  box-shadow: inset 0 0 0 2px var(--t-border-control);
+}
+
+.t-progress-value {
+  font-variant-numeric: tabular-nums;
+}
+
+/* separator: a full line */
+.t-separator,
+.t-separator:has(> .t-separator-label)::after {
+  background: var(--t-border-control);
+}
+
+.t-separator:has(> .t-separator-label) {
+  background: none;
+}
+
+/* skeleton: square blocks, also for the round shape */
+.t-skeleton[data-shape="circle"] {
+  border-radius: 0;
+}
+
+/* spinner: a turning corner of a square frame */
+.t-spinner::before {
+  border-color: transparent;
+  border-block-start-color: currentColor;
+  border-inline-start-color: currentColor;
+  border-radius: 0;
+}
+
+/* stat: a transparent framed box like the card */
+.t-stat {
+  border-color: var(--t-border-control);
+  background: transparent;
+}
+
+.t-stat-value {
+  font-weight: var(--t-weight-bold);
+}
+
+/* table: a framed grid; the header row in bold on the sunken band, full lines between rows */
+.t-table-wrap {
+  border-color: var(--t-border-control);
+}
+
+.t-table thead th {
+  border-color: var(--t-border-control);
+  color: var(--t-text);
+  font-weight: var(--t-weight-bold);
+}
+
+/* timeline: a line rail with square marks */
+.t-timeline-marker::after {
+  background: var(--t-border-control);
+}
+
+.t-timeline-title {
+  font-weight: var(--t-weight-bold);
+}
+
+/* alert: a box framed in its tone */
+.t-alert {
+  border-color: var(--t-tone);
+}
+
+.t-alert:not([data-tone]) {
+  border-color: var(--t-border-control);
+}
+
+.t-alert-title {
+  color: var(--t-tone-text);
+  font-weight: var(--t-weight-bold);
+}
+
+/* banner: a status line with a rule in its tone */
+.t-banner {
+  border-bottom-color: var(--t-tone);
+}
+
+/* dialog / confirm: a double frame (WebTUI box-="double"), the title in the accent, a [×] close */
 .t-dialog {
-  border: 6px double var(--t-muted);
+  border: 6px double var(--t-border-control);
   background: var(--t-canvas);
+}
+
+.t-dialog-header,
+.t-dialog-footer {
+  border-color: var(--t-border-control);
+}
+
+.t-dialog[data-tone="danger"] {
+  border-color: var(--t-danger);
 }
 
 .t-dialog-title {
@@ -141,33 +482,184 @@ textarea.t-control:focus {
   font-weight: var(--t-weight-bold);
 }
 
-.t-dialog-close {
+.t-dialog[data-tone="danger"] .t-dialog-title {
+  color: var(--t-danger-text);
+}
+
+.t-dialog-close,
+.t-drawer-close {
   color: var(--t-text);
 }
 
-.t-dialog-close::before {
-  content: "[";
+.t-dialog-close::before,
+.t-drawer-close::before {
+  content: "[" / "";
 }
 
-.t-dialog-close::after {
-  content: "]";
+.t-dialog-close::after,
+.t-drawer-close::after {
+  content: "]" / "";
 }
 
-.t-dialog-close:active {
+.t-dialog-close:active,
+.t-drawer-close:active {
   background: var(--t-text);
   color: var(--t-canvas);
 }
 
 @media (hover: hover) {
-  .t-dialog-close:hover {
+  .t-dialog-close:hover,
+  .t-drawer-close:hover {
     background: var(--t-selection);
     color: var(--t-text);
   }
 }
 
-/* select */
-.t-select-icon {
+@media (max-width: 40rem) {
+  .t-dialog:not([data-variant="confirm"]) {
+    border: 0;
+  }
+}
+
+/* drawer / bottom sheet: a framed panel on the page background, square at every corner */
+.t-drawer {
+  border-color: var(--t-border-control);
+  background: var(--t-canvas);
+}
+
+.t-drawer-header,
+.t-drawer-footer {
+  border-color: var(--t-border-control);
+}
+
+.t-drawer-title {
+  color: var(--t-accent-text);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-drawer-handle {
+  border-radius: 0;
+}
+
+/* help: the (i) mark gets a square cell */
+.t-help:active,
+.t-help[data-popup-open] {
+  background: var(--t-tone);
+  color: var(--t-on-tone);
+}
+
+/* popover / hover-card: framed boxes on the page background, like every popup */
+.t-popover-title {
+  color: var(--t-accent-text);
+  font-weight: var(--t-weight-bold);
+}
+
+/* toast: a framed box on the page background with its tone at the start edge */
+.t-toast {
+  border-color: var(--t-border-control);
+  border-inline-start-color: var(--t-tone);
+  background: var(--t-canvas);
+}
+
+.t-toast-title {
+  font-weight: var(--t-weight-bold);
+}
+
+/* tooltip: inverse video */
+.t-tooltip {
+  border-color: var(--t-text);
+  background: var(--t-text);
+  color: var(--t-canvas);
+}
+
+/* breadcrumb: the current page in bold */
+.t-breadcrumb-item > [aria-current="page"] {
+  font-weight: var(--t-weight-bold);
+}
+
+/* pagination: the current page in inverse video */
+.t-pagination-page[aria-current="page"] {
+  background: var(--t-text);
+  color: var(--t-canvas);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-pagination-page:active:not([aria-current="page"]),
+.t-pagination-step:active:not(:disabled, [aria-disabled="true"]) {
+  background: var(--t-text);
+  color: var(--t-canvas);
+}
+
+@media (hover: hover) {
+  .t-pagination-page:hover:not([aria-current="page"]),
+  .t-pagination-step:hover:not(:disabled, [aria-disabled="true"]) {
+    background: var(--t-selection);
+    color: var(--t-text);
+  }
+}
+
+/* stepper: square marks; the current one in inverse video, the done ones solid */
+.t-stepper-step[data-state="current"] .t-stepper-marker {
+  border-color: var(--t-text);
+  background: var(--t-text);
+  color: var(--t-canvas);
+}
+
+/* tabs: a full line under the row, the chosen tab in inverse video; pills are accent blocks */
+.t-tabs-list {
+  box-shadow: inset 0 -2px var(--t-border-control);
+}
+
+.t-tab:is([aria-selected="true"], [aria-current="page"]) {
+  background: var(--t-text);
+  color: var(--t-canvas);
+  font-weight: var(--t-weight-bold);
+  box-shadow: none;
+}
+
+.t-tab:is([aria-selected="true"], [aria-current="page"]) .t-counter {
+  background: var(--t-canvas);
   color: var(--t-text);
+}
+
+.t-tab:is([aria-disabled="true"], :disabled) {
+  text-decoration: line-through;
+}
+
+.t-tabs[data-variant="pills"] .t-tab:is([aria-selected="true"], [aria-current="page"]) {
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+}
+
+@media (hover: hover) {
+  .t-tab:hover:not([aria-selected="true"], [aria-current="page"], [aria-disabled="true"], :disabled) {
+    background: var(--t-selection);
+    color: var(--t-text);
+  }
+}
+
+/* bottom-bar: a status line; the current link's icon cell in inverse video */
+.t-bottom-bar {
+  border-color: var(--t-border-control);
+}
+
+.t-bottom-bar-icon {
+  border-radius: 0;
+}
+
+.t-bottom-bar-item[aria-current="page"] > .t-bottom-bar-icon,
+.t-bottom-bar-item:active > .t-bottom-bar-icon {
+  background: var(--t-text);
+  color: var(--t-canvas);
+}
+
+.t-bottom-bar-item[data-current-section] .t-bottom-bar-label {
+  text-decoration: underline;
+}
+
+/* nav-drawer: the footer row under a full line */
+.t-nav-drawer-footer {
+  border-color: var(--t-border-control);
 }
 
 /* date: square cells, the chosen day in inverse video */
@@ -196,4 +688,56 @@ textarea.t-control:focus {
   .t-calendar-day:hover:not(:disabled, [data-selected]) {
     background: var(--t-selection);
   }
+}
+
+/* board: columns framed like boxes */
+.t-board-column {
+  border-color: var(--t-border-control);
+}
+
+.t-board-column[data-tone] {
+  border-top-color: var(--t-tone);
+}
+
+.t-board-column-title {
+  font-weight: var(--t-weight-bold);
+}
+
+/* map: square markers; a pin is a diamond with its point down */
+.t-map-marker-shape,
+.t-map-marker[data-shape="pin"] .t-map-marker-shape,
+.t-map-here {
+  border-radius: 0;
+}
+
+/* swatch-picker / color: square colour cells and thumbs */
+.t-swatches-option,
+.t-swatches-check,
+.t-color-area-thumb,
+.t-color-hue-thumb {
+  border-radius: 0;
+}
+
+/* thumb-grid: the play mark of a video is a square cell */
+.t-thumbs-kind[data-kind="video"] {
+  border-radius: 0;
+}
+
+/* windows: a framed window on the page background; the focused one framed in the text colour */
+.t-window,
+.t-windows-bubble {
+  border-color: var(--t-border-control);
+  background: var(--t-canvas);
+}
+
+.t-window-bar {
+  border-color: var(--t-border-control);
+}
+
+.t-window[data-focused] {
+  border-color: var(--t-text);
+}
+
+.t-window-title {
+  font-weight: var(--t-weight-bold);
 }
