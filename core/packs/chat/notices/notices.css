@@ -1,0 +1,74 @@
+/* A compact stack above the composer; when it grows tall it scrolls, so the transcript keeps its room. */
+.t-notices {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--t-space-1);
+  min-width: 0;
+  max-height: 40%;
+  container-type: inline-size;
+}
+
+.t-notices[hidden] {
+  display: none;
+}
+
+.t-notices-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+/* Normal text over the tone: only the weak tint keeps it readable. */
+.t-notices-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-2) var(--t-space-3);
+  min-width: 0;
+  padding: var(--t-space-2) var(--t-space-3);
+  border: var(--t-border-w) solid color-mix(in srgb, var(--t-tone) 45%, var(--t-border));
+  border-radius: var(--t-radius-box);
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint-weak), var(--t-canvas));
+  color: var(--t-text);
+  font-size: var(--t-text-sm);
+}
+
+.t-notices-icon {
+  display: inline-flex;
+  flex: none;
+  color: var(--t-tone-text);
+}
+
+.t-notices-content {
+  flex: 1 1 var(--t-measure-2xs);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.t-notices-title {
+  font-weight: var(--t-weight-bold);
+}
+
+.t-notices-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--t-space-2);
+  margin-inline-start: auto;
+}
+
+/* In a narrow box the buttons go under the text, level with it. */
+@container (max-width: 40rem) {
+  .t-notices-actions {
+    flex-basis: 100%;
+    justify-content: flex-end;
+  }
+}
+
+.t-notices-more {
+  align-self: center;
+}

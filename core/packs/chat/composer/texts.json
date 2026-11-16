@@ -1,0 +1,7 @@
+{
+  "chatSend": "Send",
+  "chatStop": "Stop",
+  "chatAttachFiles": "Attach files",
+  "chatAttachments": "Attachments",
+  "chatCharacters": "{count} of {max} characters"
+}

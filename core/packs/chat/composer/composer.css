@@ -1,0 +1,127 @@
+/* The composer is the box only; it stays above the safe area at the bottom of a phone. */
+.t-composer {
+  flex: none;
+  min-width: 0;
+  padding-block-end: var(--t-safe-bottom);
+}
+
+.t-composer-box {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: var(--t-border-w) solid var(--t-border-control);
+  border-radius: var(--t-radius-box);
+  background: var(--t-inset);
+  transition: border-color var(--t-motion-fast) var(--t-ease);
+}
+
+.t-composer-box:has(.t-composer-input:focus) {
+  border-color: var(--t-accent);
+}
+
+.t-composer-box:has(.t-composer-input:focus-visible) {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: var(--t-focus-offset);
+}
+
+.t-composer-box[data-drop] {
+  border-style: dashed;
+  border-color: var(--t-accent);
+}
+
+.t-composer-files {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--t-space-2);
+  padding: var(--t-space-2) var(--t-space-2) 0;
+}
+
+.t-composer-files > li {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.t-composer-input {
+  display: block;
+  width: 100%;
+  min-height: max(var(--t-control-h-md), calc(1lh + var(--t-space-4)));
+  max-height: var(--t-measure-xs);
+  padding: var(--t-space-2) var(--t-control-px);
+  border: 0;
+  background: transparent;
+  color: var(--t-text);
+  font-family: inherit;
+  font-size: var(--t-text-base);
+  line-height: var(--t-leading);
+  resize: none;
+  overflow-y: auto;
+}
+
+.t-composer-input:focus-visible {
+  outline: none;
+}
+
+.t-composer-input::placeholder {
+  color: var(--t-muted);
+}
+
+.t-composer-input:disabled {
+  color: var(--t-disabled);
+  cursor: not-allowed;
+}
+
+@supports (field-sizing: content) {
+  .t-composer-input {
+    field-sizing: content;
+  }
+}
+
+/* The script sets --t-composer-h where the browser cannot size the field to its content. */
+@supports not (field-sizing: content) {
+  .t-composer-input {
+    --t-composer-h: auto;
+    height: var(--t-composer-h);
+  }
+}
+
+/* A text field on a phone needs 16px text, or the browser zooms in on focus. */
+@media (pointer: coarse) {
+  .t-composer-input {
+    font-size: max(var(--t-text-touch), var(--t-text-base));
+  }
+}
+
+.t-composer-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-2);
+  padding: 0 var(--t-space-2) var(--t-space-2);
+}
+
+.t-composer-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-1);
+  min-width: 0;
+}
+
+.t-composer-count {
+  min-width: 0;
+  margin-inline-start: auto;
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  text-align: end;
+}
+
+.t-composer-count[data-tone] {
+  color: var(--t-tone-text);
+}
+
+.t-composer-send {
+  flex: none;
+  margin-inline-start: auto;
+}
+
+.t-composer-count + .t-composer-send {
+  margin-inline-start: 0;
+}

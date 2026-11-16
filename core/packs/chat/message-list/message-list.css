@@ -1,0 +1,276 @@
+/* The transcript fills its parent and scrolls by itself; the new messages button floats at its bottom. */
+.t-messages {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.t-messages-log {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* The list keeps the reading position itself; the browser's own anchoring would move it twice. */
+  overflow-anchor: none;
+}
+
+.t-messages-inner {
+  display: flex;
+  flex-direction: column;
+  /* A short conversation sits at the bottom, next to the composer. */
+  justify-content: flex-end;
+  gap: var(--t-space-1);
+  min-height: 100%;
+  max-width: var(--t-measure-prose);
+  margin-inline: auto;
+  padding: var(--t-space-4);
+}
+
+.t-messages-day {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-3);
+  padding-block: var(--t-space-3);
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-messages-day::before,
+.t-messages-day::after {
+  content: "";
+  flex: 1;
+  border-top: var(--t-border-w) solid var(--t-border);
+}
+
+.t-messages-item {
+  position: relative;
+  display: flex;
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.t-messages-item[data-group-start] {
+  margin-block-start: var(--t-space-3);
+}
+
+.t-messages-day + .t-messages-item {
+  margin-block-start: 0;
+}
+
+.t-messages-avatar {
+  flex: none;
+  width: var(--t-control-h-sm);
+}
+
+.t-messages-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--t-space-1);
+  min-width: 0;
+}
+
+.t-messages-author {
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-messages-row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--t-space-2);
+  max-width: 100%;
+  min-width: 0;
+}
+
+.t-messages-bubble {
+  min-width: 0;
+  max-width: min(100%, var(--t-measure-lg));
+  padding: var(--t-space-2) var(--t-space-3);
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  background: var(--t-surface);
+  overflow-wrap: anywhere;
+}
+
+/* Code blocks and tables scroll inside the bubble instead of widening it. */
+.t-messages-bubble :is(pre, table) {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.t-messages-time {
+  flex: none;
+  padding-block-end: var(--t-space-1);
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  white-space: nowrap;
+}
+
+/* Hover mode: the time keeps its place, so nothing moves when it shows. */
+@media (hover: hover) {
+  .t-messages:not([data-times])
+    .t-messages-item:not([data-state="sending"], :hover, :focus-within)
+    .t-messages-time {
+    visibility: hidden;
+  }
+}
+
+.t-messages-item[data-role="self"] .t-messages-body {
+  align-items: flex-end;
+}
+
+.t-messages-item[data-role="self"] .t-messages-row {
+  flex-direction: row-reverse;
+}
+
+/* Normal text over the accent: only the weak tint keeps it readable. */
+.t-messages-item[data-role="self"] .t-messages-bubble {
+  border-color: color-mix(in srgb, var(--t-accent-solid) var(--t-tint-strong), var(--t-border));
+  background: color-mix(in srgb, var(--t-accent-solid) var(--t-tint-weak), var(--t-canvas));
+}
+
+.t-messages-item[data-role="system"] {
+  justify-content: center;
+  text-align: center;
+}
+
+.t-messages-item[data-role="system"] .t-messages-body {
+  align-items: center;
+}
+
+.t-messages-item[data-role="system"] .t-messages-bubble {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-messages-item[data-state="sending"] .t-messages-bubble {
+  border-style: dashed;
+}
+
+.t-messages-item[data-state="failed"] .t-messages-bubble {
+  border-color: var(--t-danger);
+}
+
+.t-messages-activity {
+  display: block;
+  width: 0.5em;
+  height: 0.5em;
+  margin-block-start: var(--t-space-2);
+  border-radius: var(--t-radius-pill);
+  background: var(--t-muted);
+  animation: t-messages-pulse calc(var(--t-motion-base) * 6) var(--t-ease) infinite alternate;
+}
+
+@keyframes t-messages-pulse {
+  to {
+    opacity: 0.3;
+  }
+}
+
+.t-messages-files {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-1);
+  max-width: 100%;
+  font-size: var(--t-text-sm);
+}
+
+.t-messages-files > li {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-1);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.t-messages-files a {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  min-height: var(--t-control-h-sm);
+  color: var(--t-link);
+}
+
+.t-messages-failed {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-1) var(--t-space-2);
+  color: var(--t-danger-text);
+  font-size: var(--t-text-sm);
+}
+
+/* Shown on hover and focus where a pointer can hover; always on a touch screen. */
+.t-messages-actions {
+  display: flex;
+  gap: var(--t-space-05);
+}
+
+@media (hover: hover) {
+  .t-messages-actions {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: calc(var(--t-space-3) * -1);
+    inset-inline-end: 0;
+    padding: var(--t-space-05);
+    border: var(--t-border-w) solid var(--t-border);
+    border-radius: var(--t-radius-control);
+    background: var(--t-surface);
+    box-shadow: var(--t-shadow-sm);
+    opacity: 0;
+    transition: opacity var(--t-motion-fast) var(--t-ease);
+  }
+
+  .t-messages-item[data-role="self"] .t-messages-actions {
+    inset-inline: 0 auto;
+  }
+
+  .t-messages-item:is(:hover, :focus-within) .t-messages-actions {
+    opacity: 1;
+  }
+}
+
+.t-messages-jump {
+  position: absolute;
+  z-index: 1;
+  inset-block-end: var(--t-space-3);
+  inset-inline: 0;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.t-messages-jump > .t-btn {
+  box-shadow: var(--t-shadow-md);
+  pointer-events: auto;
+}
+
+.t-messages-chat {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+/* The notices and the composer line up with the reading column of the transcript. */
+.t-messages-chat > :is(.t-notices, .t-composer) {
+  width: 100%;
+  max-width: var(--t-measure-prose);
+  margin-inline: auto;
+  padding-inline: var(--t-space-4);
+}
+
+.t-messages-chat > .t-composer {
+  padding-block: var(--t-space-2) calc(var(--t-space-4) + var(--t-safe-bottom));
+}
