@@ -3,6 +3,19 @@
   min-width: 0;
 }
 
+/* A fast load shows nothing rather than a flash of placeholders: the loading state appears after a short wait. */
+.t-query[data-state="loading"] > * {
+  animation: t-query-show var(--t-motion-base) var(--t-ease) both;
+  /* lint-allow: a wait before the placeholders show, not a motion; it must hold under reduced motion too */
+  animation-delay: 150ms;
+}
+
+@keyframes t-query-show {
+  from {
+    opacity: 0;
+  }
+}
+
 /* A refresh: a thin line moves along the top edge; under reduced motion it stands still. */
 .t-query-progress {
   position: absolute;
@@ -21,7 +34,7 @@
   inset-inline-start: 0;
   width: 30%;
   background: var(--t-accent-solid);
-  animation: t-query-move calc(var(--t-motion-base) * 6) var(--t-ease) infinite;
+  animation: t-query-move calc(var(--t-spin) * 2) var(--t-ease) infinite;
 }
 
 @keyframes t-query-move {

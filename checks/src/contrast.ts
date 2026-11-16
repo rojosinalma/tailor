@@ -5,33 +5,8 @@
 import { AxeBuilder } from "@axe-core/playwright";
 import type { ComponentSpec } from "../../core/src/spec";
 import { connectBrowser, FIXED_NOW, pool, WORKERS } from "./browser";
+import { COLOURFUL } from "./colourful";
 import type { PageProblem } from "./pages";
-
-/** The components a release checks in all 252 combinations. */
-const COLOURFUL = [
-  "alert",
-  "badge",
-  "banner",
-  "button",
-  "card",
-  "chip",
-  "counter",
-  "date",
-  "field",
-  "input",
-  "list",
-  "menu",
-  "pagination",
-  "segmented",
-  "select",
-  "sidenav",
-  "stat",
-  "state-label",
-  "stepper",
-  "table",
-  "tabs",
-  "topnav",
-];
 
 export interface ContrastOptions {
   readonly siteUrl: string;

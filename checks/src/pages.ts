@@ -13,6 +13,7 @@ import { at } from "../../bin/lib/paths";
 import type { ComponentSpec } from "../../core/src/spec";
 import type { Kit } from "./behaviour";
 import { connectBrowser, FIXED_NOW, pool, WORKERS } from "./browser";
+import { COLOURFUL } from "./colourful";
 
 /**
  * The screens of the checks: a phone, a tablet upright and on its side, and two desktops.
@@ -435,7 +436,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
         states.push({ skin, palette: defaultPalette, mode: "dark", width, image });
       }
     }
-    if (options.sweep && target.kit === "react") {
+    if (options.sweep && target.kit === "react" && COLOURFUL.includes(target.component)) {
       for (const palette of options.palettes) {
         for (const mode of ["dark", "light"] as const) {
           if (palette === defaultPalette && mode === "dark") continue;

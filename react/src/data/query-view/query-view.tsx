@@ -1,10 +1,9 @@
 import { t } from "@tailor/core/text";
-import { type ReactNode, useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { Alert } from "../../core/alert/alert";
 import { Button } from "../../core/button/button";
 import { EmptyState } from "../../core/empty-state/empty-state";
 import { Skeleton } from "../../core/skeleton/skeleton";
-import { useIsStatic } from "../../kit";
 
 /** What the view reads of a query: the shape of TanStack Query's result, without depending on a version. */
 export interface QueryLike<T> {
@@ -27,9 +26,6 @@ export interface QueryViewProps<T> {
   children: (data: T) => ReactNode;
 }
 
-/** A fast load shows nothing rather than a flash of placeholders. */
-const LOADING_DELAY_MS = 150;
-
 const emptyByDefault = (data: unknown): boolean =>
   data === null || data === undefined || (Array.isArray(data) && data.length === 0);
 
@@ -44,20 +40,11 @@ export function QueryView<T>({
   isEmpty = emptyByDefault,
   children,
 }: QueryViewProps<T>) {
-  const isStatic = useIsStatic();
   const pending = query.status === "pending";
-  const [late, setLate] = useState(false);
-  useEffect(() => {
-    if (!pending) return;
-    setLate(false);
-    const timer = setTimeout(() => setLate(true), LOADING_DELAY_MS);
-    return () => clearTimeout(timer);
-  }, [pending]);
-
   if (pending)
     return (
       <div className="t-query" data-state="loading" aria-busy="true">
-        {late || isStatic ? (loading ?? <Skeleton lines={3} />) : null}
+        {loading ?? <Skeleton lines={3} />}
       </div>
     );
   if (query.status === "error")
