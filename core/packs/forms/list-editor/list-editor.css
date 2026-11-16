@@ -1,0 +1,51 @@
+/* The rows, then the Add button at its own width. */
+.t-list-editor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.t-list-editor-list {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: var(--t-space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.t-list-editor-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-1);
+  min-width: 0;
+}
+
+.t-list-editor-item {
+  display: flex;
+  flex: 1 1 var(--t-measure-2xs);
+  flex-direction: column;
+  min-width: 0;
+}
+
+.t-list-editor-error {
+  display: flex;
+  flex-basis: 100%;
+  align-items: flex-start;
+  gap: var(--t-space-1);
+  min-width: 0;
+  margin: 0;
+  color: var(--t-danger-text);
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.t-list-editor-error > .t-icon {
+  flex: none;
+  height: 1lh;
+}

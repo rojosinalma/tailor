@@ -72,7 +72,7 @@ export const PACKS: readonly PackSpec[] = [
     name: "Forms",
     description: "Validated forms, the settings page and the list and key-value editors.",
     requires: ["core"],
-    libraries: { "@tanstack/react-form": "1.33.5" },
+    libraries: { "@tanstack/react-form": "1.33.5", "@tanstack/react-pacer": "0.24.1" },
     html: "full",
   }),
   pack({

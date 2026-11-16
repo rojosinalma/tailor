@@ -1,0 +1,60 @@
+/* The rows, then the Add button at its own width. A narrow row puts the value under the key. */
+.t-kv-editor {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.t-kv-editor-list {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: var(--t-space-2);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.t-kv-editor-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-1) var(--t-space-2);
+  min-width: 0;
+}
+
+.t-kv-editor-key,
+.t-kv-editor-value {
+  display: flex;
+  flex: 1 1 var(--t-measure-2xs);
+  flex-direction: column;
+  min-width: 0;
+}
+
+.t-kv-editor-key .t-control {
+  font-family: var(--t-font-mono);
+}
+
+.t-kv-editor-value {
+  flex-grow: 2;
+}
+
+.t-kv-editor-error {
+  display: flex;
+  flex-basis: 100%;
+  align-items: flex-start;
+  gap: var(--t-space-1);
+  min-width: 0;
+  margin: 0;
+  color: var(--t-danger-text);
+  font-size: var(--t-text-sm);
+  line-height: var(--t-leading-tight);
+  overflow-wrap: anywhere;
+}
+
+.t-kv-editor-error > .t-icon {
+  flex: none;
+  height: 1lh;
+}

@@ -1,0 +1,15 @@
+{
+  "errorRequired": "This field is required",
+  "errorEmail": "Enter an email address",
+  "errorUrl": "Enter a web address",
+  "errorNumber": "Enter a number",
+  "errorPattern": "This value does not have the expected format",
+  "errorMin": "Enter {min} or more",
+  "errorMax": "Enter {max} or less",
+  "errorMinLength": "Enter at least {min} characters",
+  "errorMaxLength": "Enter at most {max} characters",
+  "formSaved": "Saved",
+  "formFailed": "Not saved. Correct the fields and try again.",
+  "formNotSent": "Not sent. Check the connection and try again.",
+  "formSummary": "Correct these fields"
+}

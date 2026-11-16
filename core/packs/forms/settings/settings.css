@@ -1,0 +1,226 @@
+/* The page fills its parent; the content scrolls inside it, the list of sections stays. */
+.t-settings {
+  flex: 1 1 auto;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  container-type: inline-size;
+}
+
+.t-settings-layout {
+  display: grid;
+  grid-template-columns: var(--t-measure-xs) minmax(0, 1fr);
+  gap: var(--t-space-5);
+  height: 100%;
+  min-height: 0;
+}
+
+.t-settings-nav {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  min-width: 0;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.t-settings-nav > ul {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-05);
+  margin: 0;
+  padding: 0;
+}
+
+.t-settings-link {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-2);
+  min-width: 0;
+  min-height: var(--t-control-h-md);
+  padding: 0 var(--t-space-3);
+  border-radius: var(--t-radius-control);
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+  text-decoration: none;
+}
+
+.t-settings-link > span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-settings-link[aria-current="true"] {
+  background: var(--t-selection);
+  color: var(--t-text);
+  font-weight: var(--t-label-weight);
+}
+
+@media (hover: hover) {
+  .t-settings-link:not([aria-current="true"]):hover {
+    background: color-mix(in srgb, var(--t-text) var(--t-tint-weak), transparent);
+    color: var(--t-text);
+  }
+}
+
+.t-settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-6);
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.t-settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.t-settings-section-title {
+  font-size: var(--t-text-lg);
+  outline: none;
+}
+
+.t-settings-section-description {
+  margin: 0;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-settings-section-body {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* A narrow box: the sections become a row of links above the content. */
+@container (max-width: 40rem) {
+  .t-settings-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
+    gap: var(--t-space-3);
+  }
+
+  .t-settings-nav {
+    z-index: var(--t-z-sticky);
+    max-height: none;
+    overflow: auto hidden;
+    border-bottom: var(--t-border-w) solid var(--t-border);
+    background: var(--t-canvas);
+  }
+
+  .t-settings-nav > ul {
+    flex-direction: row;
+    width: max-content;
+  }
+
+  .t-settings-link {
+    border-radius: 0;
+    box-shadow: inset 0 calc(-1 * var(--t-border-w-strong)) 0 transparent;
+  }
+
+  .t-settings-link[aria-current="true"] {
+    background: transparent;
+    box-shadow: inset 0 calc(-1 * var(--t-border-w-strong)) 0 var(--t-accent);
+  }
+}
+
+/* One setting: the text, then the control and the state at the end; a narrow row puts the control under it. */
+.t-setting {
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.t-setting-row {
+  display: grid;
+  grid-template-columns: minmax(0, max-content) auto minmax(0, 1fr) auto auto;
+  grid-template-areas:
+    "label help . control state"
+    "desc desc desc control state";
+  align-items: center;
+  gap: var(--t-space-1) var(--t-space-2);
+  padding: var(--t-space-3) 0;
+}
+
+.t-setting-row > .t-field {
+  display: contents;
+}
+
+.t-setting-row > .t-field > .t-field-label {
+  grid-area: label;
+}
+
+.t-setting-row > .t-field > .t-field-help {
+  grid-area: desc;
+}
+
+.t-setting-row > .t-field > .t-field-control {
+  grid-area: control;
+  width: var(--t-measure-xs);
+}
+
+.t-setting[data-toggle] .t-field-control {
+  width: auto;
+}
+
+.t-setting-row > .t-field > .t-field-error {
+  display: none;
+}
+
+.t-setting-help {
+  display: inline-flex;
+  grid-area: help;
+}
+
+.t-setting-state {
+  display: inline-flex;
+  grid-area: state;
+  align-items: center;
+  gap: var(--t-space-1);
+  min-width: var(--t-space-5);
+  font-size: var(--t-text-sm);
+}
+
+.t-setting-state[data-state="saved"] {
+  color: var(--t-success-text);
+  animation: t-setting-fade var(--t-motion-base) var(--t-ease) calc(var(--t-motion-base) * 8) both;
+}
+
+.t-setting-state[data-state="failed"] {
+  color: var(--t-danger-text);
+}
+
+@keyframes t-setting-fade {
+  to {
+    opacity: 0;
+  }
+}
+
+@container (max-width: 40rem) {
+  .t-setting:not([data-toggle]) .t-setting-row {
+    grid-template-columns: minmax(0, max-content) auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "label help . state"
+      "desc desc desc desc"
+      "control control control control";
+  }
+
+  .t-setting:not([data-toggle]) .t-field-control {
+    width: auto;
+  }
+}
+
+/* A Switch or Check holds only its box here: its label is for screen readers. */
+.t-setting[data-toggle] .t-field-control > * {
+  column-gap: 0;
+}
+
+.t-settings-section-body > .t-setting + .t-setting {
+  border-top: var(--t-border-w) solid var(--t-border);
+}

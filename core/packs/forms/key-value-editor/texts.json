@@ -1,0 +1,7 @@
+{
+  "listAdd": "Add",
+  "kvKey": "Key",
+  "kvValue": "Value",
+  "kvRemove": "Remove row",
+  "kvDuplicate": "This key is used twice."
+}

@@ -1,0 +1,84 @@
+/* Stack: one column. Sections get more room between them than fields. */
+.t-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-4);
+  min-width: 0;
+}
+
+.t-form:has(> .t-form-section) {
+  gap: var(--t-space-6);
+}
+
+.t-form-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.t-form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-4);
+  min-width: 0;
+}
+
+.t-form-section-title {
+  padding: 0 0 var(--t-space-1);
+  font-size: var(--t-text-lg);
+  font-weight: var(--t-heading-weight);
+  line-height: var(--t-leading-tight);
+}
+
+.t-form-section-description {
+  margin: 0;
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-form-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-4);
+  min-width: 0;
+}
+
+/* Grid: two columns while each gets the width of a small box, else one. */
+.t-form[data-layout="grid"],
+.t-form[data-layout="grid"] .t-form-section-body {
+  display: grid;
+  grid-template-columns: repeat(
+      auto-fit,
+      minmax(max(min(100%, var(--t-measure-sm)), calc((100% - var(--t-space-5)) / 2)), 1fr)
+    );
+  gap: var(--t-space-4) var(--t-space-5);
+  align-items: start;
+}
+
+.t-form[data-layout="grid"]:has(> .t-form-section) {
+  row-gap: var(--t-space-6);
+}
+
+.t-form[data-layout="grid"] > :not(.t-form-field),
+.t-form[data-layout="grid"] .t-form-field[data-span] {
+  grid-column: 1 / -1;
+}
+
+.t-form-summary[hidden] {
+  display: none;
+}
+
+.t-form-summary-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-1);
+  margin: 0;
+  padding: 0;
+}
+
+.t-form-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--t-space-2);
+}

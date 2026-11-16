@@ -1,0 +1,20 @@
+/* The number takes the room; the unit list keeps the width of its longest word. */
+.t-duration {
+  display: flex;
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.t-duration > .t-number {
+  flex: 1 1 var(--t-measure-2xs);
+  min-width: 0;
+}
+
+.t-duration > .t-select-trigger,
+.t-duration > select.t-select {
+  flex: none;
+}
+
+.t-duration-unit {
+  display: contents;
+}
