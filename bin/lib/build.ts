@@ -80,10 +80,32 @@ async function buildCss(): Promise<void> {
 }
 
 async function buildHtmlKit(): Promise<void> {
+  const textsByPack = (await Bun.file(at("core/src/texts-by-pack.gen.json")).json()) as Record<
+    string,
+    Record<string, string>
+  >;
   for (const pack of PACKS) {
     const entry = at(`html/src/${pack.id}/index.gen.ts`);
     if (!(await Bun.file(entry).exists())) continue;
-    const result = await Bun.build({ entrypoints: [entry], format: "iife", target: "browser", minify: true });
+    // The script of a pack carries the texts of that pack only; the page's one text table holds them all.
+    const packTexts = JSON.stringify(textsByPack[pack.id] ?? {});
+    const result = await Bun.build({
+      entrypoints: [entry],
+      format: "iife",
+      target: "browser",
+      minify: true,
+      plugins: [
+        {
+          name: "pack-texts",
+          setup(builder) {
+            builder.onLoad({ filter: /core\/src\/texts\.gen\.ts$/ }, () => ({
+              contents: `export const TEXTS = ${packTexts};`,
+              loader: "ts",
+            }));
+          },
+        },
+      ],
+    });
     if (!result.success) throw new AggregateError(result.logs, `HTML kit: the pack ${pack.id} did not build`);
     const output = result.outputs[0];
     if (!output) throw new Error(`HTML kit: the pack ${pack.id} gave no output`);

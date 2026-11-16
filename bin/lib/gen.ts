@@ -55,14 +55,21 @@ export async function gen(): Promise<GenResult> {
 
   // Texts: the base table plus the texts that a component brings.
   const texts = new Map<string, string>();
+  const textsByPack: Record<string, Record<string, string>> = {};
   for (const file of ["core/src/texts.json", ...(await scan("core/packs/*/*/texts.json"))]) {
     const map = (await Bun.file(at(file)).json()) as Record<string, string>;
+    const pack = file.startsWith("core/packs/") ? (file.split("/")[2] ?? "core") : "core";
+    const mine = textsByPack[pack] ?? {};
+    textsByPack[pack] = mine;
     for (const [key, value] of Object.entries(map)) {
       if (texts.has(key) && texts.get(key) !== value)
         errors.push(`${file}: the text "${key}" is defined twice`);
       else texts.set(key, value);
+      mine[key] = value;
     }
   }
+  // The HTML kit gives each pack's script only the texts of that pack.
+  await write("core/src/texts-by-pack.gen.json", `${JSON.stringify(textsByPack)}\n`);
   await write(
     "core/src/texts.gen.ts",
     `${HEADER}export const TEXTS = ${JSON.stringify(Object.fromEntries([...texts].sort(([a], [b]) => a.localeCompare(b))), null, 2)} as const;\n`,
