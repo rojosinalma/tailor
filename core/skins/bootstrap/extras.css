@@ -305,15 +305,16 @@ input.t-switch-input:checked::before {
   font-weight: var(--t-weight-bold);
 }
 
-/* card: a footer band; an edge-to-edge card gets a header band too */
+/* card: .card-header and .card-footer, sunken bands over a line (a tone tint on them stays readable) */
 .t-card-footer {
   border-radius: 0 0 var(--t-radius-box) var(--t-radius-box);
-  background: color-mix(in srgb, var(--t-text) 3%, transparent);
+  background: var(--t-inset);
 }
 
-.t-card[data-padding="none"] > .t-card-header:not(:only-child) {
+.t-card-header:not(:only-child) {
+  border-bottom: var(--t-border-w) solid var(--t-border);
   border-radius: var(--t-radius-box) var(--t-radius-box) 0 0;
-  background: color-mix(in srgb, var(--t-text) 3%, transparent);
+  background: var(--t-inset);
 }
 
 /* kbd: the dark key with page-coloured text */
@@ -435,6 +436,28 @@ input.t-switch-input:checked::before {
 .t-pagination-step:is(:disabled, [aria-disabled="true"]) {
   background: var(--t-inset);
   color: var(--t-disabled);
+}
+
+/* One joined group: the ellipsis and the phone status are boxes too; inner corners square, no double lines */
+.t-pagination-gap,
+.t-pagination-status {
+  border: var(--t-border-w) solid var(--t-border);
+  background: var(--t-canvas);
+}
+
+.t-pagination-list > li + li > :is(.t-pagination-page, .t-pagination-step),
+.t-pagination-list > li + li:is(.t-pagination-gap, .t-pagination-status) {
+  border-inline-start-width: 0;
+}
+
+.t-pagination-list > li:not(:first-child) > :is(.t-pagination-page, .t-pagination-step) {
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+.t-pagination-list > li:not(:last-child) > :is(.t-pagination-page, .t-pagination-step) {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
 }
 
 @media (hover: hover) {

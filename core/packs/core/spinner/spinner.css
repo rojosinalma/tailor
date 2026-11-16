@@ -14,7 +14,7 @@
   border: 0.15em solid currentColor;
   border-block-start-color: transparent;
   border-radius: 50%;
-  animation: t-spinner-turn calc(var(--t-motion-base) * 4) linear infinite;
+  animation: t-spinner-turn var(--t-spin) linear infinite;
 }
 
 .t-spinner[data-size="sm"] {

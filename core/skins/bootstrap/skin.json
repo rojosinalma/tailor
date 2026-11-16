@@ -40,6 +40,9 @@
     "motion-fast": "150ms",
     "motion-base": "300ms",
     "ease": "ease-in-out",
-    "btn-weight": "400"
+    "btn-weight": "400",
+    "card-header-pb": "var(--t-space-3)",
+    "pagination-gap": "0",
+    "progress-h": "1rem"
   }
 }

@@ -123,8 +123,7 @@ a.t-btn {
   border: var(--t-border-w-strong) solid currentColor;
   border-inline-end-color: transparent;
   border-radius: 50%;
-  /* lint-allow: one full turn needs its own pace; the motion tokens are for transitions and drop to 0 for reduced motion */
-  animation: t-btn-spin 0.8s var(--t-ease) infinite;
+  animation: t-btn-spin var(--t-spin) var(--t-ease) infinite;
 }
 
 @keyframes t-btn-spin {

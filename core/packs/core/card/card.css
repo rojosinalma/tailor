@@ -26,7 +26,7 @@
   align-items: center;
   column-gap: var(--t-space-3);
   row-gap: var(--t-space-1);
-  padding: var(--t-space-4) var(--t-space-4) 0;
+  padding: var(--t-space-4) var(--t-space-4) var(--t-card-header-pb);
 }
 
 .t-card-header:only-child,
@@ -71,6 +71,12 @@
 .t-card[data-padding="none"] > .t-card-body:last-child {
   overflow: clip;
   border-radius: 0 0 var(--t-radius-box) var(--t-radius-box);
+}
+
+/* A table that runs to the edges: the card draws the frame, so the table's own goes. */
+.t-card[data-padding="none"] > .t-card-body > :is(.t-table-wrap, .t-data-table > .t-table-wrap) {
+  border: 0;
+  border-radius: 0;
 }
 
 .t-card-footer {

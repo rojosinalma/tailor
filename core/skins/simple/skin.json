@@ -36,6 +36,7 @@
     "control-h-md": "2.5rem",
     "control-h-lg": "3rem",
     "control-px": "0.9rem",
-    "btn-weight": "400"
+    "btn-weight": "400",
+    "bar-label-size": "0.8125rem"
   }
 }

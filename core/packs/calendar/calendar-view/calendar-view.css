@@ -1,6 +1,9 @@
 .t-calendar-view {
   /* The height of one event bar in the month, and of one hour in the week; both reach the touch size. */
-  --t-calendar-view-bar: calc(var(--t-text-xs) * var(--t-leading) + var(--t-space-1));
+  --t-calendar-view-bar: max(
+    calc(var(--t-text-xs) * var(--t-leading) + var(--t-space-1)),
+    var(--t-target-min)
+  );
   --t-calendar-view-hour: calc(var(--t-control-h-sm) * 2);
   --t-calendar-view-axis: var(--t-space-7);
   display: flex;

@@ -380,13 +380,15 @@ input.t-switch-input::before {
   background: transparent;
 }
 
-/* card: a Box, flat and bordered; an edge-to-edge header is the Box-header band */
+/* card: a Box, flat and bordered; a header is the Box-header band */
 .t-card,
 .t-stat {
   background: var(--t-primer-box);
 }
 
-.t-card[data-padding="none"] > .t-card-header:not(:only-child) {
+.t-card-header:not(:only-child) {
+  border-bottom: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box) var(--t-radius-box) 0 0;
   background: var(--t-inset);
 }
 
@@ -413,6 +415,17 @@ input.t-switch-input::before {
   box-shadow: none;
 }
 
+/* state-label: StateLabel, a filled pill in the tone colour */
+.t-state {
+  border-radius: var(--t-radius-pill);
+  background: var(--t-tone);
+  color: var(--t-on-tone);
+}
+
+.t-state-icon {
+  color: inherit;
+}
+
 /* table: DataTable, a Box with a muted header row and plain row lines (no stripes) */
 .t-table-wrap {
   background: var(--t-primer-box);
@@ -426,7 +439,18 @@ input.t-switch-input::before {
   background: transparent;
 }
 
-/* timeline: a muted 2px rail */
+/* timeline: a muted 2px rail; TimelineBadge, a round neutral badge, filled in the tone colour */
+.t-timeline-marker > :first-child {
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--t-muted) 24%, var(--t-primer-box));
+  color: var(--t-muted);
+}
+
+.t-timeline-item[data-tone] .t-timeline-marker > :first-child {
+  background: var(--t-tone);
+  color: var(--t-on-tone);
+}
+
 .t-timeline-title {
   font-weight: var(--t-weight-bold);
 }

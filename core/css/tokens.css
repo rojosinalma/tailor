@@ -107,6 +107,8 @@
     /* Skin settings: motion. */
     --t-skin-motion-fast: 120ms;
     --t-skin-motion-base: 180ms;
+    /* One full turn of a spinner: its own pace, so a skin with instant transitions still shows it turning. */
+    --t-skin-spin: 720ms;
     --t-ease: cubic-bezier(0.2, 0, 0, 1);
 
     /* Skin settings: button look. */
@@ -114,6 +116,14 @@
     --t-btn-transform: none;
     --t-btn-shadow: none;
     --t-btn-press: 0;
+
+    /* Skin settings: component measures that a skin may change. */
+    --t-card-header-pb: 0;
+    --t-state-px: 0;
+    --t-pagination-gap: var(--t-space-1);
+    --t-progress-h: var(--t-space-2);
+    --t-bar-label-size: var(--t-text-xs);
+    --t-timeline-badge: calc(var(--t-text-base) * var(--t-leading-tight));
 
     /* Derived: spacing scale. */
     --t-space-05: calc(var(--t-space-unit) * 0.5);
@@ -128,6 +138,8 @@
 
     /* Derived: control heights. A touch screen gets at least the touch size. */
     --t-touch: 2.75rem;
+    /* The smallest pointer target (WCAG 2.2 target size, minimum). */
+    --t-target-min: 1.5rem;
     --t-text-touch: 1rem;
     --t-control-h-sm: var(--t-skin-control-h-sm);
     --t-control-h-md: var(--t-skin-control-h-md);
@@ -136,6 +148,7 @@
     /* Derived: motion. It stops when the device asks for reduced motion. */
     --t-motion-fast: var(--t-skin-motion-fast);
     --t-motion-base: var(--t-skin-motion-base);
+    --t-spin: var(--t-skin-spin);
 
     /* Derived: fixed measures for boxes that need an own width or height. */
     --t-measure-2xs: 8rem;
@@ -151,6 +164,7 @@
     /* Derived: layout metrics of the shells. */
     --t-nav-h: 3.5rem;
     --t-sidebar-w: 15rem;
+    --t-nav-item-h: var(--t-control-h-md);
     --t-sidebar-w-collapsed: 3.5rem;
     --t-panel-w: 20rem;
     --t-gutter: clamp(var(--t-space-4), 3vw, var(--t-space-7));
@@ -197,6 +211,7 @@
     :root {
       --t-motion-fast: 0ms;
       --t-motion-base: 0ms;
+      --t-spin: 0ms;
     }
   }
 

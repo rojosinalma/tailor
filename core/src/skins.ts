@@ -51,6 +51,14 @@ export const SKIN_SETTINGS = {
   "btn-press": "--t-btn-press",
   "nav-h": "--t-nav-h",
   "sidebar-w": "--t-sidebar-w",
+  "nav-item-h": "--t-nav-item-h",
+  "spin-duration": "--t-skin-spin",
+  "card-header-pb": "--t-card-header-pb",
+  "state-px": "--t-state-px",
+  "pagination-gap": "--t-pagination-gap",
+  "progress-h": "--t-progress-h",
+  "bar-label-size": "--t-bar-label-size",
+  "timeline-badge": "--t-timeline-badge",
 } as const;
 
 export type SkinSetting = keyof typeof SKIN_SETTINGS;

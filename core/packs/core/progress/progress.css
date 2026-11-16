@@ -22,7 +22,7 @@
 
 .t-progress-track {
   grid-column: 1 / -1;
-  height: var(--t-space-2);
+  height: var(--t-progress-h);
   overflow: hidden;
   border-radius: var(--t-radius-pill);
   background: var(--t-inset);
@@ -42,14 +42,14 @@
 }
 
 .t-progress[data-size="sm"] .t-progress-track {
-  height: var(--t-space-1);
+  height: calc(var(--t-progress-h) / 2);
 }
 
 /* No value: a short bar that slides. Under reduced motion it stays a faint full bar. */
 .t-progress[data-indeterminate] .t-progress-fill {
   width: 100%;
   opacity: 0.35;
-  animation: t-progress-slide calc(var(--t-motion-base) * 8) var(--t-ease) infinite;
+  animation: t-progress-slide calc(var(--t-spin) * 2) var(--t-ease) infinite;
 }
 
 @keyframes t-progress-slide {

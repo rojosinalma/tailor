@@ -27,7 +27,7 @@
   min-height: var(--t-nav-h);
   padding: var(--t-space-1);
   color: var(--t-muted);
-  font-size: var(--t-text-xs);
+  font-size: var(--t-bar-label-size);
   line-height: var(--t-leading-tight);
   text-decoration: none;
 }

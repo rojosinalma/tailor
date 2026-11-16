@@ -3,6 +3,9 @@
   align-items: baseline;
   gap: var(--t-space-1);
   min-width: 0;
+  max-width: max-content;
+  /* A skin with an inline padding draws a pill; the block padding keeps its proportion. */
+  padding: calc(var(--t-state-px) / 3) var(--t-state-px);
   color: var(--t-tone-text);
   font-weight: var(--t-label-weight);
   line-height: var(--t-leading-tight);

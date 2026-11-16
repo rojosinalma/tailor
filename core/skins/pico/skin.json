@@ -41,6 +41,7 @@
     "motion-fast": "200ms",
     "motion-base": "250ms",
     "ease": "ease-in-out",
-    "btn-weight": "400"
+    "btn-weight": "400",
+    "nav-item-h": "2.5rem"
   }
 }

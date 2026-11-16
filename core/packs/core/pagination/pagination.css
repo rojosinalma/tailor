@@ -6,7 +6,7 @@
 .t-pagination-list {
   display: flex;
   align-items: center;
-  gap: var(--t-space-1);
+  gap: var(--t-pagination-gap);
 }
 
 .t-pagination-page,
@@ -45,10 +45,18 @@
   cursor: not-allowed;
 }
 
+/* The ellipsis and the status fill the row's height, so a skin can box them with the pages. */
+.t-pagination-gap,
+.t-pagination-status {
+  align-self: stretch;
+  align-items: center;
+  justify-content: center;
+}
+
 .t-pagination-gap {
+  display: flex;
   min-width: var(--t-control-h-sm);
   color: var(--t-muted);
-  text-align: center;
 }
 
 .t-pagination-status {
@@ -67,7 +75,7 @@
   }
 
   .t-pagination-status {
-    display: block;
+    display: flex;
   }
 }
 
