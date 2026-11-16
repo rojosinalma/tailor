@@ -9,6 +9,8 @@ const params = new URLSearchParams(location.search);
 const id = params.get("id") ?? "";
 const load = EXAMPLES[id];
 const root = document.getElementById("root");
+// ?embed=1 drops the page's own title and padding, for a view inside a frame.
+if (params.get("embed")) document.body.classList.add("sc-embed");
 
 if (root && load) {
   const { default: set } = await load();

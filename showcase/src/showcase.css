@@ -52,3 +52,14 @@
 .sc-example-body[data-width="md"] {
   max-width: var(--t-measure-md);
 }
+
+/* An entry page shown inside a frame of the showcase: no padding and no title of its own. */
+.sc-embed {
+  padding: 0;
+}
+
+.sc-embed .sc-entry-title,
+.sc-embed .sc-example-title,
+.sc-embed .sc-example-note {
+  display: none;
+}

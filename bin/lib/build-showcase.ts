@@ -210,13 +210,19 @@ export async function buildShowcase(
         ),
       ),
     );
+    // ?example=<id> keeps one example; ?embed=1 drops the page's own title and padding, for a view inside a frame.
+    const filter =
+      '<script>(function(){var q=new URLSearchParams(location.search),e=q.get("example");' +
+      'if(e)document.querySelectorAll(".sc-example").forEach(function(s){if(s.dataset.example!==e)s.remove()});' +
+      'if(q.get("embed"))document.body.classList.add("sc-embed")})()</script>';
+
     await out(
       `${dist}/html/${spec.id}.html`,
       page({
         title: `${spec.name} · tailor`,
         rel: "../",
         theme,
-        body,
+        body: body + filter,
         scripts: scriptsFor(spec.pack, body),
         bodyClass: "sc-entry",
       }),
