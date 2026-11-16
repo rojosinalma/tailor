@@ -30,10 +30,14 @@ export function targets(file: ManifestFile, kit: Kit, folders: Folders): string[
   if (p.startsWith("css/")) return [`${pub}/${p}`];
   if (kit === "html" && p.startsWith("html/reference/"))
     return [`${pub}/reference/${p.slice("html/reference/".length)}`];
-  if (kit === "html" && /^html\/[^/]+\.js$/.test(p)) return [`${pub}/js/${p.slice("html/".length)}`];
+  // A script of both kits (the service worker) goes to the React kit's public folder too.
+  if (/^html\/[^/]+\.js$/.test(p) && (kit === "html" || file.kit === "both"))
+    return [`${pub}/js/${p.slice("html/".length)}`];
   // The package file of the React kit is made per project (only the installed packs).
   if (kit === "react" && p.startsWith("react/") && p !== "react/package.json")
     return [`${ven}/${p.slice("react/".length)}`];
+  // The reference of each pack, next to the index that the command makes (REFERENCE.md).
+  if (/^reference\/[^/]+\.md$/.test(p)) return [`${kit === "react" ? ven : pub}/${p}`];
   if (p === "LICENSE") return kit === "react" ? [`${pub}/LICENSE`, `${ven}/LICENSE`] : [`${pub}/LICENSE`];
   if (p === "THIRD-PARTY.md" && kit === "html") return [`${pub}/THIRD-PARTY.md`];
   return [];
@@ -73,9 +77,17 @@ export function pageAssets(
   };
 }
 
-/** The libraries the React kit needs for these packs, with their pinned versions. */
-export function librariesOf(manifest: Manifest, packs: readonly string[]): Record<string, string> {
+/**
+ * The libraries the React kit needs for these packs, with their pinned versions; with `types`, the type
+ * packages a TypeScript project needs for them.
+ */
+export function librariesOf(
+  manifest: Manifest,
+  packs: readonly string[],
+  types = false,
+): Record<string, string> {
   const out: Record<string, string> = {};
-  for (const p of manifest.packs) if (packs.includes(p.id)) Object.assign(out, p.libraries);
+  for (const p of manifest.packs)
+    if (packs.includes(p.id)) Object.assign(out, types ? (p.devLibraries ?? {}) : p.libraries);
   return out;
 }

@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { choice, helpText, list, parseArgs } from "./args";
 import { UsageError } from "./errors";
-import { compareVersions, isBetween } from "./version";
+import { compareVersions, isBetween, isPrerelease, isVersion } from "./version";
 
 describe("parseArgs", () => {
   test("no arguments and --help give the help, --version the version", () => {
@@ -57,6 +57,35 @@ describe("versions", () => {
     expect(compareVersions("2.0.0-1", "2.0.0-alpha")).toBeLessThan(0);
     expect(compareVersions("1.9.9", "2.0.0")).toBeLessThan(0);
     expect(() => compareVersions("2.0", "2.0.0")).toThrow(/Not a version: 2.0/);
+  });
+
+  test("the order of the semver specification, build metadata left out", () => {
+    const order = [
+      "1.0.0-alpha",
+      "1.0.0-alpha.1",
+      "1.0.0-alpha.beta",
+      "1.0.0-beta",
+      "1.0.0-beta.2",
+      "1.0.0-beta.11",
+      "1.0.0-rc.1",
+      "1.0.0",
+      "1.0.1",
+      "1.1.0",
+      "2.0.0",
+    ];
+    const shuffled = [...order].reverse();
+    expect(shuffled.sort(compareVersions)).toEqual(order);
+    expect(compareVersions("1.0.0+build.5", "1.0.0")).toBe(0);
+    expect(compareVersions("1.0.0-rc.1+build.5", "1.0.0")).toBeLessThan(0);
+    expect(isVersion("01.0.0")).toBe(false);
+    expect(isVersion("1.0.0-")).toBe(false);
+  });
+
+  test("a pre-release has a tag; build metadata is no tag", () => {
+    expect(isPrerelease("2.0.0-rc.1")).toBe(true);
+    expect(isPrerelease("2.0.0-dev.0")).toBe(true);
+    expect(isPrerelease("2.0.0")).toBe(false);
+    expect(isPrerelease("2.0.0+build.5")).toBe(false);
   });
 
   test("isBetween takes the range (from, to]", () => {

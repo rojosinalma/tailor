@@ -24,6 +24,7 @@ export const PACKS: readonly PackSpec[] = [
     description: "The base.",
     requires: [],
     libraries: { react: "19.0.0" },
+    devLibraries: { "@types/react": "19.0.0" },
     html: "full",
   },
   {
@@ -49,6 +50,7 @@ export const PACKS: readonly PackSpec[] = [
     description: "Needs extra.",
     requires: ["extra"],
     libraries: { "lib-y": "2.0.0" },
+    devLibraries: { "@types/lib-y": "2.0.0" },
     html: "full",
   },
   {
@@ -81,6 +83,9 @@ export function releaseFiles(
     "css/palettes/grey.css": { data: ".p{}", pack: "palettes", kit: "both" },
     "html/tailor.js": { data: "/*core*/", pack: "core", kit: "html" },
     "html/tailor-extra.js": { data: "/*extra*/", pack: "extra", kit: "html" },
+    "html/tailor-sw.js": { data: "/*sw*/", pack: "extra", kit: "both" },
+    "reference/core.md": { data: "# core\n", pack: "core" },
+    "reference/extra.md": { data: "# extra\n", pack: "extra" },
     "html/head.html": { data: HEAD_TEMPLATE, pack: "meta", kit: "both" },
     "html/reference/core/button.html": {
       data: '<button class="t-btn">Save</button>',

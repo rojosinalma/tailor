@@ -1,8 +1,13 @@
 /** Semantic versions: "2.0.0", "2.1.0-dev.3". */
 
-const PATTERN = /^(\d+)\.(\d+)\.(\d+)(?:-([0-9A-Za-z.-]+))?$/;
+/** major.minor.patch, an optional pre-release tag, optional build metadata (which never counts). */
+const PATTERN =
+  /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z.-]+)?$/;
 
 export const isVersion = (text: string): boolean => PATTERN.test(text);
+
+/** True for "2.0.0-rc.1", false for "2.0.0" and for "2.0.0+build.5". */
+export const isPrerelease = (version: string): boolean => PATTERN.exec(version)?.[4] !== undefined;
 
 /** Negative when a < b, 0 when equal, positive when a > b. A pre-release sorts before its release. */
 export function compareVersions(a: string, b: string): number {

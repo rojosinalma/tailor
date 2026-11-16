@@ -19,6 +19,7 @@ import { storeDir } from "./store";
 const releaseInput = (o: Options) => ({
   ...(text(o, "from") ? { from: text(o, "from") } : {}),
   offline: o.offline === true,
+  pre: o.pre === true,
   verbose: o.verbose === true,
 });
 

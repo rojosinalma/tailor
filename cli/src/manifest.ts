@@ -111,6 +111,9 @@ export function parseManifest(value: Json, where = "manifest.json"): Manifest {
       description: s.string(o.description, `packs[${i}].description`),
       requires: s.strings(o.requires, `packs[${i}].requires`),
       libraries: s.record(o.libraries, `packs[${i}].libraries`),
+      ...(o.devLibraries === undefined
+        ? {}
+        : { devLibraries: s.record(o.devLibraries, `packs[${i}].devLibraries`) }),
       html: html as PackSpec["html"],
       ...(o.shell === true ? { shell: true } : {}),
     };

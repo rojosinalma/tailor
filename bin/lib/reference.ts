@@ -137,3 +137,28 @@ export async function buildReference(
   if (problems.length) throw new Error(`The reference cannot be made:\n${problems.join("\n")}`);
   return { version, packs: out };
 }
+
+/** The code of each component's first example in each kit, for the showcase: whole, not shortened. */
+export interface ShowcaseReference {
+  readonly components: Readonly<Record<string, { readonly react?: string; readonly html?: string }>>;
+}
+
+export const SHOWCASE_REFERENCE = "showcase/src/reference.gen.json";
+
+export async function showcaseReference(specs: readonly ComponentSpec[]): Promise<ShowcaseReference> {
+  const components: Record<string, { react?: string; html?: string }> = {};
+  for (const spec of specs) {
+    const first = (await loadExamples(spec)).examples[0];
+    const react = extractRender(await Bun.file(at(`react/src/${spec.pack}/${spec.id}/examples.tsx`)).text());
+    const html = first && spec.html !== "none" ? renderExample(first) : undefined;
+    components[spec.id] = { ...(react ? { react } : {}), ...(html ? { html } : {}) };
+  }
+  return { components };
+}
+
+/** Writes showcase/src/reference.gen.json, only when its content changed. */
+export async function writeShowcaseReference(specs: readonly ComponentSpec[]): Promise<void> {
+  const text = `${JSON.stringify(await showcaseReference(specs), null, 2)}\n`;
+  const file = Bun.file(at(SHOWCASE_REFERENCE));
+  if (!(await file.exists()) || (await file.text()) !== text) await Bun.write(file, text);
+}

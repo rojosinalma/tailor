@@ -13,6 +13,7 @@ import { Problem } from "./errors";
 import { run } from "./main";
 import { sha256 } from "./plan";
 import { readState } from "./state";
+import { latestVersion } from "./store";
 
 let base: string;
 let v1: string;
@@ -35,6 +36,12 @@ beforeAll(async () => {
       const path = new URL(req.url).pathname;
       requests.push(path);
       if (path === "/repos/rojosinalma/tailor/releases/latest") return Response.json({ tag_name: "v2.0.0" });
+      if (path === "/repos/rojosinalma/tailor/releases")
+        return Response.json([
+          { tag_name: "v9.0.0", draft: true },
+          { tag_name: "v2.6.0-rc.1", prerelease: true },
+          { tag_name: "v2.0.0" },
+        ]);
       if (path === "/rojosinalma/tailor/releases/download/v2.0.0/tailor-2.0.0.tgz") return new Response(data);
       if (path === "/rojosinalma/tailor/releases/download/v2.0.0/tailor-2.0.0.tgz.sha256")
         return new Response(`${sha256(data)}  tailor-2.0.0.tgz\n`);
@@ -71,12 +78,24 @@ describe("React kit project", () => {
     expect(exists(dir(), "vendor/tailor/deep/index.ts")).toBe(true);
     expect(exists(dir(), "vendor/tailor/react-only/index.ts")).toBe(false);
     expect(exists(dir(), "public/tailor/css/tailor-extra.css")).toBe(true);
-    expect(exists(dir(), "public/tailor/js")).toBe(false);
+    // The service worker of a pack in both kits; no HTML kit script.
+    expect(exists(dir(), "public/tailor/js/tailor-sw.js")).toBe(true);
+    expect(exists(dir(), "public/tailor/js/tailor.js")).toBe(false);
+    expect(exists(dir(), "vendor/tailor/reference/core.md")).toBe(true);
+    expect(exists(dir(), "vendor/tailor/reference/extra.md")).toBe(true);
     expect(await read(dir(), "public/tailor/icons.svg")).toContain('id="bi-house"');
     expect(JSON.parse(await read(dir(), "vendor/tailor/package.json")).exports["./deep"]).toBe(
       "./deep/index.ts",
     );
     expect(out.data.bunAdd).toBe("bun add react@19.0.0 lib-x@1.0.0 lib-y@2.0.0");
+    expect(out.data.bunAddTypes).toBe("bun add -d @types/react@19.0.0 @types/lib-y@2.0.0");
+    expect(out.lines).toContain("  bun add -d @types/react@19.0.0 @types/lib-y@2.0.0");
+    const pkg = JSON.parse(await read(dir(), "vendor/tailor/package.json"));
+    expect(pkg.peerDependencies["@types/lib-y"]).toBe("2.0.0");
+    expect(pkg.peerDependenciesMeta).toEqual({
+      "@types/lib-y": { optional: true },
+      "@types/react": { optional: true },
+    });
     expect(out.lines.join("\n")).toContain("tailor/core");
     expect(Object.keys(state?.files ?? {})).toContain("vendor/tailor/REFERENCE.md");
   });
@@ -161,6 +180,10 @@ describe("React kit project", () => {
     expect(preview.data.packs).toEqual({ removed: ["deep", "extra"], remaining: ["core", "shell-top"] });
     const out = await remove(ctx, { dir: "app-react", pack: "deep", yes: true, force: true, offline: true });
     expect(out.data.libraries).toEqual(["lib-x", "lib-y"]);
+    expect(out.data.types).toEqual(["@types/lib-y"]);
+    expect(out.lines).toContain("type packages the project can drop: @types/lib-y");
+    expect(exists(dir(), "vendor/tailor/reference/extra.md")).toBe(false);
+    expect(exists(dir(), "public/tailor/js")).toBe(false);
     expect(exists(dir(), "vendor/tailor/deep")).toBe(false);
     expect(exists(dir(), "vendor/tailor/extra")).toBe(false);
     expect((await readState(dir()))?.packs).toEqual(["core", "shell-top"]);
@@ -244,14 +267,43 @@ describe("HTML kit project", () => {
     expect(existsSync(join(ctx.store, "3.0.0"))).toBe(false);
   });
 
-  test("a local build newer than the latest published release wins", async () => {
-    await cp(join(ctx.store, "2.0.0"), join(ctx.store, "2.5.0-dev.1"), { recursive: true });
-    const file = join(ctx.store, "2.5.0-dev.1", "manifest.json");
-    await Bun.write(file, JSON.stringify({ ...(await Bun.file(file).json()), version: "2.5.0-dev.1" }));
-    const out = await list(ctx, {});
-    expect(out.lines[0]).toBe("the store has 2.5.0-dev.1, newer than the latest published release 2.0.0");
-    expect(out.data.release).toMatchObject({ version: "2.5.0-dev.1" });
+  test("a local build newer than the latest published release wins; a pre-release only with --pre", async () => {
+    const local = async (version: string) => {
+      await cp(join(ctx.store, "2.0.0"), join(ctx.store, version), { recursive: true });
+      const file = join(ctx.store, version, "manifest.json");
+      await Bun.write(file, JSON.stringify({ ...(await Bun.file(file).json()), version }));
+    };
+    await local("2.5.0-dev.1");
+    const plain = await list(ctx, {});
+    expect(plain.data.release).toMatchObject({ version: "2.0.0" });
+    // The published list has a newer pre-release (2.6.0-rc.1), not downloadable here: offline picks the store's.
+    const pre = await list(ctx, { pre: true, offline: true });
+    expect(pre.data.release).toMatchObject({ version: "2.5.0-dev.1" });
+    await local("2.5.0");
+    const newer = await list(ctx, {});
+    expect(newer.lines[0]).toBe("the store has 2.5.0, newer than the latest published release 2.0.0");
+    expect(newer.data.release).toMatchObject({ version: "2.5.0" });
+    await rm(join(ctx.store, "2.5.0"), { recursive: true });
     await rm(join(ctx.store, "2.5.0-dev.1"), { recursive: true });
+  });
+
+  test("a store with only pre-releases needs --pre, or a project that is on one", async () => {
+    const store = join(base, "pre-store");
+    const dir = await writeRelease(join(base, "pre-src"), "1.0.0-rc.1");
+    await cp(dir, join(store, "1.0.0-rc.1"), { recursive: true });
+    const preCtx = { ...ctx, store };
+    await expect(list(preCtx, { offline: true })).rejects.toThrow(/only pre-releases \(1.0.0-rc.1\)/);
+    expect((await list(preCtx, { offline: true, pre: true })).data.release).toMatchObject({
+      version: "1.0.0-rc.1",
+    });
+    await add(preCtx, { dir: "on-rc", kit: "html", version: "1.0.0-rc.1", offline: true });
+    // The project is on a pre-release: its upgrade may pick one without --pre.
+    expect((await upgrade(preCtx, { dir: "on-rc", offline: true })).data.to).toBe("1.0.0-rc.1");
+  });
+
+  test("the latest pre-release comes from the list of releases, drafts left out", async () => {
+    expect(await latestVersion("github:rojosinalma/tailor", ctx.endpoints)).toBe("2.0.0");
+    expect(await latestVersion("github:rojosinalma/tailor", ctx.endpoints, true)).toBe("2.6.0-rc.1");
   });
 
   test("--from takes a .tgz too", async () => {

@@ -9,6 +9,7 @@ import { buildShowcase } from "./build-showcase";
 import { gen } from "./gen";
 import { packVendor } from "./lint-css";
 import { at, ROOT } from "./paths";
+import { writeShowcaseReference } from "./reference";
 
 const scan = async (pattern: string): Promise<string[]> =>
   (await Array.fromAsync(new Glob(pattern).scan(ROOT))).sort();
@@ -146,6 +147,7 @@ export async function build(options: { quiet?: boolean } = {}): Promise<void> {
       2,
     )}\n`,
   );
+  await writeShowcaseReference(specs);
   await buildShowcase(
     specs,
     skins.map((s) => s.spec),

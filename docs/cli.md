@@ -30,6 +30,8 @@ Options that every command takes:
 2. `--verbose`: every path, not only the counts.
 3. `--from <path>`: take the release from a folder or a `.tgz` file instead of the store or a download.
 4. `--offline`: never download.
+5. `--pre` (`add`, `upgrade`, `list`): when no version is named, a pre-release (such as `2.0.0-rc.1`) may be
+   picked. Without it, a pre-release is picked only when the project already has one.
 
 Exit codes: `0` done, `1` a problem (the message says what is wrong, the line `fix:` says what to do),
 `2` wrong use of the command. The text output has one fact per line and no colour.
@@ -59,7 +61,8 @@ tailor add --packs markdown          # later: adds a pack to what is there
    - g. `--base <url>`: the address of `tailor/css/` on the site (default `/tailor/css/`). The scripts are
      expected next to it, in `tailor/js/`.
 6. It prints the files written (a count per folder), the lines for `<head>`, and for the React kit the
-   `bun add …` line with the pinned libraries and the way to import the kit.
+   `bun add …` line with the pinned libraries, a `bun add -d …` line with their type packages, and the way to
+   import the kit.
 
 What it writes:
 
@@ -74,14 +77,28 @@ tailor.json                         the record (below)
   head.html                         the lines for <head>
   LICENSE
   js/tailor.js, js/tailor-<pack>.js           HTML kit only
+  js/tailor-sw.js                             with the pwa pack, in both kits
   reference/<pack>/<component>.html           HTML kit only: the markup of every example
-  REFERENCE.md, THIRD-PARTY.md                HTML kit only
+  REFERENCE.md, reference/<pack>.md           HTML kit only: the reference (below)
+  THIRD-PARTY.md                              HTML kit only
 <vendor>/tailor/                    React kit only: the kit as source, the installed packs only
   core/, <pack>/                    the components; <pack>/index.ts is what an import names
   kit/, lib/                        shared code
   package.json                      name "tailor", one export per pack, the libraries as peers
-  REFERENCE.md, LICENSE
+  REFERENCE.md, reference/<pack>.md the reference (below)
+  LICENSE
 ```
+
+The service worker script `tailor-sw.js` of the `pwa` pack goes to `<public>/tailor/js/` in both kits: the
+HTML kit loads it from there, and a React app serves a small `sw.js` of its own that imports it.
+
+The reference for agents is in two levels: `REFERENCE.md` is a short index (how to use tailor, then one line
+per component of the installed packs), and `reference/<pack>.md` holds the full entry of each component of
+that pack: its import, classes, props with their allowed values, and its first example in each kit.
+
+In `package.json`, the type packages (`@types/…`) are optional peer dependencies: the project compiles this
+source with its own TypeScript, so the project must have them, and a project without TypeScript needs none.
+A vendored package's dev dependencies are never installed, so they would not help.
 
 The React kit is plain TypeScript with relative imports. Make the name `tailor` point at it in one of two ways:
 
@@ -120,7 +137,8 @@ tailor upgrade --yes           # apply
 
 `tailor remove charts` shows the files that go; `--yes` removes them. Packs that only this pack required go
 too, and the output names them. `core` cannot be removed, nor a pack that another installed pack requires.
-Edited files stay and are listed. For the React kit it prints the libraries that no remaining pack needs.
+Edited files stay and are listed. For the React kit it prints the libraries and the type packages that no
+remaining pack needs.
 
 ### `list`
 
@@ -179,8 +197,11 @@ In this order:
    else `~/.cache/tailor/releases/<version>/`.
 3. A download from the releases of the repository named in `source`
    (`releases/download/v<version>/tailor-<version>.tgz`), checked against its `.sha256` file when the release
-   has one, and unpacked into the store, so each version is fetched once. Without a version, the command asks
-   for the latest release.
+   has one, and unpacked into the store, so each version is fetched once.
+
+Without a version, the command takes the latest published release, or the highest version in the store when
+that one is newer (a local build). Pre-releases count only with `--pre`, or when the project already has a
+pre-release.
 
 The command checks every file of a release against its manifest before it uses it.
 
@@ -196,11 +217,12 @@ manifest.json      version, packs, components, skins, palettes, default theme, f
                    breaking changes, changelog
 LICENSE, THIRD-PARTY.md        THIRD-PARTY: the libraries bundled into the HTML kit scripts
 css/               tailor.css, tailor-<pack>.css, skins/, palettes/, fonts/
-html/              tailor.js, tailor-<pack>.js, head.html (a template), reference/<pack>/<component>.html
+html/              tailor.js, tailor-<pack>.js, tailor-sw.js, head.html (a template),
+                   reference/<pack>/<component>.html
 react/             kit/, <pack>/<component>/, <pack>/index.ts, lib/core/, lib/packs/, package.json
 icons/             bi.json, simple-icons.json (Iconify JSON)
-layouts/           standard page layouts, when the repository has them
-REFERENCE.md, reference.json   the reference for agents, made from the specs and the examples
+reference/         <pack>.md: the full reference entries of each pack
+REFERENCE.md       the index of the reference; reference.json holds all of it as data
 ```
 
 1. The React kit goes in as source. Every import is rewritten to a relative one, and the build type-checks the

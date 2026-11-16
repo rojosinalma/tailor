@@ -17,7 +17,7 @@ import {
 } from "../../cli/src/manifest";
 import { sha256 } from "../../cli/src/plan";
 import { reactPackage } from "../../cli/src/react-package";
-import { renderReference } from "../../cli/src/reference-md";
+import { packFile, renderIndex, renderPack } from "../../cli/src/reference-md";
 import { storeDir } from "../../cli/src/store";
 import { type PackSpec, withRequirements } from "../../core/src/packs";
 import type { ComponentSpec } from "../../core/src/spec";
@@ -34,6 +34,9 @@ export const ALIASES: Readonly<Record<string, string>> = {
   "@tailor/html": "html/src",
 };
 
+/** The service worker script of the pwa pack. */
+const SERVICE_WORKER = "tailor-sw.js";
+
 const SOURCE_EXTENSIONS = [".ts", ".tsx"] as const;
 
 const dropGen = (path: string): string => path.replace(/\.gen$/, "");
@@ -44,8 +47,6 @@ const dropGen = (path: string): string => path.replace(/\.gen$/, "");
  */
 export function moduleTarget(module: string): string | undefined {
   const parts = module.split("/");
-  if (module.startsWith("react/src/layouts/"))
-    return `layouts/${dropGen(module.slice("react/src/layouts/".length))}`;
   if (parts[0] === "react" && parts[1] === "src") {
     if (parts.length === 3) return parts[2] === "examples" ? undefined : `react/kit/${parts[2]}`;
     if (parts.length === 4 && parts[3] === "index.gen") return `react/${parts[2]}/index`;
@@ -123,7 +124,6 @@ const isTest = (path: string): boolean => /\.test\.tsx?$/.test(path);
 /** The pack a source file of the React kit tree belongs to. */
 function packOfSource(file: string): string {
   const parts = file.split("/");
-  if (file.startsWith("react/src/layouts/")) return "meta";
   if (parts[0] === "react") return parts.length === 3 ? "core" : (parts[2] ?? "core");
   if (parts[1] === "src") return "core";
   return parts[2] ?? "core";
@@ -174,7 +174,6 @@ async function checkPackBounds(files: readonly string[], packs: readonly PackSpe
   const known = new Set(packs.map((p) => p.id));
   for (const file of files) {
     const pack = packOfSource(file);
-    if (pack === "meta") continue;
     if (!known.has(pack)) {
       problems.push(`${file}: the folder names no known pack "${pack}"`);
       continue;
@@ -306,10 +305,7 @@ async function typeCheck(releaseDir: string): Promise<void> {
   const project = at("dist/release/.typecheck");
   await mkdir(project, { recursive: true });
   const name = releaseDir.split("/").pop() ?? "";
-  const include = [
-    `../${name}/react`,
-    ...(existsSync(`${releaseDir}/layouts`) ? [`../${name}/layouts`] : []),
-  ];
+  const include = [`../${name}/react`];
   await Bun.write(`${project}/tsconfig.json`, JSON.stringify({ ...TSCONFIG, include }, null, 2));
   const proc = Bun.spawn(["bunx", "tsc", "-p", `${project}/tsconfig.json`], {
     cwd: ROOT,
@@ -376,8 +372,7 @@ export async function release(options: { install?: boolean } = {}): Promise<Rele
   const bytes = async (path: string) => new Uint8Array(await Bun.file(at(path)).arrayBuffer());
   const packIds = new Set(packs.map((p) => p.id));
   const packOfAsset = (file: string): string => {
-    // The service worker is a file of the pwa pack.
-    if (file === "tailor-sw.js") return "pwa";
+    if (file === SERVICE_WORKER) return "pwa";
     const id = /^tailor(?:-(.+))?\.(?:css|js)$/.exec(file)?.[1] ?? "core";
     if (!packIds.has(id)) throw new Error(`dist/${file}: no pack "${id}"`);
     return id;
@@ -391,8 +386,16 @@ export async function release(options: { install?: boolean } = {}): Promise<Rele
       sub === "skins" || sub === "fonts" ? "skins" : sub === "palettes" ? "palettes" : packOfAsset(sub);
     await put(rel, await bytes(f), pack, "both");
   }
-  for (const f of await scan("dist/html/*.js"))
-    await put(f.slice("dist/".length), await bytes(f), packOfAsset(f.split("/").pop() ?? ""), "html");
+  for (const f of await scan("dist/html/*.js")) {
+    const name = f.split("/").pop() ?? "";
+    // A React app serves the service worker too (its own sw.js imports it): it belongs to both kits.
+    await put(
+      f.slice("dist/".length),
+      await bytes(f),
+      packOfAsset(name),
+      name === SERVICE_WORKER ? "both" : "html",
+    );
+  }
   await put("html/head.html", HEAD_TEMPLATE, "meta", "both");
 
   // The markup of every example, from the static render.
@@ -440,7 +443,8 @@ export async function release(options: { install?: boolean } = {}): Promise<Rele
 
   // The reference for agents, the licences.
   const reference = await buildReference(version, packs, components);
-  await put("REFERENCE.md", renderReference(reference), "meta");
+  await put("REFERENCE.md", renderIndex(reference), "meta");
+  for (const pack of reference.packs) await put(packFile(pack.id), renderPack(reference, pack), pack.id);
   await put("reference.json", `${JSON.stringify(reference, null, 2)}\n`, "meta");
   await put("THIRD-PARTY.md", thirdParty(await bundledLibraries(packs)), "meta");
   await put("LICENSE", await bytes("LICENSE"), "meta");

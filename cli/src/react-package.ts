@@ -15,6 +15,9 @@ export interface ReactPackage {
 /**
  * `paths` are release paths (react/<pack>/index.ts, react/kit/<file>). With `installed`, only those packs,
  * and their libraries are plain peers; without it, every pack, and every library is an optional peer.
+ * Type packages are always optional peers: the project compiles this source with its own TypeScript, so
+ * the project must have them (a peer), and a project without TypeScript needs none (optional). As dev
+ * dependencies of a vendored package they would never be installed.
  */
 export function reactPackage(
   version: string,
@@ -33,8 +36,15 @@ export function reactPackage(
     exports[`./${file.replace(/\.ts$/, "")}`] = `./${file}`;
   }
   const peers: Record<string, string> = {};
-  for (const p of chosen) Object.assign(peers, p.libraries);
-  const sorted = Object.fromEntries(Object.entries(peers).sort(([a], [b]) => a.localeCompare(b)));
+  const types: Record<string, string> = {};
+  for (const p of chosen) {
+    Object.assign(peers, p.libraries);
+    Object.assign(types, p.devLibraries ?? {});
+  }
+  const sorted = Object.fromEntries(
+    Object.entries({ ...peers, ...types }).sort(([a], [b]) => a.localeCompare(b)),
+  );
+  const optional = installed ? Object.keys(types) : Object.keys(sorted);
   return {
     name: "tailor",
     version,
@@ -43,12 +53,12 @@ export function reactPackage(
     license: "MIT",
     exports,
     peerDependencies: sorted,
-    ...(installed
-      ? {}
-      : {
+    ...(optional.length
+      ? {
           peerDependenciesMeta: Object.fromEntries(
-            Object.keys(sorted).map((n) => [n, { optional: true as const }]),
+            optional.sort().map((n) => [n, { optional: true as const }]),
           ),
-        }),
+        }
+      : {}),
   };
 }

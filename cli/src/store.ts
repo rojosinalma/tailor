@@ -9,10 +9,12 @@ import { basename, join, resolve } from "node:path";
 import { Problem } from "./errors";
 import { type Manifest, parseManifest } from "./manifest";
 import { sha256 } from "./plan";
-import { compareVersions, isVersion } from "./version";
+import { compareVersions, isPrerelease, isVersion } from "./version";
 
 const API_TIMEOUT_MS = 15_000;
 const DOWNLOAD_TIMEOUT_MS = 120_000;
+/** How many recent releases the search for a pre-release looks at. */
+const RELEASES_PAGE = 100;
 
 /** The hosts of the releases. Tests point them at a local server. */
 export interface Endpoints {
@@ -140,14 +142,27 @@ async function request(url: string, timeout: number): Promise<Response> {
   }
 }
 
-export async function latestVersion(source: string, endpoints: Endpoints = GITHUB): Promise<string> {
+/**
+ * The latest published version. Without `pre`, the repository's latest release (never a pre-release);
+ * with it, the highest version of the recent releases, pre-releases included.
+ */
+export async function latestVersion(
+  source: string,
+  endpoints: Endpoints = GITHUB,
+  pre = false,
+): Promise<string> {
   const { owner, repo } = parseSource(source);
-  const url = `${endpoints.api}/repos/${owner}/${repo}/releases/latest`;
+  const url = `${endpoints.api}/repos/${owner}/${repo}/releases${pre ? `?per_page=${RELEASES_PAGE}` : "/latest"}`;
   const res = await request(url, API_TIMEOUT_MS);
   if (!res.ok) throw new Problem(`${url} answered ${res.status}.`, "Name a version with --version or --to.");
-  const tag = ((await res.json()) as { tag_name?: unknown }).tag_name;
-  const version = typeof tag === "string" ? tag.replace(/^v/, "") : "";
-  if (!isVersion(version)) throw new Problem(`${url} names no version (tag "${String(tag)}").`);
+  const body = (await res.json()) as unknown;
+  const tags = (Array.isArray(body) ? body : [body]).flatMap((r) => {
+    const release = r as { tag_name?: unknown; draft?: unknown };
+    const version = typeof release.tag_name === "string" ? release.tag_name.replace(/^v/, "") : "";
+    return release.draft !== true && isVersion(version) ? [version] : [];
+  });
+  const version = tags.sort((a, b) => compareVersions(b, a))[0];
+  if (!version) throw new Problem(`${url} names no version.`, "Name a version with --version or --to.");
   return version;
 }
 
@@ -191,13 +206,15 @@ export interface Find {
   readonly offline: boolean;
   readonly store: string;
   readonly endpoints?: Endpoints;
+  /** A pre-release may be picked when no version is named. */
+  readonly pre?: boolean;
   /** Lines for the user about where the release came from. */
   readonly notes: string[];
 }
 
 /** Finds the release: --from, then the store, then a download. */
 export async function findRelease(find: Find): Promise<Release> {
-  const { from, version, source, offline, store, endpoints, notes } = find;
+  const { from, version, source, offline, store, endpoints, notes, pre = false } = find;
   if (from) {
     const path = resolve(from);
     let isDir: boolean;
@@ -222,18 +239,29 @@ export async function findRelease(find: Find): Promise<Release> {
     }
   }
   let wanted = version;
+  /** Pre-releases in the store that the choice left out. */
+  let skipped: string[] = [];
   if (!wanted) {
-    const local = await localVersions(store);
+    const stored = await localVersions(store);
+    const local = stored.filter((v) => pre || !isPrerelease(v));
+    skipped = stored.filter((v) => !local.includes(v));
+    const onlyPre = stored.length > 0 && local.length === 0;
     if (offline) {
       wanted = local[0];
       if (!wanted)
         throw new Problem(
-          `The release store ${store} is empty.`,
-          "Run once without --offline, or use --from.",
+          onlyPre
+            ? `The release store ${store} holds only pre-releases (${stored.join(", ")}).`
+            : `The release store ${store} is empty.`,
+          onlyPre
+            ? "Add --pre to use one, or name it with --version or --to."
+            : "Run once without --offline, or use --from.",
         );
     } else {
+      if (onlyPre)
+        notes.push(`the store holds only pre-releases (${stored.join(", ")}): add --pre to use one`);
       try {
-        wanted = await latestVersion(source, endpoints);
+        wanted = await latestVersion(source, endpoints, pre);
         // A local build newer than the latest published release (bin/build --release --install) wins.
         if (local[0] && compareVersions(local[0], wanted) > 0) {
           notes.push(`the store has ${local[0]}, newer than the latest published release ${wanted}`);
@@ -258,7 +286,15 @@ export async function findRelease(find: Find): Promise<Release> {
       `Version ${wanted} is not in the release store ${store}.`,
       "Run without --offline to download it.",
     );
-  await download(source, wanted, store, endpoints);
+  try {
+    await download(source, wanted, store, endpoints);
+  } catch (error) {
+    if (!(error instanceof Problem) || skipped.length === 0) throw error;
+    throw new Problem(
+      error.message,
+      `${error.fix ?? ""} The store has ${skipped.join(", ")}: add --pre to use it.`.trim(),
+    );
+  }
   notes.push(`release ${wanted} downloaded into the store`);
   return loadRelease(dir);
 }

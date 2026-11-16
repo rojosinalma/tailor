@@ -35,7 +35,7 @@ describe("the React kit tree", () => {
     expect(targetPath("core/src/glyphs.gen.ts")).toBe("react/lib/core/glyphs.ts");
     expect(targetPath("core/src/theme.ts")).toBe("react/lib/core/theme.ts");
     expect(targetPath("core/packs/pickers/date/logic.ts")).toBe("react/lib/packs/pickers/date/logic.ts");
-    expect(targetPath("react/src/layouts/admin/admin.tsx")).toBe("layouts/admin/admin.tsx");
+    expect(targetPath("react/src/layouts/settings/settings.tsx")).toBe("react/layouts/settings/settings.tsx");
     expect(moduleTarget("html/src/core/dialog")).toBeUndefined();
     expect(moduleTarget("showcase/src/entry")).toBeUndefined();
   });

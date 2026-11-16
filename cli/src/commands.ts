@@ -20,7 +20,7 @@ import {
   type Wanted,
 } from "./plan";
 import { reactPackage } from "./react-package";
-import { type Reference, renderReference } from "./reference-md";
+import { type Reference, renderIndex } from "./reference-md";
 import { type Folders, librariesOf, pageAssets, publicRoot, selectFiles, vendorRoot } from "./select";
 import {
   DEFAULT_BASE,
@@ -35,7 +35,7 @@ import {
   type ThemeMode,
 } from "./state";
 import { type Endpoints, findRelease, type Release } from "./store";
-import { compareVersions, isBetween } from "./version";
+import { compareVersions, isBetween, isPrerelease } from "./version";
 
 export interface Context {
   readonly cwd: string;
@@ -52,6 +52,8 @@ export interface Output {
 export interface ReleaseInput {
   readonly from?: string;
   readonly offline?: boolean;
+  /** A pre-release may be picked when no version is named. */
+  readonly pre?: boolean;
   readonly verbose?: boolean;
 }
 
@@ -120,7 +122,7 @@ async function wantedFiles(root: string, state: State, release: Release): Promis
   wanted.set(`${pub}/icons.svg`, made(await sprite(root, state, release)));
   const reference = JSON.parse(await release.text("reference.json")) as Reference;
   const docs = state.kit === "react" ? vendorRoot(state) : pub;
-  wanted.set(`${docs}/REFERENCE.md`, made(renderReference(reference, state.packs)));
+  wanted.set(`${docs}/REFERENCE.md`, made(renderIndex(reference, state.packs)));
   if (state.kit === "react") {
     const pkg = reactPackage(
       manifest.version,
@@ -227,10 +229,13 @@ function releaseOf(
   source: string,
   version: string | undefined,
   notes: string[],
+  /** The project's version: a project on a pre-release may move to another one. */
+  current?: string,
 ) {
   return findRelease({
     ...(input.from ? { from: input.from } : {}),
     ...(version ? { version } : {}),
+    pre: input.pre === true || (current !== undefined && isPrerelease(current)),
     source,
     offline: input.offline ?? false,
     store: ctx.store,
@@ -259,15 +264,22 @@ function emptyPackNotes(manifest: Manifest, packs: readonly string[]): string[] 
     .map((id) => `the pack ${id} has no files in this release yet: nothing to install for it`);
 }
 
-function reactHints(state: State, manifest: Manifest): { bunAdd: string; lines: string[] } {
-  const libs = Object.entries(librariesOf(manifest, state.packs)).map(([n, v]) => `${n}@${v}`);
-  const bunAdd = `bun add ${libs.join(" ")}`;
+function reactHints(
+  state: State,
+  manifest: Manifest,
+): { bunAdd: string; bunAddTypes?: string; lines: string[] } {
+  const pinned = (libs: Record<string, string>) => Object.entries(libs).map(([n, v]) => `${n}@${v}`);
+  const bunAdd = `bun add ${pinned(librariesOf(manifest, state.packs)).join(" ")}`;
+  const types = pinned(librariesOf(manifest, state.packs, true));
+  const bunAddTypes = types.length ? `bun add -d ${types.join(" ")}` : undefined;
   const ven = vendorRoot(state);
   return {
     bunAdd,
+    ...(bunAddTypes ? { bunAddTypes } : {}),
     lines: [
-      "install the libraries of the installed packs:",
+      "install the libraries of the installed packs (the second line: their types, for TypeScript):",
       `  ${bunAdd}`,
+      ...(bunAddTypes ? [`  ${bunAddTypes}`] : []),
       "import the components by pack:",
       '  import { Button } from "tailor/core";',
       `make "tailor" point at ${ven}, one of:`,
@@ -409,7 +421,13 @@ export async function add(ctx: Context, input: AddInput): Promise<Output> {
       kept: planned.summary.kept,
       newFiles: planned.summary.newFiles,
       head,
-      ...(react ? { bunAdd: react.bunAdd, import: 'import { Button } from "tailor/core";' } : {}),
+      ...(react
+        ? {
+            bunAdd: react.bunAdd,
+            ...(react.bunAddTypes ? { bunAddTypes: react.bunAddTypes } : {}),
+            import: 'import { Button } from "tailor/core";',
+          }
+        : {}),
       notes,
     },
     lines,
@@ -427,7 +445,7 @@ export async function upgrade(ctx: Context, input: UpgradeInput): Promise<Output
   const root = folderOf(ctx, input.dir);
   const before = await requireState(root);
   const notes: string[] = [];
-  const release = await releaseOf(ctx, input, before.source, input.to, notes);
+  const release = await releaseOf(ctx, input, before.source, input.to, notes, before.tailor);
   const { manifest } = release;
   const gone = before.packs.filter((id) => !manifest.packs.some((p) => p.id === id));
   if (gone.length)
@@ -524,11 +542,13 @@ export async function remove(ctx: Context, input: RemoveInput): Promise<Output> 
   const after: State = { ...(shellGone ? rest : before), packs: remaining };
   const project = new Project(root);
   const planned = await planFor(project, before, after, release);
-  const kept = librariesOf(manifest, remaining);
-  const drop =
-    before.kit === "react"
-      ? Object.keys(librariesOf(manifest, before.packs)).filter((n) => !(n in kept))
-      : [];
+  const droppable = (types: boolean): string[] => {
+    if (before.kit !== "react") return [];
+    const kept = librariesOf(manifest, remaining, types);
+    return Object.keys(librariesOf(manifest, before.packs, types)).filter((n) => !(n in kept));
+  };
+  const drop = droppable(false);
+  const dropTypes = droppable(true);
   let applied = false;
   if (input.yes) {
     await checkClean(root, before, input.force);
@@ -548,10 +568,20 @@ export async function remove(ctx: Context, input: RemoveInput): Promise<Output> 
     ...(drop.length
       ? [`libraries the project can drop: ${drop.join(" ")}`, `  bun remove ${drop.join(" ")}`]
       : []),
+    ...(dropTypes.length
+      ? [`type packages the project can drop: ${dropTypes.join(" ")}`, `  bun remove ${dropTypes.join(" ")}`]
+      : []),
     applied ? "done" : "nothing written: run again with --yes to remove",
   ];
   return {
-    data: { ...planned.summary, packs: { removed, remaining }, applied, libraries: drop, notes },
+    data: {
+      ...planned.summary,
+      packs: { removed, remaining },
+      applied,
+      libraries: drop,
+      types: dropTypes,
+      notes,
+    },
     lines,
   };
 }
@@ -589,7 +619,7 @@ export async function list(ctx: Context, input: ListInput): Promise<Output> {
     `release ${manifest.version}: ${count(manifest.packs.length, "pack")}, ${count(manifest.components.length, "component")}`,
   );
   for (const p of manifest.packs) {
-    const libs = Object.entries(p.libraries).map(([n, v]) => `${n}@${v}`);
+    const libs = Object.entries({ ...p.libraries, ...p.devLibraries }).map(([n, v]) => `${n}@${v}`);
     const html = typeof p.html === "string" ? p.html : `partial (${p.html.partial})`;
     const mine = manifest.components.filter((c) => c.pack === p.id);
     lines.push(

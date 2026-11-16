@@ -20,9 +20,13 @@ describe("file selection per kit", () => {
       "www/tailor/css/skins/plain.css",
       "www/tailor/css/tailor.css",
       "www/tailor/js/tailor.js",
+      "www/tailor/reference/core.md",
       "www/tailor/reference/core/button.html",
     ]);
-    expect(paths("html", ["core", "extra"])).toContain("www/tailor/js/tailor-extra.js");
+    const extra = paths("html", ["core", "extra"]);
+    expect(extra).toContain("www/tailor/js/tailor-extra.js");
+    expect(extra).toContain("www/tailor/js/tailor-sw.js");
+    expect(extra).toContain("www/tailor/reference/extra.md");
   });
 
   test("React kit: the stylesheets in public, the source tree in vendor, never the HTML kit files", () => {
@@ -33,12 +37,17 @@ describe("file selection per kit", () => {
       "src/vendor/tailor/core/index.ts",
       "src/vendor/tailor/extra/index.ts",
       "src/vendor/tailor/kit/kit.tsx",
+      "src/vendor/tailor/reference/core.md",
+      "src/vendor/tailor/reference/extra.md",
       "www/tailor/LICENSE",
       "www/tailor/css/palettes/grey.css",
       "www/tailor/css/skins/plain.css",
       "www/tailor/css/tailor-extra.css",
       "www/tailor/css/tailor.css",
+      "www/tailor/js/tailor-sw.js",
     ]);
+    // Without the pack that owns it, no service worker.
+    expect(paths("react", ["core"])).not.toContain("www/tailor/js/tailor-sw.js");
   });
 
   test("a pack with no files installs nothing", () => {
@@ -95,8 +104,13 @@ describe("React package", () => {
     expect(all.peerDependenciesMeta?.react).toEqual({ optional: true });
     const mine = reactPackage("1.0.0", manifest.packs, files, ["core", "extra"]);
     expect(Object.keys(mine.exports)).toEqual(["./core", "./extra", "./kit/*"]);
-    expect(mine.peerDependencies).toEqual({ "lib-x": "1.0.0", react: "19.0.0" });
-    expect(mine.peerDependenciesMeta).toBeUndefined();
+    // Type packages are optional peers, the libraries plain peers.
+    expect(mine.peerDependencies).toEqual({ "@types/react": "19.0.0", "lib-x": "1.0.0", react: "19.0.0" });
+    expect(mine.peerDependenciesMeta).toEqual({ "@types/react": { optional: true } });
+    expect(librariesOf(manifest, ["core", "deep"], true)).toEqual({
+      "@types/react": "19.0.0",
+      "@types/lib-y": "2.0.0",
+    });
     expect(librariesOf(manifest, ["core", "deep"])).toEqual({ react: "19.0.0", "lib-y": "2.0.0" });
   });
 });

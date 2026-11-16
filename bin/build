@@ -23,3 +23,6 @@ if (args.includes("--release")) {
   );
   if (result.installed) console.log(`release: installed in ${result.installed}`);
 }
+
+// The bundler keeps the process open for a few seconds after its work is done.
+process.exit(0);

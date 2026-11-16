@@ -20,6 +20,10 @@ const RELEASE_OPTIONS: Readonly<Record<string, OptionSpec>> = {
   offline: { about: "never download; use the local release store only" },
 };
 
+const PRE: Readonly<Record<string, OptionSpec>> = {
+  pre: { about: "with no version named, a pre-release (such as 2.0.0-rc.1) may be picked" },
+};
+
 const COMMON: Readonly<Record<string, OptionSpec>> = {
   json: { about: "print one JSON object instead of text" },
   verbose: { about: "print every path" },
@@ -44,6 +48,7 @@ export const COMMANDS: Readonly<Record<string, CommandSpec>> = {
       vendor: { value: "dir", about: "the folder for the React kit source (default: vendor)" },
       base: { value: "url", about: "the address of tailor/css/ on the site (default: /tailor/css/)" },
       "replace-shell": { about: "replace the installed shell with the one named by --shell" },
+      ...PRE,
       ...RELEASE_OPTIONS,
     },
   },
@@ -55,6 +60,7 @@ export const COMMANDS: Readonly<Record<string, CommandSpec>> = {
       to: { value: "X", about: "the target version (default: the latest)" },
       yes: { about: "apply the upgrade" },
       force: { about: "go on even when the tailor folders have uncommitted changes" },
+      ...PRE,
       ...RELEASE_OPTIONS,
     },
   },
@@ -76,6 +82,7 @@ export const COMMANDS: Readonly<Record<string, CommandSpec>> = {
     options: {
       components: { about: "list the components of each pack" },
       version: { value: "X", about: "the release to describe when there is no project" },
+      ...PRE,
       ...RELEASE_OPTIONS,
     },
   },
