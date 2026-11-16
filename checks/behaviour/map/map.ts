@@ -41,8 +41,9 @@ export default behaviour("map", {
       await expect(body.getByRole("button", { name })).toBeVisible();
     await page.getByRole("region", { name: "Host locations" }).focus();
     await page.keyboard.press("Tab");
-    const focused = await page.evaluate(() => document.activeElement?.getAttribute("aria-label"));
-    expect(["web-1", "nas", "db-1"]).toContain(focused);
+    await expect
+      .poll(() => page.evaluate(() => document.activeElement?.getAttribute("aria-label")))
+      .toMatch(/^(web-1|nas|db-1)$/);
   },
   "Enter on a marker opens its card, Escape closes it": async ({ page, example, expect }) => {
     const marker = example("default").getByRole("button", { name: "web-1" });
@@ -53,7 +54,7 @@ export default behaviour("map", {
     await expect(card).toContainText("Serves example.com.");
     await expect(card.getByRole("link", { name: "web-1" })).toHaveAttribute("href", "#web-1");
     await expect(marker).toHaveAttribute("aria-expanded", "true");
-    expect(await card.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+    await expect.poll(() => card.evaluate((el) => el.contains(document.activeElement))).toBe(true);
     await page.keyboard.press("Escape");
     await expect(card).toBeHidden();
     await expect(marker).toBeFocused();

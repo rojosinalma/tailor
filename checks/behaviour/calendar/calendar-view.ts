@@ -55,9 +55,9 @@ export default behaviour("calendar-view", {
     await page.keyboard.press("Tab");
     await expect(body.getByRole("button", { name: /^\+3 more/ })).toBeFocused();
     await page.keyboard.press("Tab");
-    expect(await body.getByRole("grid").evaluate((grid) => grid.contains(document.activeElement))).toBe(
-      false,
-    );
+    await expect
+      .poll(() => body.getByRole("grid").evaluate((grid) => grid.contains(document.activeElement)))
+      .toBe(false);
   },
   "Enter opens the day in a popover; Escape closes it": async ({ page, example, expect }) => {
     const body = example("month");

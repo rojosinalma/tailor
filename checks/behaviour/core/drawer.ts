@@ -5,7 +5,7 @@ export default behaviour("drawer", {
     await example("default").getByRole("button", { name: "Host details" }).click();
     const drawer = page.getByRole("dialog", { name: "Host details" });
     await expect(drawer).toBeVisible();
-    expect(await drawer.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+    await expect.poll(() => drawer.evaluate((el) => el.contains(document.activeElement))).toBe(true);
     const box = await drawer.boundingBox();
     expect(Math.round((box?.x ?? 0) + (box?.width ?? 0))).toBe(1280);
     expect(box?.height).toBe(800);
@@ -39,7 +39,7 @@ export default behaviour("drawer", {
     await expect(drawer).toBeVisible();
     for (let i = 0; i < 6; i++) {
       await page.keyboard.press("Tab");
-      expect(await drawer.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+      await expect.poll(() => drawer.evaluate((el) => el.contains(document.activeElement))).toBe(true);
     }
   },
   "the start side and the bottom side": async ({ page, example, expect }) => {

@@ -176,6 +176,8 @@ Append-only. One line per decision: what, why.
 38. 2026-11-16 — The unused-code check also fails on an export or a type that nothing uses. Four were left at the release; they are gone.
 39. 2026-11-16 — The check builds before it checks types. On a fresh checkout the generated files of the showcase did not exist yet; the first nightly run and the first CI run found it.
 40. 2026-11-16 — A page that failed to load because the machine's network changed is opened once more. The checks' browser shares the machine's network, and a container that starts elsewhere makes it drop its requests.
+41. 2026-11-16 — A picture that is not the expected one is confirmed by more pictures, a moment apart, until two in a row are the same. On a busy machine the browser hands out a picture that still shows parts of an older frame (the area of the first screen, without the icons that arrived later); a picture taken a moment later is right. Found on the first CI runs.
+42. 2026-11-16 — A behaviour test waits for the focus, it does not read it once. Base UI moves the focus a frame after a key; a slow machine showed the tests that read too early.
 
 ## 10. Measurements at 2.0.0
 
@@ -205,15 +207,15 @@ Measured on the development machine (32 cores) with a warm image cache, unless a
 
 ### Time
 
-| Check                                                                                             | Time  | Limit       |
-| ------------------------------------------------------------------------------------------------- | ----- | ----------- |
-| A change to one component (`bin/check`)                                                           | 4 s   | 10 s        |
-| A release (`bin/check --release`): 6,048 page states, 5,544 contrast combinations                 | 94 s  | 120 s       |
-| A release on a machine with no image cache                                                        | 196 s | not limited |
-| A full run (`bin/check --full`): 8,462 page states with every image, 34,020 contrast combinations | 335 s | not limited |
+| Check                                                                                             | Time         | Limit       |
+| ------------------------------------------------------------------------------------------------- | ------------ | ----------- |
+| A change to one component (`bin/check`)                                                           | 4 s          | 10 s        |
+| A release (`bin/check --release`): 6,048 page states, 5,544 contrast combinations                 | 94 s         | 120 s       |
+| A release on a machine with no image cache                                                        | 196 s        | not limited |
+| A full run (`bin/check --full`): 8,462 page states with every image, 34,020 contrast combinations | 335 to 375 s | not limited |
 
 The three slowest steps of a release: pages and images 45 s, contrast 24 s, behaviour in both kits 22 s
-(1,084 tests). The release check keeps 22 % of its limit.
+(1,084 tests). The release check keeps 14 to 23 % of its limit; on a busy machine it can pass the limit.
 
 ### Known limits
 

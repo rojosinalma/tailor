@@ -31,6 +31,8 @@ const TOUCH_WIDTHS: readonly number[] = SCREENS.filter((screen) => screen.touch)
 );
 const heightOf = (width: number): number => SCREENS.find((screen) => screen.width === width)?.height ?? 900;
 const TOUCH = 44;
+const ICON_WAIT = 10_000;
+
 /** What a dropped connection or a page that never arrived looks like in a page error. */
 const TRANSIENT = /ERR_NETWORK_CHANGED|ERR_CONNECTION|Timeout \d+ms exceeded/;
 
@@ -396,6 +398,50 @@ async function settle(page: Page): Promise<void> {
     );
     await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => done(null))));
   });
+  await iconsDrawn(page);
+}
+
+/**
+ * An icon from the sprite file draws a moment after its element is made or shown again. Waits until every
+ * icon on the screen has its drawing (a box with a size). A page whose icons never draw did not load right.
+ */
+async function iconsDrawn(page: Page): Promise<void> {
+  const drawn = await page.evaluate(async (limit) => {
+    const pending = (): boolean =>
+      [...document.querySelectorAll<SVGGraphicsElement>("svg.t-icon")].some((svg) => {
+        const use = svg.querySelector<SVGGraphicsElement>("use");
+        return use !== null && svg.getClientRects().length > 0 && use.getBBox().width === 0;
+      });
+    for (let waited = 0; pending(); waited += 50) {
+      if (waited >= limit) return false;
+      await new Promise((done) => setTimeout(done, 50));
+    }
+    await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => done(null))));
+    return true;
+  }, ICON_WAIT);
+  if (!drawn) throw new Error(`the icons of the page did not draw: Timeout ${ICON_WAIT}ms exceeded.`);
+}
+
+/**
+ * Takes the picture of the page. On a busy machine the browser can hand out a picture that still shows
+ * parts of an older frame (icons that had not arrived yet). So a picture that is not the expected one is
+ * confirmed: more pictures are taken, a moment apart, until two in a row are the same.
+ */
+async function capture(page: Page, expected: string | undefined): Promise<{ png: Uint8Array; hash: string }> {
+  const shoot = async (): Promise<{ png: Uint8Array; hash: string }> => {
+    const png = await page.screenshot({ fullPage: true, animations: "disabled", caret: "hide" });
+    return { png, hash: pixelHash(png) };
+  };
+  await repaint(page);
+  let last = await shoot();
+  if (last.hash === expected) return last;
+  for (let attempt = 0; attempt < 4; attempt++) {
+    await page.waitForTimeout(250);
+    const next = await shoot();
+    if (next.hash === last.hash || next.hash === expected) return next;
+    last = next;
+  }
+  return last;
 }
 
 /**
@@ -410,6 +456,7 @@ async function repaint(page: Page): Promise<void> {
     root.style.display = "";
     await new Promise((done) => requestAnimationFrame(() => requestAnimationFrame(() => done(null))));
   });
+  await iconsDrawn(page);
 }
 
 interface Target {
@@ -559,13 +606,10 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
                   taken.set(state.image, known);
                   skipped++;
                 } else {
-                  await repaint(page);
-                  const png = await page.screenshot({
-                    fullPage: true,
-                    animations: "disabled",
-                    caret: "hide",
-                  });
-                  const hash = pixelHash(png);
+                  // The picture that is expected: the reference, and for the HTML kit the React kit's reference.
+                  const twin = state.image.replace(/^html\//, "react/");
+                  const expected = reference[state.image] ?? reference[twin];
+                  const { png, hash } = await capture(page, expected);
                   taken.set(state.image, hash);
                   cache[`${state.image}@${fingerprint}`] = hash;
                   await writeFile(`checks/.images/${state.image}.png`, png);
@@ -580,13 +624,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
                     await page
                       .addStyleTag({ content: '.sc-example[data-kit="react"]{display:none}' })
                       .then(async (tag) => {
-                        await repaint(page);
-                        const png = await page.screenshot({
-                          fullPage: true,
-                          animations: "disabled",
-                          caret: "hide",
-                        });
-                        const hash = pixelHash(png);
+                        const { png, hash } = await capture(page, undefined);
                         taken.set(shared, hash);
                         cache[`${shared}@${fingerprint}`] = hash;
                         await writeFile(`checks/.images/${shared}.png`, png);

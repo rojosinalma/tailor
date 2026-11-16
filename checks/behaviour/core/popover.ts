@@ -7,7 +7,7 @@ export default behaviour("popover", {
     const popover = page.getByRole("dialog", { name: "Share web-1" });
     await expect(popover).toBeVisible();
     await expect(trigger).toHaveAttribute("aria-expanded", "true");
-    expect(await popover.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+    await expect.poll(() => popover.evaluate((el) => el.contains(document.activeElement))).toBe(true);
     await expect(popover.getByRole("button", { name: "Close" })).toBeHidden();
   },
   "Escape closes it and the focus returns to the trigger": async ({ page, example, expect }) => {

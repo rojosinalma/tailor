@@ -16,7 +16,7 @@ export default behaviour(
       await example("choices").getByRole("button", { name: "Actions for web-1" }).click();
       const sheet = page.getByRole("dialog", { name: "web-1" });
       await expect(sheet).toBeVisible();
-      expect(await sheet.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+      await expect.poll(() => sheet.evaluate((el) => el.contains(document.activeElement))).toBe(true);
       const box = await sheet.boundingBox();
       expect(box?.width).toBe(390);
       expect(Math.round((box?.y ?? 0) + (box?.height ?? 0))).toBe(800);

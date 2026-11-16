@@ -10,7 +10,7 @@ export default behaviour("lightbox", {
     await expect(viewer.getByText("3 of 6")).toBeVisible();
     await expect(viewer.getByRole("img", { name: "Old bridge, sample photo 3" })).toBeVisible();
     await expect(viewer.getByText("Old bridge at dawn")).toBeVisible();
-    expect(await viewer.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+    await expect.poll(() => viewer.evaluate((el) => el.contains(document.activeElement))).toBe(true);
   },
   "arrow keys, Home and End move": async ({ page, example, expect }) => {
     await example("gallery").getByRole("link", { name: "Old bridge at dawn" }).click();

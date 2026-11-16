@@ -20,7 +20,7 @@ export default behaviour("dialog", {
     await example("default").getByRole("button", { name: "Edit host" }).click();
     const dialog = page.getByRole("dialog", { name: "Edit host" });
     await expect(dialog).toBeVisible();
-    expect(await dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true);
+    await expect.poll(() => dialog.evaluate((el) => el.contains(document.activeElement))).toBe(true);
   },
   "Escape closes it and the focus returns to the trigger": async ({ page, example, expect }) => {
     const trigger = example("default").getByRole("button", { name: "Edit host" });
