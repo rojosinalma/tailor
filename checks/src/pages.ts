@@ -111,6 +111,88 @@ async function writeFile(path: string, content: string | Uint8Array): Promise<vo
   await Bun.write(at(path), content);
 }
 
+/** The pixels of a PNG file (8-bit RGB or RGBA, as the browser writes them), row after row. */
+function decodePng(png: Uint8Array): { width: number; height: number; channels: number; data: Uint8Array } {
+  const view = new DataView(png.buffer, png.byteOffset, png.byteLength);
+  const chunks: Uint8Array[] = [];
+  let width = 0;
+  let height = 0;
+  let channels = 3;
+  for (let at = 8; at < png.length; ) {
+    const length = view.getUint32(at);
+    const type = String.fromCharCode(...png.subarray(at + 4, at + 8));
+    if (type === "IHDR") {
+      width = view.getUint32(at + 8);
+      height = view.getUint32(at + 12);
+      channels = png[at + 17] === 6 ? 4 : 3;
+    } else if (type === "IDAT") chunks.push(png.subarray(at + 8, at + 8 + length));
+    at += 12 + length;
+  }
+  const raw = inflateSync(Buffer.concat(chunks));
+  const stride = width * channels;
+  const data = new Uint8Array(stride * height);
+  for (let y = 0; y < height; y++) {
+    const filter = raw[y * (stride + 1)] ?? 0;
+    const row = y * stride;
+    for (let x = 0; x < stride; x++) {
+      const value = raw[y * (stride + 1) + 1 + x] ?? 0;
+      const left = x >= channels ? (data[row + x - channels] ?? 0) : 0;
+      const up = y > 0 ? (data[row - stride + x] ?? 0) : 0;
+      const corner = y > 0 && x >= channels ? (data[row - stride + x - channels] ?? 0) : 0;
+      let predicted = 0;
+      if (filter === 1) predicted = left;
+      else if (filter === 2) predicted = up;
+      else if (filter === 3) predicted = (left + up) >> 1;
+      else if (filter === 4) {
+        const [a, b, c] = [Math.abs(up - corner), Math.abs(left - corner), Math.abs(left + up - 2 * corner)];
+        predicted = a <= b && a <= c ? left : b <= c ? up : corner;
+      }
+      data[row + x] = (value + predicted) & 255;
+    }
+  }
+  return { width, height, channels, data };
+}
+
+/**
+ * The browser draws the edge of a rounded corner or of a small icon a little differently from run to run
+ * in a few places. Two images count as the same when they have the same size, at most NOISE_PIXELS pixels
+ * differ at all, and at most NOISE_STRONG of them by more than NOISE_LEVELS in a colour channel.
+ * A real change, even a one-pixel shift of a border or another icon, moves more pixels than that.
+ */
+const NOISE_PIXELS = 150;
+const NOISE_STRONG = 40;
+const NOISE_LEVELS = 6;
+
+export function sameImage(a: Uint8Array, b: Uint8Array): boolean {
+  const [x, y] = [decodePng(a), decodePng(b)];
+  if (x.width !== y.width || x.height !== y.height || x.channels !== y.channels) return false;
+  let differing = 0;
+  let strong = 0;
+  for (let i = 0; i < x.data.length; i += x.channels) {
+    let delta = 0;
+    for (let c = 0; c < x.channels; c++) {
+      delta = Math.max(delta, Math.abs((x.data[i + c] ?? 0) - (y.data[i + c] ?? 0)));
+    }
+    if (delta === 0) continue;
+    if (++differing > NOISE_PIXELS) return false;
+    if (delta > NOISE_LEVELS && ++strong > NOISE_STRONG) return false;
+  }
+  return true;
+}
+
+/** Two images of the checks, by their keys: the same hash, or the same picture apart from drawing noise. */
+async function sameByKey(
+  a: string,
+  b: string,
+  hashes: ReadonlyMap<string, string>,
+  fileB = `checks/.images/${b}.png`,
+): Promise<boolean> {
+  if (hashes.get(a) !== undefined && hashes.get(a) === hashes.get(b)) return true;
+  const [first, second] = [Bun.file(at(`checks/.images/${a}.png`)), Bun.file(at(fileB))];
+  if (!(await first.exists()) || !(await second.exists())) return false;
+  return sameImage(await first.bytes(), await second.bytes());
+}
+
 /** Runs in the page: finds what a person would have to correct by hand. */
 function inspect(touch: boolean, touchSize: number): { rule: string; message: string }[] {
   const problems: { rule: string; message: string }[] = [];
@@ -452,8 +534,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
                 const hash = pixelHash(png);
                 taken.set(state.image, hash);
                 cache[`${state.image}@${fingerprint}`] = hash;
-                if (reference[state.image] !== hash)
-                  await writeFile(`checks/.images/${state.image}.png`, png);
+                await writeFile(`checks/.images/${state.image}.png`, png);
               }
               // Examples that only the React kit can show are left out of the image that the HTML kit is compared with.
               if (reactOnly > 0) {
@@ -525,9 +606,9 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
   const next: Record<string, string> = { ...reference };
   for (const [key, hash] of taken) {
     if (key.startsWith("html/")) {
-      const twin =
-        taken.get(key.replace(/^html\//, "shared/")) ?? taken.get(key.replace(/^html\//, "react/"));
-      if (twin && twin !== hash) {
+      const sharedKey = key.replace(/^html\//, "shared/");
+      const twinKey = taken.has(sharedKey) ? sharedKey : key.replace(/^html\//, "react/");
+      if (taken.has(twinKey) && !(await sameByKey(key, twinKey, taken))) {
         problems.push({
           page: key,
           state: "parity",
@@ -539,7 +620,15 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
     }
     if (key.startsWith("shared/")) continue;
     if (!(key in reference)) added.push(key);
-    else if (reference[key] !== hash) changed.push(key);
+    else if (reference[key] !== hash) {
+      // The stored reference picture decides when the hash differs only by drawing noise.
+      const stored = `checks/.images/reference/${key}.png`;
+      if (await sameByKey(key, key, new Map(), stored)) {
+        next[key] = reference[key] ?? hash;
+        continue;
+      }
+      changed.push(key);
+    }
     next[key] = hash;
   }
   const full = !options.only && !options.onlySkins && !options.widths;
@@ -557,6 +646,12 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
       // Nothing to compare: the reference images belong to another machine.
     } else if (options.update) {
       const sorted = Object.fromEntries(Object.entries(next).sort(([a], [b]) => a.localeCompare(b)));
+      // The accepted pictures are kept beside the hashes on this machine, for the noise comparison.
+      for (const key of [...added, ...changed]) {
+        const current = Bun.file(at(`checks/.images/${key}.png`));
+        if (await current.exists())
+          await writeFile(`checks/.images/reference/${key}.png`, await current.bytes());
+      }
       await writeFile(
         REFERENCE,
         `${JSON.stringify(sorted, null, 0).replaceAll('","', '",\n"').replace("{", "{\n").replace(/}$/, "\n}")}\n`,
