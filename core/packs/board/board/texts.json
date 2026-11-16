@@ -1,0 +1,10 @@
+{
+  "boardColumns": "Columns",
+  "boardEmpty": "No cards. Drop one here.",
+  "boardCountLimit": "{count} of {limit}",
+  "boardOverLimit": "{count} of {limit}, over the limit",
+  "boardMoveTo": "Move {title} to…",
+  "boardMoveMenu": "Move to",
+  "boardAdd": "Add card",
+  "boardAddTo": "Add card to {column}"
+}

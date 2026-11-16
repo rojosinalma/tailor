@@ -1,0 +1,9 @@
+{
+  "sortableHandle": "Reorder {label}",
+  "sortableInstructions": "Press Space or Enter to pick the item up. Use the arrow keys to move it, Space or Enter to drop it, Escape to cancel.",
+  "sortablePickedUp": "Picked up {label}. Position {position} of {count}.",
+  "sortableMoved": "Moved to position {position} of {count}.",
+  "sortableMovedList": "Moved to {list}, position {position} of {count}.",
+  "sortableDropped": "Dropped.",
+  "sortableCancelled": "Cancelled."
+}

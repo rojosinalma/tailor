@@ -1,0 +1,112 @@
+.t-board {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-3);
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  container-type: inline-size;
+}
+
+/* The column switch shows only in a narrow box. */
+.t-board-switch {
+  display: none;
+}
+
+.t-board-columns {
+  display: flex;
+  flex: 1;
+  align-items: flex-start;
+  gap: var(--t-space-3);
+  min-height: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border-radius: var(--t-radius-box);
+}
+
+.t-board-column {
+  display: flex;
+  flex: 1 0 var(--t-measure-xs);
+  flex-direction: column;
+  max-width: var(--t-measure-sm);
+  max-height: 100%;
+  min-width: 0;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  background: var(--t-inset);
+}
+
+.t-board-column[data-tone] {
+  border-top: var(--t-border-w-strong) solid var(--t-tone);
+}
+
+.t-board-column-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--t-space-2);
+  padding: var(--t-space-3);
+}
+
+.t-board-column-title {
+  min-width: 0;
+  font-size: var(--t-text-base);
+  font-weight: var(--t-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.t-board-count {
+  display: flex;
+  min-width: 0;
+}
+
+.t-board-column-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  padding: 0 var(--t-space-2) var(--t-space-2);
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+}
+
+/* The list fills the column, so the space under the last card takes a drop too. */
+.t-board-column-body > .t-sortable {
+  flex: 1;
+}
+
+.t-board-column-footer {
+  display: flex;
+  padding-top: var(--t-space-2);
+}
+
+.t-board-column-footer > .t-btn {
+  flex: 1;
+}
+
+.t-board-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* A card on a board is small: its title is body sized. */
+.t-board-card .t-card-title {
+  font-size: var(--t-text-base);
+}
+
+@container (max-width: 40rem) {
+  .t-board-switch {
+    display: flex;
+  }
+
+  .t-board-column {
+    flex: 1 1 auto;
+    max-width: none;
+  }
+
+  .t-board-column:not([data-selected]) {
+    display: none;
+  }
+}

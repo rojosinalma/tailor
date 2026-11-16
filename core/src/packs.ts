@@ -140,7 +140,7 @@ export const PACKS: readonly PackSpec[] = [
     name: "Sortable",
     description: "Drag to reorder lists, rows and cards.",
     requires: ["core"],
-    libraries: { "@dnd-kit/react": "0.5.3" },
+    libraries: { "@dnd-kit/react": "0.5.3", "@dnd-kit/dom": "0.5.3" },
     html: "none",
   }),
   pack({

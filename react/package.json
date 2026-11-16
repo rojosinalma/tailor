@@ -6,6 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "@base-ui/react": "1.9.0",
+    "@dnd-kit/dom": "0.5.3",
     "@dnd-kit/react": "0.5.3",
     "@tanstack/react-form": "1.33.5",
     "@tanstack/react-hotkeys": "0.25.1",

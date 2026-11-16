@@ -1,0 +1,152 @@
+.t-sortable {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
+  min-width: 0;
+}
+
+.t-sortable[data-orientation="horizontal"] {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.t-sortable[data-orientation="grid"] {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, var(--t-measure-xs)), 1fr));
+  gap: var(--t-space-4);
+}
+
+/* A list (ul or ol): rows with lines between them, as in t-list. */
+:is(ul, ol).t-sortable {
+  gap: 0;
+}
+
+tbody.t-sortable {
+  display: table-row-group;
+}
+
+.t-sortable-item {
+  position: relative;
+  min-width: 0;
+}
+
+/* Without a handle the whole item takes the pointer; on a touch screen it is at least a touch target high. */
+.t-sortable[data-handle="false"] > .t-sortable-item {
+  display: flex;
+  align-items: center;
+  min-height: var(--t-control-h-sm);
+  border-radius: var(--t-radius-control);
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+li.t-sortable-item + li.t-sortable-item {
+  border-top: var(--t-border-w) solid var(--t-border);
+}
+
+.t-sortable-row {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-3);
+  min-width: 0;
+  min-height: var(--t-control-h-lg);
+  padding: var(--t-space-1) var(--t-space-3) var(--t-space-1) var(--t-space-1);
+  border-radius: var(--t-radius-control);
+}
+
+.t-sortable-row > * {
+  min-width: 0;
+}
+
+/* The content after the grip takes the free width; what follows sits at the end. */
+.t-sortable-row > .t-sortable-handle + * {
+  flex: 1;
+}
+
+.t-sortable-handle {
+  flex: none;
+  color: var(--t-muted);
+  cursor: grab;
+  touch-action: none;
+}
+
+.t-sortable-handle:disabled {
+  cursor: default;
+}
+
+/* The item in the air: raised over the page. Its own box is reset by the drag, so the look sits on its content. */
+.t-sortable-item[data-dragging]:not([data-dnd-placeholder]) {
+  cursor: grabbing;
+}
+
+.t-sortable-item[data-dragging]:not([data-dnd-placeholder]) > *,
+tr.t-sortable-item[data-dragging]:not([data-dnd-placeholder]) {
+  box-shadow: var(--t-shadow-lg);
+}
+
+.t-sortable-item[data-dragging]:not([data-dnd-placeholder]) > .t-sortable-row,
+tr.t-sortable-item[data-dragging]:not([data-dnd-placeholder]) > * {
+  background: var(--t-surface);
+}
+
+tr.t-sortable-item[data-dragging]:not([data-dnd-placeholder]) > * {
+  box-shadow: none;
+}
+
+/* The gap where the item lands: the copy left in the list is hidden, its outline shows. */
+.t-sortable-item[data-dnd-placeholder]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border: var(--t-border-w-strong) dashed var(--t-border-control);
+  border-radius: var(--t-radius-box);
+  background: var(--t-inset);
+  visibility: visible;
+}
+
+li.t-sortable-item[data-dnd-placeholder]::after {
+  border-radius: var(--t-radius-control);
+}
+
+/* A table row cannot hold a box over its cells: the cells of the copy show as an empty band instead. */
+tr.t-sortable-item[data-dnd-placeholder]::after {
+  content: none;
+}
+
+tr.t-sortable-item[data-dnd-placeholder] > * {
+  background: var(--t-inset);
+  color: transparent;
+  visibility: visible;
+}
+
+tr.t-sortable-item[data-dnd-placeholder] > * > * {
+  visibility: hidden;
+}
+
+.t-sortable[data-orientation="horizontal"] > .t-sortable-item[data-dnd-placeholder]::after {
+  border-radius: var(--t-radius-pill);
+}
+
+.t-sortable-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--t-control-h-lg);
+  padding: var(--t-space-3);
+  border: var(--t-border-w) dashed var(--t-border);
+  border-radius: var(--t-radius-box);
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+  text-align: center;
+}
+
+tr.t-sortable-empty {
+  display: table-row;
+}
+
+tr.t-sortable-empty > td {
+  color: var(--t-muted);
+  text-align: center;
+}
