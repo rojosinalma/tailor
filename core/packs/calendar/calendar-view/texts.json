@@ -1,0 +1,13 @@
+{
+  "calendarAgenda": "Agenda",
+  "calendarAllDay": "All day",
+  "calendarEvents": "{count} events",
+  "calendarHours": "Hours",
+  "calendarMonth": "Month",
+  "calendarMore": "+{count} more",
+  "calendarNoEvents": "No events",
+  "calendarOneEvent": "1 event",
+  "calendarRange": "{start} to {end}",
+  "calendarView": "View",
+  "calendarWeek": "Week"
+}

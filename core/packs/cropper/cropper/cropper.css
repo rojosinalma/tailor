@@ -1,0 +1,72 @@
+.t-cropper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
+  width: 100%;
+  min-width: 0;
+  container-type: inline-size;
+}
+
+.t-cropper-area {
+  position: relative;
+  height: var(--t-measure-sm);
+  overflow: hidden;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  background: var(--t-inset);
+}
+
+.t-cropper[data-size="sm"] > .t-cropper-area {
+  height: var(--t-measure-xs);
+}
+
+.t-cropper[data-size="lg"] > .t-cropper-area {
+  height: var(--t-measure-md);
+}
+
+.t-cropper-hint {
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+}
+
+.t-cropper-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: var(--t-space-2) var(--t-space-4);
+}
+
+.t-cropper-zoom {
+  display: flex;
+  flex: 1 1 var(--t-measure-xs);
+  align-items: flex-end;
+  gap: var(--t-space-1);
+  min-width: 0;
+}
+
+.t-cropper-slider {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The library's frame, grid and mask, in the palette. The mask is the frame's shadow in its text colour. */
+.reactEasyCrop_CropArea {
+  border: var(--t-border-w-strong) solid var(--t-accent);
+  color: var(--t-backdrop);
+}
+
+.reactEasyCrop_CropArea:focus-visible {
+  outline: var(--t-focus-w) solid var(--t-focus-color);
+  outline-offset: var(--t-focus-offset);
+}
+
+.reactEasyCrop_CropAreaGrid::before,
+.reactEasyCrop_CropAreaGrid::after {
+  border-color: color-mix(in srgb, var(--t-accent) 50%, transparent);
+}
+
+@container (max-width: 40rem) {
+  .t-cropper-zoom {
+    flex-basis: 100%;
+  }
+}

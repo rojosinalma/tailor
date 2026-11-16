@@ -1,0 +1,84 @@
+/* The layer over the page: it takes every pointer event, so the page is inert while the tour runs. */
+.t-tour-layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--t-z-overlay);
+}
+
+/* The script sets --t-x, --t-y, --t-w and --t-h to the box around the target. */
+.t-tour-cutout {
+  --t-x: 50%;
+  --t-y: 50%;
+  --t-w: 0;
+  --t-h: 0;
+  position: fixed;
+  top: var(--t-y);
+  left: var(--t-x);
+  z-index: var(--t-z-overlay);
+  width: var(--t-w);
+  height: var(--t-h);
+  border-radius: var(--t-radius-box);
+  outline: var(--t-border-w-strong) solid var(--t-accent);
+  box-shadow: 0 0 0 100vmax var(--t-backdrop);
+  pointer-events: none;
+  transition-property: top, left, width, height;
+  transition-duration: var(--t-motion-base);
+  transition-timing-function: var(--t-ease);
+}
+
+/* The step text. The script sets --t-x and --t-y next to the target. */
+.t-tour {
+  --t-x: 0;
+  --t-y: 0;
+  position: fixed;
+  top: var(--t-y);
+  left: var(--t-x);
+  z-index: var(--t-z-popup);
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-2);
+  width: min(var(--t-measure-sm), calc(100vw - var(--t-space-6)));
+  padding: var(--t-space-4);
+  box-shadow: var(--t-shadow-lg);
+}
+
+.t-tour-count {
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+}
+
+.t-tour-title {
+  font-size: var(--t-text-lg);
+}
+
+.t-tour-text {
+  color: var(--t-text);
+}
+
+.t-tour-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--t-space-2);
+  padding-top: var(--t-space-2);
+}
+
+.t-tour-actions > :first-child {
+  margin-inline-end: auto;
+}
+
+@media (max-width: 40rem) {
+  .t-tour {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-width: none;
+    padding: var(--t-space-4) var(--t-space-4) calc(var(--t-space-4) + var(--t-safe-bottom));
+    border-width: var(--t-border-w) 0 0;
+    border-radius: var(--t-radius-popup) var(--t-radius-popup) 0 0;
+    box-shadow: var(--t-shadow-lg);
+  }
+}

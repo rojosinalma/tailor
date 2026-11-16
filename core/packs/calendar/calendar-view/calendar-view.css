@@ -1,0 +1,563 @@
+.t-calendar-view {
+  /* The height of one event bar in the month, and of one hour in the week; both reach the touch size. */
+  --t-calendar-view-bar: calc(var(--t-text-xs) * var(--t-leading) + var(--t-space-1));
+  --t-calendar-view-hour: calc(var(--t-control-h-sm) * 2);
+  --t-calendar-view-axis: var(--t-space-7);
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: var(--t-space-3);
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  container-type: inline-size;
+}
+
+.t-calendar-view-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--t-space-2) var(--t-space-3);
+}
+
+.t-calendar-view-nav {
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-1);
+}
+
+.t-calendar-view-title {
+  flex: 1 1 var(--t-measure-2xs);
+  min-width: 0;
+  font-size: var(--t-text-lg);
+}
+
+/* Month. */
+.t-calendar-view-month {
+  display: flex;
+  flex-direction: column;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  border-collapse: separate;
+}
+
+.t-calendar-view-month > thead,
+.t-calendar-view-month > tbody {
+  display: flex;
+  flex-direction: column;
+}
+
+.t-calendar-view-weekdays,
+.t-calendar-view-week {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.t-calendar-view-weekdays > * {
+  padding: var(--t-space-1) var(--t-space-2);
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  font-weight: var(--t-label-weight);
+  text-align: start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-calendar-view-week {
+  border-top: var(--t-border-w) solid var(--t-border);
+}
+
+.t-calendar-view-day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-05);
+  min-width: 0;
+  min-height: calc(var(--t-control-h-sm) + var(--t-calendar-view-bar) * 3 + var(--t-space-3));
+  padding-bottom: var(--t-space-1);
+}
+
+.t-calendar-view-day + .t-calendar-view-day {
+  border-inline-start: var(--t-border-w) solid var(--t-border);
+}
+
+.t-calendar-view-day[data-outside] {
+  background: color-mix(in srgb, var(--t-inset) 60%, transparent);
+}
+
+.t-calendar-view-date {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  align-self: flex-start;
+  justify-content: center;
+  gap: var(--t-space-05);
+  min-width: var(--t-control-h-sm);
+  min-height: var(--t-control-h-sm);
+  border-radius: var(--t-radius-control);
+  font-size: var(--t-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.t-calendar-view-day[data-outside] .t-calendar-view-date {
+  color: var(--t-muted);
+}
+
+.t-calendar-view-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.75em;
+  min-height: 1.75em;
+  border-radius: var(--t-radius-pill);
+}
+
+.t-calendar-view-head > .t-calendar-view-num {
+  color: var(--t-text);
+}
+
+[data-today] > .t-calendar-view-date > .t-calendar-view-num,
+.t-calendar-view-head[data-today] > .t-calendar-view-num {
+  background: var(--t-accent-solid);
+  color: var(--t-on-accent);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-calendar-view-dots {
+  display: none;
+  gap: var(--t-space-05);
+}
+
+.t-calendar-view-dots > * {
+  width: var(--t-space-1);
+  height: var(--t-space-1);
+  border-radius: var(--t-radius-pill);
+  background: var(--t-tone);
+}
+
+.t-calendar-view-lanes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-05);
+  min-width: 0;
+}
+
+.t-calendar-view-slot {
+  height: var(--t-calendar-view-bar);
+}
+
+/* An event bar: it lies in the cell of its first day and reaches over the next ones. */
+.t-calendar-view-event {
+  --t-span: 1;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: var(--t-space-1);
+  min-width: 0;
+  height: var(--t-calendar-view-bar);
+  padding: 0 var(--t-space-1);
+  border-radius: var(--t-radius-control);
+  background: color-mix(in srgb, var(--t-tone) var(--t-tint), var(--t-surface));
+  color: var(--t-tone-text);
+  font-size: var(--t-text-xs);
+  line-height: var(--t-leading-tight);
+  text-align: start;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-calendar-view-lanes > .t-calendar-view-event {
+  display: block;
+  width: calc(var(--t-span) * (100% + var(--t-border-w)) - var(--t-border-w) - var(--t-space-2));
+  margin-inline-start: var(--t-space-1);
+  line-height: var(--t-calendar-view-bar);
+}
+
+.t-calendar-view-lanes > .t-calendar-view-event[data-before] {
+  margin-inline-start: 0;
+  width: calc(var(--t-span) * (100% + var(--t-border-w)) - var(--t-border-w) - var(--t-space-1));
+  border-start-start-radius: 0;
+  border-end-start-radius: 0;
+}
+
+.t-calendar-view-event[data-after] {
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}
+
+/* A timed event in the month: a dot in its tone and normal text, no fill. */
+.t-calendar-view-lanes > .t-calendar-view-event[data-timed] {
+  background: transparent;
+  color: var(--t-text);
+}
+
+.t-calendar-view-lanes > .t-calendar-view-event[data-timed]::before {
+  content: "";
+  display: inline-block;
+  width: var(--t-space-2);
+  height: var(--t-space-2);
+  margin-inline-end: var(--t-space-1);
+  border-radius: var(--t-radius-pill);
+  background: var(--t-tone);
+  vertical-align: middle;
+}
+
+.t-calendar-view-more {
+  align-self: flex-start;
+  min-height: var(--t-calendar-view-bar);
+  padding: 0 var(--t-space-2);
+  border-radius: var(--t-radius-control);
+  color: var(--t-link);
+  font-size: var(--t-text-xs);
+  font-weight: var(--t-weight-medium);
+}
+
+/* The events of the picked day, under the grid in the narrow form. */
+.t-calendar-view-picked {
+  display: none;
+  flex-direction: column;
+  gap: var(--t-space-2);
+}
+
+/* Agenda, and the lists of a day. */
+.t-calendar-view-agenda {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-4);
+}
+
+.t-calendar-view-agenda-day {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-1);
+}
+
+.t-calendar-view-agenda-title {
+  padding-bottom: var(--t-space-1);
+  border-bottom: var(--t-border-w) solid var(--t-border);
+  font-size: var(--t-text-sm);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-calendar-view-agenda-day[data-today] > .t-calendar-view-agenda-title {
+  color: var(--t-accent-text);
+}
+
+.t-calendar-view-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--t-space-05);
+}
+
+.t-calendar-view-event[data-row] {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: var(--t-control-h-sm);
+  --t-calendar-view-py: var(--t-space-1);
+  --t-calendar-view-px: var(--t-space-2);
+  padding: calc(var(--t-calendar-view-py) + 1lh) var(--t-calendar-view-px) var(--t-calendar-view-py);
+  border-inline-start: var(--t-border-w-strong) solid var(--t-tone);
+  border-radius: 0 var(--t-radius-control) var(--t-radius-control) 0;
+  background: transparent;
+  color: var(--t-text);
+  font-size: var(--t-text-sm);
+  white-space: normal;
+}
+
+.t-calendar-view-time {
+  display: block;
+  color: var(--t-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * An event that also shows its time (a list row, a week block): the title is the action and covers the
+ * whole event, so its hit area is the event; the time sits under the title line, in the top padding.
+ */
+.t-calendar-view-hit {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  padding: var(--t-calendar-view-py) var(--t-calendar-view-px);
+  border-radius: inherit;
+  color: inherit;
+  text-align: start;
+}
+
+.t-calendar-view-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.t-calendar-view-hit:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+.t-calendar-view-empty {
+  padding: var(--t-space-4) 0;
+  color: var(--t-muted);
+  text-align: center;
+}
+
+.t-calendar-view-popup .t-popover-body {
+  max-width: var(--t-measure-sm);
+}
+
+/* Week. */
+.t-calendar-view-weekgrid {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  border: var(--t-border-w) solid var(--t-border);
+  border-radius: var(--t-radius-box);
+  overflow: hidden;
+}
+
+.t-calendar-view-heads,
+.t-calendar-view-allday,
+.t-calendar-view-scroll {
+  display: grid;
+  grid-template-columns: var(--t-calendar-view-axis) repeat(7, minmax(0, 1fr));
+}
+
+.t-calendar-view-heads {
+  padding-inline-start: var(--t-calendar-view-axis);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  border-bottom: var(--t-border-w) solid var(--t-border);
+}
+
+.t-calendar-view-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--t-space-1);
+  min-width: 0;
+  min-height: var(--t-control-h-md);
+  color: var(--t-muted);
+  font-size: var(--t-text-sm);
+}
+
+.t-calendar-view-head[aria-pressed="true"] {
+  color: var(--t-text);
+  font-weight: var(--t-weight-bold);
+}
+
+.t-calendar-view-allday {
+  grid-auto-rows: var(--t-calendar-view-bar);
+  gap: var(--t-space-05) 0;
+  padding: var(--t-space-1) 0;
+  border-bottom: var(--t-border-w) solid var(--t-border);
+}
+
+.t-calendar-view-allday-label {
+  grid-column: 1;
+  grid-row: 1;
+  padding-inline-end: var(--t-space-1);
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  text-align: end;
+}
+
+.t-calendar-view-allday > .t-calendar-view-event {
+  --t-col: 2;
+  --t-lane: 1;
+  grid-column: var(--t-col) / span var(--t-span);
+  grid-row: var(--t-lane);
+  margin: 0 var(--t-space-05);
+}
+
+.t-calendar-view-scroll {
+  flex: 1 1 var(--t-measure-md);
+  min-height: var(--t-measure-2xs);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.t-calendar-view-scroll:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
+.t-calendar-view-hours {
+  display: grid;
+  grid-auto-rows: var(--t-calendar-view-hour);
+}
+
+.t-calendar-view-hours > span {
+  align-self: start;
+  padding-inline-end: var(--t-space-1);
+  color: var(--t-muted);
+  font-size: var(--t-text-xs);
+  padding-top: var(--t-space-05);
+  line-height: 1;
+  text-align: end;
+}
+
+.t-calendar-view-col {
+  position: relative;
+  min-width: 0;
+  height: calc(var(--t-calendar-view-hour) * 24);
+  border-inline-start: var(--t-border-w) solid var(--t-border);
+  background:
+    linear-gradient(var(--t-border) var(--t-hairline), transparent var(--t-hairline)) 0 0 / 100%
+    var(--t-calendar-view-hour);
+}
+
+.t-calendar-view-col[data-today] {
+  background-color: color-mix(in srgb, var(--t-accent) var(--t-tint-weak), transparent);
+}
+
+/* A timed block, placed by minutes; overlapping blocks share the width. */
+.t-calendar-view-col > .t-calendar-view-event {
+  --t-top: 0;
+  --t-len: 60;
+  --t-column: 0;
+  --t-columns: 1;
+  position: absolute;
+  top: calc(var(--t-top) / 60 * var(--t-calendar-view-hour));
+  left: calc(var(--t-column) / var(--t-columns) * 100%);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  width: calc(100% / var(--t-columns) - var(--t-space-05));
+  height: calc(var(--t-len) / 60 * var(--t-calendar-view-hour));
+  --t-calendar-view-py: var(--t-space-05);
+  --t-calendar-view-px: var(--t-space-1);
+  padding: calc(var(--t-calendar-view-py) + 1lh) var(--t-calendar-view-px) var(--t-calendar-view-py);
+  border-bottom: var(--t-space-05) solid transparent;
+  background-clip: padding-box;
+  border-inline-start: var(--t-border-w-strong) solid var(--t-tone);
+  white-space: normal;
+}
+
+.t-calendar-view-col .t-calendar-view-time {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--t-tone-text);
+}
+
+.t-calendar-view-now {
+  --t-top: 0;
+  position: absolute;
+  top: calc(var(--t-top) / 60 * var(--t-calendar-view-hour));
+  right: 0;
+  left: 0;
+  z-index: 2;
+  border-top: var(--t-border-w-strong) solid var(--t-danger);
+  pointer-events: none;
+}
+
+.t-calendar-view-date:active,
+.t-calendar-view-event:active,
+.t-calendar-view-event:has(> .t-calendar-view-hit:active),
+.t-calendar-view-more:active,
+.t-calendar-view-head:active {
+  background: var(--t-active);
+}
+
+@media (hover: hover) {
+  .t-calendar-view-date:hover,
+  .t-calendar-view-more:hover,
+  .t-calendar-view-head:hover,
+  .t-calendar-view-lanes > .t-calendar-view-event[data-timed]:hover,
+  .t-calendar-view-event[data-row]:hover {
+    background: var(--t-hover);
+  }
+
+  .t-calendar-view-event:hover {
+    text-decoration: underline;
+  }
+}
+
+@media (pointer: coarse) {
+  .t-calendar-view {
+    --t-calendar-view-bar: var(--t-touch);
+  }
+}
+
+@container (max-width: 40rem) {
+  .t-calendar-view-title {
+    flex-basis: 100%;
+    order: -1;
+  }
+
+  /* Month: dots in place of the bars, the picked day as an agenda under the grid. */
+  .t-calendar-view-day {
+    min-height: 0;
+    padding: var(--t-space-05);
+  }
+
+  .t-calendar-view-date {
+    align-self: stretch;
+    min-height: var(--t-control-h-md);
+  }
+
+  .t-calendar-view-dots {
+    display: flex;
+    min-height: var(--t-space-1);
+  }
+
+  .t-calendar-view-day[aria-selected="true"] > .t-calendar-view-date {
+    background: var(--t-selection);
+  }
+
+  .t-calendar-view-lanes,
+  .t-calendar-view-more {
+    display: none;
+  }
+
+  .t-calendar-view-picked {
+    display: flex;
+  }
+
+  /* Week: the day buttons pick one day, which shows alone. */
+  .t-calendar-view-heads {
+    padding-inline-start: 0;
+  }
+
+  .t-calendar-view-head {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .t-calendar-view-head[aria-pressed="true"] {
+    background: var(--t-selection);
+  }
+
+  .t-calendar-view-scroll {
+    grid-template-columns: var(--t-calendar-view-axis) minmax(0, 1fr);
+  }
+
+  .t-calendar-view-col:not([data-selected]) {
+    display: none;
+  }
+
+  .t-calendar-view-allday {
+    display: flex;
+    flex-direction: column;
+    gap: var(--t-space-05);
+    padding: var(--t-space-1) var(--t-space-1) var(--t-space-1) var(--t-calendar-view-axis);
+  }
+
+  .t-calendar-view-allday-label {
+    display: none;
+  }
+
+  .t-calendar-view-allday > .t-calendar-view-event:not([data-on-day]) {
+    display: none;
+  }
+
+  .t-calendar-view-allday > .t-calendar-view-event {
+    flex: none;
+    margin: 0;
+  }
+}

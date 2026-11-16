@@ -1,0 +1,9 @@
+{
+  "cropperAspect": "Aspect",
+  "cropperFree": "Free",
+  "cropperHint": "Drag or use the arrow keys to move the image. Pinch, scroll or press + and - to zoom.",
+  "cropperReset": "Reset",
+  "cropperZoom": "Zoom",
+  "cropperZoomIn": "Zoom in",
+  "cropperZoomOut": "Zoom out"
+}

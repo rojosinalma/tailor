@@ -1,0 +1,5 @@
+{
+  "tourLabel": "Guided tour",
+  "tourSkip": "Skip tour",
+  "tourStep": "Step {index} of {count}"
+}
