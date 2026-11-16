@@ -1,8 +1,8 @@
 {
   "id": "bootstrap",
   "name": "Bootstrap",
-  "about": "In the style of the Bootstrap 5 toolkit.",
-  "source": { "name": "Bootstrap 5", "url": "https://getbootstrap.com", "license": "MIT" },
+  "about": "In the style of the Bootstrap 5.3 toolkit.",
+  "source": { "name": "Bootstrap 5.3", "url": "https://getbootstrap.com", "license": "MIT" },
   "settings": {
     "font-sans": "system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", \"Noto Sans\", \"Liberation Sans\", Arial, sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\"",
     "font-mono": "SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
