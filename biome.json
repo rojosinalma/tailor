@@ -15,7 +15,8 @@
       "!**/node_modules",
       "!**/bun.lock",
       "!core/palettes/src",
-      "!core/skins/*/fonts"
+      "!core/skins/*/fonts",
+      "!checks/images.json"
     ]
   },
   "formatter": {

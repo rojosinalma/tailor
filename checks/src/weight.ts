@@ -4,6 +4,25 @@ import { DEFAULT_PALETTE, DEFAULT_SKIN } from "../../bin/lib/build-showcase";
 import { at, ROOT } from "../../bin/lib/paths";
 
 export const HTML_CORE_LIMIT = 50_000;
+/**
+ * The React core limit: every component of the core pack with React, Base UI and the router, minified and
+ * compressed. A project ships less, because its bundler drops what it does not import.
+ * Set at the first measured build (147.6 kB) plus 10 %.
+ */
+export const REACT_CORE_LIMIT = 162_500;
+
+export async function measureReactCore(): Promise<number> {
+  const result = await Bun.build({
+    entrypoints: [at("react/src/core/index.gen.ts")],
+    target: "browser",
+    format: "esm",
+    minify: true,
+    define: { "process.env.NODE_ENV": '"production"' },
+  });
+  const output = result.outputs[0];
+  if (!result.success || !output) throw new AggregateError(result.logs, "The React core did not build");
+  return Bun.gzipSync(Buffer.from(await output.text()), { level: 9 }).length;
+}
 
 const gzip = async (path: string): Promise<number> =>
   Bun.gzipSync(await Bun.file(at(path)).bytes(), { level: 9 }).length;
@@ -38,7 +57,9 @@ export async function checkWeight(): Promise<boolean> {
       .map(([f, n]) => `${f.split("/").pop()} ${kb(n)}`)
       .join(", ")})`,
   );
-  return htmlCore <= HTML_CORE_LIMIT;
+  const reactCore = await measureReactCore();
+  console.log(`    React core: ${kb(reactCore)} of ${kb(REACT_CORE_LIMIT)}`);
+  return htmlCore <= HTML_CORE_LIMIT && reactCore <= REACT_CORE_LIMIT;
 }
 
 if (import.meta.main) {
@@ -46,5 +67,7 @@ if (import.meta.main) {
   for (const [file, size] of Object.entries({ ...parts, ...packs }))
     console.log(`${String(size).padStart(8)}  ${file}`);
   console.log(`${String(htmlCore).padStart(8)}  HTML core total (limit ${HTML_CORE_LIMIT})`);
-  process.exit(htmlCore <= HTML_CORE_LIMIT ? 0 : 1);
+  const reactCore = await measureReactCore();
+  console.log(`${String(reactCore).padStart(8)}  React core total (limit ${REACT_CORE_LIMIT})`);
+  process.exit(htmlCore <= HTML_CORE_LIMIT && reactCore <= REACT_CORE_LIMIT ? 0 : 1);
 }

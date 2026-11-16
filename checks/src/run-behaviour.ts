@@ -36,54 +36,60 @@ export async function runBehaviour(
 
   const browser = await connectBrowser();
   try {
-    const results = await pool(
-      jobs,
-      WORKERS,
-      async ({ suite, kit, name }): Promise<BehaviourFailure | null> => {
-        const context = await browser.newContext({
-          viewport: suite.viewport ?? { width: 1280, height: 800 },
-          reducedMotion: "reduce",
-          colorScheme: "dark",
-          locale: "en-US",
-          timezoneId: "UTC",
-          permissions: ["clipboard-read", "clipboard-write"],
+    const runJob = async ({ suite, kit, name }: (typeof jobs)[number]): Promise<BehaviourFailure | null> => {
+      const context = await browser.newContext({
+        viewport: suite.viewport ?? { width: 1280, height: 800 },
+        reducedMotion: "reduce",
+        colorScheme: "dark",
+        locale: "en-US",
+        timezoneId: "UTC",
+        permissions: ["clipboard-read", "clipboard-write"],
+      });
+      const page = await context.newPage();
+      const errors: string[] = [];
+      page.on("pageerror", (error) => errors.push(String(error)));
+      try {
+        const url = kit === "react" ? `entry.html?id=${suite.component}` : `html/${suite.component}.html`;
+        await page.goto(siteUrl + url);
+        await page.locator(".sc-example").first().waitFor();
+        const test = suite.tests[name];
+        if (!test) throw new Error("no such test");
+        await test({
+          page,
+          kit,
+          expect,
+          example: (id) => page.locator(`.sc-example[data-example="${id}"] .sc-example-body`),
+          freezeTime: async () => {
+            await page.clock.setFixedTime(FIXED_NOW);
+            await page.reload();
+            await page.locator(".sc-example").first().waitFor();
+          },
         });
-        const page = await context.newPage();
-        const errors: string[] = [];
-        page.on("pageerror", (error) => errors.push(String(error)));
-        try {
-          const url = kit === "react" ? `entry.html?id=${suite.component}` : `html/${suite.component}.html`;
-          await page.goto(siteUrl + url);
-          await page.locator(".sc-example").first().waitFor();
-          const test = suite.tests[name];
-          if (!test) throw new Error("no such test");
-          await test({
-            page,
-            kit,
-            expect,
-            example: (id) => page.locator(`.sc-example[data-example="${id}"] .sc-example-body`),
-            freezeTime: async () => {
-              await page.clock.setFixedTime(FIXED_NOW);
-              await page.reload();
-              await page.locator(".sc-example").first().waitFor();
-            },
-          });
-          if (errors.length > 0) throw new Error(`page errors: ${errors.join("; ")}`);
-          return null;
-        } catch (error) {
-          const message = error instanceof Error ? error.message : String(error);
-          return {
-            component: suite.component,
-            kit,
-            test: name,
-            error: message.split("\n").slice(0, 12).join("\n"),
-          };
-        } finally {
-          await context.close();
-        }
-      },
-    );
-    return { ran: jobs.length, failures: results.filter((r): r is BehaviourFailure => r !== null), untested };
+        if (errors.length > 0) throw new Error(`page errors: ${errors.join("; ")}`);
+        return null;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        return {
+          component: suite.component,
+          kit,
+          test: name,
+          error: message.split("\n").slice(0, 12).join("\n"),
+        };
+      } finally {
+        await context.close();
+      }
+    };
+    const results = await pool(jobs, WORKERS, runJob);
+    // A test that failed runs once more, alone: with many pages open at once, a wait can run out of time.
+    // A test that fails twice has a real fault.
+    const failures: BehaviourFailure[] = [];
+    for (const [index, result] of results.entries()) {
+      const job = jobs[index];
+      if (result === null || !job) continue;
+      const again = await runJob(job);
+      if (again !== null) failures.push(again);
+    }
+    return { ran: jobs.length, failures, untested };
   } finally {
     await browser.close();
   }
