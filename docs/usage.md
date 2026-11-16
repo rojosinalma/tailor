@@ -130,7 +130,8 @@ behaviour. A page needs no build tool.
    cards, controls are 44 px high on a touch screen.
 2. A component adapts to the space it sits in, so a table in a narrow panel takes its narrow form on a wide
    screen too.
-3. The page needs the viewport line from `head.html`. Nothing else.
+3. A tablet on its side is as wide as a small desktop: it gets the desktop layout, with the touch sizes.
+4. The page needs the viewport line from `head.html`. Nothing else.
 
 ## 5. An installable app (the pack `pwa`)
 
