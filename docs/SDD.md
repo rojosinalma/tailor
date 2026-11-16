@@ -210,7 +210,7 @@ Measured on the development machine (32 cores) with a warm image cache, unless a
 | Check                                                                                             | Time         | Limit       |
 | ------------------------------------------------------------------------------------------------- | ------------ | ----------- |
 | A change to one component (`bin/check`)                                                           | 4 s          | 10 s        |
-| A release (`bin/check --release`): 6,048 page states, 5,544 contrast combinations                 | 94 s         | 120 s       |
+| A release (`bin/check --release`): 6,048 page states, 5,544 contrast combinations                 | 92 to 103 s  | 120 s       |
 | A release on a machine with no image cache                                                        | 196 s        | not limited |
 | A full run (`bin/check --full`): 8,462 page states with every image, 34,020 contrast combinations | 335 to 375 s | not limited |
 
