@@ -167,7 +167,7 @@ Append-only. One line per decision: what, why.
 29. 2026-11-16 — A tablet is checked upright (820×1180) and on its side (1180×820), both as a touch screen; the showcase has both sizes. On its side a tablet is as wide as a small desktop but is used by touch, so it gets the desktop layout with touch sizes, and that pair needs its own check.
 30. 2026-11-16 — Two images count as the same when they differ only by drawing noise: at most 150 pixels, at most 40 of them by more than 6 colour levels. The browser draws the edge of a rounded corner or of a small icon a little differently from run to run; the accepted pictures are kept on the checking machine for this comparison.
 31. 2026-11-16 — The React core limit is 162.5 kB compressed: the first measured build of the whole core pack with React, Base UI and the router (147.6 kB) plus 10 %. The HTML core measured 37.6 kB of its 50 kB.
-32. 2026-11-16 — A release check leaves out the 1920 px screen and the images in every palette; the full run takes them. Measured on a quiet machine: a release check takes about 95 s (limit 120 s), a full run about 6 minutes.
+32. 2026-11-16 — A release check leaves out the 1920 px screen and the images in every palette (palette part superseded by decision 43); the full run takes them. Measured on a quiet machine: a release check takes about 95 s (limit 120 s), a full run about 6 minutes.
 33. 2026-11-16 — The image check loads a page again for each skin and switches palettes in place. A skin changes sizes, and a component that measures itself is only right after a load in that skin.
 34. 2026-11-16 — A behaviour test that fails runs once more alone before it counts as failed. With two dozen pages open at once, a wait can run out of time.
 35. 2026-11-16 — Contrast was checked for every component in all 252 combinations of skin, palette and mode: 34,020 combinations, 0 problems.
@@ -178,6 +178,7 @@ Append-only. One line per decision: what, why.
 40. 2026-11-16 — A page that failed to load because the machine's network changed is opened once more. The checks' browser shares the machine's network, and a container that starts elsewhere makes it drop its requests.
 41. 2026-11-16 — A picture that is not the expected one is confirmed by more pictures, a moment apart, until two in a row are the same. On a busy machine the browser hands out a picture that still shows parts of an older frame (the area of the first screen, without the icons that arrived later); a picture taken a moment later is right. Found on the first CI runs.
 42. 2026-11-16 — A behaviour test waits for the focus, it does not read it once. Base UI moves the focus a frame after a key; a slow machine showed the tests that read too early.
+43. 2026-11-20 — A release check takes an image in every palette when its fingerprint is not known, and reads a known one from the page of the same skin without a visit. At 2.1.0 the theme controls changed the side navigation in every palette, the release check did not take those images, and the nightly full run found 41 changed images. The release check still takes about 95 s. Supersedes the palette part of decision 32.
 
 ## 10. Measurements at 2.0.0
 

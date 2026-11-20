@@ -2,6 +2,13 @@
 
 This project follows [semantic versioning](https://semver.org). Format: [Keep a Changelog](https://keepachangelog.com).
 
+## [Unreleased]
+
+### Fixed
+
+- The release check takes the images in every palette whose page changed. At 2.1.0 it left them to the full
+  run, and the side navigation images in every palette kept their 2.0.0 reference.
+
 ## [2.1.0] — 2026-11-16
 
 ### Added

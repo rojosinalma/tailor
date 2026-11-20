@@ -13,6 +13,8 @@
       "**",
       "!**/dist",
       "!**/node_modules",
+      "!.agents",
+      "!.worktrees",
       "!**/bun.lock",
       "!core/palettes/src",
       "!core/skins/*/fonts",

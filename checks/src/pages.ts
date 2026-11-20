@@ -566,8 +566,28 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
             let loaded = first.skin;
             const reactOnly =
               target.kit === "react" ? await page.locator('.sc-example[data-kit="react"]').count() : 0;
+            const fingerprintOf = (state: State): string =>
+              sha(
+                [version, stylesheets, dom, state.skin, state.palette, state.mode, state.width, touch].join(
+                  "|",
+                ),
+              );
             for (const state of mine) {
               states++;
+              // A palette image whose fingerprint is known needs no visit: a palette changes colours only, so
+              // the page of the same skin gives the fingerprint. Only a palette image that is not known is taken.
+              if (options.skipKnown && dom && state.skin === loaded && state.image?.includes("/palette/")) {
+                const fingerprint = fingerprintOf(state);
+                const known = cache[`${state.image}@${fingerprint}`];
+                const shared = state.image.replace(/^react\//, "shared/");
+                const knownShared = reactOnly > 0 ? cache[`${shared}@${fingerprint}`] : "";
+                if (known && knownShared !== undefined) {
+                  taken.set(state.image, known);
+                  if (knownShared) taken.set(shared, knownShared);
+                  skipped++;
+                  continue;
+                }
+              }
               const label = `${state.skin || "no skin"} ${state.palette} ${state.mode} ${state.width}px`;
               await page.setViewportSize({ width: state.width, height: heightOf(state.width) });
               if (state.skin !== loaded) {
@@ -596,11 +616,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
                 local.push({ page: `${target.kit}/${target.component}`, state: label, ...problem });
               if (state.image) {
                 dom ||= sha(await page.evaluate(() => document.body.innerHTML));
-                const fingerprint = sha(
-                  [version, stylesheets, dom, state.skin, state.palette, state.mode, state.width, touch].join(
-                    "|",
-                  ),
-                );
+                const fingerprint = fingerprintOf(state);
                 const known = options.skipKnown ? cache[`${state.image}@${fingerprint}`] : undefined;
                 if (known) {
                   taken.set(state.image, known);

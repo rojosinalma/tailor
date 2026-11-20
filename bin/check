@@ -136,10 +136,10 @@ if (!failed || everything) {
           ...(mode === "change" && scope.skins.size > 0 && !scope.all && (only?.size ?? 0) === 0 ? { onlySkins: scope.skins } : {}),
           images: true,
           skipKnown: mode !== "full",
-          // A release leaves out the widest desktop and the images in every palette, to stay in its time
-          // limit. The full run takes them all.
+          // A release leaves out the widest desktop, to stay in its time limit. It takes an image in every
+          // palette only when its fingerprint is not known. The full run takes them all.
           ...(mode === "release" ? { widths: RELEASE_WIDTHS } : {}),
-          sweep: mode === "full",
+          sweep: mode !== "change",
           axe: true,
           allowNew: mode === "change",
           noReference: flag("no-reference"),
