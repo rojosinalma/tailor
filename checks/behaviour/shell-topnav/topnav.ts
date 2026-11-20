@@ -102,4 +102,33 @@ export default behaviour("topnav", {
     await page.setViewportSize({ width: 390, height: 700 });
     await frameStays(page, example("phone-bar"));
   },
+  "no links, narrow: the footer takes the compact theme controls and the facts keep their width": async ({
+    page,
+    example,
+    expect,
+  }) => {
+    const footer = example("empty-narrow").locator(".t-shell-footer");
+    await expect(footer.getByRole("button", { name: /^Theme:/ })).toBeVisible();
+    await expect(footer.getByRole("combobox")).toHaveCount(0);
+    await expect(footer.getByRole("button", { name: /mode$/ })).toBeVisible();
+    // Each fact stays on one line: one letter per line was the fault.
+    for (const fact of await footer.getByRole("listitem").all()) {
+      const lines = await fact.evaluate((el) => {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        return new Set([...range.getClientRects()].map((r) => Math.round(r.bottom))).size;
+      });
+      expect(lines).toBe(1);
+    }
+    await footer.getByRole("button", { name: /^Theme:/ }).click();
+    await expect(
+      page.getByRole("dialog", { name: "Theme" }).getByRole("combobox", { name: "Palette" }),
+    ).toBeVisible();
+  },
+  "a wide footer keeps the full theme controls": async ({ example, expect }) => {
+    const footer = example("section").locator(".t-shell-footer");
+    await expect(footer.getByRole("combobox", { name: "Skin" })).toBeVisible();
+    await expect(footer.getByRole("combobox", { name: "Palette" })).toBeVisible();
+    await expect(footer.getByRole("button", { name: /^Theme:/ })).toHaveCount(0);
+  },
 });

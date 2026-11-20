@@ -4,7 +4,27 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 
 ## [Unreleased]
 
+### Added
+
+- Layout `tool-page` (pack `layouts`): inputs beside a result in a fill page. A form with a file picker in
+  one pane, the rendered picture in the other; each pane scrolls alone and the page never scrolls. On a phone
+  the panes stack. The pack `layouts` now requires `pickers`.
+- `MediaFit` (core, `t-media-fit`): one image, video, canvas or SVG at the largest size that fits the free
+  width and height of its box, ratio kept; `fit="contain"` also scales a small one up. An empty slot shows
+  until media is put in.
+- `REFERENCE.md` and the usage guide open with a table of page kinds: for each, the layout to copy, the shell
+  and the Page mode.
+- `tailor icons` also finds the sprite address of HTML markup (`icons.svg#bi-<name>`,
+  `icons.svg#simple-icons-<name>`).
+
 ### Fixed
+
+- HTML kit file picker: the choose button no longer takes the input's id (two elements had it), and the
+  picker follows `aria-invalid` and `aria-describedby` of its input, and `data-invalid` of its field, after the
+  start.
+- Shell footers: theme controls with no layout of their own take the compact form when the footer is as
+  narrow as a phone, in both kits, and go to a row of their own before the facts get narrower than a short
+  line. A top navigation shell with no links showed the footer facts one letter per line on a phone.
 
 - The release check takes the images in every palette whose page changed. At 2.1.0 it left them to the full
   run, and the side navigation images in every palette kept their 2.0.0 reference.

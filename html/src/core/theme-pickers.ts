@@ -118,49 +118,66 @@ function compact(theme: Theme, choices: ChoicePart[], size: string | undefined) 
 register("theme-pickers", (element) => {
   if (!theme) return;
   const current = theme;
-  const wanted = (element.dataset.parts ?? PARTS.join(" ")).split(/\s+/);
-  const size = element.dataset.size ?? "sm";
-  const dataSize = size === "md" ? undefined : size;
+  let paint = (_state: ThemeState): void => {};
+  let panels: HTMLElement[] = [];
 
-  const shown = PARTS.filter((part) => wanted.includes(part));
-  const choices = shown.filter((part): part is ChoicePart => part !== "mode");
-  const mode = h("button", {
-    type: "button",
-    class: "t-btn t-theme-mode",
-    "data-variant": "ghost",
-    "data-size": dataSize,
-    "data-icon-only": true,
-  });
+  // Draws the controls for the root's data-layout; a change of data-layout (a shell that measures its
+  // footer) draws them again.
+  const draw = (): void => {
+    for (const panel of panels) (panel.closest(".t-popup-positioner") ?? panel).remove();
+    const wanted = (element.dataset.parts ?? PARTS.join(" ")).split(/\s+/);
+    const size = element.dataset.size ?? "sm";
+    const dataSize = size === "md" ? undefined : size;
 
-  // A compact root with no skin and no palette shows the mode button only, as the inline form does.
-  const form =
-    element.dataset.layout === "compact" && choices.length > 0 ? compact(current, choices, dataSize) : null;
-  const selects = form
-    ? form.selects
-    : choices.map((part) => [choiceSelect(current, part, dataSize, t(part)), part] as const);
-  const children = form
-    ? [...form.nodes, ...(shown.includes("mode") ? [mode] : [])]
-    : shown.map((part) => (part === "mode" ? mode : (selects[choices.indexOf(part)]?.[0] ?? mode)));
+    const shown = PARTS.filter((part) => wanted.includes(part));
+    const choices = shown.filter((part): part is ChoicePart => part !== "mode");
+    const mode = h("button", {
+      type: "button",
+      class: "t-btn t-theme-mode",
+      "data-variant": "ghost",
+      "data-size": dataSize,
+      "data-icon-only": true,
+    });
 
-  const paint = (state: ThemeState): void => {
-    for (const [select, part] of selects) {
-      if (select.value === state[part]) continue;
-      select.value = state[part];
-      select.dispatchEvent(new Event("change", { bubbles: true }));
-    }
-    const dark = state.mode === "dark";
-    mode.setAttribute("aria-label", dark ? t("lightMode") : t("darkMode"));
-    mode.replaceChildren(glyph(dark ? sun : moon));
-    form?.paint(state);
+    // A compact root with no skin and no palette shows the mode button only, as the inline form does.
+    const form =
+      element.dataset.layout === "compact" && choices.length > 0 ? compact(current, choices, dataSize) : null;
+    const selects = form
+      ? form.selects
+      : choices.map((part) => [choiceSelect(current, part, dataSize, t(part)), part] as const);
+    const children = form
+      ? [...form.nodes, ...(shown.includes("mode") ? [mode] : [])]
+      : shown.map((part) => (part === "mode" ? mode : (selects[choices.indexOf(part)]?.[0] ?? mode)));
+    panels = form ? form.nodes.filter((node) => node.classList.contains("t-popover")) : [];
+
+    paint = (state: ThemeState): void => {
+      for (const [select, part] of selects) {
+        if (select.value === state[part]) continue;
+        select.value = state[part];
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+      const dark = state.mode === "dark";
+      mode.setAttribute("aria-label", dark ? t("lightMode") : t("darkMode"));
+      mode.replaceChildren(glyph(dark ? sun : moon));
+      form?.paint(state);
+    };
+
+    mode.addEventListener("click", () =>
+      current.set({ mode: current.get().mode === "dark" ? "light" : "dark" }),
+    );
+    paint(current.get());
+    element.replaceChildren(...children);
+    // The selects first, while their labels are in the page: the popover script takes its panel out of it.
+    for (const [select] of selects) upgrade(select);
+    upgrade(element);
   };
 
-  mode.addEventListener("click", () =>
-    current.set({ mode: current.get().mode === "dark" ? "light" : "dark" }),
-  );
   document.addEventListener(THEME_EVENT, () => paint(current.get()));
-  paint(current.get());
-  element.replaceChildren(...children);
-  // The selects first, while their labels are in the page: the popover script takes its panel out of it.
-  for (const [select] of selects) upgrade(select);
-  upgrade(element);
+  draw();
+  let layout = element.dataset.layout;
+  new MutationObserver(() => {
+    if (element.dataset.layout === layout) return;
+    layout = element.dataset.layout;
+    draw();
+  }).observe(element, { attributes: true, attributeFilter: ["data-layout"] });
 });

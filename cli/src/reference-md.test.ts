@@ -61,6 +61,11 @@ describe("the reference", () => {
   test("the index: how to use, then one line per component with its pack file", () => {
     const index = renderIndex(ref);
     expect(index).toContain("## How to use");
+    // The kinds of page come first, so an agent picks a layout, a shell and a mode before anything else.
+    expect(index.indexOf("## Pick the page first")).toBeLessThan(index.indexOf("## How to use"));
+    expect(index).toMatch(/\| A tool: inputs and a result[^|]*\| `tool-page` +\| `topnav`[^|]*\| `fill` +\|/);
+    expect(index).toMatch(/\| A list of records +\| `list-page` +\|[^|]*\| `scroll` +\|/);
+    expect(index).toContain("icons.svg#bi-house");
     expect(index).toContain("Pick one shell (`top`)");
     expect(index).toContain("- [Button](reference/core.md#button) (`button`, core): Starts an action.\n");
     expect(index).toContain("### Pack extra: Extra ([reference/extra.md](reference/extra.md))");

@@ -328,7 +328,8 @@ export function ShellActions({ children }: { children?: ReactNode }) {
 
 /**
  * The footer of a shell: the facts at the start, the theme controls at the end. Nothing when both are empty.
- * A footer in a narrow column takes the compact theme controls.
+ * A footer in a narrow column takes the compact theme controls. Without `themeLayout` the footer measures
+ * itself: as narrow as a phone (40rem), it takes the compact ones, so the facts keep their width.
  */
 export function ShellFooter({
   facts = [],
@@ -339,11 +340,14 @@ export function ShellFooter({
   theme?: readonly ShellThemePart[] | false;
   themeLayout?: ShellThemeLayout;
 }) {
+  const [footer, setFooter] = useState<HTMLElement | null>(null);
+  const form = useShellForm(themeLayout ? null : footer);
   if (facts.length === 0 && (theme === false || theme?.length === 0)) return null;
+  const layout = themeLayout ?? (form === "phone" ? "compact" : undefined);
   return (
-    <footer className="t-shell-footer">
+    <footer className="t-shell-footer" ref={setFooter}>
       <FooterFacts facts={facts} />
-      <ShellTheme parts={theme} layout={themeLayout} />
+      <ShellTheme parts={theme} layout={layout} />
     </footer>
   );
 }

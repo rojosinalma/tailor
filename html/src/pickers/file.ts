@@ -21,7 +21,6 @@ register("file", (element) => {
       type: "button",
       class: "t-btn",
       "data-size": "sm",
-      id: input.id || undefined,
       disabled: input.disabled,
     },
     t(input.multiple ? "fileChoose" : "fileChooseOne"),
@@ -139,6 +138,20 @@ register("file", (element) => {
   input.hidden = true;
   input.tabIndex = -1;
   input.setAttribute("data-t-upgraded", "");
+  // The group takes the input's id, so a <label for> names the group and its click focuses the button.
   input.removeAttribute("id");
   fieldGroup(root, () => choose);
+  // A form check or the page's code marks the input or its field later: the group follows.
+  const field = root.closest(".t-field");
+  const follow = (): void => {
+    const invalid = input.getAttribute("aria-invalid") === "true" || field?.hasAttribute("data-invalid");
+    if (invalid) root.setAttribute("aria-invalid", "true");
+    else root.removeAttribute("aria-invalid");
+    const described = input.getAttribute("aria-describedby");
+    if (described) root.setAttribute("aria-describedby", described);
+    else root.removeAttribute("aria-describedby");
+  };
+  const watch = new MutationObserver(follow);
+  watch.observe(input, { attributes: true, attributeFilter: ["aria-invalid", "aria-describedby"] });
+  if (field) watch.observe(field, { attributes: true, attributeFilter: ["data-invalid"] });
 });

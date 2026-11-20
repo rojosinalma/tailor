@@ -19,6 +19,8 @@ describe("icon scan", () => {
       "vendor/tailor/core/icon.tsx": "bi:never-either",
       "public/tailor/reference/core/x.html": "bi:skipped",
       "deep/a/b/view.j2": "{{ icon('bi:trash') }}",
+      "templates/page.html": '<svg class="t-icon"><use href="/tailor/icons.svg#bi-x-lg"></use></svg>',
+      "templates/brand.html": '<use href="/tailor/icons.svg#simple-icons-github"></use>',
     };
     for (const [path, text] of Object.entries(files)) {
       await mkdir(dirname(join(root, path)), { recursive: true });
@@ -28,6 +30,7 @@ describe("icon scan", () => {
       "bi:gear",
       "bi:house",
       "bi:trash",
+      "bi:x-lg",
       "simple-icons:github",
     ]);
     expect(await scanIcons(root, ["src/**/*.tsx"], [])).toEqual(["bi:gear", "simple-icons:github"]);

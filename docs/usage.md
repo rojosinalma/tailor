@@ -16,8 +16,24 @@ A UI built by these rules is right in every skin and palette, on a desktop and o
    `Pane`, `Card`. A project's own stylesheet has no margin, gap, padding or width for tailor's parts.
 4. **No colours and no sizes of your own.** Colour comes from tones (`tone="danger"`) and tokens; size from
    `size="sm|md|lg"`. A value that a component does not allow is a type error in the React kit.
-5. **Start from a layout.** The pack `layouts` has complete pages to copy: a list with filters, a detail
-   page, a settings page, a dashboard, a form in a dialog, a first-run page.
+5. **Start from a layout.** The pack `layouts` has complete pages to copy. Find the kind of page first; it
+   gives the layout, the shell and the Page mode:
+
+   | The page shows                                            | Copy                                                 | Shell                          | Page mode        |
+   | --------------------------------------------------------- | ---------------------------------------------------- | ------------------------------ | ---------------- |
+   | A list of records                                         | `list-page`                                          | `sidenav` or `topnav`          | `scroll`         |
+   | One record                                                | `detail-page`                                        | the shell of its list          | `scroll`         |
+   | The settings of the app                                   | `settings-page`                                      | `sidenav` or `topnav`          | `fill`           |
+   | An overview, a dashboard                                  | `dashboard-page`                                     | `sidenav` or `topnav`          | `scroll`         |
+   | A tool: inputs and a result (a preview, an output, a log) | `tool-page`                                          | `topnav`, also with no links   | `fill`           |
+   | Nothing yet: the first run, an empty list                 | `first-run-page`                                     | the shell of the app           | `scroll`         |
+   | Sign-in, an error, not found, offline                     | `sign-in`, `error-page`, `not-found`, `offline-page` | `bare` with `align="center"`   | no `Page`        |
+   | A form that adds or edits a record                        | `form-dialog`                                        | the shell of the page under it | that page's mode |
+   | A workspace, an editor: a tree, the item, panels          | `page` (example "fill"), `split`, `list-detail`      | `workspace`                    | `fill`           |
+
+   A page with a part that can grow without limit beside other parts (a picture, an output, a log next to a
+   form) is a fill page: each part goes in a `Pane`, which scrolls alone, and a picture goes in a `MediaFit`.
+   The same table is at the top of `REFERENCE.md`.
 
 ## 2. The React kit
 
@@ -120,17 +136,23 @@ behaviour. A page needs no build tool.
    `Tailor.theme.set({ mode: "light" })`, `Tailor.upgrade(node)`.
 4. **Forms.** A `<form data-t="form" novalidate>` draws the validation messages; with
    `data-t-submit="fetch"` it sends itself and shows the answer `{ ok, message, errors }` as a toast.
-5. **What the HTML kit has.** `tailor list` shows it per pack: all of it, a named part, or nothing.
+5. **Icons.** `<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"></use></svg>`.
+   `tailor icons` finds the sprite address (`icons.svg#bi-<name>`, `icons.svg#simple-icons-<name>`) as well
+   as the `bi:<name>` form, and adds the icon to the sprite.
+6. **What the HTML kit has.** `tailor list` shows it per pack: all of it, a named part, or nothing.
 
 ## 4. Phones
 
 1. Both kits adapt by themselves: a shell's navigation becomes a drawer (or a bottom bar with
    `phoneNav="bar"`), popups become bottom sheets, a form dialog takes the full screen, a table's rows become
-   cards, controls are 44 px high on a touch screen.
-2. A component adapts to the space it sits in, so a table in a narrow panel takes its narrow form on a wide
+   cards, controls are 44 px high on a touch screen. A shell footer as narrow as a phone shows the compact
+   theme controls.
+2. A fill page stays a fill page: a `Split` stacks its two panes, each with half the height, and each still
+   scrolls alone. The tool page does this.
+3. A component adapts to the space it sits in, so a table in a narrow panel takes its narrow form on a wide
    screen too.
-3. A tablet on its side is as wide as a small desktop: it gets the desktop layout, with the touch sizes.
-4. The page needs the viewport line from `head.html`. Nothing else.
+4. A tablet on its side is as wide as a small desktop: it gets the desktop layout, with the touch sizes.
+5. The page needs the viewport line from `head.html`. Nothing else.
 
 ## 5. An installable app (the pack `pwa`)
 

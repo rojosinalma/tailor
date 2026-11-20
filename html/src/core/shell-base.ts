@@ -73,6 +73,24 @@ function searchToggle(link: HTMLAnchorElement): void {
   );
 }
 
+/**
+ * Theme controls that the markup leaves without a layout take the compact one while the footer is as narrow
+ * as a phone (40rem), so the footer facts keep their width.
+ */
+function compactWhenNarrow(footer: HTMLElement): void {
+  const pickers = [...footer.querySelectorAll<HTMLElement>('[data-t="theme-pickers"]:not([data-layout])')];
+  if (pickers.length === 0) return;
+  const update = (): void => {
+    const narrow = formOf(footer) === "phone";
+    for (const element of pickers) {
+      if (narrow) element.setAttribute("data-layout", "compact");
+      else element.removeAttribute("data-layout");
+    }
+  };
+  update();
+  new ResizeObserver(update).observe(footer);
+}
+
 /** The frame of a shell: the skip link moves the focus to the main region; a full-screen shell follows the viewport. */
 register("shell", (root) => {
   const skip = root.querySelector<HTMLAnchorElement>(":scope > .t-shell-skip");
@@ -83,5 +101,7 @@ register("shell", (root) => {
     main.focus();
   });
   for (const link of root.querySelectorAll<HTMLAnchorElement>("a.t-shell-search-button")) searchToggle(link);
+  const footer = root.querySelector<HTMLElement>(":scope > .t-shell-footer");
+  if (footer) compactWhenNarrow(footer);
   if (!root.hasAttribute("data-contained")) once("shell-viewport", followViewport);
 });

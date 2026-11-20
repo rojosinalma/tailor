@@ -12,9 +12,16 @@ export interface IconData {
 export const ICON_SETS = ["bi", "simple-icons"] as const;
 export type IconSetId = (typeof ICON_SETS)[number];
 
-/** Finds every icon name in a source text. */
+const NAME = "[a-z0-9]+(?:-[a-z0-9]+)*";
+const PLAIN = new RegExp(`\\b(?:bi|simple-icons):${NAME}`, "g");
+/** A sprite address as HTML markup writes it: `/tailor/icons.svg#bi-house`. */
+const SPRITE_ID = new RegExp(`icons\\.svg#(bi|simple-icons)-(${NAME})`, "g");
+
+/** Finds every icon name in a source text: `bi:house`, and the sprite address `icons.svg#bi-house`. */
 export function findIconNames(source: string): string[] {
-  return [...new Set(source.match(/\b(?:bi|simple-icons):[a-z0-9]+(?:-[a-z0-9]+)*/g) ?? [])];
+  const names: string[] = [...(source.match(PLAIN) ?? [])];
+  for (const [, set, id] of source.matchAll(SPRITE_ID)) names.push(`${set}:${id}`);
+  return [...new Set(names)];
 }
 
 export function buildSprite(

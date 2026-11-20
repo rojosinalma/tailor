@@ -149,7 +149,8 @@ components of each pack. Outside a project it shows only the release (`--version
 ### `icons`
 
 Builds `<public>/tailor/icons.svg` again. It reads the project's source files for icon names
-(`bi:<name>` and `simple-icons:<name>`), adds the names given with `--add`, and writes the sprite. An unknown
+(`bi:<name>` and `simple-icons:<name>`, and the sprite address that HTML markup writes:
+`icons.svg#bi-<name>` and `icons.svg#simple-icons-<name>`), adds the names given with `--add`, and writes the sprite. An unknown
 name is an error that lists it. `add` and `upgrade` do this too.
 
 1. `--scan glob,…`: the files to read. The default is

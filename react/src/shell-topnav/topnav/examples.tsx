@@ -59,6 +59,18 @@ export default defineExamples("topnav", [
     ),
   },
   {
+    id: "empty-narrow",
+    title: "No links, narrow: the footer stays, its theme controls take the compact form",
+    note: "With no links there is no drawer, so the footer row stays on a phone. As narrow as a phone, it shows one theme button, so the facts keep their width.",
+    display: "frame",
+    width: "sm",
+    render: () => (
+      <TopNavShell brand={BRAND} nav={[]} footer={FOOTER} theme={["skin", "palette", "mode"]} contained>
+        <ServicesPage />
+      </TopNavShell>
+    ),
+  },
+  {
     id: "narrow",
     title: "Narrow: the phone form with the menu button",
     note: "The menu button opens the navigation drawer; the footer facts and the theme controls are in it.",

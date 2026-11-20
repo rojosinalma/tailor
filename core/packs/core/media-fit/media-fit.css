@@ -1,0 +1,58 @@
+/*
+ * The box takes the free space of its parent and never more: the media inside is limited to the box, so a
+ * large picture never grows a pane or the page. In a parent with no fixed height it fits the width only.
+ */
+.t-media-fit {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Down (default): at most the natural size; width and height auto keep the aspect ratio under both limits. */
+.t-media-fit > :is(img, video, canvas),
+.t-media-fit > picture > img {
+  display: block;
+  flex: none;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* An inline SVG keeps its own size attributes; its viewBox keeps the drawing's ratio inside the limits. */
+.t-media-fit > svg {
+  display: block;
+  flex: none;
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.t-media-fit > picture {
+  display: contents;
+}
+
+/* Contain: the media takes the whole box and its drawing scales up or down to fit. */
+.t-media-fit[data-fit="contain"] > :is(img, video, canvas, svg),
+.t-media-fit[data-fit="contain"] > picture > img {
+  width: 100%;
+  height: 100%;
+}
+
+.t-media-fit-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+}
+
+.t-media-fit:has(> :is(img, video, canvas, svg, picture)) > .t-media-fit-empty {
+  display: none;
+}

@@ -1,4 +1,6 @@
 import { describe, expect, test } from "bun:test";
+import { PAGE_KINDS } from "../../cli/src/reference-md";
+import { SPECS } from "../../core/src/registry.gen";
 import { componentExports, extractRender } from "./reference";
 
 describe("the example extractor", () => {
@@ -68,5 +70,15 @@ describe("the example extractor", () => {
       "function helper() {}",
     ].join("\n");
     expect(componentExports(source)).toEqual(["Button", "ButtonLink", "useTheme"]);
+  });
+});
+
+describe("the page-kind table of the reference", () => {
+  test("names only components and shells that exist", () => {
+    const ids = new Set(SPECS.map((s) => s.id));
+    for (const [, copy, shell] of PAGE_KINDS.slice(1)) {
+      for (const id of [...copy.matchAll(/`([a-z-]+)`/g)].map((m) => m[1] ?? "")) expect(ids).toContain(id);
+      for (const id of [...shell.matchAll(/`([a-z-]+)`/g)].map((m) => m[1] ?? "")) expect(ids).toContain(id);
+    }
   });
 });

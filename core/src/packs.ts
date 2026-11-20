@@ -215,8 +215,8 @@ export const PACKS: readonly PackSpec[] = [
     id: "layouts",
     name: "Layouts",
     description:
-      "Standard page layouts with sample content, to copy: list with filters, detail, settings, dashboard, form dialog, first run.",
-    requires: ["core", "forms", "data", "charts"],
+      "Standard page layouts with sample content, to copy: list with filters, detail, settings, dashboard, form dialog, first run, tool.",
+    requires: ["core", "forms", "data", "charts", "pickers"],
     libraries: {},
     html: "full",
   }),

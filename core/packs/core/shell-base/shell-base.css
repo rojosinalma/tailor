@@ -342,10 +342,21 @@ span.t-shell-link {
 /* A footer row at the bottom of the frame: thin, facts at the start, theme controls at the end. */
 .t-shell > .t-shell-footer {
   grid-area: footer;
+  /* When the facts would get narrower than a short line, the theme controls go to a row of their own. */
+  flex-wrap: wrap;
   padding: var(--t-space-1) calc(var(--t-gutter) + var(--t-safe-right))
     calc(var(--t-space-1) + var(--t-safe-bottom)) calc(var(--t-gutter) + var(--t-safe-left));
   border-top: var(--t-border-w) solid var(--t-border);
   background: var(--t-inset);
+}
+
+.t-shell > .t-shell-footer > .t-shell-facts {
+  flex-basis: var(--t-measure-2xs);
+}
+
+.t-shell > .t-shell-footer > .t-shell-theme {
+  flex-shrink: 1;
+  min-width: 0;
 }
 
 .t-shell > .t-bottom-bar {

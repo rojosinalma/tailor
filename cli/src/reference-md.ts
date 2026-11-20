@@ -31,16 +31,77 @@ export interface Reference {
   readonly packs: readonly ReferencePack[];
 }
 
+/** The kinds of page: what the page shows, the layout to copy, the shell that suits it, the Page mode. */
+export const PAGE_KINDS: readonly (readonly [string, string, string, string])[] = [
+  ["The page shows", "Copy", "Shell", "Page mode"],
+  ["A list of records", "`list-page`", "`sidenav` or `topnav`", "`scroll`"],
+  ["One record", "`detail-page`", "the shell of its list", "`scroll`"],
+  ["The settings of the app", "`settings-page`", "`sidenav` or `topnav`", "`fill`"],
+  ["An overview, a dashboard", "`dashboard-page`", "`sidenav` or `topnav`", "`scroll`"],
+  [
+    "A tool: inputs and a result (a preview, an output, a log)",
+    "`tool-page`",
+    "`topnav`, also with no links",
+    "`fill`",
+  ],
+  ["Nothing yet: the first run, an empty list", "`first-run-page`", "the shell of the app", "`scroll`"],
+  [
+    "Sign-in, an error, not found, offline",
+    "`sign-in`, `error-page`, `not-found`, `offline-page`",
+    '`bare` with `align="center"`',
+    "no `Page`",
+  ],
+  [
+    "A form that adds or edits a record",
+    "`form-dialog`",
+    "the shell of the page under it",
+    "that page's mode",
+  ],
+  [
+    "A workspace, an editor: a tree, the item, panels",
+    '`page` (example "fill"), `split`, `list-detail`',
+    "`workspace`",
+    "`fill`",
+  ],
+];
+
+/** A Markdown table with padded columns; the first row is the header. */
+function table(rows: readonly (readonly string[])[]): string {
+  const widths = (rows[0] ?? []).map((_, i) => Math.max(...rows.map((r) => (r[i] ?? "").length)));
+  const line = (r: readonly string[]) => `| ${r.map((c, i) => c.padEnd(widths[i] ?? 0)).join(" | ")} |`;
+  const [head = [], ...body] = rows;
+  return [line(head), `| ${widths.map((w) => "-".repeat(w)).join(" | ")} |`, ...body.map(line)].join("\n");
+}
+
+const pickPage = (): string => `## Pick the page first
+
+Find the kind of each page in this table; copy its layout (pack \`layouts\`, entries in
+[reference/layouts.md](reference/layouts.md)), put it in the shell of the row, and give the \`Page\` that mode
+(React \`mode="fill"\`, HTML \`data-mode="fill"\` on \`t-page\`).
+
+${table(PAGE_KINDS)}
+
+1. A page with a part that can grow without limit beside other parts (a picture, an output, a log next to a
+   form) is a \`fill\` page: each part goes in a \`Pane\`, which scrolls alone, and a picture goes in a
+   \`MediaFit\` (\`t-media-fit\`). The page itself then never scrolls.
+2. A \`scroll\` page grows with its content and scrolls as one column. Never put a large picture in a \`Card\`
+   of a scroll page: it grows the card and the page.
+3. No kind fits: start from the nearest row, and keep its shell and its mode.
+`;
+
 const howTo = (shells: readonly string[]): string => `## How to use
 
 1. Pick one shell (${shells.map((s) => `\`${s}\``).join(", ") || "none in this release yet"}) and give it data:
    brand, links, actions. Never write the frame yourself.
-2. Each view renders one \`Page\` (title, actions, body) inside the shell.
+2. Each view renders one \`Page\` (title, actions, body) inside the shell, with the mode of its row in the
+   table above.
 3. All spacing comes from layout parts: \`Stack\`, \`Cluster\`, \`Grid\`, \`Section\`, \`Card\`, \`Split\`. A component
    never sets its own margin; never add one.
 4. Never write colours, sizes, fonts or class names of your own: skins and palettes set the look, and the props
    in the pack files list every allowed value.
-5. Icons: \`<Icon name="bi:house" />\` (sets \`bi\` and \`simple-icons\`); run \`tailor icons\` after adding a name.
+5. Icons: \`<Icon name="bi:house" />\` in the React kit; in HTML markup
+   \`<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"></use></svg>\` (sets \`bi\` and
+   \`simple-icons\`). Run \`tailor icons\` after adding a name: it finds both forms and adds them to the sprite.
 6. Where the files are, after \`tailor add\`:
    - a. React kit: the source in \`<vendor>/tailor/\`, imported as \`tailor/<pack>\`; stylesheets and
      \`icons.svg\` in \`<public>/tailor/\`.
@@ -81,7 +142,14 @@ export const packFile = (pack: string): string => `reference/${pack}.md`;
 /** The index: the "how to use" screen and one line per component. `packs` limits it to the installed packs. */
 export function renderIndex(ref: Reference, packs?: readonly string[]): string {
   const shells = ref.packs.filter((p) => p.shell).map((p) => p.id.replace(/^shell-/, ""));
-  const out: string[] = [`# tailor ${ref.version}: reference`, "", howTo(shells), "## Components", ""];
+  const out: string[] = [
+    `# tailor ${ref.version}: reference`,
+    "",
+    pickPage(),
+    howTo(shells),
+    "## Components",
+    "",
+  ];
   for (const pack of ref.packs) {
     if (packs && !packs.includes(pack.id)) continue;
     out.push(`### Pack ${pack.id}: ${pack.name} ([${packFile(pack.id)}](${packFile(pack.id)}))`, "");

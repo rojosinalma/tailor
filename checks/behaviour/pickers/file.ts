@@ -105,4 +105,35 @@ export default behaviour("file", {
     await body.locator(".t-field-label").click();
     await expect(group.getByRole("button", { name: "Choose a file" })).toBeFocused();
   },
+  "inside a Field: one element has the id, and the label is the button's name": async ({
+    page,
+    example,
+    expect,
+  }) => {
+    const body = example("field");
+    const group = body.getByRole("group", { name: "Report" });
+    const id = (await group.getAttribute("id")) ?? "";
+    expect(id).not.toBe("");
+    expect(await page.evaluate((id) => document.querySelectorAll(`[id="${id}"]`).length, id)).toBe(1);
+    await expect(body.locator(".t-field-label")).toHaveAttribute("for", id);
+    await expect(group.getByRole("button", { name: "Choose a file" })).not.toHaveAttribute("id", id);
+  },
+  "the error state follows the input and the field after the start": async ({ kit, example, expect }) => {
+    // The React kit draws it from the Field's props; the HTML kit follows the attributes that change later.
+    if (kit !== "html") return;
+    const body = example("field");
+    const group = body.getByRole("group", { name: "Report" });
+    const input = body.locator('input[name="report"]');
+    const field = body.locator(".t-field");
+    await expect(group).toHaveAttribute("aria-invalid", "true");
+    await input.evaluate((el) => el.removeAttribute("aria-invalid"));
+    await field.evaluate((el) => el.removeAttribute("data-invalid"));
+    await expect(group).not.toHaveAttribute("aria-invalid", "true");
+    await input.evaluate((el) => el.setAttribute("aria-invalid", "true"));
+    await expect(group).toHaveAttribute("aria-invalid", "true");
+    await input.evaluate((el) => el.removeAttribute("aria-invalid"));
+    await expect(group).not.toHaveAttribute("aria-invalid", "true");
+    await field.evaluate((el) => el.setAttribute("data-invalid", ""));
+    await expect(group).toHaveAttribute("aria-invalid", "true");
+  },
 });
