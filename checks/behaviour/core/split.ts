@@ -100,4 +100,21 @@ export default behaviour("split", {
     if (!first || !second) throw new Error("no box");
     expect(second.y).toBeGreaterThanOrEqual(first.y + first.height);
   },
+  "a hidden part at the end of a long pane stays inside the pane": async ({ example, expect }) => {
+    const split = example("default").locator(".t-split");
+    // A native control behind a drawn one, as a select or a file picker puts it, after content that scrolls.
+    await split
+      .locator(".t-pane-body")
+      .last()
+      .evaluate((body) => {
+        const tall = document.createElement("div");
+        tall.style.height = "3000px";
+        const hidden = document.createElement("input");
+        hidden.setAttribute("aria-hidden", "true");
+        hidden.tabIndex = -1;
+        hidden.style.cssText = "position:absolute;width:1px;height:1px;opacity:0;bottom:0";
+        body.append(tall, hidden);
+      });
+    expect(await split.evaluate((el) => el.scrollHeight <= el.clientHeight + 1)).toBe(true);
+  },
 });

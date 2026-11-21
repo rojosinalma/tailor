@@ -1,13 +1,16 @@
 import { defineExamples } from "../../examples";
 import { EmptyState } from "../empty-state/empty-state";
 import { Icon } from "../icon/icon";
+import { Page } from "../page/page";
 import { Pane } from "../pane/pane";
+import { Split } from "../split/split";
 import { MediaFit } from "./media-fit";
 import { drawing } from "./sample";
 
 const LARGE = drawing(1200, 900);
 const SMALL = drawing(240, 180);
 const TALL = drawing(600, 1600);
+const NARROW = drawing(400, 2400);
 
 const noPreview = (
   <EmptyState
@@ -41,6 +44,32 @@ export default defineExamples("media-fit", [
           <img src={TALL} width={600} height={1600} alt="Drawing of 600 × 1600 pixels" />
         </MediaFit>
       </Pane>
+    ),
+  },
+  {
+    id: "stacked",
+    title: "In a fill page on a phone: the width, and at most 70 % of the screen height",
+    note: "The split stacks its panes at their natural height and the page scrolls as one column: the tall picture stays within the screen.",
+    display: "frame",
+    width: "sm",
+    render: () => (
+      <Page title="Section drawing" mode="fill">
+        <Split
+          label="Resize the notes"
+          first={
+            <Pane title="Notes">
+              <p>The north stair, from the ground floor to the roof.</p>
+            </Pane>
+          }
+          second={
+            <Pane title="Preview">
+              <MediaFit>
+                <img src={NARROW} width={400} height={2400} alt="Tall drawing in a stacked split" />
+              </MediaFit>
+            </Pane>
+          }
+        />
+      </Page>
     ),
   },
   {

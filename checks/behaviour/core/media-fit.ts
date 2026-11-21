@@ -40,6 +40,19 @@ export default behaviour("media-fit", {
     expect(b.height).toBeCloseTo(b.freeHeight, 0);
     expect(b.width / b.height).toBeCloseTo(600 / 1600, 1);
   },
+  "in a stacked split of a fill page a tall picture stays within 70 % of the screen height": async ({
+    page,
+    example,
+    expect,
+  }) => {
+    const img = example("stacked").getByRole("img", { name: "Tall drawing in a stacked split" });
+    await img.evaluate((el) => (el as HTMLImageElement).decode());
+    const [box, screen] = await Promise.all([img.boundingBox(), page.evaluate(() => innerHeight)]);
+    if (!box) throw new Error("no box");
+    expect(box.height).toBeLessThanOrEqual(screen * 0.7 + 1);
+    expect(box.height).toBeGreaterThan(screen * 0.69);
+    expect(box.width / box.height).toBeCloseTo(400 / 2400, 1);
+  },
   "a small picture keeps its natural size; contain scales it up": async ({ example, expect }) => {
     const small = await boxes(example("small").getByRole("img", { name: "Drawing of 240 × 180 pixels" }));
     expect([small.width, small.height]).toEqual([240, 180]);

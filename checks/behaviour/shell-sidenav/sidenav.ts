@@ -116,4 +116,27 @@ export default behaviour("sidenav", {
   "the frame never scrolls, the page body does": async ({ page, example }) => {
     await frameStays(page, example("section"));
   },
+  "the page bar: a long title keeps its room, and a readable page keeps the whole bar": async ({
+    example,
+    expect,
+  }) => {
+    const body = example("default");
+    const page = body.locator(".t-page").first();
+    await page.evaluate((el) => {
+      el.setAttribute("data-width", "readable");
+      const title = el.querySelector(".t-page-title");
+      if (title) title.textContent = "build_artifact_cache_replica_eu_west_3_2026_11_15_000042";
+    });
+    const [header, main, title, heading] = await Promise.all([
+      page.locator(".t-page-header").boundingBox(),
+      body.locator(".t-shell-main").boundingBox(),
+      page.locator(".t-page-title").boundingBox(),
+      page.locator(".t-page-heading").boundingBox(),
+    ]);
+    if (!header || !main || !title || !heading) throw new Error("no box");
+    // The bar and its line reach the right edge; only its content stops at the readable width.
+    expect(Math.abs(header.x + header.width - (main.x + main.width))).toBeLessThan(2);
+    // The description gives up its room before the title truncates.
+    expect(title.width).toBeGreaterThan(heading.width * 0.9);
+  },
 });

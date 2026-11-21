@@ -45,6 +45,21 @@
   height: 100%;
 }
 
+/*
+ * A split of a fill page on a phone is one column that scrolls: the box has no fixed height there, so the
+ * media fits the width and stays within most of the screen height.
+ */
+@container t-page (max-width: 40rem) {
+  .t-page[data-mode="fill"]
+    > .t-page-body
+    > .t-split
+    .t-media-fit:not([data-fit="contain"])
+    > :is(img, video, canvas, svg),
+  .t-page[data-mode="fill"] > .t-page-body > .t-split .t-media-fit:not([data-fit="contain"]) > picture > img {
+    max-height: 70svh;
+  }
+}
+
 .t-media-fit-empty {
   display: flex;
   align-items: center;

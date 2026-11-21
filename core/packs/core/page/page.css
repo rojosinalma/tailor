@@ -4,7 +4,7 @@
   height: 100%;
   min-height: 0;
   min-width: 0;
-  container-type: inline-size;
+  container: t-page / inline-size;
 }
 
 .t-page-header {
@@ -98,6 +98,16 @@
 
 .t-page[data-width="readable"] > .t-page-body > * {
   max-width: var(--t-measure-lg);
+}
+
+/*
+ * Fill on a phone: the page is one column that scrolls as a whole. Its parts keep their own height (a list
+ * and detail, a log) unless they give it up: a split stacks its panes at their natural height.
+ */
+@container t-page (max-width: 40rem) {
+  .t-page[data-mode="fill"] > .t-page-body {
+    overflow-y: auto;
+  }
 }
 
 @container (max-width: 40rem) {

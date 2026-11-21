@@ -155,31 +155,32 @@ await pool(
         const frame = await frameOf(page);
         await expect(frame.locator(".t-shell, .sc-demo-fill").first()).toBeVisible();
       }
-      if (s.id !== "topnav" && s.id !== "sidenav" && s.id !== "bare") return;
       const frame = await frameOf(page);
+      const heading = (name: string) => frame.getByRole("heading", { level: 1, name, exact: true });
       if (s.id === "bare") {
         await frame.getByLabel("Email").fill("alice@example.com");
         await frame.getByLabel("Password").fill("secret");
         await frame.getByRole("button", { name: "Sign in" }).click();
-        await expect(frame.getByText("Signed in")).toBeVisible();
+        await expect(frame.getByText("No services yet")).toBeVisible();
         return;
       }
-      await expect(frame.getByRole("heading", { level: 1, name: "Overview" })).toBeVisible();
-      await frame
-        .getByRole("link", { name: /^Services/ })
-        .first()
-        .click();
-      await expect(frame.getByRole("heading", { level: 1, name: "Services" })).toBeVisible();
-      await expect(frame.getByRole("link", { name: /^Services/ }).first()).toHaveAttribute(
-        "aria-current",
-        "page",
-      );
-      await frame.getByRole("link", { name: "api", exact: true }).click();
-      await expect(frame.getByRole("heading", { level: 1, name: "api" })).toBeVisible();
-      await frame
-        .getByRole("link", { name: /^Reports/ })
-        .first()
-        .click();
+      if (s.id === "workspace") {
+        await expect(heading("compose.yaml")).toBeVisible();
+        return;
+      }
+      const link = (name: string) => frame.getByRole("link", { name: new RegExp(`^${name}`) }).first();
+      if (s.id === "topnav") {
+        await expect(heading("Thumbnails")).toBeVisible();
+        await link("Settings").click();
+        await expect(heading("Settings")).toBeVisible();
+        await expect(link("Settings")).toHaveAttribute("aria-current", "page");
+        return;
+      }
+      await expect(heading("Overview")).toBeVisible();
+      await link("Services").click();
+      await expect(heading("Services")).toBeVisible();
+      await expect(link("Services")).toHaveAttribute("aria-current", "page");
+      await link("Reports").click();
       await expect(frame.getByText("404")).toBeAttached();
     }),
 );

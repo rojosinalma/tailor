@@ -140,11 +140,24 @@
     white-space: nowrap;
   }
 
+  /* The title comes first: the description gives up its room before the title truncates. */
+  .t-shell[data-shell="sidenav"] > .t-shell-main > .t-page > .t-page-header .t-page-title-row {
+    flex: none;
+    max-width: 100%;
+  }
+
   .t-shell[data-shell="sidenav"] > .t-shell-main > .t-page > .t-page-header .t-page-description {
+    flex: 1 1 0;
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  /* A readable page keeps the full width of the bar; only its content stops at the readable width. */
+  .t-shell[data-shell="sidenav"] > .t-shell-main > .t-page[data-width="readable"] > .t-page-header {
+    max-width: none;
+    padding-inline-end: max(var(--t-gutter), calc(100% - var(--t-measure-lg) - var(--t-gutter)));
   }
 
   /* Collapsed: icons only. The labels stay as the accessible names. */

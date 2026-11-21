@@ -3,6 +3,7 @@ import { loadPalettes, loadSkins } from "../../bin/lib/build";
 import { DEFAULT_PALETTE, DEFAULT_SKIN } from "../../bin/lib/build-showcase";
 import { gen } from "../../bin/lib/gen";
 import { serve } from "../../bin/lib/serve";
+import { appChecks } from "./apps";
 import { runPages } from "./pages";
 import { printProblems } from "./report";
 
@@ -18,12 +19,13 @@ if (import.meta.main) {
   const started = performance.now();
   const result = await runPages({
     siteUrl: site.url,
-    specs,
+    // --apps checks the sample apps only.
+    specs: args.includes("--apps") ? [] : specs,
     skins,
     palettes,
     defaultSkin: DEFAULT_SKIN,
     defaultPalette: DEFAULT_PALETTE,
-    ...(names.length > 0 ? { only: new Set(names) } : {}),
+    ...(names.length > 0 ? { only: new Set(names) } : { apps: appChecks(specs, "full") }),
     ...(skinArgs.length > 0 ? { onlySkins: new Set(skinArgs) } : {}),
     images: args.includes("--images"),
     update: args.includes("--update-images"),

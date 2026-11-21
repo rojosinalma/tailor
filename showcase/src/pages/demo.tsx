@@ -1,6 +1,5 @@
-/** The React kit demo of a shell (demo.html?shell=<id>): the sample console as a small app with its own router. */
+/** The React kit demo of a shell (demo.html?shell=<id>): the shell's sample app, with its own router. */
 
-import { Button } from "@tailor/react/core/button/button";
 import { routeErrorComponent } from "@tailor/react/core/error-page/error-page";
 import { IconSprite } from "@tailor/react/core/icon/icon";
 import { routePendingComponent } from "@tailor/react/core/loading-page/loading-page";
@@ -13,52 +12,54 @@ import {
   createRouter,
   Outlet,
   RouterProvider,
+  useNavigate,
+  useRouterState,
 } from "@tanstack/react-router";
-import { type ReactNode, useState } from "react";
 import { createRoot } from "react-dom/client";
-import { componentById, isShell, THEME } from "../app/data";
-import {
-  ConsoleFrame,
-  ConsolePage,
-  type Href,
-  NotBuilt,
-  ShellExampleDemo,
-  SignedIn,
-  SignInDemo,
-} from "../demo/console";
-import { EXAMPLES } from "../examples.gen";
+import { componentById, THEME } from "../app/data";
+import type { AppContext } from "../demo/app-context";
+import { AppFrame, AppPage, hasApp, NotBuilt } from "../demo/apps";
+import { type AppShell, startPage } from "../demo/routes";
 
-const href: Href = (route) =>
-  route.page === "overview" ? "/" : route.page === "service" ? `/services/${route.name}` : `/${route.page}`;
+/** The context of the app's pages: its addresses, the page shown and a way to another page. */
+function useAppContext(shell: AppShell): AppContext {
+  const start = startPage(shell);
+  const href = (page: string): string => (page === start ? "/" : `/${page}`);
+  const navigate = useNavigate();
+  // The page shown, so a link stands for its stress pages too, as in the HTML kit.
+  const path = useRouterState({ select: (state) => state.location.pathname });
+  return { href, current: path.slice(1) || start, go: (page) => void navigate({ to: href(page) }) };
+}
 
-function consoleRouter(shell: "topnav" | "sidenav") {
+function appRouter(shell: AppShell) {
+  const start = startPage(shell);
   const root = createRootRoute({
-    component: () => (
-      <ConsoleFrame shell={shell} href={href}>
-        <Outlet />
-      </ConsoleFrame>
-    ),
+    component: function Root() {
+      return (
+        <AppFrame shell={shell} context={useAppContext(shell)}>
+          <Outlet />
+        </AppFrame>
+      );
+    },
     notFoundComponent: routeNotFoundComponent,
   });
-  const page = (path: string, element: () => ReactNode) =>
-    createRoute({ getParentRoute: () => root, path, component: element });
-  const service = createRoute({
+  const index = createRoute({
     getParentRoute: () => root,
-    path: "/services/$name",
-    component: function Service() {
-      const { name } = service.useParams();
-      return <ConsolePage href={href} route={{ page: "service", name }} />;
+    path: "/",
+    component: function Start() {
+      return <AppPage shell={shell} id={start} context={useAppContext(shell)} />;
     },
   });
-  const tree = root.addChildren([
-    page("/", () => <ConsolePage href={href} route={{ page: "overview" }} />),
-    page("/services", () => <ConsolePage href={href} route={{ page: "services" }} />),
-    service,
-    page("/hosts", () => <ConsolePage href={href} route={{ page: "hosts" }} />),
-    page("/settings", () => <ConsolePage href={href} route={{ page: "settings" }} />),
-  ]);
+  const page = createRoute({
+    getParentRoute: () => root,
+    path: "/$page",
+    component: function Other() {
+      const { page: id } = page.useParams();
+      return <AppPage shell={shell} id={id} context={useAppContext(shell)} />;
+    },
+  });
   return createRouter({
-    routeTree: tree,
+    routeTree: root.addChildren([index, page]),
     history: createHashHistory(),
     defaultPendingComponent: routePendingComponent,
     defaultErrorComponent: routeErrorComponent,
@@ -66,31 +67,15 @@ function consoleRouter(shell: "topnav" | "sidenav") {
   });
 }
 
-function BareDemo() {
-  const [signedIn, setSignedIn] = useState(false);
-  if (signedIn) return <SignedIn signOut={<Button onClick={() => setSignedIn(false)}>Sign out</Button>} />;
-  return <SignInDemo onSignIn={() => setSignedIn(true)} />;
-}
-
-async function demoFor(id: string): Promise<ReactNode> {
-  if (id === "bare") return <BareDemo />;
-  if (id === "topnav" || id === "sidenav") return <RouterProvider router={consoleRouter(id)} />;
-  const spec = componentById(id);
-  const load = EXAMPLES[id];
-  if (!spec || !isShell(spec) || !load) return <NotBuilt id={id} />;
-  const { default: set } = await load();
-  const example = set.examples.find((e) => e.display === "frame") ?? set.examples[0];
-  return example ? <ShellExampleDemo example={example} /> : <NotBuilt id={id} />;
-}
-
 const shell = new URLSearchParams(location.search).get("shell") ?? "";
 const root = document.getElementById("root");
 if (root) {
   document.title = `${componentById(shell)?.name ?? shell} · tailor`;
-  const demo = await demoFor(shell);
   createRoot(root).render(
     <ThemeProvider config={THEME}>
-      <IconSprite href="tailor/icons.svg">{demo}</IconSprite>
+      <IconSprite href="tailor/icons.svg">
+        {hasApp(shell) ? <RouterProvider router={appRouter(shell)} /> : <NotBuilt id={shell} />}
+      </IconSprite>
     </ThemeProvider>,
   );
 }

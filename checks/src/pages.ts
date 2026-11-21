@@ -14,22 +14,34 @@ import type { Kit } from "./behaviour";
 import { connectBrowser, FIXED_NOW, pool, WORKERS } from "./browser";
 import { COLOURFUL } from "./colourful";
 
+/** A screen of the checks. An image is named by the name of its screen. */
+export interface Screen {
+  readonly name: string;
+  readonly width: number;
+  readonly height: number;
+  readonly touch: boolean;
+}
+
 /**
- * The screens of the checks: a phone, a tablet upright and on its side, and two desktops.
- * The phone and the tablet are touch screens. An image is named by the width of its screen.
+ * The screens of the checks: a phone, a tablet upright and on its side, and two desktops; the phone and
+ * the tablet are touch screens. The component pages take these five, named by their width. The sample apps
+ * also take a large desktop and a short desktop window, where a page that grows past the screen shows.
  */
-const SCREENS = [
-  { width: 390, height: 844, touch: true },
-  { width: 820, height: 1180, touch: true },
-  { width: 1180, height: 820, touch: true },
-  { width: 1440, height: 900, touch: false },
-  { width: 1920, height: 1080, touch: false },
-] as const;
-export const WIDTHS: readonly number[] = SCREENS.map((screen) => screen.width);
-const TOUCH_WIDTHS: readonly number[] = SCREENS.filter((screen) => screen.touch).map(
-  (screen) => screen.width,
-);
-const heightOf = (width: number): number => SCREENS.find((screen) => screen.width === width)?.height ?? 900;
+export const SCREENS: readonly Screen[] = [
+  { name: "390", width: 390, height: 844, touch: true },
+  { name: "820", width: 820, height: 1180, touch: true },
+  { name: "1180", width: 1180, height: 820, touch: true },
+  { name: "1440", width: 1440, height: 900, touch: false },
+  { name: "1920", width: 1920, height: 1080, touch: false },
+  { name: "2560", width: 2560, height: 1440, touch: false },
+  { name: "1440x800", width: 1440, height: 800, touch: false },
+];
+export const WIDTHS: readonly number[] = [390, 820, 1180, 1440, 1920];
+const screenOf = (name: string): Screen => {
+  const screen = SCREENS.find((s) => s.name === name);
+  if (!screen) throw new Error(`no screen named ${name}`);
+  return screen;
+};
 const TOUCH = 44;
 const ICON_WAIT = 10_000;
 
@@ -47,6 +59,20 @@ interface AxeEngine {
 /** The accessibility target: WCAG 2.2 level AA. */
 const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
+/** One page of a sample app to check, in the React kit and, when the shell has one, the HTML kit. */
+export interface AppCheck {
+  readonly shell: string;
+  readonly id: string;
+  readonly html: boolean;
+  /** The names of its screens. */
+  readonly screens: readonly string[];
+  /** The screens that it takes in the default skin only. */
+  readonly defaultSkinOnly: readonly string[];
+  /** The addresses of the page, relative to the site root. */
+  readonly react: string;
+  readonly htmlUrl: string;
+}
+
 export interface PagesOptions {
   readonly siteUrl: string;
   readonly specs: readonly ComponentSpec[];
@@ -59,6 +85,8 @@ export interface PagesOptions {
   /** Only these skins. Leave out for all. */
   readonly onlySkins?: ReadonlySet<string>;
   readonly widths?: readonly number[];
+  /** The pages of the sample apps. They run when no component is named (`only` is left out). */
+  readonly apps?: readonly AppCheck[];
   /** Run the palette sweep: every palette and mode, for the entries that show the most colour. */
   readonly sweep?: boolean;
   /** Take and compare images. Off for a quick run that only checks the pages. */
@@ -254,6 +282,21 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
       rule: "sideways-scroll",
       message: `the page is ${doc.scrollWidth}px wide in a ${doc.clientWidth}px window`,
     });
+  }
+
+  // A fill page takes the screen and never scrolls: only the panes inside it may. On a page narrower than
+  // 40rem (a phone) the body scrolls as one column by design, so the rule holds for wider pages only.
+  const rem = Number.parseFloat(getComputedStyle(doc).fontSize) || 16;
+  for (const body of document.querySelectorAll('.t-page[data-mode="fill"] > .t-page-body')) {
+    const page = body.parentElement;
+    if (!page || !visible(page) || page.getBoundingClientRect().width < 40 * rem) continue;
+    if (body.scrollHeight > body.clientHeight + 1) {
+      const title = (page.querySelector(".t-page-title")?.textContent ?? "").trim().slice(0, 30);
+      problems.push({
+        rule: "fill-body-scroll",
+        message: `the body of the fill page "${title}" holds ${body.scrollHeight}px in ${body.clientHeight}px; only the panes inside a fill page may scroll`,
+      });
+    }
   }
 
   const interactive =
@@ -460,41 +503,62 @@ async function repaint(page: Page): Promise<void> {
 }
 
 interface Target {
+  /** The name of the page in its image keys: a component id, or app-<shell>/<page>. */
   readonly component: string;
   readonly kit: Kit;
   readonly url: string;
+  /** The element that shows the page is drawn. */
+  readonly ready: string;
+  readonly screens: readonly Screen[];
+  /** The screens that it takes in the default skin only. */
+  readonly defaultSkinOnly?: readonly string[];
 }
 
 interface State {
   readonly skin: string;
   readonly palette: string;
   readonly mode: "dark" | "light";
-  readonly width: number;
+  readonly screen: Screen;
   /** The key of the reference image, or null when this state takes no image. */
   readonly image: string | null;
 }
 
 export async function runPages(options: PagesOptions): Promise<PagesResult> {
   const { siteUrl, specs, defaultSkin, defaultPalette } = options;
-  const widths = options.widths ?? WIDTHS;
+  const screens = (options.widths ?? WIDTHS).map((width) => screenOf(String(width)));
   const skins = options.skins.filter((s) => !options.onlySkins || options.onlySkins.has(s));
   const skinList = skins.length > 0 ? skins : [""];
   const takeImages = options.images ?? true;
 
   const targets: Target[] = [];
+  // The sample apps go first: each takes many states in a row, and the short component pages fill the gaps.
+  for (const app of options.only ? [] : (options.apps ?? [])) {
+    const page = {
+      component: `app-${app.shell}/${app.id}`,
+      ready: ".t-shell-main > *",
+      screens: app.screens.map(screenOf),
+      defaultSkinOnly: app.defaultSkinOnly,
+    };
+    targets.push({ ...page, kit: "react", url: app.react });
+    if (app.html) targets.push({ ...page, kit: "html", url: app.htmlUrl });
+  }
   for (const spec of specs) {
     if (options.only && !options.only.has(spec.id)) continue;
-    targets.push({ component: spec.id, kit: "react", url: `entry.html?id=${spec.id}` });
-    if (spec.html !== "none") targets.push({ component: spec.id, kit: "html", url: `html/${spec.id}.html` });
+    const entry = { component: spec.id, ready: ".sc-example", screens };
+    targets.push({ ...entry, kit: "react", url: `entry.html?id=${spec.id}` });
+    if (spec.html !== "none") targets.push({ ...entry, kit: "html", url: `html/${spec.id}.html` });
   }
 
   const statesFor = (target: Target): State[] => {
     const states: State[] = [];
     for (const skin of skinList) {
-      for (const width of widths) {
+      for (const screen of target.screens) {
+        if (skin !== defaultSkin && target.defaultSkinOnly?.includes(screen.name)) continue;
         // The React kit's images are the reference. The HTML kit's images are compared with them (parity).
-        const image = takeImages ? `${target.kit}/${target.component}/${skin || "none"}/${width}` : null;
-        states.push({ skin, palette: defaultPalette, mode: "dark", width, image });
+        const image = takeImages
+          ? `${target.kit}/${target.component}/${skin || "none"}/${screen.name}`
+          : null;
+        states.push({ skin, palette: defaultPalette, mode: "dark", screen, image });
       }
     }
     if (options.sweep && target.kit === "react" && COLOURFUL.includes(target.component)) {
@@ -506,7 +570,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
             skin: skinList.includes(defaultSkin) ? defaultSkin : (skinList[0] ?? ""),
             palette,
             mode,
-            width: 1440,
+            screen: screenOf("1440"),
             image,
           });
         }
@@ -532,7 +596,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
     await pool(targets, WORKERS, async (target) => {
       const all = statesFor(target);
       for (const touch of [true, false]) {
-        const mine = all.filter((s) => TOUCH_WIDTHS.includes(s.width) === touch);
+        const mine = all.filter((s) => s.screen.touch === touch);
         const first = mine[0];
         if (!first) continue;
         // A change in the machine's network (a container that starts somewhere) makes the browser drop its
@@ -540,7 +604,7 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
         for (let attempt = 0; attempt < 2; attempt++) {
           const local: PageProblem[] = [];
           const context: BrowserContext = await browser.newContext({
-            viewport: { width: first.width, height: heightOf(first.width) },
+            viewport: { width: first.screen.width, height: first.screen.height },
             hasTouch: touch,
             isMobile: touch,
             reducedMotion: "reduce",
@@ -557,20 +621,30 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
           });
           try {
             await page.clock.setFixedTime(FIXED_NOW);
-            const join = target.url.includes("?") ? "&" : "?";
-            await page.goto(
-              `${siteUrl}${target.url}${join}skin=${first.skin}&palette=${first.palette}&mode=${first.mode}`,
-            );
-            await page.locator(".sc-example").first().waitFor();
+            // The theme goes into the query, before the address of a page in a hash router.
+            const [path = "", hash] = target.url.split("#");
+            const join = path.includes("?") ? "&" : "?";
+            const address = (state: State): string =>
+              `${siteUrl}${path}${join}skin=${state.skin}&palette=${state.palette}&mode=${state.mode}${hash === undefined ? "" : `#${hash}`}`;
+            await page.goto(address(first));
+            await page.locator(target.ready).first().waitFor();
             let dom = "";
             let loaded = first.skin;
             const reactOnly =
               target.kit === "react" ? await page.locator('.sc-example[data-kit="react"]').count() : 0;
             const fingerprintOf = (state: State): string =>
               sha(
-                [version, stylesheets, dom, state.skin, state.palette, state.mode, state.width, touch].join(
-                  "|",
-                ),
+                [
+                  version,
+                  stylesheets,
+                  dom,
+                  state.skin,
+                  state.palette,
+                  state.mode,
+                  // A screen named by its width alone has its usual height, so its fingerprint stays as it was.
+                  state.screen.name === String(state.screen.width) ? state.screen.width : state.screen.name,
+                  touch,
+                ].join("|"),
               );
             for (const state of mine) {
               states++;
@@ -588,15 +662,15 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
                   continue;
                 }
               }
-              const label = `${state.skin || "no skin"} ${state.palette} ${state.mode} ${state.width}px`;
-              await page.setViewportSize({ width: state.width, height: heightOf(state.width) });
+              const { width, height } = state.screen;
+              const size = state.screen.name === String(width) ? `${width}px` : `${width}×${height}px`;
+              const label = `${state.skin || "no skin"} ${state.palette} ${state.mode} ${size}`;
+              await page.setViewportSize({ width, height });
               if (state.skin !== loaded) {
                 // A skin changes sizes and fonts, so the page is loaded again in it, as a person would see it.
                 // Palettes and modes change colours only and switch in place.
-                await page.goto(
-                  `${siteUrl}${target.url}${join}skin=${state.skin}&palette=${state.palette}&mode=${state.mode}`,
-                );
-                await page.locator(".sc-example").first().waitFor();
+                await page.goto(address(state));
+                await page.locator(target.ready).first().waitFor();
                 loaded = state.skin;
                 dom = "";
               }

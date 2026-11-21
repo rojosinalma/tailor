@@ -48,6 +48,8 @@
 }
 
 .t-pane-body {
+  /* The scroll box holds its hidden parts (a native control behind a drawn one); else they reach past it. */
+  position: relative;
   flex: 1;
   min-height: 0;
   padding: var(--t-space-4);

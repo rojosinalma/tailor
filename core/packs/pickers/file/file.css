@@ -8,6 +8,8 @@
 
 .t-file-zone {
   display: flex;
+  /* In a narrow box the text goes under the icon. */
+  flex-wrap: wrap;
   align-items: center;
   gap: var(--t-space-3);
   min-width: 0;
@@ -42,6 +44,13 @@
   align-items: flex-start;
   gap: var(--t-space-1);
   min-width: 0;
+}
+
+/* In a narrow box the label of the button wraps between its words instead of reaching past the zone. */
+.t-file-text > .t-btn {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .t-file-hint {

@@ -9,6 +9,8 @@
   color: var(--t-tone-text);
   font-weight: var(--t-label-weight);
   line-height: var(--t-leading-tight);
+  /* A state is a word or two: it breaks between words, and inside a word only when the word cannot fit. */
+  overflow-wrap: break-word;
 }
 
 .t-state-icon {

@@ -20,6 +20,8 @@
 }
 
 .t-split-pane {
+  /* The scroll box holds its hidden parts (a native control behind a drawn one); else they reach past it. */
+  position: relative;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -105,5 +107,22 @@
     width: auto;
     height: var(--t-space-3);
     visibility: hidden;
+  }
+}
+
+/*
+ * A row split in a fill page on a phone: one column that the page body scrolls. Each pane takes its natural
+ * height, so the inputs show in full and the result follows, never a half of the screen each.
+ */
+@container t-page (max-width: 40rem) {
+  .t-page[data-mode="fill"] > .t-page-body > .t-split:not([data-direction="column"]) {
+    flex: none;
+    height: auto;
+    grid-template-rows: auto;
+    grid-auto-rows: auto;
+  }
+
+  .t-page[data-mode="fill"] > .t-page-body > .t-split:not([data-direction="column"]) > .t-split-pane {
+    overflow: visible;
   }
 }

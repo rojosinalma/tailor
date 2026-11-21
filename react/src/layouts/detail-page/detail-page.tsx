@@ -23,7 +23,18 @@ import { Setting, useAutoSave } from "../../forms/settings/settings";
 
 // Sample data: one service, as the list page shows it. Replace with the record of the app.
 
-export const DETAIL_SERVICE = {
+export interface DetailService {
+  readonly id: string;
+  readonly name: string;
+  readonly host: string;
+  readonly image: string;
+  readonly address: string;
+  readonly owner: string;
+  readonly created: string;
+  readonly deployed: string;
+}
+
+export const DETAIL_SERVICE: DetailService = {
   id: "api",
   name: "api",
   host: "web-1",
@@ -32,7 +43,7 @@ export const DETAIL_SERVICE = {
   owner: "alice",
   created: "2026-03-02T09:00:00Z",
   deployed: "2026-11-15T11:48:00Z",
-} as const;
+};
 
 export const DETAIL_STATS = {
   requests: [310, 340, 330, 360, 420, 480, 510, 470, 520, 610, 580, 640],
@@ -85,11 +96,11 @@ const POLICIES = [
 const save = (): Promise<void> => new Promise((done) => setTimeout(done, 400));
 
 /** The settings tab: each row saves itself, so the tab needs no Save button. */
-function ServiceSettings() {
+function ServiceSettings({ id }: { id: string }) {
   const replicas = useAutoSave<number | null>({ value: 2, save });
   const policy = useAutoSave({ value: "on-failure", save });
   const publicAccess = useAutoSave({ value: true, save });
-  const url = (name: string): string => `/api/services/${DETAIL_SERVICE.id}/settings/${name}`;
+  const url = (name: string): string => `/api/services/${id}/settings/${name}`;
   return (
     <Card>
       <Setting
@@ -127,10 +138,9 @@ function ServiceSettings() {
 }
 
 /** One record: what it is, how it is doing, and what can be done with it. */
-export function DetailPageLayout() {
+export function DetailPageLayout({ service: s = DETAIL_SERVICE }: { service?: DetailService }) {
   const toast = useToast();
   const confirm = useConfirm();
-  const s = DETAIL_SERVICE;
 
   // The HTML kit's script (html/src/layouts/detail-page.ts) answers these actions by their data-id.
   // A destructive action always asks first, and says what is lost.
@@ -260,7 +270,7 @@ export function DetailPageLayout() {
               </Card>
             ),
           },
-          { id: "settings", label: "Settings", content: <ServiceSettings /> },
+          { id: "settings", label: "Settings", content: <ServiceSettings id={s.id} /> },
         ]}
       />
     </Page>

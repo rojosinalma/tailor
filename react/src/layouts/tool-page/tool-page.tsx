@@ -6,6 +6,7 @@ import { MediaFit } from "../../core/media-fit/media-fit";
 import { Page } from "../../core/page/page";
 import { Pane } from "../../core/pane/pane";
 import { Select } from "../../core/select/select";
+import { Spinner } from "../../core/spinner/spinner";
 import { Split } from "../../core/split/split";
 import { Switch } from "../../core/switch/switch";
 import { Form, FormActions, FormField, type SubmitResult, useTailorForm } from "../../forms/form/form";
@@ -73,7 +74,16 @@ async function render(settings: RenderSettings): Promise<SubmitResult> {
  * each Pane scrolls alone, and MediaFit keeps any picture inside its pane.
  * HTML kit: the form posts to its action with fetch; the page's code puts the <img> into the MediaFit.
  */
-export function ToolPageLayout({ result: first = LAST_RESULT }: { result?: RenderResult | null }) {
+export interface ToolPageLayoutProps {
+  /** The last result; null before the first render. */
+  result?: RenderResult | null;
+  /** A render runs: the preview waits for it. */
+  rendering?: boolean;
+  /** The last render failed: what the server said. */
+  error?: string;
+}
+
+export function ToolPageLayout({ result: first = LAST_RESULT, rendering, error }: ToolPageLayoutProps) {
   const [result, setResult] = useState(first);
   const form = useTailorForm<RenderSettings>({
     defaultValues: RENDER_DEFAULTS,
@@ -132,23 +142,42 @@ export function ToolPageLayout({ result: first = LAST_RESULT }: { result?: Rende
             title="Preview"
             actions={
               // The page's code sends the file; the button waits for a result.
-              <Button size="sm" icon={<Icon name="bi:download" />} disabled={!result}>
+              <Button
+                size="sm"
+                icon={<Icon name="bi:download" />}
+                disabled={!result || rendering || Boolean(error)}
+              >
                 Download
               </Button>
             }
-            footer={result ? <span>{result.facts}</span> : undefined}
+            footer={result && !rendering && !error ? <span>{result.facts}</span> : undefined}
           >
             {/* The picture takes the free width and height of the pane, never more, whatever its size. */}
+            {/* What shows while there is no picture: the render that runs, the failure, or the first step. */}
             <MediaFit
               empty={
-                <EmptyState
-                  icon={<Icon name="bi:image" />}
-                  title="No preview yet"
-                  text="Choose a drawing and press Render."
-                />
+                rendering ? (
+                  <EmptyState
+                    icon={<Spinner />}
+                    title="Rendering"
+                    text="The preview shows when it is done."
+                  />
+                ) : error ? (
+                  <EmptyState
+                    icon={<Icon name="bi:exclamation-triangle" />}
+                    title="The render failed"
+                    text={error}
+                  />
+                ) : (
+                  <EmptyState
+                    icon={<Icon name="bi:image" />}
+                    title="No preview yet"
+                    text="Choose a drawing and press Render."
+                  />
+                )
               }
             >
-              {result ? (
+              {result && !rendering && !error ? (
                 <img
                   src={result.src}
                   width={result.width}

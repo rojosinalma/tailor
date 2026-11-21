@@ -40,4 +40,26 @@ export default behaviour("list-page", {
     await expect(body.getByRole("button", { name: "Restart" }).first()).toBeVisible();
     await expect(body.getByRole("button", { name: "Stop" })).toBeVisible();
   },
+  "a long name with no break never splits a state inside its word": async ({ page, example, expect }) => {
+    await page.setViewportSize({ width: 820, height: 1180 });
+    const body = example("default");
+    // A generated name with no place to break squeezes the other columns.
+    await body
+      .getByRole("rowheader")
+      .first()
+      .evaluate((cell) => {
+        cell.textContent = "build_artifact_cache_replica_eu_west_3_2026_11_15_000042_build_artifact_cache";
+      });
+    const lines = await body.locator("tbody .t-state").evaluateAll((labels) =>
+      labels.map((label) => {
+        // The lines of the text alone; the icon beside it sits at its own height.
+        const text = [...label.childNodes].find((node) => node.nodeType === Node.TEXT_NODE);
+        const range = document.createRange();
+        if (text) range.selectNodeContents(text);
+        return new Set([...range.getClientRects()].map((r) => Math.round(r.top))).size;
+      }),
+    );
+    expect(lines.length).toBeGreaterThan(0);
+    expect(Math.max(...lines)).toBe(1);
+  },
 });

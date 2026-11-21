@@ -147,8 +147,11 @@ behaviour. A page needs no build tool.
    `phoneNav="bar"`), popups become bottom sheets, a form dialog takes the full screen, a table's rows become
    cards, controls are 44 px high on a touch screen. A shell footer as narrow as a phone shows the compact
    theme controls.
-2. A fill page stays a fill page: a `Split` stacks its two panes, each with half the height, and each still
-   scrolls alone. The tool page does this.
+2. A fill page on a phone (a page narrower than 40rem) is one column that scrolls as a page. A `Split` in it
+   stacks its panes at their natural height: the inputs in full, the primary action under them, then the
+   result. A `MediaFit` there fits the width and stays within 70 % of the screen height. A part that keeps
+   its own height (a list and detail, a log, one `Pane`) still scrolls alone. The tool page does this. On a
+   wider screen a fill page never scrolls: only its panes do, and the page check fails a body that scrolls.
 3. A component adapts to the space it sits in, so a table in a narrow panel takes its narrow form on a wide
    screen too.
 4. A tablet on its side is as wide as a small desktop: it gets the desktop layout, with the touch sizes.

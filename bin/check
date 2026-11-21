@@ -10,6 +10,7 @@
  *   --enforce-time             fail when the run is over its time limit (10 s for a change, 2 min for a release)
  */
 import { $ } from "bun";
+import { appChecks } from "../checks/src/apps";
 import { runBehaviour } from "../checks/src/run-behaviour";
 import { runContrast } from "../checks/src/contrast";
 import { runPages } from "../checks/src/pages";
@@ -139,6 +140,8 @@ if (!failed || everything) {
           // A release leaves out the widest desktop, to stay in its time limit. It takes an image in every
           // palette only when its fingerprint is not known. The full run takes them all.
           ...(mode === "release" ? { widths: RELEASE_WIDTHS } : {}),
+          // The sample apps, when everything runs: on more screens than the component pages (checks/src/apps.ts).
+          ...(scope.all ? { apps: appChecks(specs, mode === "full" ? "full" : "release") } : {}),
           sweep: mode !== "change",
           axe: true,
           allowNew: mode === "change",

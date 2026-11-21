@@ -196,7 +196,9 @@ export function DashboardPageLayout() {
                 title={b.host}
                 description={
                   <>
-                    <RelativeTime date={b.at} />, {b.size}
+                    <RelativeTime date={b.at} />
+                    {/* One text node, as in the HTML kit's markup: two nodes draw a hair apart on a wide screen. */}
+                    {`, ${b.size}`}
                   </>
                 }
                 trailing={<StateLabel tone={b.tone}>{b.result}</StateLabel>}

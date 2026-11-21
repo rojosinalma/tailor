@@ -69,15 +69,33 @@ export default behaviour("tool-page", {
       await expect(body.getByText("No preview yet")).toBeHidden();
     }
   },
-  "narrow: the panes stack, inputs above the result, and each scrolls alone": async ({ example, expect }) => {
+  "narrow: one column that scrolls as a page, inputs in full above the result": async ({
+    example,
+    expect,
+  }) => {
     const body = example("narrow");
-    const [settings, preview] = await Promise.all([
-      body.getByRole("region", { name: "Settings" }).boundingBox(),
-      body.getByRole("region", { name: "Preview" }).boundingBox(),
-    ]);
-    if (!settings || !preview) throw new Error("no box");
-    expect(settings.y + settings.height).toBeLessThanOrEqual(preview.y);
-    expect(Math.abs(settings.x - preview.x)).toBeLessThan(1);
-    expect(await scrolls(body.locator(".t-page-body"))).toBe(false);
+    const settings = body.getByRole("region", { name: "Settings" });
+    const preview = body.getByRole("region", { name: "Preview" });
+    const page = body.locator(".t-page-body");
+    const [a, b] = await Promise.all([settings.boundingBox(), preview.boundingBox(), page.boundingBox()]);
+    if (!a || !b) throw new Error("no box");
+    expect(a.y + a.height).toBeLessThanOrEqual(b.y);
+    expect(Math.abs(a.x - b.x)).toBeLessThan(1);
+    // The panes keep their natural height: neither scrolls, the page body does.
+    expect(await scrolls(settings)).toBe(false);
+    expect(await scrolls(preview)).toBe(false);
+    expect(await scrolls(page)).toBe(true);
+    const render = body.getByRole("button", { name: "Render" });
+    await render.scrollIntoViewIfNeeded();
+    await expect(render).toBeInViewport();
+    await expect(settings.getByRole("switch", { name: "Draw the grid" })).toBeInViewport();
+    // The picture fits the width of its pane and keeps its ratio.
+    const img = preview.getByRole("img", { name: "Preview of floor-plan.svg" });
+    await img.evaluate((el) => (el as HTMLImageElement).decode());
+    await img.scrollIntoViewIfNeeded();
+    const [box, pane] = await Promise.all([img.boundingBox(), preview.boundingBox()]);
+    if (!box || !pane) throw new Error("no box");
+    expect(box.width).toBeLessThan(pane.width);
+    expect(Math.abs(box.width / box.height - 1200 / 900)).toBeLessThan(0.02);
   },
 });

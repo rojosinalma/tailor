@@ -160,10 +160,16 @@ export const SERVICE_ROWS: readonly ServiceRow[] = [
 export interface ListPageLayoutProps {
   /** Opens the list on a search, such as one that matches nothing. */
   initialSearch?: string;
+  /** The records; the sample rows when left out. */
+  rows?: readonly ServiceRow[];
+  /** The records are on their way. */
+  loading?: boolean;
+  /** The records could not be loaded: what went wrong. */
+  error?: string;
 }
 
 /** The list of services, with filters: the most common page of an app. */
-export function ListPageLayout({ initialSearch }: ListPageLayoutProps) {
+export function ListPageLayout({ initialSearch, rows = SERVICE_ROWS, loading, error }: ListPageLayoutProps) {
   const toast = useToast();
   const say = (message: string) => () => toast("info", message);
 
@@ -246,8 +252,10 @@ export function ListPageLayout({ initialSearch }: ListPageLayoutProps) {
       <DataTable
         label="Services"
         columns={columns}
-        rows={SERVICE_ROWS}
+        rows={rows}
         rowKey={(row) => row.id}
+        loading={loading}
+        error={error}
         search
         selectable
         bulkActions={bulk}

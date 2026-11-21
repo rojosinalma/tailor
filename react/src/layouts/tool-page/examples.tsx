@@ -25,7 +25,7 @@ export default defineExamples("tool-page", [
   {
     id: "narrow",
     title: "On a phone",
-    note: "The panes stack, inputs above the result, each with half the height; each still scrolls alone.",
+    note: "One column that scrolls as a page: the inputs in full with Render under them, then the result, fitted to the width.",
     display: "frame",
     width: "sm",
     render: () => <ToolPageLayout />,

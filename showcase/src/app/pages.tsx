@@ -13,7 +13,7 @@ import { Stat } from "@tailor/react/core/stat/stat";
 import { Table } from "@tailor/react/core/table/table";
 import { Tabs } from "@tailor/react/core/tabs/tabs";
 import type { ExampleSet } from "@tailor/react/examples";
-import { staticStart } from "../demo/console";
+import { appPages, htmlAddress, reactAddress, startPage } from "../demo/routes";
 import { COMPONENTS, htmlSupportLabel, PACK_LIST, packHtmlLabel, packName, SHELLS, THEME } from "./data";
 import { ExamplesView, Stage, ViewControls } from "./examples-view";
 import { Frame } from "./frames";
@@ -146,7 +146,7 @@ export function ComponentPage({ spec, set }: { spec: ComponentSpec; set: Example
 
 /** The demo page of a shell in the chosen kit, relative to the site root. */
 const demoAddress = (shell: string, kit: string): string =>
-  kit === "html" ? `html/demo/${shell}/${staticStart(shell)}` : `demo.html?shell=${shell}`;
+  kit === "html" ? htmlAddress({ shell, id: startPage(shell) }) : `demo.html?shell=${shell}`;
 
 /** A link that leaves the site's router: a full address of the same site. */
 const fullAddress = (relative: string): string => new URL(relative, location.href).href;
@@ -183,12 +183,57 @@ function ShellDemo({ spec }: { spec: ComponentSpec }) {
   );
 }
 
+/** Every page of the shell's sample app, the stress pages too, each as a full page in both kits. */
+function SamplePages({ spec }: { spec: ComponentSpec }) {
+  const pages = appPages(spec.id);
+  if (pages.length === 0) return null;
+  return (
+    <Section
+      title="Sample pages"
+      description="The demo's pages as full pages. A stress page holds long text, names with no break, many rows, large media, or an empty, loading or error state."
+    >
+      <Table
+        caption="Sample pages"
+        rows={pages}
+        rowKey={(page) => page.id}
+        columns={[
+          { key: "id", header: "Page", render: (page) => page.id },
+          { key: "about", header: "What it shows", render: (page) => page.about },
+          {
+            key: "stress",
+            header: "Kind",
+            priority: "low",
+            render: (page) => (page.stress ? <Badge tone="warning">Stress</Badge> : "Sample"),
+          },
+          {
+            key: "open",
+            header: "Open",
+            render: (page) => (
+              <Cluster gap="2">
+                <ButtonLink size="sm" to={fullAddress(reactAddress(page))} target="_blank" rel="noopener">
+                  React
+                </ButtonLink>
+                {spec.html === "none" ? null : (
+                  <ButtonLink size="sm" to={fullAddress(htmlAddress(page))} target="_blank" rel="noopener">
+                    HTML
+                  </ButtonLink>
+                )}
+              </Cluster>
+            ),
+          },
+        ]}
+      />
+    </Section>
+  );
+}
+
 export function ShellPage({ spec, set }: { spec: ComponentSpec; set: ExampleSet }) {
   return (
     <Page title={spec.name} description={headline(spec.description)}>
       <Badges spec={spec} />
       <ShellDemo spec={spec} />
       <MoreText text={spec.description} />
+      <SamplePages spec={spec} />
       <Section title="Reference">
         <ReferenceView spec={spec} />
       </Section>

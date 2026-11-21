@@ -136,4 +136,18 @@ export default behaviour("file", {
     await field.evaluate((el) => el.setAttribute("data-invalid", ""));
     await expect(group).toHaveAttribute("aria-invalid", "true");
   },
+  "in a narrow box the button stays inside the drop zone": async ({ example, expect }) => {
+    const picker = example("default").locator(".t-file").first();
+    await picker.evaluate((el) => {
+      (el as HTMLElement).style.width = "150px";
+    });
+    const [zone, button] = await Promise.all([
+      picker.locator(".t-file-zone").boundingBox(),
+      picker.getByRole("button").first().boundingBox(),
+    ]);
+    if (!zone || !button) throw new Error("no box");
+    expect(button.x + button.width).toBeLessThanOrEqual(zone.x + zone.width);
+    // The label breaks between words only: no line of it is shorter than its shortest word.
+    expect(button.height).toBeLessThan(4 * 24);
+  },
 });
