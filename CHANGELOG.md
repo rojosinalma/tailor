@@ -4,6 +4,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 
 ## [Unreleased]
 
+## [2.2.0] — 2026-11-21
+
 ### Added
 
 - Layout `tool-page` (pack `layouts`): inputs beside a result in a fill page. A form with a file picker in
