@@ -56,6 +56,7 @@ export const APP_PAGES: readonly AppPage[] = [
   page("bare", "error", "Error", "Error page"),
   page("bare", "offline", "Offline", "Offline page"),
   page("bare", "error-long", "Error", "An error with long details and no break", true),
+  page("bare", "error-details", "Error", "The same error with its details open", true),
 ];
 
 export const appPages = (shell: string): readonly AppPage[] => APP_PAGES.filter((p) => p.shell === shell);

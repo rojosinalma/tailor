@@ -11,9 +11,9 @@
 .t-stepper-step {
   display: grid;
   flex: 1 1 auto;
-  grid-template-columns: auto minmax(0, auto) 1fr;
+  /* A step gives way down to its longest word, never inside one ("Chec" over "k"). */
+  grid-template-columns: auto minmax(min-content, auto) 1fr;
   align-items: start;
-  min-width: 0;
 }
 
 .t-stepper-step:last-child {
@@ -39,7 +39,6 @@
   display: flex;
   flex-direction: column;
   grid-area: 1 / 2;
-  min-width: 0;
   padding-top: calc(var(--t-text-sm) - 0.5lh);
   padding-inline-start: var(--t-space-2);
   line-height: var(--t-leading-tight);

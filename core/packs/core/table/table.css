@@ -24,6 +24,8 @@
 .t-table th,
 .t-table td {
   padding: var(--t-space-2) var(--t-space-3);
+  /* A table is never narrower than its longest word: a name with no place to break breaks anywhere. */
+  overflow-wrap: anywhere;
   border-bottom: var(--t-border-w) solid var(--t-border);
   text-align: start;
   vertical-align: middle;
@@ -35,11 +37,26 @@
   font-size: var(--t-text-sm);
   font-weight: var(--t-label-weight);
   text-transform: var(--t-label-transform);
-  white-space: nowrap;
+  /* A header breaks between its words when the table is squeezed, never inside one. */
+  overflow-wrap: break-word;
 }
 
 .t-table tbody th {
   font-weight: var(--t-weight-medium);
+}
+
+/*
+ * A text cell keeps room for a short name: a host such as web-1, a version, a status. The page breaks a long
+ * word anywhere, so a squeezed table gave such a cell the width of a few letters and broke the name at its
+ * hyphen ("web-" over "1") or in the middle ("metri" over "cs"). Longer text still wraps in its cell.
+ */
+.t-table tbody :is(th, td):not([data-kind], :has(*)) {
+  box-sizing: content-box;
+  min-width: 8ch;
+}
+
+.t-table tbody th:not([data-kind], :has(*)) {
+  min-width: 12ch;
 }
 
 .t-table tbody tr:last-child > * {
@@ -62,6 +79,9 @@
 .t-table [data-kind="num"] {
   font-variant-numeric: tabular-nums;
   text-align: end;
+}
+
+.t-table td[data-kind="num"] {
   white-space: nowrap;
 }
 
@@ -110,12 +130,24 @@
   .t-table [data-priority="low"] {
     display: none;
   }
+
+  /* A narrower table keeps less room between its columns, so the names in them keep theirs. */
+  .t-table th,
+  .t-table td {
+    padding-inline: var(--t-space-2);
+  }
 }
 
 @container t-table (max-width: 40rem) {
+  /* The scroll form keeps every cell on one line, so no cell needs the room for a short name. */
   .t-table[data-narrow="scroll"] th,
   .t-table[data-narrow="scroll"] td {
     white-space: nowrap;
+  }
+
+  /* The scroll form keeps every cell on one line, so no cell needs the room for a short name. */
+  .t-table[data-narrow="scroll"] tbody :is(th, td) {
+    min-width: 0;
   }
 
   /* Cards: each row is a card, each cell a "label value" line. The header row stays for screen readers. */

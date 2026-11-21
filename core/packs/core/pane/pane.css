@@ -28,6 +28,11 @@
   border-bottom: var(--t-border-w) solid var(--t-border);
 }
 
+/* What the footer holds shrinks with the pane, so a long name wraps in it instead of reaching past it. */
+.t-pane-footer > * {
+  min-width: 0;
+}
+
 .t-pane-footer {
   justify-content: flex-end;
   border-top: var(--t-border-w) solid var(--t-border);

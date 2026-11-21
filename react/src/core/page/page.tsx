@@ -1,7 +1,7 @@
 import { more } from "@tailor/core/glyphs.gen";
 import { t } from "@tailor/core/text";
 import type spec from "@tailor/packs/core/page/spec";
-import type { ReactNode } from "react";
+import { type ReactNode, useId } from "react";
 import { Glyph } from "../../glyph";
 import { Button, ButtonLink } from "../button/button";
 import { Menu, type MenuActionItem, type MenuSeparatorItem } from "../menu/menu";
@@ -76,6 +76,7 @@ export function Page({
   children,
 }: PageProps) {
   const hasMore = moreActions !== undefined && moreActions.length > 0;
+  const titleId = useId();
   return (
     <div
       className="t-page"
@@ -87,11 +88,15 @@ export function Page({
         <div className="t-page-heading">
           {status ? (
             <div className="t-page-title-row">
-              <h1 className="t-page-title">{title}</h1>
+              <h1 className="t-page-title" id={titleId}>
+                {title}
+              </h1>
               <span className="t-page-status">{status}</span>
             </div>
           ) : (
-            <h1 className="t-page-title">{title}</h1>
+            <h1 className="t-page-title" id={titleId}>
+              {title}
+            </h1>
           )}
           {description ? <p className="t-page-description">{description}</p> : null}
         </div>
@@ -103,7 +108,14 @@ export function Page({
           </div>
         ) : null}
       </header>
-      <div className="t-page-body">{children}</div>
+      <section
+        className="t-page-body"
+        // biome-ignore lint/a11y/noNoninteractiveTabindex: the body scrolls, so it takes the focus: the keyboard can scroll it when nothing in it is focusable.
+        tabIndex={0}
+        aria-labelledby={titleId}
+      >
+        {children}
+      </section>
     </div>
   );
 }

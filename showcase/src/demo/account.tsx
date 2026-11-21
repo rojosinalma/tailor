@@ -29,9 +29,11 @@ export function BarePage({ id, context }: { id: string; context: AppContext }) {
         </BareShell>
       );
     case "error-long":
+    case "error-details":
       return (
         <BareShell align="center" theme={THEME}>
           <ErrorPage
+            detailsOpen={id === "error-details"}
             title="The console could not start"
             text="The settings service did not answer in time. The details below help the person who runs the console."
             details={ERROR_DETAILS}

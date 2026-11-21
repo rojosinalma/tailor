@@ -6,7 +6,9 @@ import { Input } from "../../core/input/input";
 import { NumberField } from "../../core/number/number";
 import { Page } from "../../core/page/page";
 import { Select } from "../../core/select/select";
+import { StateLabel } from "../../core/state-label/state-label";
 import { Switch } from "../../core/switch/switch";
+import { Table, type TableColumn } from "../../core/table/table";
 import {
   Form,
   FormActions,
@@ -15,6 +17,7 @@ import {
   type SubmitResult,
   useTailorForm,
 } from "../../forms/form/form";
+import { SERVICE_ROWS, SERVICE_STATUS, type ServiceRow } from "../list-page/list-page";
 
 // Sample data: the new service as the form starts it, and the hosts it can run on.
 
@@ -130,6 +133,20 @@ export function AddServiceDialog({ trigger }: { trigger: ReactElement }) {
   );
 }
 
+/** The records under the dialog: a short list of services. */
+const SERVICE_COLUMNS: readonly TableColumn<ServiceRow>[] = [
+  { key: "name", header: "Name" },
+  { key: "host", header: "Host" },
+  {
+    key: "status",
+    header: "Status",
+    render: (row) => (
+      <StateLabel tone={SERVICE_STATUS[row.status].tone}>{SERVICE_STATUS[row.status].label}</StateLabel>
+    ),
+  },
+  { key: "image", header: "Image", priority: "low" },
+];
+
 /** A small page with the button that opens the dialog: the record is added without leaving the page. */
 export function FormDialogLayout() {
   return (
@@ -146,7 +163,7 @@ export function FormDialogLayout() {
         />
       }
     >
-      <p>The list of services goes here.</p>
+      <Table columns={SERVICE_COLUMNS} rows={SERVICE_ROWS.slice(0, 6)} rowKey={(row) => row.id} />
     </Page>
   );
 }

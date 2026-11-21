@@ -37,6 +37,10 @@ is the guide for writing a component, a shell, a skin or a palette; the checks e
 for the components you changed. `bin/check --release` runs everything. A new or changed image is accepted
 with `--update-images` after you looked at it in `checks/.images/`.
 
+`bin/agent-check` is the agent build test: an agent builds each brief of `checks/agent/briefs/` from the
+release and its reference alone, and the page checks run on its result. It needs the `opencode` command and
+takes several minutes per brief, so it runs before a release, not on every change.
+
 ## Commits and releases
 
 Plain descriptive commit messages. Commits and tags are signed. Versions follow semver: a change to a

@@ -84,6 +84,11 @@
   overscroll-behavior: contain;
 }
 
+/* The body cuts off what is outside it, so its ring goes inside. */
+.t-page-body:focus-visible {
+  outline-offset: calc(var(--t-focus-w) * -1);
+}
+
 /* Fill: the body takes exactly the free height and never scrolls; its children scroll alone. */
 .t-page[data-mode="fill"] > .t-page-body {
   display: flex;

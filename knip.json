@@ -2,7 +2,7 @@
   "$schema": "https://unpkg.com/knip@6/schema.json",
   "workspaces": {
     ".": {
-      "entry": ["bin/build", "bin/check", "bin/tailor", "bin/lib/*.ts"],
+      "entry": ["bin/build", "bin/check", "bin/agent-check", "bin/tailor", "bin/lib/*.ts"],
       "project": ["bin/**"]
     },
     "core": {

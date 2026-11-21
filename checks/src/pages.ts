@@ -42,7 +42,7 @@ const screenOf = (name: string): Screen => {
   if (!screen) throw new Error(`no screen named ${name}`);
   return screen;
 };
-const TOUCH = 44;
+export const TOUCH = 44;
 const ICON_WAIT = 10_000;
 
 /** What a dropped connection or a page that never arrived looks like in a page error. */
@@ -57,7 +57,7 @@ interface AxeEngine {
 }
 
 /** The accessibility target: WCAG 2.2 level AA. */
-const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
+export const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
 
 /** One page of a sample app to check, in the React kit and, when the shell has one, the HTML kit. */
 export interface AppCheck {
@@ -235,7 +235,7 @@ async function sameByKey(
 }
 
 /** Runs in the page: finds what a person would have to correct by hand. */
-function inspect(touch: boolean, touchSize: number): { rule: string; message: string }[] {
+export function inspect(touch: boolean, touchSize: number): { rule: string; message: string }[] {
   const problems: { rule: string; message: string }[] = [];
   const name = (el: Element): string => {
     const cls =
@@ -302,6 +302,8 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
   const interactive =
     "button, a[href], input:not([type=hidden]), select, textarea, summary, [role=button], [role=tab], [role=option], [role=menuitem], [role=switch], [role=checkbox], [role=radio], [role=slider], [role=combobox]";
   const controls: { el: Element; rect: DOMRect }[] = [];
+  // While a modal dialog is open, the page under it takes no input: only the controls in the dialog count.
+  const modal = document.querySelector(":modal");
   for (const el of document.querySelectorAll("body *")) {
     if (!visible(el)) continue;
     const rect = el.getBoundingClientRect();
@@ -331,9 +333,142 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
     if (
       el.matches(interactive) &&
       !el.closest("[aria-hidden=true]") &&
-      !(el instanceof HTMLInputElement && el.tabIndex < 0)
+      !(el instanceof HTMLInputElement && el.tabIndex < 0) &&
+      (!modal || modal.contains(el))
     ) {
       controls.push({ el, rect });
+    }
+  }
+
+  // Content cut by a box around it. A box that clips (overflow hidden or clip) hides what reaches past its
+  // edge, unless it says so with an ellipsis or a line clamp. A box that scrolls in both directions (a pane, a
+  // page region) is not meant to scroll sideways: what reaches past its side is cut in the picture, unless it is
+  // preformatted text (code, a log). A box that scrolls sideways only (overflow-y hidden: a tab strip, a table
+  // in its scroll form, a code block) scrolls by design. The walk stops at the nearest box that scrolls.
+  const isText = (el: Element): boolean =>
+    [...el.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && (n.textContent ?? "").trim() !== "");
+  for (const el of document.querySelectorAll("body *")) {
+    const own = getComputedStyle(el);
+    if (own.position === "fixed") continue;
+    if (!(isText(el) || el.matches(interactive)) || !visible(el)) continue;
+    if (el.closest("[aria-hidden=true], .t-skeleton")) continue;
+    const rect = el.getBoundingClientRect();
+    let absolute = own.position === "absolute";
+    let found: string | null = null;
+    for (let node = el.parentElement; node && node !== document.body && !found; node = node.parentElement) {
+      const style = getComputedStyle(node);
+      if (node.matches(":modal, :popover-open")) break;
+      // An absolutely placed element is clipped only from its containing block (a placed ancestor) up.
+      if (absolute && style.position === "static") continue;
+      absolute = style.position === "absolute";
+      if (style.position === "fixed") break;
+      const [x, y] = [style.overflowX, style.overflowY];
+      if (x === "visible" && y === "visible") continue;
+      const box = node.getBoundingClientRect();
+      const past = {
+        left: box.left - rect.left,
+        right: rect.right - box.right,
+        top: box.top - rect.top,
+        bottom: rect.bottom - box.bottom,
+      };
+      const sideways = Math.max(past.left, past.right);
+      const scrolls = (v: string): boolean => v === "auto" || v === "scroll";
+      if (scrolls(x) || scrolls(y)) {
+        const preformatted = own.whiteSpace === "pre";
+        if (scrolls(x) && scrolls(y) && sideways > 1 && !preformatted)
+          found = `${name(el)} reaches ${Math.round(sideways)}px past the side of ${name(node).split(" ")[0]}, which scrolls in both directions; it is cut in the picture`;
+        break;
+      }
+      const marked = style.textOverflow === "ellipsis" || style.webkitLineClamp !== "none";
+      const cut = Math.max(
+        x === "visible" ? 0 : sideways,
+        y === "visible" ? 0 : Math.max(past.top, past.bottom),
+      );
+      if (cut > 1 && !marked)
+        found = `${name(el)} is cut by ${name(node).split(" ")[0]}: it reaches ${Math.round(cut)}px past its edge`;
+    }
+    if (found) problems.push({ rule: "clipped", message: found });
+  }
+
+  // A word breaks only where a person would break it: after a hyphen, a dot, a slash or a low line, never in
+  // the middle; in a table cell a short one (at most 8 characters, such as a host "web-1") stays whole ("nas-document" over "s", "€12,48" over "0"). A word longer than 16
+  // characters is a path, an address or a name with no place to break: it may break anywhere. Code and logs
+  // (preformatted text) break where they must.
+  const lineWidth = (el: Element): number => {
+    const style = getComputedStyle(el);
+    const block = style.display === "inline" ? (el.parentElement ?? el) : el;
+    const b = getComputedStyle(block);
+    return block.clientWidth - Number.parseFloat(b.paddingLeft) - Number.parseFloat(b.paddingRight);
+  };
+  const wordWidth = (node: Node, from: number, length: number): number => {
+    const range = document.createRange();
+    let width = 0;
+    for (let i = from; i < from + length; i++) {
+      range.setStart(node, i);
+      range.setEnd(node, i + 1);
+      width += range.getBoundingClientRect().width;
+    }
+    return width;
+  };
+  const textBoxes = new Set<Element>();
+  for (const node of document.querySelectorAll("body *")) {
+    if ([...node.childNodes].some((n) => n.nodeType === Node.TEXT_NODE && /\S{2}/.test(n.textContent ?? "")))
+      textBoxes.add(node);
+  }
+  for (const cell of textBoxes) {
+    if (cell.closest("pre, code, kbd, samp, textarea, [aria-hidden=true]")) continue;
+    // Text for screen readers only sits in a box of one pixel.
+    let hidden = false;
+    for (let up: Element | null = cell; up && !hidden; up = up.parentElement) {
+      const box = up.getBoundingClientRect();
+      hidden = box.width <= 1 || box.height <= 1 || getComputedStyle(up).clipPath === "inset(50%)";
+    }
+    if (hidden) continue;
+    if (/^pre/.test(getComputedStyle(cell).whiteSpace) || !visible(cell)) continue;
+    for (const node of cell.childNodes) {
+      if (node.nodeType !== Node.TEXT_NODE) continue;
+      const text = node.textContent ?? "";
+      const range = document.createRange();
+      const lines = (from: number, to: number): number => {
+        range.setStart(node, from);
+        range.setEnd(node, to);
+        const tops: number[] = [];
+        for (const r of range.getClientRects())
+          if (r.width > 0 && !tops.some((top) => Math.abs(top - r.top) < r.height / 2)) tops.push(r.top);
+        return tops.length;
+      };
+      // Most text stays on one line: only a text that wraps is looked at word by word.
+      if (lines(0, text.length) < 2) continue;
+      for (const match of text.matchAll(/\S+/g)) {
+        const word = match[0];
+        if (word.length < 2 || word.length > 16) continue;
+        const at = match.index ?? 0;
+        if (lines(at, at + word.length) < 2) continue;
+        let lastTop: number | null = null;
+        for (let i = 0; i < word.length; i++) {
+          range.setStart(node, at + i);
+          range.setEnd(node, at + i + 1);
+          const rect = range.getClientRects()[0];
+          if (!rect || rect.width === 0) continue;
+          if (lastTop !== null && rect.top > lastTop + rect.height / 2) {
+            const before = word[i - 1] ?? "";
+            // In a table cell a short name stays whole; in running text it may break after its hyphen. A word
+            // wider than the whole line of its box cannot fit: outside a table (whose columns share the room)
+            // it breaks where it must.
+            const inTable = cell.closest(".t-table td, .t-table th") !== null;
+            const short = word.length <= 8 && inTable;
+            const fits = inTable || lineWidth(cell) >= wordWidth(node, at, word.length);
+            if (fits && (short || !/[-./_]/.test(before))) {
+              problems.push({
+                rule: "broken-word",
+                message: `${name(cell).split(" ")[0]} breaks "${word}" after "${word.slice(0, i)}"`,
+              });
+              break;
+            }
+          }
+          lastTop = rect.top;
+        }
+      }
     }
   }
 
@@ -426,7 +561,7 @@ function inspect(touch: boolean, touchSize: number): { rule: string; message: st
   return problems;
 }
 
-async function settle(page: Page): Promise<void> {
+export async function settle(page: Page): Promise<void> {
   // An example that plays something over time (a reply that arrives) marks itself with data-sc-wait until it ends.
   await page
     .waitForFunction(() => !document.querySelector("[data-sc-wait]"), undefined, { timeout: 3000 })

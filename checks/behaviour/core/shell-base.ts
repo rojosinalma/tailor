@@ -17,7 +17,7 @@ export async function fullScreen(example: Locator): Promise<void> {
 
 /** The frame fills the window and never scrolls; the page body inside it does. */
 export async function frameStays(page: Page, example: Locator): Promise<void> {
-  if ((page.viewportSize()?.height ?? 0) > 500) await page.setViewportSize({ width: 1280, height: 500 });
+  if ((page.viewportSize()?.height ?? 0) > 400) await page.setViewportSize({ width: 1280, height: 400 });
   await fullScreen(example);
   const sizes = await page.evaluate(() => ({
     scroll: document.scrollingElement?.scrollHeight ?? 0,

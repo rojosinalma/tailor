@@ -99,7 +99,7 @@
   body {
     font-size: var(--t-text-base);
     min-height: 100dvh;
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
   }
   h1,
   h2,

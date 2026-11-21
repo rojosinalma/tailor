@@ -73,6 +73,17 @@ describe("the reference", () => {
     expect(renderIndex(ref, ["core"])).not.toContain("Pack extra");
   });
 
+  test("a project's index says what it has and how to add a shell and the packs of a page", () => {
+    const index = renderIndex(ref, ["core"]);
+    expect(index).toContain("This project has the packs `core` and no shell yet.");
+    expect(index).toContain("tailor add --shell <shell> --packs <pack>,<pack>");
+    expect(index).toContain("Shells it can add: `top`.");
+    expect(index).toMatch(/- `extra`: /);
+    expect(index.indexOf("## Packs and shells of this project")).toBeLessThan(index.indexOf("## How to use"));
+    // The release's own index lists everything, so it has no such section.
+    expect(renderIndex(ref)).not.toContain("## Packs and shells of this project");
+  });
+
   test("a pack file: the full entries, with an anchor per component", () => {
     const core = ref.packs[0];
     if (!core) throw new Error("fixture");

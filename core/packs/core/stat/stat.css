@@ -5,6 +5,7 @@
   gap: var(--t-space-1);
   min-width: var(--t-measure-2xs);
   padding: var(--t-space-4);
+  container-type: inline-size;
   border: var(--t-border-w) solid var(--t-border);
   border-radius: var(--t-radius-box);
   background: var(--t-surface);
@@ -20,11 +21,11 @@
 
 .t-stat-value {
   font-family: var(--t-font-heading);
-  font-size: var(--t-text-3xl);
+  /* A narrow stat draws its number smaller rather than break it ("1,28" over "4"). */
+  font-size: min(var(--t-text-3xl), 20cqi);
   font-weight: var(--t-heading-weight);
   font-variant-numeric: tabular-nums;
   line-height: var(--t-leading-tight);
-  overflow-wrap: anywhere;
 }
 
 .t-stat[data-tone] > .t-stat-value {

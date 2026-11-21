@@ -22,7 +22,7 @@
   color: inherit;
   font: inherit;
   text-transform: inherit;
-  white-space: nowrap;
+  text-align: inherit;
 }
 
 /* The hit area covers the padding of the header cell; on a touch screen it reaches the touch size. */

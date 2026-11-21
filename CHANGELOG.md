@@ -24,6 +24,15 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   `fill-body-scroll` fails a fill page wider than 40rem whose body scrolls.
 - Optional props for the sample data of the layouts: `ListPageLayout` `rows`, `loading`, `error`;
   `DetailPageLayout` `service`; `ToolPageLayout` `rendering`, `error`.
+- A project's `REFERENCE.md` names the packs and the shell the project has, lists the ones it can add, and
+  gives the `tailor add --shell … --packs …` line.
+- `ErrorPage` `detailsOpen`: the Details section starts open. The bare sample app has a stress page with it.
+- Page checks: rule `clipped` (text or a control cut by a box that clips, or past the side of a pane that
+  scrolls in both directions) and rule `broken-word` (a word broken in its middle, a short name broken in a
+  table cell). Only the controls of an open modal dialog count for the overlap and touch rules.
+- `bin/agent-check`, the agent build test: an agent builds each brief of `checks/agent/briefs/` (seven pages
+  in the owner's words, both kits) from the release and its reference alone, then the page checks and a scan
+  of the project's own files run on the result. Run on demand and before a release.
 
 ### Changed
 
@@ -33,6 +42,21 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   height each and showed one label and no preview.
 
 ### Fixed
+
+- A word breaks only when it does not fit: the page uses `overflow-wrap: break-word` (was `anywhere`), so
+  a box no longer shrinks to one letter and breaks a word in its middle ("€12,48" over "0" in a stat, "Chec"
+  over "k" in a stepper, a card title beside its actions). Tables keep breaking a name with no place to break.
+- Table: a text cell keeps room for a short name (8ch; the row's name 12ch), so a squeezed table no longer
+  breaks "web-1" at its hyphen or "nas-documents" in its middle; a header breaks between its words; a table
+  narrower than 64rem has narrower cell padding. The scroll form is unchanged.
+- A stat draws its value smaller in a narrow stat instead of breaking the number.
+- The page body takes the focus, so the keyboard can scroll a page with nothing focusable in it (WCAG 2.1.1).
+- Bare shell: an error, offline or not-found page is 32rem wide, with the shell's gutter only (it was 15rem).
+- Tabs and the board columns scroll sideways only.
+- A pane footer's content shrinks with the pane: a long file name wraps in it.
+- Form dialog layout: the page under the button shows a table of services, not a placeholder line.
+- A skeleton stops its shimmer under reduced motion.
+- A relative time breaks between its words, so two time columns no longer push a table past its box.
 
 - A split pane and a pane body hold their hidden parts: the hidden native control of a select at the end of
   a scrolled pane reached past it and made the body of a fill page scroll.

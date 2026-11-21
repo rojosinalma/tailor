@@ -139,6 +139,50 @@ const packLine = (pack: ReferencePack): string => {
 /** The path of a pack's file, relative to the index. */
 export const packFile = (pack: string): string => `reference/${pack}.md`;
 
+/**
+ * What the project has and what it can add. An agent that saw only the core pack built a shell and a settings
+ * page by hand: nothing said that the layouts and the shells of the table above are one command away.
+ */
+function installed(ref: Reference, packs: readonly string[]): string {
+  const name = (p: ReferencePack) => (p.shell ? p.id.replace(/^shell-/, "") : p.id);
+  const have = ref.packs.filter((p) => packs.includes(p.id));
+  const shell = have.find((p) => p.shell);
+  const missing = ref.packs.filter((p) => !packs.includes(p.id) && !p.shell);
+  const shells = ref.packs.filter((p) => p.shell && !packs.includes(p.id));
+  const lines = [
+    "## Packs and shells of this project",
+    "",
+    `This project has the packs ${have
+      .filter((p) => !p.shell)
+      .map((p) => `\`${p.id}\``)
+      .join(
+        ", ",
+      )} and ${shell ? `the shell \`${name(shell)}\`` : "no shell yet"}. This file lists only what it has.`,
+    "Before you build a page, add the shell and the packs that its row in the table above names (the layouts are",
+    "in the pack `layouts`), in the project folder:",
+    "",
+    "```sh",
+    `tailor add --shell ${shell ? name(shell) : "<shell>"} --packs <pack>,<pack>   # such as: --shell topnav --packs layouts`,
+    "```",
+    "",
+    "It copies their files, adds their entries to this reference, and prints the lines for `<head>` again: the",
+    "HTML kit needs the new stylesheet and script lines in every page, the React kit the new `bun add` line. A",
+    "project has one shell.",
+    "",
+  ];
+  if (shells.length > 0)
+    lines.push(`Shells it can add: ${shells.map((p) => `\`${name(p)}\``).join(", ")}.`, "");
+  if (missing.length > 0) {
+    lines.push("Packs it can add:", "");
+    for (const p of missing)
+      lines.push(
+        `- \`${p.id}\`: ${firstSentence(p.description)}${p.html === "none" ? " React kit only." : ""}`,
+      );
+    lines.push("");
+  }
+  return lines.join("\n");
+}
+
 /** The index: the "how to use" screen and one line per component. `packs` limits it to the installed packs. */
 export function renderIndex(ref: Reference, packs?: readonly string[]): string {
   const shells = ref.packs.filter((p) => p.shell).map((p) => p.id.replace(/^shell-/, ""));
@@ -146,6 +190,7 @@ export function renderIndex(ref: Reference, packs?: readonly string[]): string {
     `# tailor ${ref.version}: reference`,
     "",
     pickPage(),
+    ...(packs ? [installed(ref, packs)] : []),
     howTo(shells),
     "## Components",
     "",

@@ -19,6 +19,8 @@ export interface ErrorPageProps {
   homeTo?: string;
   /** The error message or a reference, in a closed Details section with a copy button. */
   details?: string;
+  /** Opens the Details section from the start. */
+  detailsOpen?: boolean;
 }
 
 const reload = (): void => window.location.reload();
@@ -30,6 +32,7 @@ export function ErrorPage({
   onRetry,
   homeTo = "/",
   details,
+  detailsOpen = false,
 }: ErrorPageProps) {
   const isStatic = useIsStatic();
   return (
@@ -54,6 +57,7 @@ export function ErrorPage({
         {details ? (
           <div className="t-status-page-details">
             <Accordion
+              defaultOpen={detailsOpen ? ["details"] : []}
               items={[
                 {
                   id: "details",

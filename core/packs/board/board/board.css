@@ -19,7 +19,7 @@
   align-items: flex-start;
   gap: var(--t-space-3);
   min-height: 0;
-  overflow-x: auto;
+  overflow: auto hidden;
   overscroll-behavior-x: contain;
   border-radius: var(--t-radius-box);
 }
@@ -53,7 +53,6 @@
   min-width: 0;
   font-size: var(--t-text-base);
   font-weight: var(--t-weight-bold);
-  overflow-wrap: anywhere;
 }
 
 .t-board-count {

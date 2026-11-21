@@ -92,8 +92,9 @@ tailor.json                         the record (below)
 The service worker script `tailor-sw.js` of the `pwa` pack goes to `<public>/tailor/js/` in both kits: the
 HTML kit loads it from there, and a React app serves a small `sw.js` of its own that imports it.
 
-The reference for agents is in two levels: `REFERENCE.md` is a short index (how to use tailor, then one line
-per component of the installed packs), and `reference/<pack>.md` holds the full entry of each component of
+The reference for agents is in two levels: `REFERENCE.md` is a short index (the kinds of page, the packs and
+shell the project has with the line that adds more, how to use tailor, then one line per component of the
+installed packs), and `reference/<pack>.md` holds the full entry of each component of
 that pack: its import, classes, props with their allowed values, and its first example in each kit.
 
 In `package.json`, the type packages (`@types/…`) are optional peer dependencies: the project compiles this

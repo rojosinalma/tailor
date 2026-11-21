@@ -22,7 +22,8 @@
 
 .t-card-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  /* The title keeps room for a word or two beside the actions; it never breaks inside a word. */
+  grid-template-columns: minmax(min(var(--t-measure-2xs), 100%), 1fr) auto;
   align-items: center;
   column-gap: var(--t-space-3);
   row-gap: var(--t-space-1);

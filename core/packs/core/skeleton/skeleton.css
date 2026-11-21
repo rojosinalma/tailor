@@ -65,3 +65,14 @@
     background-position: 0 0;
   }
 }
+
+/*
+ * With reduced motion the shimmer stops: a zero-length animation that repeats forever showed a different
+ * moment of the shimmer in each picture.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .t-skeleton,
+  .t-skeleton-line {
+    animation: none;
+  }
+}

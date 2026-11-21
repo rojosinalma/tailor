@@ -1,0 +1,193 @@
+#!/usr/bin/env bun
+/**
+ * The agent build test. For each brief in checks/agent/briefs/, an agent builds the page in a project of its
+ * own from tailor's files and reference only; then the page checks run on its result. Slow and not
+ * repeatable (an agent decides differently each time), so it is not part of bin/check: run it on demand and
+ * before a release.
+ *
+ *   bin/agent-check [brief …]     all briefs, or the named ones
+ *   --inspect-only                check the pages of the last run again, without the agent
+ *   --jobs=N                      briefs at a time (default 3)
+ *   --timeout=M                   minutes for one agent (default 15)
+ *
+ * TAILOR_AGENT_MODEL=<provider/model> picks the agent's model; OPENCODE_BIN names the opencode command. Scratch projects, reports and pictures go to
+ * .agents/tmp/agent-check/ (git-ignored). The release comes from this checkout, in a store of its own there.
+ */
+import { $ } from "bun";
+import { mkdir, rm, writeFile } from "node:fs/promises";
+import { join } from "node:path";
+import { connectBrowser, pool } from "../checks/src/browser";
+import {
+  type Brief,
+  grouped,
+  inspectSite,
+  parseBrief,
+  type Problem,
+  prompt,
+  relativeToRepo,
+  scanProject,
+} from "../checks/src/agent";
+import { serve } from "./lib/serve";
+import { at } from "./lib/paths";
+
+const args = process.argv.slice(2);
+const option = (name: string, fallback: number): number => {
+  const raw = args.find((a) => a.startsWith(`--${name}=`));
+  return raw ? Number(raw.slice(name.length + 3)) : fallback;
+};
+const inspectOnly = args.includes("--inspect-only");
+const jobs = option("jobs", 3);
+const timeoutMs = option("timeout", 15) * 60_000;
+const names = args.filter((a) => !a.startsWith("--"));
+
+const OPENCODE = process.env.OPENCODE_BIN ?? "opencode";
+const WORK = at(".agents/tmp/agent-check");
+const STORE = join(WORK, "store");
+const BIN = join(WORK, "bin");
+
+const briefFiles = (await Array.fromAsync(new Bun.Glob("*.md").scan(at("checks/agent/briefs")))).sort();
+const briefs: Brief[] = [];
+for (const file of briefFiles) {
+  const id = file.replace(/\.md$/, "");
+  if (names.length > 0 && !names.includes(id)) continue;
+  briefs.push(parseBrief(id, await Bun.file(at(`checks/agent/briefs/${file}`)).text()));
+}
+for (const name of names)
+  if (!briefs.some((b) => b.id === name)) {
+    console.error(`no brief named ${name} (checks/agent/briefs/)`);
+    process.exit(2);
+  }
+
+/** The environment of the agent: the release of this checkout, and a tailor command that cannot build. */
+const env = { ...process.env, TAILOR_RELEASES: STORE, PATH: `${BIN}:${process.env.PATH ?? ""}` };
+
+/** What the agent may use in its project: its own files only, no skills and no tools from outside. */
+const OPENCODE_CONFIG = {
+  $schema: "https://opencode.ai/config.json",
+  policies: [
+    { action: "skill.use", resource: "*", effect: "deny" },
+    { action: "mcp.use", resource: "*", effect: "deny" },
+    { action: "tool.use", resource: "external_directory:*", effect: "deny" },
+    { action: "tool.use", resource: "subagent:*", effect: "deny" },
+  ],
+};
+
+if (!inspectOnly) {
+  // The release of this checkout, in a store of the test's own: the store of the machine stays as it is.
+  await mkdir(BIN, { recursive: true });
+  const built = await $`bun bin/build --release --install`.cwd(at(".")).env(env).nothrow().quiet();
+  if (built.exitCode !== 0) {
+    console.error(built.stderr.toString() || built.stdout.toString());
+    process.exit(1);
+  }
+  await writeFile(
+    join(BIN, "tailor"),
+    `#!/bin/sh\n# The tailor command for the agent build test: the release of this checkout, never a build.\nif [ "$1" = "build" ]; then echo "tailor build is not available here" >&2; exit 2; fi\nexec bun ${at("bin/tailor")} "$@"\n`,
+    { mode: 0o755 },
+  );
+}
+
+interface Outcome {
+  readonly brief: Brief;
+  readonly agent: "done" | "timeout" | "failed" | "skipped";
+  readonly minutes: number;
+  readonly problems: Problem[];
+  readonly states: number;
+}
+
+const browser = await connectBrowser();
+
+async function runBrief(brief: Brief): Promise<Outcome> {
+  const dir = join(WORK, brief.id);
+  const project = join(dir, "project");
+  const started = performance.now();
+  let agent: Outcome["agent"] = "skipped";
+  if (!inspectOnly) {
+    await rm(dir, { recursive: true, force: true });
+    await mkdir(project, { recursive: true });
+    // A repository of its own, so the agent's tools see this folder as the project and nothing around it.
+    await $`git init -q`.cwd(project).quiet();
+    await writeFile(join(project, "opencode.json"), `${JSON.stringify(OPENCODE_CONFIG, null, 2)}\n`);
+    const added = await $`bun ${at("bin/tailor")} add . --kit ${brief.kit} --offline`.cwd(project).env(env).nothrow().quiet();
+    await writeFile(join(dir, "tailor-add.log"), added.stdout.toString() + added.stderr.toString());
+    if (added.exitCode !== 0) throw new Error(`${brief.id}: tailor add failed (see ${relativeToRepo(dir)}/tailor-add.log)`);
+    const model = process.env.TAILOR_AGENT_MODEL ? ["--model", process.env.TAILOR_AGENT_MODEL] : [];
+    const child = Bun.spawn(
+      [OPENCODE, "run", "--agent", "build", "--auto", "--archived", "--title", `tailor agent-check ${brief.id}`, ...model, prompt(brief)],
+      // opencode takes its folder from PWD, not from the working directory of the process.
+      { cwd: project, env: { ...env, PWD: project }, stdout: "pipe", stderr: "pipe" },
+    );
+    const timer = setTimeout(() => child.kill(), timeoutMs);
+    const [out, err, code] = await Promise.all([new Response(child.stdout).text(), new Response(child.stderr).text(), child.exited]);
+    clearTimeout(timer);
+    await writeFile(join(dir, "agent.log"), out + err.split("\n").filter((l) => !l.startsWith("timestamp=")).join("\n"));
+    agent = child.signalCode ? "timeout" : code === 0 ? "done" : "failed";
+  }
+  const minutes = (performance.now() - started) / 60_000;
+
+  const problems: Problem[] = [];
+  if (agent === "timeout") problems.push({ rule: "agent-timeout", message: `the agent did not finish in ${timeoutMs / 60_000} minutes`, where: "agent" });
+  if (agent === "failed") problems.push({ rule: "agent-failed", message: "the agent run ended with an error (see agent.log)", where: "agent" });
+  const kit = brief.kit;
+  if (!(await Bun.file(join(project, "public/index.html")).exists())) {
+    problems.push({ rule: "no-page", message: "public/index.html does not exist", where: "project" });
+  } else {
+    const site = serve(relativeToRepo(join(project, "public")));
+    try {
+      const result = await inspectSite(browser, site.url, brief.open, join(dir, "shots"));
+      problems.push(...result.problems);
+      problems.push(...(await scanProject(project, kit)));
+      return { brief, agent, minutes, problems, states: result.states };
+    } finally {
+      site.stop();
+    }
+  }
+  problems.push(...(await scanProject(project, kit)));
+  return { brief, agent, minutes, problems, states: 0 };
+}
+
+const outcomes = await pool(briefs, jobs, async (brief) => {
+  console.log(`start ${brief.id} (${brief.kit})`);
+  try {
+    const outcome = await runBrief(brief);
+    console.log(`${outcome.problems.length === 0 ? "pass" : "FAIL"} ${brief.id}: ${grouped(outcome.problems).length} problems, agent ${outcome.agent} in ${outcome.minutes.toFixed(1)} min`);
+    return outcome;
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.log(`FAIL ${brief.id}: ${message}`);
+    return { brief, agent: "failed", minutes: 0, problems: [{ rule: "runner", message, where: "runner" }], states: 0 } satisfies Outcome;
+  }
+});
+await browser.close();
+
+/** The report of one brief: the result, then each problem with its rule and where it shows. */
+function report(o: Outcome): string {
+  const groups = grouped(o.problems);
+  const lines = [
+    `# ${o.brief.id} (${o.brief.kit} kit): ${groups.length === 0 ? "pass" : "FAIL"}`,
+    "",
+    `Agent: ${o.agent}, ${o.minutes.toFixed(1)} min. Page states checked: ${o.states}. Pictures: shots/. The project: project/.`,
+    "",
+  ];
+  for (const g of groups) {
+    const where = g.where.length > 4 ? `${g.where.slice(0, 4).join(", ")} and ${g.where.length - 4} more` : g.where.join(", ");
+    lines.push(`- [${g.rule}] ${g.message}`, `  at: ${where}`);
+  }
+  return `${lines.join("\n")}\n`;
+}
+
+for (const o of outcomes) await writeFile(join(WORK, o.brief.id, "report.md"), report(o));
+const summary = [
+  "# Agent build test",
+  "",
+  "| Brief | Kit | Result | Problems | Agent | Minutes |",
+  "| ----- | --- | ------ | -------- | ----- | ------- |",
+  ...outcomes.map((o) => {
+    const n = grouped(o.problems).length;
+    return `| ${o.brief.id} | ${o.brief.kit} | ${n === 0 ? "pass" : "FAIL"} | ${n} | ${o.agent} | ${o.minutes.toFixed(1)} |`;
+  }),
+  "",
+];
+await writeFile(join(WORK, "summary.md"), summary.join("\n"));
+console.log(`\n${summary.join("\n")}\nreports: ${relativeToRepo(WORK)}/<brief>/report.md`);
+process.exit(outcomes.every((o) => o.problems.length === 0) ? 0 : 1);
