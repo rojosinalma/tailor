@@ -123,6 +123,16 @@ export default behaviour("topnav", {
     await old.getByRole("button", { name: "Menu" }).click();
     await expect(page.locator("#old_R_0H1_").getByRole("link", { name: "Hosts" })).toBeVisible();
   },
+  "the phone form: the page header scrolls away with the content": async ({ example, expect }) => {
+    const page = example("narrow").locator(".t-page");
+    const header = page.locator(".t-page-header");
+    const before = await header.boundingBox();
+    expect(await page.evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
+    await page.evaluate((el) => el.scrollTo(0, el.scrollHeight));
+    const after = await header.boundingBox();
+    if (!before || !after) throw new Error("no box");
+    expect(after.y).toBeLessThan(before.y - before.height + 1);
+  },
   "the phone form: the search folds into a button that opens it under the bar": async ({ page, example }) => {
     await phoneSearchWorks(page, example("narrow"));
   },

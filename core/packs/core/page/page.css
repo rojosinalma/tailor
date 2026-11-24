@@ -115,6 +115,31 @@
   }
 }
 
+/*
+ * A phone: the header stays pinned, so it is compact: a smaller title, a description of at most two lines,
+ * and less room above and below it.
+ */
+@container t-page (max-width: 40rem) {
+  .t-page-header {
+    padding-top: var(--t-space-3);
+  }
+
+  .t-page-title {
+    font-size: var(--t-text-xl);
+  }
+
+  .t-page-description {
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .t-page-body {
+    padding-top: var(--t-space-4);
+  }
+}
+
 @container (max-width: 40rem) {
   .t-page-actions {
     flex-basis: 100%;
@@ -126,5 +151,21 @@
 
   .t-page-more {
     display: contents;
+  }
+}
+
+/*
+ * A scroll page in a shell as narrow as a phone: the header scrolls away with the content, so the whole
+ * screen below the bar is for the page. A fill page keeps its header: its parts keep their own height.
+ */
+@container t-shell (max-width: 40rem) {
+  .t-page:not([data-mode="fill"]) {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .t-page:not([data-mode="fill"]) > .t-page-body {
+    flex: none;
+    overflow: visible;
   }
 }

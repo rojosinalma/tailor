@@ -159,10 +159,12 @@ behaviour. A page needs no build tool.
    result. A `MediaFit` there fits the width and stays within 70 % of the screen height. A part that keeps
    its own height (a list and detail, a log, one `Pane`) still scrolls alone. The tool page does this. On a
    wider screen a fill page never scrolls: only its panes do, and the page check fails a body that scrolls.
-3. A component adapts to the space it sits in, so a table in a narrow panel takes its narrow form on a wide
+3. A scroll page on a phone scrolls as a whole: its header goes up with the content, and it is compact (a
+   smaller title, a description of at most two lines). A fill page keeps its header, compact as well.
+4. A component adapts to the space it sits in, so a table in a narrow panel takes its narrow form on a wide
    screen too.
-4. A tablet on its side is as wide as a small desktop: it gets the desktop layout, with the touch sizes.
-5. The page needs the viewport line from `head.html`. Nothing else.
+5. A tablet on its side is as wide as a small desktop: it gets the desktop layout, with the touch sizes.
+6. The page needs the viewport line from `head.html`. Nothing else.
 
 ## 5. An installable app (the pack `pwa`)
 

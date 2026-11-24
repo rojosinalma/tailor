@@ -34,6 +34,9 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   holds a drawer or "More" (2.2.0 and before) keeps them. With `phoneNav="bar"` the markup is as before.
 - The reference (REFERENCE.md, `reference/<pack>.md`, the HTML markup files, the showcase's code) leaves out
   `contained` and `data-contained`: they only fit a preview of a shell into a box. REFERENCE.md says so.
+- A scroll page in a shell as narrow as a phone scrolls as a whole: its header goes up with the content. On a
+  phone the page header is compact: a smaller title, a description of at most two lines, less room around it.
+  The header of a detail page took a quarter of a phone screen.
 
 ### Fixed
 
