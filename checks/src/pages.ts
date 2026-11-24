@@ -493,12 +493,18 @@ export function inspect(touch: boolean, touchSize: number): { rule: string; mess
     return boxes;
   };
 
+  // An open popup that is not modal (a popover, a menu, a select's list, a dialog opened with show()) lies
+  // over the page by design: a control under it is covered, not overlapped. The popup's own controls still
+  // count among themselves, and the page's among themselves.
+  const POPUP = ":popover-open, dialog[open]:not(:modal), .t-popup-positioner";
+  const layerOf = (el: Element): Element | null => el.closest(POPUP);
   for (let i = 0; i < controls.length; i++) {
     const a = controls[i];
     if (!a) continue;
     for (let j = i + 1; j < controls.length; j++) {
       const b = controls[j];
       if (!b || a.el.contains(b.el) || b.el.contains(a.el)) continue;
+      if (layerOf(a.el) !== layerOf(b.el)) continue;
       // A link that wraps has one box per line, so the boxes are compared line by line.
       let worst: [number, number] | null = null;
       for (const ra of shown(a.el)) {
@@ -523,6 +529,9 @@ export function inspect(touch: boolean, touchSize: number): { rule: string; mess
       const hit = document.elementFromPoint(x, y);
       if (!hit) return false;
       if (hit === el || el.contains(hit)) return true;
+      // An open popup covers this part of the control: what is under it is not measured.
+      const cover = layerOf(hit);
+      if (cover && !cover.contains(el)) return true;
       const label = hit.closest("label");
       if (label && (label.contains(el) || label.control === el)) return true;
       return hit.closest(".t-control, [data-t-hit]")?.contains(el) ?? false;

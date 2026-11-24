@@ -93,6 +93,21 @@ test("the controls under an open modal dialog do not count", async () => {
   expect((await rules(body)).filter((f) => f.startsWith("overlap:"))).toEqual([]);
 });
 
+test("the controls under an open popup that is not modal do not count; the popup's own controls do", async () => {
+  const under = `<button style="position:fixed;top:0;left:0;width:200px;height:60px">Under</button><button style="position:fixed;top:70px;left:0;width:200px;height:60px">Also under</button>`;
+  const popup = (inside: string) =>
+    `${under}<div id="p" popover="manual" style="margin:0;inset:0 auto auto 0;padding:0;width:220px;height:140px">${inside}</div><script>document.getElementById("p").showPopover()</script>`;
+  const one = '<button style="width:200px;height:60px">In the popup</button>';
+  expect((await rules(popup(one))).filter((f) => f.startsWith("overlap:"))).toEqual([]);
+  // A Base UI popup is a positioned box, not a popover element.
+  const positioner = `${under}<div class="t-popup-positioner" style="position:fixed;top:0;left:0;width:220px">${one}</div>`;
+  expect((await rules(positioner)).filter((f) => f.startsWith("overlap:"))).toEqual([]);
+  const two = `<button style="position:absolute;top:0;left:0;width:200px;height:60px">First</button><button style="position:absolute;top:20px;left:0;width:200px;height:60px">Second</button>`;
+  const found = (await rules(popup(two))).filter((f) => f.startsWith("overlap:"));
+  expect(found.length).toBe(1);
+  expect(found[0]).toContain('"First"');
+});
+
 test("a longer word broken in its middle is found; broken after its hyphen it is not", async () => {
   const cell = (width: string) =>
     `<table class="t-table"><tbody><tr><td style="width:${width};overflow-wrap:anywhere">nas-documents</td></tr></tbody></table>`;

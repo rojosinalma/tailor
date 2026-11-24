@@ -222,6 +222,7 @@ Append-only. One line per decision: what, why.
 67. 2026-11-21 — A project's `REFERENCE.md` says which packs and shell the project has, lists what it can add, and gives the `tailor add --shell … --packs …` line, before "How to use". An agent in a project with only the core pack built a shell and a settings page by hand from core parts: the page-kind table named layouts and shells that it did not have, and nothing said how to get them.
 68. 2026-11-21 — A relative time ("24 minutes ago") breaks between its words. Two such columns that never wrapped pushed an agent's table of backup jobs past its box on the tablet.
 69. 2026-11-21 — A skeleton has no animation under reduced motion. A zero-length animation that repeats forever drew another moment of the shimmer in each picture, and the full run failed on the loading page of the sample console in a different screen each time.
+70. 2026-11-24 — The page rules do not count a control under an open popup that is not modal (a popover, a menu, a list, a dialog opened without `showModal`) as overlapped, and do not measure its hit area where the popup covers it; the popup's own controls still count among themselves. A popup lies over the page by design: on a settings page with open help popovers the inspector reported 622 overlaps that were not faults.
 
 ## 10. Measurements at 2.0.0
 

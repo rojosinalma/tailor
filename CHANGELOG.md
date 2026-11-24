@@ -4,6 +4,11 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 
 ## [Unreleased]
 
+### Fixed
+
+- Page checks: a control under an open popup that is not modal no longer counts as overlapped, and its hit
+  area is not measured where the popup covers it.
+
 ## [2.2.0] — 2026-11-21
 
 ### Added
