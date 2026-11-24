@@ -9,6 +9,30 @@ const hosts = [
   { value: "console", label: "console", disabled: true },
 ];
 
+/** Time zones, as a settings page lists them: the chosen one sits far down. */
+const zones = [
+  "Africa/Cairo",
+  "Africa/Lagos",
+  "America/Chicago",
+  "America/Denver",
+  "America/Los_Angeles",
+  "America/New_York",
+  "America/Sao_Paulo",
+  "Asia/Dubai",
+  "Asia/Kolkata",
+  "Asia/Shanghai",
+  "Asia/Singapore",
+  "Asia/Tokyo",
+  "Australia/Sydney",
+  "Europe/Berlin",
+  "Europe/London",
+  "Europe/Madrid",
+  "Europe/Paris",
+  "Europe/Rome",
+  "Pacific/Auckland",
+  "UTC",
+].map((zone) => ({ value: zone, label: zone }));
+
 export default defineExamples("select", [
   {
     id: "default",
@@ -30,5 +54,11 @@ export default defineExamples("select", [
     id: "disabled",
     title: "Disabled",
     render: () => <Select options={hosts} defaultValue="nas" disabled aria-label="Locked host" />,
+  },
+  {
+    id: "long",
+    title: "A long list with a value far down",
+    note: "The list opens at the chosen value.",
+    render: () => <Select options={zones} defaultValue="Pacific/Auckland" aria-label="Time zone" />,
   },
 ]);

@@ -54,6 +54,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   next column.
 - Multi-select: never wider than its cell, and the end button of a small or large field stays inside its
   border.
+- HTML kit combobox: the list opens at the chosen value (a time zone far down a long list), as in the React
+  kit; it opened at the top.
 
 ## [2.2.0] — 2026-11-21
 

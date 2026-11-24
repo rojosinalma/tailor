@@ -53,6 +53,14 @@ export default defineExamples("combobox", [
     render: () => <Combobox options={many} name="node" aria-label="Node" placeholder="Type a node name" />,
   },
   {
+    id: "many-value",
+    title: "Many options, with a value far down",
+    note: "The list opens at the chosen value, not at the top.",
+    render: () => (
+      <Combobox options={many} defaultValue="queue-9" name="zone-node" aria-label="Chosen node" />
+    ),
+  },
+  {
     id: "descriptions",
     title: "Descriptions, long labels and a disabled option",
     render: () => <Combobox options={zones} name="zone" aria-label="Region" placeholder="Pick a region" />,

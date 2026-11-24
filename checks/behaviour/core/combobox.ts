@@ -1,6 +1,18 @@
 import { behaviour } from "../../src/behaviour";
 
 export default behaviour("combobox", {
+  "the list opens at the chosen value, with every choice": async ({ page, example, expect }) => {
+    const body = example("many-value");
+    const input = body.getByRole("combobox", { name: "Chosen node" });
+    for (const opener of [input, body.getByRole("button", { name: /show|open|choices/i }).first()]) {
+      if (opener !== input && (await opener.count()) === 0) continue;
+      await opener.click();
+      await expect(page.getByRole("option")).toHaveCount(40);
+      await expect(page.getByRole("option", { name: "queue-9" })).toBeInViewport();
+      await page.keyboard.press("Escape");
+      await expect(page.getByRole("listbox")).toBeHidden();
+    }
+  },
   "typing filters the list and opens it": async ({ page, example, expect }) => {
     const input = example("default").getByRole("combobox", { name: "Host" });
     await input.click();

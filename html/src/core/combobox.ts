@@ -85,6 +85,14 @@ export function createChoiceList(
       input.setAttribute("aria-expanded", "true");
       anchor.setAttribute("data-popup-open", "");
       popup.open();
+      // The list opens at the chosen value (a time zone far down a long list), as the React kit's does.
+      const chosen = items.find((item) => item.hasAttribute("data-selected"));
+      for (let box = chosen?.parentElement; chosen && box && panel.contains(box); box = box.parentElement) {
+        if (box.scrollHeight <= box.clientHeight) continue;
+        const top = chosen.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop;
+        box.scrollTop = top - (box.clientHeight - chosen.offsetHeight) / 2;
+        break;
+      }
     },
     close: () => popup.close(),
     isOpen: () => popup.isOpen(),

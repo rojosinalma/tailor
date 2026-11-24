@@ -1,6 +1,10 @@
 import { behaviour } from "../../src/behaviour";
 
 export default behaviour("select", {
+  "a long list opens at the chosen value": async ({ page, example, expect }) => {
+    await example("long").getByRole("combobox", { name: "Time zone" }).click();
+    await expect(page.getByRole("option", { name: "Pacific/Auckland" })).toBeInViewport();
+  },
   "shows the placeholder, then the picked value": async ({ page, example, expect }) => {
     const body = example("default");
     const trigger = body.getByRole("combobox", { name: "Host" });
