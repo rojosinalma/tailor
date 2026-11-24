@@ -75,6 +75,9 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   reached past the screen.
 - Image check: pixels one or two colour levels off count as drawing noise; a full run failed on 162 pixels one
   level off.
+- Agent build test: a `package.json` above the scratch projects, so an agent that runs `bun add` in a folder
+  without one cannot change the repository's; the scan rule `links-twice` holds for the top navigation (the
+  side navigation still writes its drawer).
 
 ## [2.2.0] — 2026-11-21
 

@@ -75,6 +75,9 @@ const OPENCODE_CONFIG = {
 if (!inspectOnly) {
   // The release of this checkout, in a store of the test's own: the store of the machine stays as it is.
   await mkdir(BIN, { recursive: true });
+  // A package.json above the projects: bun looks upward for the nearest one, and an agent that ran
+  // "bun add" in a folder of its project without one changed the repository's package.json.
+  await writeFile(join(WORK, "package.json"), `${JSON.stringify({ name: "agent-check", private: true })}\n`);
   const built = await $`bun bin/build --release --install`.cwd(at(".")).env(env).nothrow().quiet();
   if (built.exitCode !== 0) {
     console.error(built.stderr.toString() || built.stdout.toString());

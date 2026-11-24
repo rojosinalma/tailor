@@ -153,7 +153,9 @@ export function markupProblems(file: string, text: string): Problem[] {
       where: `${file}:${lineAt(text, m.index ?? 0)}`,
     });
   // The links of a top bar written again for the drawer or "More": the script builds both from the bar.
-  for (const m of text.matchAll(/class="t-drawer t-nav-drawer"|class="t-topnav-more"/g))
+  // (The side navigation still writes its drawer in the markup.)
+  const topnav = /data-shell="topnav"/.test(text);
+  for (const m of topnav ? text.matchAll(/class="t-drawer t-nav-drawer"|class="t-topnav-more"/g) : [])
     problems.push({
       rule: "links-twice",
       message: `${m[0]}: write the links once, in the bar's list; the script builds the drawer and "More"`,
