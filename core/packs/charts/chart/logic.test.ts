@@ -100,6 +100,28 @@ describe("formatting and table", () => {
     expect(formatValue(12, "%")).toBe("12%");
     expect(formatValue(undefined)).toBe("–");
   });
+  test("formatValue puts a currency where the locale puts it", () => {
+    // The test runs in en-US, as the checks' browser does.
+    expect(formatValue(1000, undefined, "USD")).toBe("$1,000");
+    expect(formatValue(1240.5, undefined, "USD")).toBe("$1,240.50");
+    expect(formatValue(1000, "$")).toBe("1,000 $");
+  });
+  test("a reference line is a row of the table and is read from the HTML kit's JSON", () => {
+    const model = parseModel("bar", {
+      categories: ["Mon", "Tue"],
+      series: [{ label: "Spend", values: [800, 1200] }],
+      options: { currency: "USD", lines: [{ value: 1000, label: "Required per day", tone: "warning" }] },
+    });
+    expect(model.options.lines).toEqual([{ value: 1000, label: "Required per day", tone: "warning" }]);
+    expect(dataTable(model).rows).toEqual([
+      ["Mon", "$800"],
+      ["Tue", "$1,200"],
+      ["Required per day", "$1,000"],
+    ]);
+    expect(() =>
+      parseModel("bar", { categories: [], series: [], options: { lines: [{ value: "x" }] } }),
+    ).toThrow("line 0 needs a value and a label");
+  });
   test("shortLabel cuts long names", () => {
     expect(shortLabel("short")).toBe("short");
     expect(shortLabel("Fetch dependencies from the mirror")).toBe("Fetch dependenc…");

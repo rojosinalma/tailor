@@ -7,7 +7,7 @@ export default defineComponent({
   pack: "charts",
   group: "display",
   description:
-    "Parts of a whole as a ring with the total in the centre and the legend beside it, or under it in a narrow box.",
+    'Parts of a whole as a ring with the total in the centre and the legend beside it, or under it in a narrow box. Money: currency="USD" (the ISO code), and the locale places the sign ("$1,000" in en-US); unit is a suffix for "ms", "%", "GB", never a currency sign.',
   root: "t-chart",
   parts: {
     ...CHART_PARTS,

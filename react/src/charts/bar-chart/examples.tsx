@@ -98,4 +98,18 @@ export default defineExamples("bar-chart", [
     title: "No data",
     render: () => <BarChart label="Deploys per day, web-3" categories={days} series={[]} />,
   },
+  {
+    id: "target",
+    title: "Money, with a reference line",
+    note: 'currency="USD" formats the values for the locale ($1,000 in en-US); a line marks what is required per day.',
+    render: () => (
+      <BarChart
+        label="Spend per day, last 7 days"
+        currency="USD"
+        categories={days}
+        series={[{ label: "Spend", values: [820, 1140, 960, 1320, 700, 1010, 1250] }]}
+        lines={[{ value: 1000, label: "Required per day", tone: "warning" }]}
+      />
+    ),
+  },
 ]);

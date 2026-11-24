@@ -131,6 +131,7 @@ export function mountChart(
       value.textContent = formatValue(
         typeof point.raw === "number" ? point.raw : undefined,
         model.options.unit,
+        model.options.currency,
       );
       const row = document.createElement("li");
       row.className = "t-chart-tooltip-row";

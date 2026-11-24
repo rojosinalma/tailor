@@ -3,7 +3,7 @@
  * the Chart.js configuration. Plain TypeScript: the theme comes in already resolved (see ./dom.ts).
  */
 import { TONES, type Tone } from "@tailor/core/spec";
-import type { ChartConfiguration, ChartDataset, TooltipModel } from "chart.js";
+import type { Chart, ChartConfiguration, ChartDataset, Plugin, TooltipModel } from "chart.js";
 
 export const KINDS = ["line", "bar", "donut"] as const;
 export type ChartKind = (typeof KINDS)[number];
@@ -34,12 +34,25 @@ export interface ChartOptions {
   readonly yMax?: number;
   /** Suffix of every value: "ms", "%", "GB". */
   readonly unit?: string;
+  /** Money: the ISO code of the currency ("USD", "EUR"). The locale places the sign: "$1,000", "1.000 €". */
+  readonly currency?: string;
+  /** Line and bar: lines across the chart at a value, such as a target or a limit. */
+  readonly lines?: readonly ReferenceLine[];
   /** Donut: the text under the total in the centre. */
   readonly centerLabel?: string;
   /** Default: shown when there is more than one series (donut: more than one segment). */
   readonly legend?: boolean;
   /** Default: true. */
   readonly tooltip?: boolean;
+}
+
+/** A line across a line or bar chart at one value: a target, a limit, "required per day". */
+export interface ReferenceLine {
+  readonly value: number;
+  /** What the line means; it shows at the line with the value, and in the data table. */
+  readonly label: string;
+  /** The colour of the line. Default: the muted text colour. */
+  readonly tone?: Tone;
 }
 
 /** One chart's data. A donut holds its segments as the categories with one series of values. */
@@ -78,8 +91,21 @@ export function legendShown(model: ChartModel): boolean {
   return model.options.legend ?? keys(model).length > 1;
 }
 
-export function formatValue(value: number | undefined, unit?: string): string {
+/**
+ * A value as the chart shows it, in the locale of the page's browser. A currency follows the locale ("$1,000"
+ * in en-US, "1.000 $" in de-DE), with cents only where the value has them; a unit is a suffix.
+ */
+export function formatValue(value: number | undefined, unit?: string, currency?: string): string {
   if (value === undefined || !Number.isFinite(value)) return "–";
+  if (currency) {
+    const cents = Number.isInteger(value) ? 0 : 2;
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency,
+      minimumFractionDigits: cents,
+      maximumFractionDigits: cents,
+    }).format(value);
+  }
   const number = new Intl.NumberFormat(undefined, { maximumFractionDigits: 2 }).format(value);
   if (!unit) return number;
   return unit === "%" ? `${number}%` : `${number} ${unit}`;
@@ -95,14 +121,17 @@ export function donutTotal(model: ChartModel, hidden: readonly boolean[]): numbe
 
 /** The hidden data table: the same numbers as the chart, for screen readers. */
 export function dataTable(model: ChartModel): { head: string[]; rows: string[][] } {
-  const unit = model.options.unit;
+  const { unit, currency } = model.options;
+  const format = (v: number | undefined) => formatValue(v, unit, currency);
   if (model.kind === "donut") {
     const values = model.series[0]?.values ?? [];
-    return { head: ["", ""], rows: model.categories.map((c, i) => [c, formatValue(values[i], unit)]) };
+    return { head: ["", ""], rows: model.categories.map((c, i) => [c, format(values[i])]) };
   }
+  // A reference line is a row of its own, with its value in every column.
+  const lines = (model.options.lines ?? []).map((l) => [l.label, ...model.series.map(() => format(l.value))]);
   return {
     head: ["", ...model.series.map((s) => s.label)],
-    rows: model.categories.map((c, i) => [c, ...model.series.map((s) => formatValue(s.values[i], unit))]),
+    rows: [...model.categories.map((c, i) => [c, ...model.series.map((s) => format(s.values[i]))]), ...lines],
   };
 }
 
@@ -216,13 +245,20 @@ function readOptions(raw: unknown): ChartOptions {
     if (typeof v !== "number") throw new Error(`chart: option ${name} must be a number`);
     out[name] = v;
   }
-  for (const name of ["unit", "centerLabel"]) {
+  for (const name of ["unit", "currency", "centerLabel"]) {
     const v = raw[name];
     if (v === undefined) continue;
     if (typeof v !== "string") throw new Error(`chart: option ${name} must be text`);
     out[name] = v;
   }
-  return out;
+  if (raw.lines === undefined) return out;
+  if (!Array.isArray(raw.lines)) throw new Error("chart: lines must be a list");
+  const lines = raw.lines.map((l, i): ReferenceLine => {
+    if (!isRecord(l) || typeof l.value !== "number" || typeof l.label !== "string")
+      throw new Error(`chart: line ${i} needs a value and a label`);
+    return { value: l.value, label: l.label, tone: toneOf(l.tone, `chart: line ${i}`) };
+  });
+  return { ...out, lines };
 }
 
 const numbers = (v: unknown, where: string): number[] => {
@@ -343,9 +379,18 @@ export function chartConfig(
       color: theme.muted,
       font,
       maxTicksLimit: 6,
-      callback: (v: number | string) => formatValue(Number(v), options.unit),
+      callback: (v: number | string) => formatValue(Number(v), options.unit, options.currency),
     },
   };
+  // The axis reaches every reference line.
+  const lineValues = (options.lines ?? []).map((l) => l.value);
+  if (lineValues.length > 0) {
+    Object.assign(value, {
+      suggestedMax: Math.max(...lineValues),
+      suggestedMin: Math.min(0, ...lineValues),
+    });
+  }
+  const extra = lineValues.length > 0 ? [referenceLines(model, theme, horizontal)] : [];
   const scales = horizontal ? { x: value, y: category } : { x: category, y: value };
 
   if (model.kind === "bar") {
@@ -364,6 +409,7 @@ export function chartConfig(
     return {
       type: "bar",
       data: { labels: [...model.categories], datasets },
+      plugins: extra,
       options: {
         ...base,
         indexAxis: horizontal ? "y" : "x",
@@ -396,6 +442,56 @@ export function chartConfig(
   return {
     type: "line",
     data: { labels: [...model.categories], datasets },
+    plugins: extra,
     options: { ...base, interaction: { mode: "index", intersect: false }, scales },
+  };
+}
+
+/**
+ * Draws the reference lines of a line or bar chart over its data: a dashed line across the plot at each value,
+ * in its tone (default the muted colour), and its label with the value at the end of the line in the text colour.
+ */
+function referenceLines(model: ChartModel, theme: ChartTheme, horizontal: boolean): Plugin<Kind> {
+  const { unit, currency, lines = [] } = model.options;
+  return {
+    id: "t-reference-lines",
+    afterDatasetsDraw(chart: Chart<Kind>) {
+      const { ctx, chartArea: area } = chart;
+      const scale = horizontal ? chart.scales.x : chart.scales.y;
+      if (!scale) return;
+      const gap = theme.fontSize / 3;
+      for (const line of lines) {
+        const at = scale.getPixelForValue(line.value);
+        if (!Number.isFinite(at)) continue;
+        ctx.save();
+        ctx.strokeStyle = line.tone ? theme.tones[line.tone] : theme.muted;
+        ctx.lineWidth = theme.lineWidth;
+        ctx.setLineDash([theme.lineWidth * 4, theme.lineWidth * 3]);
+        ctx.beginPath();
+        if (horizontal) {
+          ctx.moveTo(at, area.top);
+          ctx.lineTo(at, area.bottom);
+        } else {
+          ctx.moveTo(area.left, at);
+          ctx.lineTo(area.right, at);
+        }
+        ctx.stroke();
+        ctx.font = `${theme.fontSize}px ${theme.fontFamily}`;
+        const text = `${line.label} ${formatValue(line.value, unit, currency)}`;
+        // The label sits on the surface colour, a little see-through: a bar behind it neither takes its
+        // contrast nor disappears.
+        const width = ctx.measureText(text).width;
+        const height = theme.fontSize * 1.25;
+        const x = horizontal ? at + gap : area.right - width;
+        const y = horizontal ? area.top : at - gap - height;
+        ctx.fillStyle = withAlpha(theme.surface, 0.8);
+        ctx.fillRect(x - gap, y, width + gap * 2, height);
+        ctx.fillStyle = theme.text;
+        ctx.textAlign = "start";
+        ctx.textBaseline = "middle";
+        ctx.fillText(text, x, y + height / 2);
+        ctx.restore();
+      }
+    },
   };
 }

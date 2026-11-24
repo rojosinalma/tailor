@@ -29,7 +29,7 @@ function setup(root: HTMLElement): void {
   const frame = h("div", { class: "t-chart-frame" }, canvas);
   const total = h("span", { class: "t-chart-center-value" });
   const showTotal = (): void => {
-    total.textContent = formatValue(donutTotal(model, hidden), model.options.unit);
+    total.textContent = formatValue(donutTotal(model, hidden), model.options.unit, model.options.currency);
   };
   if (model.kind === "donut") {
     const centerLabel = model.options.centerLabel;

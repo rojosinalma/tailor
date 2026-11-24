@@ -21,6 +21,10 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 - Page checks: rule `spill`, content of a cell of a tailor grid (Facts, Grid, Form) that reaches past the cell
   into the next column. Showcase: Facts examples with a help button on each key and with a long badge in
   columns; a table with a help button in each row.
+- Line and bar charts: `lines`, reference lines across the chart at a value ("required per day"), with their
+  label and value at the line and a row in the hidden table. HTML kit: `lines` in the options of the JSON.
+- Charts: `currency` (an ISO code): values on the axis, in the tooltip, the table and the donut total follow
+  the locale, "$1,000" in en-US. `unit` stays a suffix.
 
 ### Changed
 

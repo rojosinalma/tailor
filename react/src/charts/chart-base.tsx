@@ -134,7 +134,9 @@ export function ChartView({
         <canvas className="t-chart-canvas" role="img" aria-label={label} ref={canvas} />
         {stable.kind === "donut" ? (
           <div className="t-chart-center">
-            <span className="t-chart-center-value">{formatValue(donutTotal(stable, hidden), unit)}</span>
+            <span className="t-chart-center-value">
+              {formatValue(donutTotal(stable, hidden), unit, stable.options.currency)}
+            </span>
             {stable.options.centerLabel ? (
               <span className="t-chart-center-label">{stable.options.centerLabel}</span>
             ) : null}
