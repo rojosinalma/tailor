@@ -53,8 +53,26 @@ interface AxeEngine {
   run(
     context: Document,
     options: { runOnly: string[]; resultTypes: string[] },
-  ): Promise<{ violations: { id: string; help: string; nodes: { target: string[] }[] }[] }>;
+  ): Promise<Record<"violations" | "incomplete", AxeResult[]>>;
 }
+
+interface AxeResult {
+  id: string;
+  help: string;
+  nodes: { target: string[] }[];
+}
+
+/**
+ * The axe checks whose "needs review" result counts as a fault: a person cannot settle them by looking, and a
+ * page of tailor gives them no reason to ask. Colour contrast over a picture or a gradient stays a review
+ * (the contrast check covers the tokens).
+ */
+const AXE_REVIEW = new Set([
+  "aria-prohibited-attr",
+  "aria-allowed-attr",
+  "aria-valid-attr-value",
+  "aria-allowed-role",
+]);
 
 /** The accessibility target: WCAG 2.2 level AA. */
 export const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
@@ -924,15 +942,29 @@ export async function runPages(options: PagesOptions): Promise<PagesResult> {
             }
             if (options.axe && !touch) {
               await page.addScriptTag({ path: at("node_modules/axe-core/axe.min.js") });
-              const violations = await page.evaluate(async (tags) => {
-                const axe = (window as unknown as { axe: AxeEngine }).axe;
-                const result = await axe.run(document, { runOnly: tags, resultTypes: ["violations"] });
-                return result.violations.map((v) => ({
-                  id: v.id,
-                  help: v.help,
-                  targets: v.nodes.slice(0, 3).map((node) => node.target.join(" ")),
-                }));
-              }, AXE_TAGS);
+              const violations = await page.evaluate(
+                async ([tags, review]) => {
+                  const axe = (window as unknown as { axe: AxeEngine }).axe;
+                  const result = await axe.run(document, {
+                    runOnly: tags,
+                    resultTypes: ["violations", "incomplete"],
+                  });
+                  const list = (items: AxeResult[], kind: string) =>
+                    items.map((v) => ({
+                      id: kind + v.id,
+                      help: v.help,
+                      targets: v.nodes.slice(0, 3).map((node) => node.target.join(" ")),
+                    }));
+                  return [
+                    ...list(result.violations, ""),
+                    ...list(
+                      result.incomplete.filter((v) => review.includes(v.id)),
+                      "review:",
+                    ),
+                  ];
+                },
+                [AXE_TAGS, [...AXE_REVIEW]] as const,
+              );
               for (const violation of violations) {
                 const where = violation.targets.join("; ");
                 local.push({

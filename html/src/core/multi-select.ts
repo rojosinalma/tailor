@@ -89,7 +89,6 @@ register("multi-select", (element) => {
       {
         class: "t-chip",
         tabindex: "-1",
-        "aria-label": option.label,
         "aria-disabled": select.disabled ? "true" : undefined,
         "data-disabled": select.disabled,
       },

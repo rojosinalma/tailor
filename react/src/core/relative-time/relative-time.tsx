@@ -38,11 +38,11 @@ export function RelativeTime({ date, locale }: RelativeTimeProps) {
   // A value that is not a time shows as it came.
   if (!parsed) return <time className="t-time">{String(date)}</time>;
   return (
-    // biome-ignore lint/a11y/useAriaPropsSupportedByRole: browsers map <time> to the role "time", which takes a name: the full date.
+    // The full date is the description: the role "time" takes no name (ARIA 1.2).
     <time
       className="t-time"
       dateTime={parsed.toISOString()}
-      aria-label={formatFull(parsed, locale)}
+      title={formatFull(parsed, locale)}
       data-t={isStatic ? "relative-time" : undefined}
       data-locale={isStatic ? locale : undefined}
     >

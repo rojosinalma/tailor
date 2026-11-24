@@ -16,7 +16,9 @@ register("relative-time", (element) => {
   const locale = element.dataset.locale || undefined;
   const paint = (now: Date): number => {
     element.textContent = formatRelative(date, now, t("justNow"), locale);
-    element.setAttribute("aria-label", formatFull(date, locale));
+    // The full date is the description: the role "time" takes no name (ARIA 1.2), so aria-label would not do.
+    element.setAttribute("title", formatFull(date, locale));
+    element.removeAttribute("aria-label");
     return nextUpdate(date, now);
   };
   const stop = subscribe(() => {

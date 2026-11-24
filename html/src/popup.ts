@@ -31,6 +31,23 @@ export function createPopup(anchor: HTMLElement, panel: HTMLElement, options: Po
   const positioner = h("div", { class: "t-popup-positioner", popover: "manual" }, panel);
   let open = false;
 
+  // A closed popup is out of the page, so aria-controls would name nothing (axe asks for a review). The
+  // controls point at the panel or its list only while it is open, as in Base UI; data-t-controls keeps it.
+  const point = (on: boolean): void => {
+    const ids = new Set([panel, ...panel.querySelectorAll("[id]")].map((el) => el.id).filter(Boolean));
+    const from = on ? "data-t-controls" : "aria-controls";
+    const to = on ? "aria-controls" : "data-t-controls";
+    for (const el of document.querySelectorAll(`[${from}]`)) {
+      const value = el.getAttribute(from) ?? "";
+      if (!ids.has(value)) continue;
+      el.setAttribute(to, value);
+      el.removeAttribute(from);
+    }
+  };
+  queueMicrotask(() => {
+    if (!open) point(false);
+  });
+
   const update = (): void => {
     if (matchMedia(PHONE).matches) {
       positioner.removeAttribute("style");
@@ -73,6 +90,7 @@ export function createPopup(anchor: HTMLElement, panel: HTMLElement, options: Po
     stack.splice(stack.indexOf(positioner), 1);
     positioner.hidePopover();
     positioner.remove();
+    point(false);
     document.removeEventListener("pointerdown", onPointerDown, true);
     document.removeEventListener("keydown", onKeyDown, true);
     removeEventListener("resize", update);
@@ -87,6 +105,7 @@ export function createPopup(anchor: HTMLElement, panel: HTMLElement, options: Po
       open = true;
       stack.push(positioner);
       document.body.append(positioner);
+      point(true);
       positioner.showPopover();
       update();
       document.addEventListener("pointerdown", onPointerDown, true);

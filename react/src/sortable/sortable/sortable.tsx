@@ -416,6 +416,8 @@ function List({
       <Tag
         ref={setRef as Ref<never>}
         className="t-sortable"
+        // A <div> takes a name only with a role: a labelled group (ARIA 1.2).
+        role={as === "div" ? "group" : undefined}
         aria-label={tableRow ? undefined : label}
         data-orientation={orientation === "vertical" ? undefined : orientation}
         data-handle={handle ? undefined : "false"}

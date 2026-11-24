@@ -158,7 +158,7 @@ export function MultiSelect({
           {shown.map((v) => {
             const label = labelOf(v);
             return (
-              <Base.Chip key={v} className="t-chip" aria-label={label}>
+              <Base.Chip key={v} className="t-chip">
                 <span className="t-chip-label">{label}</span>
                 <Base.ChipRemove
                   className="t-chip-remove"

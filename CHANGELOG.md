@@ -25,6 +25,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   label and value at the line and a row in the hidden table. HTML kit: `lines` in the options of the JSON.
 - Charts: `currency` (an ISO code): values on the axis, in the tooltip, the table and the donut total follow
   the locale, "$1,000" in en-US. `unit` stays a suffix.
+- Page checks: the axe results "needs review" of `aria-prohibited-attr`, `aria-allowed-attr`, `aria-valid-
+  attr-value` and `aria-allowed-role` fail the check (rule `axe:review:<id>`).
 
 ### Changed
 
@@ -56,6 +58,10 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   border.
 - HTML kit combobox: the list opens at the chosen value (a time zone far down a long list), as in the React
   kit; it opened at the top.
+- Accessibility reviews that axe raised: a relative time names its full date as its description (`title`), not
+  `aria-label`, which the role "time" does not take; the HTML kit sets `aria-controls` on a popup trigger only
+  while the popup is open (a closed popup is out of the page); a sortable list of `<div>` is a labelled group;
+  a multi-select chip has no `aria-label` of its own.
 
 ## [2.2.0] — 2026-11-21
 
