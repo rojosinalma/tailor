@@ -251,7 +251,10 @@ export interface SettingProps {
   help?: ReactNode;
   /** The save state from useAutoSave. */
   state?: SaveStatus;
-  /** The address that the HTML kit saves the value to, with { name, value } as JSON. */
+  /**
+   * The address that the HTML kit saves the value to: { name, value } as JSON, PATCH by default. The server
+   * answers 204, { ok: true }, or { ok: false, message }.
+   */
   saveUrl?: string;
   saveMethod?: "PATCH" | "PUT" | "POST";
   /** One control, with a name. A Switch or Check takes the row's label. */

@@ -148,7 +148,10 @@ register("setting", (row) => {
         headers: { "Content-Type": "application/json", Accept: "application/json" },
         body: JSON.stringify({ name: control.name, value }),
       });
-      outcome = saveOutcome(await response.json());
+      // An empty answer (204 No Content) is saved when the status says so; a JSON answer says it itself.
+      const body = (await response.text()).trim();
+      outcome = body === "" ? { ok: response.ok } : saveOutcome(JSON.parse(body));
+      if (!response.ok && outcome.ok) outcome = { ok: false, message: outcome.message };
     } catch {
       outcome = { ok: false };
     }

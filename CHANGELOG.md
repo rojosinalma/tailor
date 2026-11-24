@@ -43,6 +43,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 - A scroll page in a shell as narrow as a phone scrolls as a whole: its header goes up with the content. On a
   phone the page header is compact: a smaller title, a description of at most two lines, less room around it.
   The header of a detail page took a quarter of a phone screen.
+- REFERENCE.md and the settings entries say what a setting row sends and what the server answers: `PATCH
+  <saveUrl>` with `{ "name", "value" }` as JSON; `204`, `{ "ok": true }` or `{ "ok": false, "message" }`.
 
 ### Fixed
 
@@ -62,6 +64,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   `aria-label`, which the role "time" does not take; the HTML kit sets `aria-controls` on a popup trigger only
   while the popup is open (a closed popup is out of the page); a sortable list of `<div>` is a labelled group;
   a multi-select chip has no `aria-label` of its own.
+- HTML kit settings: an empty answer with an ok status (204 No Content) counts as saved; it showed "Not
+  saved".
 
 ## [2.2.0] — 2026-11-21
 

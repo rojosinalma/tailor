@@ -125,6 +125,10 @@ const howTo = (shells: readonly string[]): string => `## How to use
    picture, a file) comes in the \`t:submit\` event as \`detail.blob\` with \`detail.response\`, and a picture
    goes into the \`t-media-fit\` that \`data-t-result="<its id>"\` names, where a button with
    \`data-t-download="<its id>"\` saves it. Never write fetch or busy code for a form.
+9. Settings that save themselves (pack \`forms\`, layout \`settings-page\`): each change is one request,
+   \`PATCH <saveUrl>\` with the JSON \`{ "name": "<control name>", "value": <text, number, true/false or null> }\`;
+   the server answers \`204\` or \`{ "ok": true }\`, or \`{ "ok": false, "message": "…" }\` and the row shows the
+   failure, puts the old value back and offers retry. React kit: \`useAutoSave({ value, save })\`.
 `;
 
 const htmlSupport = (h: ReferencePack["html"]): string =>

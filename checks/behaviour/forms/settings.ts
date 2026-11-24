@@ -26,6 +26,31 @@ async function server(page: Page): Promise<{ sent: Sent[]; fix: () => void }> {
 }
 
 export default behaviour("settings", {
+  "HTML kit: the request is PATCH with { name, value } as JSON, and an empty 204 answer is saved": async ({
+    page,
+    kit,
+    example,
+    expect,
+  }) => {
+    if (kit !== "html") return;
+    const requests: { method: string; type: string; body: string }[] = [];
+    await page.route("**/api/settings/**", async (route) => {
+      const request = route.request();
+      requests.push({
+        method: request.method(),
+        type: (await request.allHeaders())["content-type"] ?? "",
+        body: request.postData() ?? "",
+      });
+      await route.fulfill({ status: 204 });
+    });
+    const row = example("page").locator(".t-setting", { hasText: "Theme" });
+    await row.getByRole("combobox", { name: /Theme/ }).click();
+    await page.getByRole("option", { name: "Dark" }).click();
+    await expect(row.locator(".t-setting-state")).toHaveText("Saved");
+    expect(requests).toEqual([
+      { method: "PATCH", type: "application/json", body: '{"name":"theme","value":"dark"}' },
+    ]);
+  },
   "a pick saves at once and the row shows saving, then saved": async ({ page, example, expect }) => {
     const { sent } = await server(page);
     const body = example("page");
