@@ -35,6 +35,8 @@ export const SCREENS: readonly Screen[] = [
   { name: "1920", width: 1920, height: 1080, touch: false },
   { name: "2560", width: 2560, height: 1440, touch: false },
   { name: "1440x800", width: 1440, height: 800, touch: false },
+  // A desktop window of 1280×800 at 400 % browser zoom (WCAG 1.4.10 reflow): tailor has no zoom of its own.
+  { name: "320", width: 320, height: 200, touch: false },
 ];
 export const WIDTHS: readonly number[] = [390, 820, 1180, 1440, 1920];
 const screenOf = (name: string): Screen => {

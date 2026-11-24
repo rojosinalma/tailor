@@ -27,6 +27,7 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   the locale, "$1,000" in en-US. `unit` stays a suffix.
 - Page checks: the axe results "needs review" of `aria-prohibited-attr`, `aria-allowed-attr`, `aria-valid-
   attr-value` and `aria-allowed-role` fail the check (rule `axe:review:<id>`).
+- Page checks: the sample apps also on a 320 px window, a 1280 px window at 400 % browser zoom (WCAG 1.4.10).
 
 ### Changed
 
@@ -66,6 +67,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   a multi-select chip has no `aria-label` of its own.
 - HTML kit settings: an empty answer with an ok status (204 No Content) counts as saved; it showed "Not
   saved".
+- Status dot: a label wider than its box ends with an ellipsis; at 400 % zoom the status in the top bar
+  reached past the screen.
 
 ## [2.2.0] — 2026-11-21
 

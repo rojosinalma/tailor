@@ -9,7 +9,8 @@ import { APP_PAGES, htmlAddress, reactAddress } from "../../showcase/src/demo/ro
 import type { AppCheck } from "./pages";
 
 const BASE = ["390", "820", "1180", "1440"];
-const APP_SCREENS = ["2560", "1440x800"];
+/** The sample apps only: a large desktop, a short window, and 400 % browser zoom (a 320 px wide window). */
+const APP_SCREENS = ["2560", "1440x800", "320"];
 
 export function appChecks(specs: readonly ComponentSpec[], mode: "release" | "full"): AppCheck[] {
   return APP_PAGES.map((page) => {

@@ -3,7 +3,16 @@
   align-items: center;
   gap: var(--t-space-2);
   min-width: 0;
+  max-width: 100%;
   vertical-align: middle;
+}
+
+/* A label in a box narrower than itself (a phone bar at 400 % zoom) ends with an ellipsis. */
+.t-dot-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .t-dot::before {
