@@ -67,7 +67,16 @@ export default behaviour("tool-page", {
         buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"/>'),
       });
       await expect(body.getByRole("group", { name: "Drawing" })).not.toHaveAttribute("aria-invalid", "true");
+      // HTML kit: t:send tells the page what goes out, so it needs no watch on the button.
+      if (kit === "html")
+        await body.locator("form").evaluate((form) => {
+          form.addEventListener("t:send", (event) => {
+            const data = (event as CustomEvent<{ data: FormData }>).detail.data;
+            form.setAttribute("data-sent", (data.get("drawing") as File | null)?.name ?? "");
+          });
+        });
       await render.click();
+      if (kit === "html") await expect(body.locator("form")).toHaveAttribute("data-sent", "site.svg");
       // The button is busy while the render runs, in both kits: the page wrote no code for it.
       await expect(render).toHaveAttribute("aria-busy", "true");
       await expect(render).not.toHaveAttribute("aria-busy", "true");

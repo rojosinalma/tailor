@@ -121,7 +121,8 @@ const howTo = (shells: readonly string[]): string => `## How to use
 8. HTML kit, the page's own script: \`Tailor.toast(tone, text)\`, \`await Tailor.confirm({ title, text, danger })\`,
    \`Tailor.busy(button, on)\` (a spinner in place of the icon; it ignores clicks), \`Tailor.upgrade(node)\`. A
    \`<form data-t="form" data-t-submit="fetch" action="…">\` sends itself and keeps its submit button busy: a JSON
-   answer \`{ ok, message, errors }\` shows as a toast and puts the errors on their fields; any other answer (a
+   answer \`{ ok, message, errors }\` shows as a toast and puts the errors on their fields; \`t:send\` fires as
+   it sends (\`detail.data\`, the FormData, to show what is sent or add a field); any other answer (a
    picture, a file) comes in the \`t:submit\` event as \`detail.blob\` with \`detail.response\`, and a picture
    goes into the \`t-media-fit\` that \`data-t-result="<its id>"\` names, where a button with
    \`data-t-download="<its id>"\` saves it. Never write fetch or busy code for a form.

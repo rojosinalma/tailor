@@ -239,6 +239,8 @@ register("form", (element) => {
       const method = (form.getAttribute("method") ?? "post").toUpperCase();
       const url = new URL(form.getAttribute("action") ?? location.href, location.href);
       const data = new FormData(form, submitter);
+      // The page can show what is sent ("Rendering plan.svg") and add fields; t:submit tells the outcome.
+      form.dispatchEvent(new CustomEvent("t:send", { detail: { data }, bubbles: true }));
       const init: RequestInit = { method, headers: { Accept: "application/json, */*;q=0.8" } };
       if (method === "GET") for (const [name, value] of data) url.searchParams.append(name, String(value));
       else init.body = data;

@@ -32,6 +32,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 - Agent build test: briefs `render-service` (a tool whose server answers with the picture itself, with a
   status in the top bar) and `spend-overview` (limits with help, a long state, money per day with a reference
   line, on a phone), both HTML kit.
+- HTML kit forms fire `t:send` as they send (`detail.data`, the FormData): a page shows what goes out without
+  watching the busy button.
 
 ### Changed
 
@@ -78,6 +80,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 - Agent build test: a `package.json` above the scratch projects, so an agent that runs `bun add` in a folder
   without one cannot change the repository's; the scan rule `links-twice` holds for the top navigation (the
   side navigation still writes its drawer).
+- A relative time in a table cell breaks between its words only ("24 minut" over "es ago" in a squeezed
+  table).
 
 ## [2.2.0] — 2026-11-21
 

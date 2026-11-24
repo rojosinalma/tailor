@@ -137,7 +137,8 @@ behaviour. A page needs no build tool.
 3. **From code.** `Tailor.toast("success", "Saved")`, `await Tailor.confirm({ title, text, danger: true })`,
    `Tailor.theme.set({ mode: "light" })`, `Tailor.busy(button, true)`, `Tailor.upgrade(node)`.
 4. **Forms.** A `<form data-t="form" novalidate>` draws the validation messages; with
-   `data-t-submit="fetch"` it sends itself, keeps its submit button busy and shows a JSON answer
+   `data-t-submit="fetch"` it sends itself (the event `t:send` carries the FormData as it goes), keeps its
+   submit button busy and shows a JSON answer
    `{ ok, message, errors }` as a toast. Any other answer (a picture, a file) comes in the `t:submit` event as
    `detail.blob` with `detail.response`; a picture goes into the `t-media-fit` that `data-t-result="<id>"`
    names, and a button with `data-t-download="<id>"` saves it. The tool page works this way with no script.

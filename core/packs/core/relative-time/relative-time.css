@@ -1,3 +1,5 @@
 .t-time {
+  /* Between its words only, also in a table cell that breaks anywhere: "24 minut" over "es ago" was found. */
+  overflow-wrap: break-word;
   font-variant-numeric: tabular-nums;
 }
