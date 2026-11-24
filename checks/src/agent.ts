@@ -168,11 +168,14 @@ export function markupProblems(file: string, text: string): Problem[] {
         body: m[1] ?? "",
         at: (m.index ?? 0) + m[0].indexOf(">") + 1,
       }));
+  // A button's busy state, by name (btn, button, submit): a region marked busy while it loads is fine.
   for (const { body, at } of scripts)
-    for (const m of body.matchAll(/aria-busy|ariaBusy|t-btn-spinner/g))
+    for (const m of body.matchAll(
+      /t-btn-spinner|\b\w*(?:btn|button|submit)\w*\s*\.\s*(?:(?:set|remove|get|has)Attribute\(\s*["']aria-busy|ariaBusy)/gi,
+    ))
       problems.push({
         rule: "own-busy",
-        message: `"${m[0]}" in a script: use Tailor.busy(button, on), a form with data-t-submit="fetch", or Button loading`,
+        message: `${m[0].slice(0, 40)}… in a script: use Tailor.busy(button, on), a form with data-t-submit="fetch", or Button loading`,
         where: `${file}:${lineAt(text, at + (m.index ?? 0))}`,
       });
   for (const m of text.matchAll(/\bstyle=\{\{([\s\S]*?)\}\}/g)) {
