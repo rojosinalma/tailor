@@ -29,6 +29,9 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   attr-value` and `aria-allowed-role` fail the check (rule `axe:review:<id>`).
 - Page checks: the sample apps also on a 320 px window, a 1280 px window at 400 % browser zoom (WCAG 1.4.10).
 - Facts: part `t-facts-key-end`, the last word of a key with its help button, kept on one line.
+- Agent build test: briefs `render-service` (a tool whose server answers with the picture itself, with a
+  status in the top bar) and `spend-overview` (limits with help, a long state, money per day with a reference
+  line, on a phone), both HTML kit.
 
 ### Changed
 
