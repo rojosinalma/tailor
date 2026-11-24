@@ -4,6 +4,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 
 ## [Unreleased]
 
+## [2.3.0] — 2026-11-24
+
 ### Added
 
 - HTML kit: `Tailor.busy(button, on)` marks a button busy as the React `loading` does (a spinner in place of
