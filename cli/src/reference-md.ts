@@ -110,6 +110,13 @@ const howTo = (shells: readonly string[]): string => `## How to use
    - c. The lines for \`<head>\`: \`<public>/tailor/head.html\`.
 7. This file lists the components. Read the entry of a component (props, parts, one example in each kit) in
    \`reference/<pack>.md\` before you use it.
+8. HTML kit, the page's own script: \`Tailor.toast(tone, text)\`, \`await Tailor.confirm({ title, text, danger })\`,
+   \`Tailor.busy(button, on)\` (a spinner in place of the icon; it ignores clicks), \`Tailor.upgrade(node)\`. A
+   \`<form data-t="form" data-t-submit="fetch" action="…">\` sends itself and keeps its submit button busy: a JSON
+   answer \`{ ok, message, errors }\` shows as a toast and puts the errors on their fields; any other answer (a
+   picture, a file) comes in the \`t:submit\` event as \`detail.blob\` with \`detail.response\`, and a picture
+   goes into the \`t-media-fit\` that \`data-t-result="<its id>"\` names, where a button with
+   \`data-t-download="<its id>"\` saves it. Never write fetch or busy code for a form.
 `;
 
 const htmlSupport = (h: ReferencePack["html"]): string =>

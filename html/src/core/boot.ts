@@ -1,13 +1,18 @@
-import { once, register, upgrade } from "../runtime";
+import { busy, once, register, upgrade } from "../runtime";
 
 declare global {
   interface Window {
-    Tailor: { upgrade: typeof upgrade; register: typeof register; [key: string]: unknown };
+    Tailor: {
+      upgrade: typeof upgrade;
+      register: typeof register;
+      busy: typeof busy;
+      [key: string]: unknown;
+    };
   }
 }
 
 once("boot", () => {
-  window.Tailor = { ...(window.Tailor ?? {}), upgrade, register };
+  window.Tailor = { ...(window.Tailor ?? {}), upgrade, register, busy };
   const start = (): void => {
     upgrade();
     new MutationObserver((records) => {

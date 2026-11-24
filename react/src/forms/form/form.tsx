@@ -168,6 +168,13 @@ export interface FormProps<V extends object> {
   layout?: (typeof spec.props.layout)[number];
   /** The address that the HTML kit sends the form to with fetch. The React kit calls onSubmit. */
   action?: string;
+  /**
+   * HTML kit: the id of the MediaFit that a picture answer goes into (an answer that is not JSON); the buttons
+   * with data-t-download="<that id>" then download it. The React kit's onSubmit puts its result in itself.
+   */
+  result?: string;
+  /** HTML kit: the alt text of a picture answer; "{file}" stands for the name of the chosen file. */
+  resultAlt?: string;
   /** The accessible name of the form. */
   label?: string;
   /**
@@ -183,6 +190,8 @@ export function Form<V extends object>({
   form,
   layout = "stack",
   action,
+  result,
+  resultAlt,
   label,
   id,
   children,
@@ -205,6 +214,8 @@ export function Form<V extends object>({
         action={action}
         method={action ? "post" : undefined}
         data-t-submit={action ? "fetch" : undefined}
+        data-t-result={result}
+        data-t-result-alt={resultAlt}
       >
         {children}
       </form>

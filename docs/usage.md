@@ -133,9 +133,12 @@ behaviour. A page needs no build tool.
    later. A drawn control keeps the native control in the form as the value holder: it submits as usual and
    fires `input` and `change`. When the script fails, the native control still works.
 3. **From code.** `Tailor.toast("success", "Saved")`, `await Tailor.confirm({ title, text, danger: true })`,
-   `Tailor.theme.set({ mode: "light" })`, `Tailor.upgrade(node)`.
+   `Tailor.theme.set({ mode: "light" })`, `Tailor.busy(button, true)`, `Tailor.upgrade(node)`.
 4. **Forms.** A `<form data-t="form" novalidate>` draws the validation messages; with
-   `data-t-submit="fetch"` it sends itself and shows the answer `{ ok, message, errors }` as a toast.
+   `data-t-submit="fetch"` it sends itself, keeps its submit button busy and shows a JSON answer
+   `{ ok, message, errors }` as a toast. Any other answer (a picture, a file) comes in the `t:submit` event as
+   `detail.blob` with `detail.response`; a picture goes into the `t-media-fit` that `data-t-result="<id>"`
+   names, and a button with `data-t-download="<id>"` saves it. The tool page works this way with no script.
 5. **Icons.** `<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"></use></svg>`.
    `tailor icons` finds the sprite address (`icons.svg#bi-<name>`, `icons.svg#simple-icons-<name>`) as well
    as the `bi:<name>` form, and adds the icon to the sprite.

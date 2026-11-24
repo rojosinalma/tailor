@@ -1,7 +1,7 @@
 import { danger } from "@tailor/core/glyphs.gen";
 import { t } from "@tailor/core/text";
 import { messageFor, problemOf, readResult, type SubmitResult } from "@tailor/packs/forms/form/logic";
-import { glyph, h, register, uid } from "../runtime";
+import { busy, glyph, h, once, register, uid } from "../runtime";
 
 type Control = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
@@ -100,22 +100,64 @@ function labelOf(control: Control): string {
   return copy.textContent?.trim() ?? "";
 }
 
-function setBusy(button: HTMLButtonElement | null, busy: boolean): void {
-  if (!button) return;
-  if (busy) {
-    button.setAttribute("aria-busy", "true");
-    button.setAttribute("aria-disabled", "true");
-    button.prepend(h("span", { class: "t-btn-spinner", "aria-hidden": "true" }));
-  } else {
-    button.removeAttribute("aria-busy");
-    button.removeAttribute("aria-disabled");
-    button.querySelector(".t-btn-spinner")?.remove();
-  }
+/** What t:submit carries: the result, and for an answer that is not JSON the response and its body. */
+interface SubmitDetail extends SubmitResult {
+  readonly response?: Response;
+  /** The body of an answer that is not JSON, such as a picture or a file. */
+  readonly blob?: Blob;
+}
+
+/** The file name of an answer: from Content-Disposition, else the first chosen file's name with the type's ending. */
+function fileNameOf(response: Response, blob: Blob, form: HTMLFormElement): string {
+  const header = response.headers.get("content-disposition") ?? "";
+  const named = /filename\*=UTF-8''([^;]+)|filename="?([^";]+)"?/i.exec(header);
+  if (named) return decodeURIComponent(named[1] ?? named[2] ?? "").trim();
+  const ending = (blob.type.split("/")[1] ?? "bin").split(/[+;]/)[0];
+  const chosen = [...form.querySelectorAll<HTMLInputElement>('input[type="file"]')].find((i) => i.files?.[0]);
+  const base = chosen?.files?.[0]?.name.replace(/\.[^.]*$/, "") || "result";
+  return `${base}.${ending}`;
 }
 
 /**
+ * Puts a picture answer into the MediaFit that the form names with data-t-result, in place of the one before,
+ * and enables the buttons that download it (data-t-download="<the MediaFit's id>").
+ */
+function showResult(form: HTMLFormElement, blob: Blob, name: string): void {
+  const box = document.getElementById(form.dataset.tResult ?? "");
+  if (!box || !blob.type.startsWith("image/")) return;
+  const old = box.querySelector<HTMLImageElement>(":scope > img");
+  if (old?.src.startsWith("blob:")) URL.revokeObjectURL(old.src);
+  const file = [...form.querySelectorAll<HTMLInputElement>('input[type="file"]')]
+    .map((input) => input.files?.[0]?.name)
+    .find(Boolean);
+  const alt = (form.dataset.tResultAlt ?? t("formResult")).replace("{file}", file ?? name);
+  const img = h("img", { src: URL.createObjectURL(blob), alt });
+  if (old) old.replaceWith(img);
+  else box.prepend(img);
+  box.dataset.tFile = name;
+  for (const button of document.querySelectorAll<HTMLButtonElement>(`[data-t-download="${box.id}"]`)) {
+    button.disabled = false;
+    button.removeAttribute("aria-disabled");
+  }
+}
+
+/** A button with data-t-download="<id>" saves the picture in that MediaFit, under the name of the answer. */
+once("download", () => {
+  document.addEventListener("click", (event) => {
+    const button = event.target instanceof Element ? event.target.closest("[data-t-download]") : null;
+    const box = document.getElementById(button?.getAttribute("data-t-download") ?? "");
+    const img = box?.querySelector<HTMLImageElement>(":scope > img, :scope > picture > img");
+    if (!box || !img?.src) return;
+    const link = h("a", { href: img.src, download: box.dataset.tFile ?? "" });
+    link.click();
+  });
+});
+
+/**
  * A form that checks its fields with the native rules and draws the errors into the tailor fields.
- * With data-t-submit="fetch" it sends itself with fetch and shows the outcome as a toast.
+ * With data-t-submit="fetch" it sends itself with fetch, keeps its submit button busy, shows a JSON outcome as
+ * a toast, and fires t:submit with the result. An answer that is not JSON (a picture, a file) goes to the page
+ * as detail.blob; a picture goes into the MediaFit that data-t-result names.
  */
 register("form", (element) => {
   if (!(element instanceof HTMLFormElement)) return;
@@ -191,26 +233,38 @@ register("form", (element) => {
 
   const send = async (submitter: HTMLButtonElement | null): Promise<void> => {
     sending = true;
-    setBusy(submitter, true);
-    let result: SubmitResult;
+    busy(submitter, true);
+    let result: SubmitDetail;
     try {
       const method = (form.getAttribute("method") ?? "post").toUpperCase();
       const url = new URL(form.getAttribute("action") ?? location.href, location.href);
       const data = new FormData(form, submitter);
-      const init: RequestInit = { method, headers: { Accept: "application/json" } };
+      const init: RequestInit = { method, headers: { Accept: "application/json, */*;q=0.8" } };
       if (method === "GET") for (const [name, value] of data) url.searchParams.append(name, String(value));
       else init.body = data;
       const response = await fetch(url, init);
-      result = readResult(await response.json());
+      const type = response.headers.get("content-type") ?? "";
+      if (type === "" || /[/+]json\b/.test(type)) {
+        result = { ...readResult(await response.json()), response };
+      } else if (response.ok) {
+        const blob = await response.blob();
+        result = { ok: true, response, blob };
+        showResult(form, blob, fileNameOf(response, blob, form));
+      } else {
+        // A plain-text failure is the server's message; a page of HTML is not shown.
+        const text = type.startsWith("text/plain") ? (await response.text()).trim().slice(0, 300) : "";
+        result = { ok: false, message: text || undefined, response };
+      }
     } catch {
       result = { ok: false, message: t("formNotSent") };
     }
     sending = false;
-    setBusy(submitter, false);
+    busy(submitter, false);
     if (result.ok) {
       failed = false;
       refresh();
-      toast("success", result.message ?? t("formSaved"));
+      // A picture or a file shows itself; a JSON answer says what happened.
+      if (!result.blob) toast("success", result.message ?? t("formSaved"));
     } else {
       toast("danger", result.message ?? t("formFailed"));
       for (const [name, message] of Object.entries(result.errors ?? {})) {

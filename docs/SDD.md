@@ -223,6 +223,7 @@ Append-only. One line per decision: what, why.
 68. 2026-11-21 — A relative time ("24 minutes ago") breaks between its words. Two such columns that never wrapped pushed an agent's table of backup jobs past its box on the tablet.
 69. 2026-11-21 — A skeleton has no animation under reduced motion. A zero-length animation that repeats forever drew another moment of the shimmer in each picture, and the full run failed on the loading page of the sample console in a different screen each time.
 70. 2026-11-24 — The page rules do not count a control under an open popup that is not modal (a popover, a menu, a list, a dialog opened without `showModal`) as overlapped, and do not measure its hit area where the popup covers it; the popup's own controls still count among themselves. A popup lies over the page by design: on a settings page with open help popovers the inspector reported 622 overlaps that were not faults.
+71. 2026-11-24 — An HTML form with `data-t-submit="fetch"` hands an answer that is not JSON to the page (`t:submit` with `detail.blob` and `detail.response`) and puts a picture answer into the MediaFit that `data-t-result` names; `data-t-download` saves it, and `Tailor.busy` is public. The first tool project wrote its own fetch, busy state and download because the form read JSON only; a tool whose answer is a file is the common case, so the layout needs no script.
 
 ## 10. Measurements at 2.0.0
 

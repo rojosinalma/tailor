@@ -1,13 +1,23 @@
 import type { Locator, Page } from "playwright";
 import { behaviour } from "../../src/behaviour";
 
-/** The server of the HTML kit: it takes a moment and says the drawing is rendered, as the React sample does. */
+/** A picture of one pixel. */
+const PNG = Buffer.from(
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
+  "base64",
+);
+
+/** The server of the HTML kit: it takes a moment and answers with the rendered picture, not with JSON. */
 async function server(page: Page): Promise<void> {
   await page.route("**/api/render", async (route) => {
     const body = route.request().postData() ?? "";
-    const file = /name="drawing"; filename="([^"]*)"/.exec(body)?.[1] ?? "The drawing";
+    const file = /name="drawing"; filename="([^"]*)"/.exec(body)?.[1] ?? "drawing.svg";
     await new Promise((done) => setTimeout(done, 600));
-    await route.fulfill({ json: { ok: true, message: `${file} is rendered.` } });
+    await route.fulfill({
+      contentType: "image/png",
+      headers: { "Content-Disposition": `attachment; filename="${file.replace(/\.[^.]*$/, "")}.png"` },
+      body: PNG,
+    });
   });
 }
 
@@ -42,33 +52,35 @@ export default behaviour("tool-page", {
       expect(await body.locator(".t-page-body").evaluate((el) => el.scrollTop)).toBe(0);
     }
   },
-  "Render with no drawing names the field; with one, the toast says it is rendered": async ({
-    page,
-    kit,
-    example,
-    expect,
-  }) => {
-    await server(page);
-    const body = example("empty");
-    await expect(body.getByText("No preview yet")).toBeVisible();
-    const render = body.getByRole("button", { name: "Render" });
-    await render.click();
-    await expect(body.getByRole("group", { name: "Drawing" })).toHaveAttribute("aria-invalid", "true");
-    await expect(body).toContainText("This field is required");
-    await body.locator('input[name="drawing"]').setInputFiles({
-      name: "site.svg",
-      mimeType: "image/svg+xml",
-      buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"/>'),
-    });
-    await expect(body.getByRole("group", { name: "Drawing" })).not.toHaveAttribute("aria-invalid", "true");
-    await render.click();
-    await expect(page.locator(".t-toast", { hasText: "site.svg is rendered." })).toBeVisible();
-    // The React sample shows its picture; in the HTML kit the page's own code puts the server's picture in.
-    if (kit === "react") {
+  "Render with no drawing names the field; with one, Render is busy, the picture shows and downloads":
+    async ({ page, kit, example, expect }) => {
+      await server(page);
+      const body = example("empty");
+      await expect(body.getByText("No preview yet")).toBeVisible();
+      const render = body.getByRole("button", { name: "Render" });
+      await render.click();
+      await expect(body.getByRole("group", { name: "Drawing" })).toHaveAttribute("aria-invalid", "true");
+      await expect(body).toContainText("This field is required");
+      await body.locator('input[name="drawing"]').setInputFiles({
+        name: "site.svg",
+        mimeType: "image/svg+xml",
+        buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"/>'),
+      });
+      await expect(body.getByRole("group", { name: "Drawing" })).not.toHaveAttribute("aria-invalid", "true");
+      await render.click();
+      // The button is busy while the render runs, in both kits: the page wrote no code for it.
+      await expect(render).toHaveAttribute("aria-busy", "true");
+      await expect(render).not.toHaveAttribute("aria-busy", "true");
+      // The picture answer goes into the preview by itself; in the React kit onSubmit puts it there.
       await expect(body.getByRole("img", { name: "Preview of site.svg" })).toBeVisible();
       await expect(body.getByText("No preview yet")).toBeHidden();
-    }
-  },
+      if (kit === "react")
+        await expect(page.locator(".t-toast", { hasText: "site.svg is rendered." })).toBeVisible();
+      const download = body.getByRole("button", { name: "Download" });
+      await expect(download).toBeEnabled();
+      const [file] = await Promise.all([page.waitForEvent("download"), download.click()]);
+      expect(file.suggestedFilename()).toBe("site.png");
+    },
   "narrow: one column that scrolls as a page, inputs in full above the result": async ({
     example,
     expect,

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import { Button } from "../../core/button/button";
 import { EmptyState } from "../../core/empty-state/empty-state";
 import { Icon } from "../../core/icon/icon";
@@ -69,10 +69,20 @@ async function render(settings: RenderSettings): Promise<SubmitResult> {
   return { ok: true, message: `${settings.drawing[0]?.name ?? "The drawing"} is rendered.` };
 }
 
+/** Saves a picture under a file name, as the Download button does. */
+function download(src: string, name: string): void {
+  const link = document.createElement("a");
+  link.href = src;
+  link.download = name;
+  link.click();
+}
+
 /**
  * A tool: the inputs on one side, the result on the other. The Page fills the screen and never scrolls;
  * each Pane scrolls alone, and MediaFit keeps any picture inside its pane.
- * HTML kit: the form posts to its action with fetch; the page's code puts the <img> into the MediaFit.
+ * HTML kit: the form posts to its action with fetch and keeps Render busy; a picture answer goes into the
+ * MediaFit that the form names (data-t-result), and Download (data-t-download) saves it. The page writes no
+ * code for that; t:submit carries the answer (detail.response, detail.blob) for facts of its own.
  */
 export interface ToolPageLayoutProps {
   /** The last result; null before the first render. */
@@ -85,6 +95,7 @@ export interface ToolPageLayoutProps {
 
 export function ToolPageLayout({ result: first = LAST_RESULT, rendering, error }: ToolPageLayoutProps) {
   const [result, setResult] = useState(first);
+  const preview = useId();
   const form = useTailorForm<RenderSettings>({
     defaultValues: RENDER_DEFAULTS,
     onSubmit: async (settings) => {
@@ -108,7 +119,13 @@ export function ToolPageLayout({ result: first = LAST_RESULT, rendering, error }
         first={
           // The submit button sits in the pane footer, so it stays in reach while the fields scroll.
           <Pane title="Settings" footer={<FormActions form={form} submit="Render" />}>
-            <Form form={form} action="/api/render" label="Render settings">
+            <Form
+              form={form}
+              action="/api/render"
+              result={preview}
+              resultAlt="Preview of {file}"
+              label="Render settings"
+            >
               <FormField
                 form={form}
                 name="drawing"
@@ -141,11 +158,15 @@ export function ToolPageLayout({ result: first = LAST_RESULT, rendering, error }
           <Pane
             title="Preview"
             actions={
-              // The page's code sends the file; the button waits for a result.
+              // Saves the picture in the preview. HTML kit: data-t-download names the MediaFit.
               <Button
                 size="sm"
                 icon={<Icon name="bi:download" />}
                 disabled={!result || rendering || Boolean(error)}
+                data-t-download={preview}
+                onClick={() => {
+                  if (result) download(result.src, `${result.file.replace(/\.[^.]*$/, "")}.png`);
+                }}
               >
                 Download
               </Button>
@@ -155,6 +176,7 @@ export function ToolPageLayout({ result: first = LAST_RESULT, rendering, error }
             {/* The picture takes the free width and height of the pane, never more, whatever its size. */}
             {/* What shows while there is no picture: the render that runs, the failure, or the first step. */}
             <MediaFit
+              id={preview}
               empty={
                 rendering ? (
                   <EmptyState

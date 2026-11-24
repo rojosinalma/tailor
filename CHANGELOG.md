@@ -4,6 +4,16 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 
 ## [Unreleased]
 
+### Added
+
+- HTML kit: `Tailor.busy(button, on)` marks a button busy as the React `loading` does (a spinner in place of
+  its icon; it ignores clicks).
+- HTML kit forms with `data-t-submit="fetch"` take an answer that is not JSON (a picture, a file): it comes in
+  the `t:submit` event as `detail.blob` with `detail.response`, and a picture goes into the MediaFit that
+  `data-t-result` names (`data-t-result-alt`), which a button with `data-t-download` saves. React: `Form`
+  props `result`, `resultAlt`; `MediaFit` prop `id`. The tool page uses it: a project that copies it writes no
+  fetch or busy code.
+
 ### Fixed
 
 - Page checks: a control under an open popup that is not modal no longer counts as overlapped, and its hit

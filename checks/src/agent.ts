@@ -137,6 +137,27 @@ export function markupProblems(file: string, text: string): Problem[] {
       if (prop.trim()) problems.push(...declarationProblems(prop.trim(), rest.join(":"), where));
     }
   }
+  // A tailor icon with a drawing of its own: a glyph copied from the reference, where the sprite has it.
+  for (const m of text.matchAll(/<svg\b[^>]*class="t-icon"[^>]*>\s*<(?:path|g)\b/g))
+    problems.push({
+      rule: "own-glyph",
+      message: 'a t-icon with its own drawing; use the sprite: <use href="/tailor/icons.svg#bi-<name>">',
+      where: `${file}:${lineAt(text, m.index ?? 0)}`,
+    });
+  // A busy button of its own: the form, Tailor.busy and the React Button's loading do it.
+  const scripts = /\.(m?js|jsx?|tsx?)$/.test(file)
+    ? [{ body: text, at: 0 }]
+    : [...text.matchAll(/<script\b[^>]*>([\s\S]*?)<\/script>/g)].map((m) => ({
+        body: m[1] ?? "",
+        at: (m.index ?? 0) + m[0].indexOf(">") + 1,
+      }));
+  for (const { body, at } of scripts)
+    for (const m of body.matchAll(/aria-busy|ariaBusy|t-btn-spinner/g))
+      problems.push({
+        rule: "own-busy",
+        message: `"${m[0]}" in a script: use Tailor.busy(button, on), a form with data-t-submit="fetch", or Button loading`,
+        where: `${file}:${lineAt(text, at + (m.index ?? 0))}`,
+      });
   for (const m of text.matchAll(/\bstyle=\{\{([\s\S]*?)\}\}/g)) {
     const body = m[1] ?? "";
     const where = `${file}:${lineAt(text, m.index ?? 0)}`;

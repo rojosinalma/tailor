@@ -11,5 +11,6 @@
   "formSaved": "Saved",
   "formFailed": "Not saved. Correct the fields and try again.",
   "formNotSent": "Not sent. Check the connection and try again.",
-  "formSummary": "Correct these fields"
+  "formSummary": "Correct these fields",
+  "formResult": "The result"
 }

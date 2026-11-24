@@ -32,3 +32,14 @@ test("style blocks, style attributes and React style objects are read", () => {
   const tsx = `export const A = () => <div style={{ width: 320, display: "flex" }} />;\nconst B = () => <div style={{ display: "none" }} />;`;
   expect(markupProblems("app.tsx", tsx).map((p) => p.rule)).toEqual(["own-size"]);
 });
+
+test("a copied glyph and a busy button of the project's own are found", () => {
+  const html = `<button class="t-btn"><svg class="t-icon" viewBox="0 0 16 16"><path d="M1 1"/></svg></button>\n<svg class="t-icon"><use href="/tailor/icons.svg#bi-x-lg"></use></svg>\n<script>\nbutton.setAttribute("aria-busy", "true");\n</script>\n<div aria-busy="true"></div>`;
+  expect(markupProblems("index.html", html).map((p) => `${p.rule} ${p.where}`)).toEqual([
+    "own-glyph index.html:1",
+    "own-busy index.html:4",
+  ]);
+  expect(markupProblems("app.js", 'b.innerHTML = "<span class=t-btn-spinner>";').map((p) => p.rule)).toEqual([
+    "own-busy",
+  ]);
+});

@@ -81,3 +81,44 @@ export function glyph(body: string): SVGSVGElement {
 
 /** An id that no other element of the page has. The count is shared by every script file of the kit. */
 export const uid = (prefix: string): string => `${prefix}-${++runtime.ids}`;
+
+const BUSY_ICON = new WeakMap<Element, Element>();
+
+/**
+ * Marks a button as busy, as the React Button's `loading` does: a spinner in place of its icon, aria-busy and
+ * aria-disabled; the button keeps the focus. `busy(button, false)` puts it back. `Tailor.busy` on the page.
+ */
+export function busy(button: Element | null, on: boolean): void {
+  if (!button) return;
+  // A busy button ignores clicks, as the React one does.
+  once("busy", () =>
+    document.addEventListener(
+      "click",
+      (event) => {
+        if (!(event.target instanceof Element) || !event.target.closest('.t-btn[aria-busy="true"]')) return;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      },
+      true,
+    ),
+  );
+  const spinner = button.querySelector(":scope > .t-btn-spinner");
+  if (on) {
+    button.setAttribute("aria-busy", "true");
+    button.setAttribute("aria-disabled", "true");
+    if (spinner) return;
+    const next = h("span", { class: "t-btn-spinner", "aria-hidden": "true" });
+    const icon = button.querySelector(":scope > svg.t-icon");
+    if (icon) {
+      BUSY_ICON.set(next, icon);
+      icon.replaceWith(next);
+    } else button.prepend(next);
+    return;
+  }
+  button.removeAttribute("aria-busy");
+  button.removeAttribute("aria-disabled");
+  if (!spinner) return;
+  const icon = BUSY_ICON.get(spinner);
+  if (icon) spinner.replaceWith(icon);
+  else spinner.remove();
+}
