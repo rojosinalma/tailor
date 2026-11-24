@@ -115,3 +115,13 @@ test("a longer word broken in its middle is found; broken after its hyphen it is
   expect(middle.some((f) => f.startsWith("broken-word:") && f.includes('"nas-documents"'))).toBe(true);
   expect(await rules(cell("10ch").replace("anywhere", "break-word"))).toEqual([]);
 });
+
+test("plain text at the side of a bar of the frame is found; an icon button there is not", async () => {
+  const bar = (end: string) =>
+    `<header class="t-shell-bar" style="display:flex;justify-content:space-between;padding:0 8px;width:390px"><span>Brand name</span>${end}</header>`;
+  const found = await rules(bar("<span><span>Ready</span></span>"));
+  expect(found.some((f) => f.startsWith("edge-text:") && f.includes("Ready"))).toBe(true);
+  expect(
+    (await rules(bar('<button aria-label="Menu">M</button>'))).filter((f) => f.includes("Ready")),
+  ).toEqual([]);
+});

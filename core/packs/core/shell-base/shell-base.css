@@ -394,6 +394,17 @@ span.t-shell-link {
     padding-inline-start: calc(var(--t-gutter) + var(--t-safe-left));
   }
 
+  /* An icon button at the end has room of its own; text there (a status, a name) keeps the gutter. */
+  .t-shell-bar:not(
+    :has(
+      > .t-shell-search-button:last-child,
+      > .t-shell-actions:last-child > .t-btn[data-icon-only]:last-child,
+      > .t-shell-actions:last-child > .t-btn[data-icon-only] + .t-popup:last-child
+    )
+  ) {
+    padding-inline-end: calc(var(--t-gutter) + var(--t-safe-right));
+  }
+
   .t-shell .t-shell-menu-button,
   .t-shell .t-shell-search-button {
     display: inline-flex;

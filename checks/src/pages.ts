@@ -477,6 +477,24 @@ export function inspect(touch: boolean, touchSize: number): { rule: string; mess
     }
   }
 
+  // Text in a bar of the frame keeps the gutter from the side of the screen: an icon button at the edge has
+  // room of its own, plain text has none ("Ready" 8 px from the edge of a phone).
+  for (const bar of document.querySelectorAll(".t-shell-bar, .t-shell-footer")) {
+    if (!visible(bar)) continue;
+    const edge = bar.getBoundingClientRect();
+    for (const node of textBoxes) {
+      if (!bar.contains(node) || !visible(node) || node.closest("button, .t-btn, .t-control, [role=search]"))
+        continue;
+      const box = node.getBoundingClientRect();
+      const gap = Math.min(box.left - edge.left, edge.right - box.right);
+      if (gap < 12)
+        problems.push({
+          rule: "edge-text",
+          message: `${name(node).split(" ")[0]} "${(node.textContent ?? "").trim().slice(0, 20)}" is ${Math.round(gap)}px from the side of its bar; text keeps the gutter`,
+        });
+    }
+  }
+
   // The boxes of an element as they show: one per line of a wrapped link, cut to every ancestor that clips or scrolls.
   const shown = (el: Element): { left: number; right: number; top: number; bottom: number }[] => {
     const boxes = [...el.getClientRects()].map((r) => ({

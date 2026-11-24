@@ -15,6 +15,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   fetch or busy code.
 - Agent build test: the scan of the project's files finds a copied glyph (`own-glyph`) and a busy button of
   its own (`own-busy`).
+- Page checks: rule `edge-text`, text in a bar of the frame closer than 12 px to its side. The sample tool has
+  a status ("Ready") at the end of its bar.
 
 ### Changed
 
@@ -33,6 +35,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 
 - Page checks: a control under an open popup that is not modal no longer counts as overlapped, and its hit
   area is not measured where the popup covers it.
+- Phone top bar: plain text at the end of the bar (a status, a name) keeps the gutter from the edge; an icon
+  button there keeps the narrow edge.
 
 ## [2.2.0] — 2026-11-21
 

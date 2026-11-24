@@ -1,6 +1,7 @@
 /** The sample tool of the top navigation shell: it renders a drawing to a picture, and has its settings. */
 import { Search } from "@tailor/react/core/search/search";
 import type { NavItem } from "@tailor/react/core/shell-base/shell-base";
+import { StatusDot } from "@tailor/react/core/status-dot/status-dot";
 import { SettingsPageLayout } from "@tailor/react/layouts/settings-page/settings-page";
 import { ToolPageLayout } from "@tailor/react/layouts/tool-page/tool-page";
 import { TopNavShell } from "@tailor/react/shell-topnav/topnav/topnav";
@@ -27,6 +28,8 @@ export function ToolFrame({ context, children }: { context: AppContext; children
       brand={{ name: "Thumbnails", icon: "bi:image", to: context.href("render") }}
       nav={toolNav(context)}
       search={<Search label="Search the drawings" placeholder="Search" size="sm" shortcut={false} />}
+      // A plain-text action at the end of the bar: on a phone it keeps the gutter from the edge.
+      actions={<StatusDot tone="success" label="Ready" showLabel />}
       footer={FOOTER}
       theme={["skin", "palette", "mode"]}
     >
