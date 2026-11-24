@@ -73,6 +73,8 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   saved".
 - Status dot: a label wider than its box ends with an ellipsis; at 400 % zoom the status in the top bar
   reached past the screen.
+- Image check: pixels one or two colour levels off count as drawing noise; a full run failed on 162 pixels one
+  level off.
 
 ## [2.2.0] — 2026-11-21
 

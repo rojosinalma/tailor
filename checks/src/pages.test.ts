@@ -65,6 +65,22 @@ test("a few pixels of drawing noise count as the same image", () => {
   ).toBe(true);
 });
 
+test("pixels one or two levels off do not count, however many", () => {
+  const base = png(100, 100, grey);
+  expect(
+    sameImage(
+      base,
+      png(100, 100, (x, y) => (y < 5 ? [121, 122, 120] : grey())),
+    ),
+  ).toBe(true);
+  expect(
+    sameImage(
+      base,
+      png(100, 100, (_x, y) => (y < 2 ? [123, 120, 120] : grey())),
+    ),
+  ).toBe(false);
+});
+
 test("a real change is not the same image", () => {
   const base = png(100, 100, grey);
   // A border of one pixel that changed its colour, a line that moved, another size.

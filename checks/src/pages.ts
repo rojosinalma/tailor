@@ -222,12 +222,13 @@ function decodePng(png: Uint8Array): {
 /**
  * The browser draws the edge of a rounded corner or of a small icon a little differently from run to run
  * in a few places. Two images count as the same when they have the same size, at most NOISE_PIXELS pixels
- * differ at all, and at most NOISE_STRONG of them by more than NOISE_LEVELS in a colour channel.
+ * differ by more than NOISE_FAINT levels, and at most NOISE_STRONG of them by more than NOISE_LEVELS in a colour channel.
  * A real change, even a one-pixel shift of a border or another icon, moves more pixels than that.
  */
 const NOISE_PIXELS = 150;
 const NOISE_STRONG = 40;
 const NOISE_LEVELS = 6;
+const NOISE_FAINT = 2;
 
 export function sameImage(a: Uint8Array, b: Uint8Array): boolean {
   const [x, y] = [decodePng(a), decodePng(b)];
@@ -239,7 +240,9 @@ export function sameImage(a: Uint8Array, b: Uint8Array): boolean {
     for (let c = 0; c < x.channels; c++) {
       delta = Math.max(delta, Math.abs((x.data[i + c] ?? 0) - (y.data[i + c] ?? 0)));
     }
-    if (delta === 0) continue;
+    // A pixel one or two levels off is rounding in the browser's drawing, which no eye sees: a page of
+    // dashed borders drew 162 such pixels in one run of the full check and none in the next.
+    if (delta <= NOISE_FAINT) continue;
     if (++differing > NOISE_PIXELS) return false;
     if (delta > NOISE_LEVELS && ++strong > NOISE_STRONG) return false;
   }
