@@ -19,6 +19,7 @@ import { sha256 } from "../../cli/src/plan";
 import { reactPackage } from "../../cli/src/react-package";
 import { packFile, renderIndex, renderPack } from "../../cli/src/reference-md";
 import { storeDir } from "../../cli/src/store";
+import { PACK_GLYPHS } from "../../core/src/glyph-icons.gen";
 import { type PackSpec, withRequirements } from "../../core/src/packs";
 import type { ComponentSpec } from "../../core/src/spec";
 import { ICON_SETS } from "../../core/src/sprite";
@@ -461,6 +462,7 @@ export async function release(options: { install?: boolean } = {}): Promise<Rele
     files: files.sort((a, b) => (a.path < b.path ? -1 : 1)),
     breaking: await readBreaking(),
     ...(changelog ? { changelog } : {}),
+    glyphs: PACK_GLYPHS,
   };
   parseManifest(manifest, "the release manifest");
   await Bun.write(`${dir}/manifest.json`, `${JSON.stringify(manifest, null, 2)}\n`);

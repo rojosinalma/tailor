@@ -1,10 +1,9 @@
 import type spec from "@tailor/packs/core/icon/spec";
-import { createContext, type ReactNode, use } from "react";
+import { type ReactNode, use } from "react";
+import { SpriteContext } from "../../kit";
 
 type IconSet = (typeof spec.props.set)[number];
 export type IconName = `${IconSet}:${string}`;
-
-const SpriteContext = createContext("/tailor/icons.svg");
 
 /** Sets the address of the icon sprite for the icons below it. */
 export function IconSprite({ href, children }: { href: string; children: ReactNode }) {

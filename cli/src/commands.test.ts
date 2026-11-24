@@ -43,6 +43,13 @@ describe("icon scan", () => {
       /Unknown icons: bi:nope, simple-icons:x/,
     );
   });
+
+  test("the glyphs of the HTML kit's markup are groups with their own ids", () => {
+    const sets = { bi: { prefix: "bi", icons: { "x-lg": { body: "<path d='M1'/>" } } } };
+    const sprite = spriteOf([], sets, { "t-close": "x-lg" });
+    expect(sprite).toContain(`<defs><g id="t-close"><path d='M1'/></g></defs>`);
+    expect(sprite).not.toContain("<symbol");
+  });
 });
 
 describe("remove plan", () => {

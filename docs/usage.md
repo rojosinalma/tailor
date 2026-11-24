@@ -141,7 +141,9 @@ behaviour. A page needs no build tool.
    names, and a button with `data-t-download="<id>"` saves it. The tool page works this way with no script.
 5. **Icons.** `<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"></use></svg>`.
    `tailor icons` finds the sprite address (`icons.svg#bi-<name>`, `icons.svg#simple-icons-<name>`) as well
-   as the `bi:<name>` form, and adds the icon to the sprite.
+   as the `bi:<name>` form, and adds the icon to the sprite. The small icons of tailor's parts (close, chevron,
+   help, the tones) are always in the sprite as `icons.svg#t-close`, `#t-chevron-down`, …: the reference markup
+   draws them that way, so a page copies one line and never an icon's drawing.
 6. **What the HTML kit has.** `tailor list` shows it per pack: all of it, a named part, or nothing.
 
 ## 4. Phones

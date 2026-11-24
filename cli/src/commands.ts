@@ -101,7 +101,12 @@ async function iconSets(release: Release): Promise<Record<string, IconData>> {
 async function sprite(root: string, state: State, release: Release): Promise<string> {
   const skip = [publicRoot(state), vendorRoot(state)];
   const names = await scanIcons(root, state.icons.scan, skip);
-  return spriteOf([...names, ...state.icons.add], await iconSets(release));
+  // The HTML kit's markup draws the glyphs of its parts from the sprite (icons.svg#t-close).
+  const glyphs =
+    state.kit === "html"
+      ? Object.assign({}, ...state.packs.map((pack) => release.manifest.glyphs?.[pack] ?? {}))
+      : {};
+  return spriteOf([...names, ...state.icons.add], await iconSets(release), glyphs);
 }
 
 const made = (data: string): Wanted => ({ sha256: sha256(data), data: async () => data });

@@ -13,6 +13,16 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   `data-t-result` names (`data-t-result-alt`), which a button with `data-t-download` saves. React: `Form`
   props `result`, `resultAlt`; `MediaFit` prop `id`. The tool page uses it: a project that copies it writes no
   fetch or busy code.
+- Agent build test: the scan of the project's files finds a copied glyph (`own-glyph`) and a busy button of
+  its own (`own-busy`).
+
+### Changed
+
+- HTML kit markup draws the glyphs of tailor's parts (close, chevron, help, the tones of alert and state) from
+  the sprite: `<svg class="t-icon" viewBox="0 0 16 16"><use href="/tailor/icons.svg#t-close"></use></svg>`.
+  The sprite of an HTML kit project always holds the glyphs of its packs (manifest field `glyphs`), so a
+  project never copies an icon's drawing. Markup with the inline drawings keeps working. The offline page
+  keeps its glyphs inline.
 
 ### Fixed
 

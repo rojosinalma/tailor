@@ -153,7 +153,12 @@ async function writeFile(path: string, content: string | Uint8Array): Promise<vo
 }
 
 /** The pixels of a PNG file (8-bit RGB or RGBA, as the browser writes them), row after row. */
-function decodePng(png: Uint8Array): { width: number; height: number; channels: number; data: Uint8Array } {
+function decodePng(png: Uint8Array): {
+  width: number;
+  height: number;
+  channels: number;
+  data: Uint8Array;
+} {
   const view = new DataView(png.buffer, png.byteOffset, png.byteLength);
   const chunks: Uint8Array[] = [];
   let width = 0;

@@ -24,9 +24,16 @@ export function findIconNames(source: string): string[] {
   return [...new Set(names)];
 }
 
+/**
+ * `glyphs` maps a glyph's sprite id (`t-close`) to its Bootstrap icon. A glyph is a plain group, not a symbol:
+ * markup draws it with the viewBox of the inline form (`<svg viewBox="0 0 16 16"><use href="…#t-close">`), and
+ * it lands on the same pixels as the React kit's inline glyph. A symbol makes a viewport of its own, which
+ * the browser draws a little differently at a size between pixels.
+ */
 export function buildSprite(
   names: readonly string[],
   sets: Readonly<Record<string, IconData>>,
+  glyphs: Readonly<Record<string, string>> = {},
 ): { sprite: string; missing: string[] } {
   const missing: string[] = [];
   const symbols: string[] = [];
@@ -42,8 +49,15 @@ export function buildSprite(
     const height = icon.height ?? set.height ?? 16;
     symbols.push(`<symbol id="${prefix}-${id}" viewBox="0 0 ${width} ${height}">${icon.body}</symbol>`);
   }
+  const groups: string[] = [];
+  for (const [id, icon] of Object.entries(glyphs).sort(([a], [b]) => (a < b ? -1 : 1))) {
+    const body = sets.bi?.icons[icon]?.body;
+    if (body) groups.push(`<g id="${id}">${body}</g>`);
+    else missing.push(`bi:${icon}`);
+  }
+  const defs = groups.length > 0 ? `<defs>${groups.join("")}</defs>` : "";
   return {
-    sprite: `<svg xmlns="http://www.w3.org/2000/svg" style="display:none">${symbols.join("")}</svg>\n`,
+    sprite: `<svg xmlns="http://www.w3.org/2000/svg" style="display:none">${symbols.join("")}${defs}</svg>\n`,
     missing,
   };
 }

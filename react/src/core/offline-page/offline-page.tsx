@@ -2,7 +2,7 @@ import { offline, retry } from "@tailor/core/glyphs.gen";
 import { t } from "@tailor/core/text";
 import type { ReactNode } from "react";
 import { Glyph } from "../../glyph";
-import { useIsStatic } from "../../kit";
+import { InlineGlyphs, useIsStatic } from "../../kit";
 import { Button } from "../button/button";
 
 export interface OfflinePageProps {
@@ -23,25 +23,28 @@ export function OfflinePage({
   onRetry,
 }: OfflinePageProps) {
   const isStatic = useIsStatic();
+  // The glyphs stay inline in the HTML kit too: the sprite may not be reachable offline.
   return (
-    <div className="t-status-page">
-      <div className="t-status-page-body">
-        <span className="t-status-page-icon" aria-hidden="true">
-          <Glyph body={offline} />
-        </span>
-        <h1 className="t-status-page-title">{title}</h1>
-        <p className="t-status-page-text">{text}</p>
-        <div className="t-status-page-actions">
-          <Button
-            variant="primary"
-            icon={<Glyph body={retry} />}
-            onClick={onRetry ?? reload}
-            data-t={isStatic ? "reload" : undefined}
-          >
-            {t("retry")}
-          </Button>
+    <InlineGlyphs>
+      <div className="t-status-page">
+        <div className="t-status-page-body">
+          <span className="t-status-page-icon" aria-hidden="true">
+            <Glyph body={offline} />
+          </span>
+          <h1 className="t-status-page-title">{title}</h1>
+          <p className="t-status-page-text">{text}</p>
+          <div className="t-status-page-actions">
+            <Button
+              variant="primary"
+              icon={<Glyph body={retry} />}
+              onClick={onRetry ?? reload}
+              data-t={isStatic ? "reload" : undefined}
+            >
+              {t("retry")}
+            </Button>
+          </div>
         </div>
       </div>
-    </div>
+    </InlineGlyphs>
   );
 }

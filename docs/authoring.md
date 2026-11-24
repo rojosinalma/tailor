@@ -118,7 +118,10 @@ export default defineComponent({
      (`data-t-open="<id>"`).
 4. Built-in texts come from `t("key")`. Add keys in the component's `texts.json`.
 5. Icons the component draws itself are glyphs: `<Glyph body={close} />` with the body from
-   `@tailor/core/glyphs.gen`. Icons an app picks are `<Icon name="bi:house" />` from the sprite.
+   `@tailor/core/glyphs.gen`. Icons an app picks are `<Icon name="bi:house" />` from the sprite. In static
+   mode a glyph renders as `<use href="…/icons.svg#t-close">` (the glyph's name in kebab case); the sprite of
+   an HTML kit project holds the glyphs of its packs. A part that must work without the network wraps itself
+   in `InlineGlyphs` (the offline page).
 6. A link is `<AppLink to="…">` from `react/src/link.tsx`: it goes through the router inside an app, marks
    the current page with `aria-current="page"`, and is a plain `<a>` in the HTML kit.
 7. Imports use the aliases `@tailor/core/*` (`core/src`), `@tailor/packs/*` (`core/packs`) and relative paths

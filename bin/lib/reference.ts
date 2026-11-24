@@ -5,6 +5,7 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { Reference, ReferenceComponent } from "../../cli/src/reference-md";
+import { GLYPH_IDS } from "../../core/src/glyph-icons.gen";
 import type { PackSpec } from "../../core/src/packs";
 import type { ComponentSpec } from "../../core/src/spec";
 import { IconSprite } from "../../react/src/core/icon/icon";
@@ -93,7 +94,7 @@ export function renderExample(example: Example): string {
   // biome-ignore lint/correctness/noChildrenProp: both components declare children as a required prop.
   const sprite = createElement(IconSprite, { href: SPRITE, children: body });
   // biome-ignore lint/correctness/noChildrenProp: as above.
-  return renderToStaticMarkup(createElement(StaticKit, { children: sprite }));
+  return renderToStaticMarkup(createElement(StaticKit, { children: sprite, glyphs: GLYPH_IDS }));
 }
 
 export async function buildReference(

@@ -39,6 +39,8 @@ export interface Manifest {
   readonly files: readonly ManifestFile[];
   readonly breaking: readonly Breaking[];
   readonly changelog?: readonly ChangelogEntry[];
+  /** The glyphs of each pack, sprite id to Bootstrap icon: an HTML kit project's sprite always holds them. */
+  readonly glyphs?: Readonly<Record<string, Readonly<Record<string, string>>>>;
 }
 
 type Json = unknown;
@@ -169,6 +171,20 @@ export function parseManifest(value: Json, where = "manifest.json"): Manifest {
             lines: s.strings(o.lines, `changelog[${i}].lines`),
           };
         });
+  const glyphs =
+    m.glyphs === undefined
+      ? undefined
+      : Object.fromEntries(
+          Object.entries(s.object(m.glyphs, "glyphs")).map(([pack, ids]) => [
+            pack,
+            Object.fromEntries(
+              Object.entries(s.object(ids, `glyphs.${pack}`)).map(([id, icon]) => [
+                id,
+                s.string(icon, `glyphs.${pack}.${id}`),
+              ]),
+            ),
+          ]),
+        );
   return {
     version: s.version(m.version, "version"),
     packs,
@@ -179,6 +195,7 @@ export function parseManifest(value: Json, where = "manifest.json"): Manifest {
     files,
     breaking,
     ...(changelog ? { changelog } : {}),
+    ...(glyphs ? { glyphs } : {}),
   };
 }
 

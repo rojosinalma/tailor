@@ -32,19 +32,49 @@ export async function gen(): Promise<GenResult> {
     icons: Record<string, { body: string }>;
   };
   const glyphs = new Map<string, string>();
+  const glyphIcons = new Map<string, string>();
+  const packGlyphs: Record<string, Record<string, string>> = {};
+  /** The sprite id of a glyph: `t-` and its name in kebab case (close → t-close, chevronDown → t-chevron-down). */
+  const glyphId = (name: string): string => `t-${name.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`)}`;
   for (const file of [
     ...(await scan("core/packs/*/glyphs.json")),
     ...(await scan("core/packs/*/*/glyphs.json")),
   ]) {
     const map = (await Bun.file(at(file)).json()) as Record<string, string>;
+    const pack = file.split("/")[2] ?? "core";
     for (const [name, icon] of Object.entries(map)) {
       const body = iconData.icons[icon]?.body;
       if (!body) errors.push(`${file}: no Bootstrap icon named "${icon}"`);
       else if (glyphs.has(name) && glyphs.get(name) !== body)
         errors.push(`${file}: glyph "${name}" is defined twice`);
-      else glyphs.set(name, body);
+      else {
+        glyphs.set(name, body);
+        glyphIcons.set(name, icon);
+        packGlyphs[pack] ??= {};
+        packGlyphs[pack][glyphId(name)] = icon;
+      }
     }
   }
+  const sortedGlyphs = [...glyphIcons].sort(([a], [b]) => a.localeCompare(b));
+  await write(
+    "core/src/glyph-icons.gen.ts",
+    `${HEADER}import * as glyph from "./glyphs.gen";
+
+/** The sprite id of each glyph body: the static markup draws a glyph from the sprite by it. */
+export const GLYPH_IDS: ReadonlyMap<string, string> = new Map([
+${sortedGlyphs.map(([name]) => `  [glyph.${name}, ${JSON.stringify(glyphId(name))}],`).join("\n")}
+]);
+
+/** The glyphs of each pack, sprite id to Bootstrap icon: the sprite of an HTML kit project always holds them. */
+export const PACK_GLYPHS: Readonly<Record<string, Readonly<Record<string, string>>>> = ${JSON.stringify(
+      Object.fromEntries(
+        Object.entries(packGlyphs)
+          .sort(([a], [b]) => a.localeCompare(b))
+          .map(([pack, ids]) => [pack, Object.fromEntries(Object.entries(ids).sort())]),
+      ),
+    )};
+`,
+  );
   await write(
     "core/src/glyphs.gen.ts",
     `${HEADER}${[...glyphs]

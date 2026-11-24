@@ -141,7 +141,8 @@ export function markupProblems(file: string, text: string): Problem[] {
   for (const m of text.matchAll(/<svg\b[^>]*class="t-icon"[^>]*>\s*<(?:path|g)\b/g))
     problems.push({
       rule: "own-glyph",
-      message: 'a t-icon with its own drawing; use the sprite: <use href="/tailor/icons.svg#bi-<name>">',
+      message:
+        'a t-icon with its own drawing; use the sprite: <use href="/tailor/icons.svg#t-close"> for a glyph of tailor, #bi-<name> for an icon',
       where: `${file}:${lineAt(text, m.index ?? 0)}`,
     });
   // A busy button of its own: the form, Tailor.busy and the React Button's loading do it.

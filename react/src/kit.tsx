@@ -8,9 +8,36 @@ type KitMode = "react" | "static";
 
 const KitContext = createContext<KitMode>("react");
 
-export function StaticKit({ children }: { children: ReactNode }) {
-  return <KitContext value="static">{children}</KitContext>;
+/**
+ * `glyphs` maps a glyph's body to its sprite id: the static markup then draws each glyph from the sprite
+ * (`icons.svg#t-close`), so a project copies one line and never a drawing.
+ */
+export function StaticKit({
+  children,
+  glyphs,
+}: {
+  children: ReactNode;
+  glyphs?: ReadonlyMap<string, string>;
+}) {
+  return (
+    <KitContext value="static">
+      <GlyphIcons value={glyphs ?? null}>{children}</GlyphIcons>
+    </KitContext>
+  );
 }
+
+const GlyphIcons = createContext<ReadonlyMap<string, string> | null>(null);
+
+/** Draws the glyphs below it inline, also in static markup: for a page that must need nothing from the network. */
+export function InlineGlyphs({ children }: { children: ReactNode }) {
+  return <GlyphIcons value={null}>{children}</GlyphIcons>;
+}
+
+/** The sprite id of a glyph in static markup, or null when the glyph is drawn inline. */
+export const useGlyphIcon = (body: string): string | null => use(GlyphIcons)?.get(body) ?? null;
+
+/** The address of the icon sprite: IconSprite sets it. */
+export const SpriteContext = createContext("/tailor/icons.svg");
 
 export const useIsStatic = (): boolean => use(KitContext) === "static";
 

@@ -102,6 +102,11 @@ const howTo = (shells: readonly string[]): string => `## How to use
 5. Icons: \`<Icon name="bi:house" />\` in the React kit; in HTML markup
    \`<svg class="t-icon" aria-hidden="true"><use href="/tailor/icons.svg#bi-house"></use></svg>\` (sets \`bi\` and
    \`simple-icons\`). Run \`tailor icons\` after adding a name: it finds both forms and adds them to the sprite.
+   The small icons of tailor's own parts (close, chevron, help, the tones of an alert or a state) are in the
+   sprite of an HTML kit project already: the reference markup draws them as
+   \`<svg class="t-icon" viewBox="0 0 16 16" aria-hidden="true"><use href="/tailor/icons.svg#t-close"></use></svg>\`
+   (\`t-chevron-down\`, \`t-help\`, \`t-info\`, \`t-success\`, \`t-warning\`, \`t-danger\`, …). Copy that line;
+   never copy or write an icon's drawing (\`<path d="…">\`).
 6. Where the files are, after \`tailor add\`:
    - a. React kit: the source in \`<vendor>/tailor/\`, imported as \`tailor/<pack>\`; stylesheets and
      \`icons.svg\` in \`<public>/tailor/\`.

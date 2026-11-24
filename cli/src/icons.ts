@@ -33,8 +33,12 @@ export async function scanIcons(
 }
 
 /** The sprite; names that no icon set has are an error that lists them. */
-export function spriteOf(names: readonly string[], sets: Readonly<Record<string, IconData>>): string {
-  const { sprite, missing } = buildSprite(names, sets);
+export function spriteOf(
+  names: readonly string[],
+  sets: Readonly<Record<string, IconData>>,
+  glyphs: Readonly<Record<string, string>> = {},
+): string {
+  const { sprite, missing } = buildSprite(names, sets, glyphs);
   if (missing.length > 0)
     throw new Problem(
       `Unknown icons: ${missing.join(", ")}.`,

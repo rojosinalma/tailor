@@ -152,7 +152,8 @@ components of each pack. Outside a project it shows only the release (`--version
 Builds `<public>/tailor/icons.svg` again. It reads the project's source files for icon names
 (`bi:<name>` and `simple-icons:<name>`, and the sprite address that HTML markup writes:
 `icons.svg#bi-<name>` and `icons.svg#simple-icons-<name>`), adds the names given with `--add`, and writes the sprite. An unknown
-name is an error that lists it. `add` and `upgrade` do this too.
+name is an error that lists it. `add` and `upgrade` do this too. In an HTML kit project the sprite also holds
+the glyphs of the installed packs (`icons.svg#t-close`, `#t-chevron-down`, …), which the reference markup draws.
 
 1. `--scan glob,…`: the files to read. The default is
    `**/*.{html,erb,tsx,ts,jsx,js,vue,svelte,astro,php,py,rb,templ,j2}`. Folders named `node_modules`,
@@ -216,7 +217,7 @@ bun bin/build --release --install  # also copies it into the local release store
 
 ```
 manifest.json      version, packs, components, skins, palettes, default theme, files (sha256, pack, kit),
-                   breaking changes, changelog
+                   breaking changes, changelog, glyphs (per pack: sprite id to Bootstrap icon)
 LICENSE, THIRD-PARTY.md        THIRD-PARTY: the libraries bundled into the HTML kit scripts
 css/               tailor.css, tailor-<pack>.css, skins/, palettes/, fonts/
 html/              tailor.js, tailor-<pack>.js, tailor-sw.js, head.html (a template),

@@ -155,7 +155,10 @@ export async function buildShowcase(
   const sets: Record<string, IconData> = {};
   for (const set of ICON_SETS)
     sets[set] = (await Bun.file(at(`node_modules/@iconify-json/${set}/icons.json`)).json()) as IconData;
-  const { sprite, missing } = buildSprite(names, sets);
+  // The glyphs too: the HTML kit's markup draws them from the sprite, as in a project.
+  const { PACK_GLYPHS } = await import(at("core/src/glyph-icons.gen.ts"));
+  const glyphs = Object.assign({}, ...Object.values(PACK_GLYPHS as Record<string, Record<string, string>>));
+  const { sprite, missing } = buildSprite(names, sets, glyphs);
   if (missing.length > 0) throw new Error(`Unknown icons: ${missing.join(", ")}`);
   await out(`${dist}/tailor/icons.svg`, sprite);
 
@@ -202,6 +205,7 @@ export async function buildShowcase(
 
   // HTML kit: one static page per component, rendered from the same examples in static mode.
   const { StaticKit } = await import(at("react/src/kit.tsx"));
+  const { GLYPH_IDS } = await import(at("core/src/glyph-icons.gen.ts"));
   const { EntrySections } = await import(at("showcase/src/entry-sections.tsx"));
   const { IconSprite } = await import(at("react/src/core/icon/icon.tsx"));
   // A page loads the scripts of its own pack, of the packs that one requires, and of any pack whose
@@ -231,7 +235,7 @@ export async function buildShowcase(
     const body = renderToStaticMarkup(
       createElement(
         StaticKit,
-        null,
+        { glyphs: GLYPH_IDS },
         createElement(
           IconSprite,
           { href: "../tailor/icons.svg" },
@@ -332,7 +336,7 @@ export async function buildShowcase(
       const body = renderToStaticMarkup(
         createElement(
           StaticKit,
-          null,
+          { glyphs: GLYPH_IDS },
           createElement(IconSprite, { href: `${rel}tailor/icons.svg` }, item.render()),
         ),
       );
