@@ -27,14 +27,24 @@ export interface FactProps {
   children: ReactNode;
 }
 
+/** A key with its help: the last word and the help button stay on one line. */
+function KeyWithHelp({ name, help }: { name: string; help: ReactNode }) {
+  const cut = name.lastIndexOf(" ");
+  return (
+    <>
+      {cut > 0 ? `${name.slice(0, cut)} ` : null}
+      <span className="t-facts-key-end">
+        {name.slice(cut + 1)} {help}
+      </span>
+    </>
+  );
+}
+
 /** One key and its value, inside Facts. */
 export function Fact({ name, mono, help, children }: FactProps) {
   return (
     <div className="t-facts-row">
-      <dt className="t-facts-key">
-        {help ? `${name} ` : name}
-        {help}
-      </dt>
+      <dt className="t-facts-key">{help ? <KeyWithHelp name={name} help={help} /> : name}</dt>
       <dd className="t-facts-value" data-mono={mono ? "" : undefined}>
         {children}
       </dd>

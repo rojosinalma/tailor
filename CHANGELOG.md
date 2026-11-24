@@ -28,6 +28,7 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 - Page checks: the axe results "needs review" of `aria-prohibited-attr`, `aria-allowed-attr`, `aria-valid-
   attr-value` and `aria-allowed-role` fail the check (rule `axe:review:<id>`).
 - Page checks: the sample apps also on a 320 px window, a 1280 px window at 400 % browser zoom (WCAG 1.4.10).
+- Facts: part `t-facts-key-end`, the last word of a key with its help button, kept on one line.
 
 ### Changed
 

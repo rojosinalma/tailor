@@ -31,6 +31,10 @@
   color: var(--t-muted);
 }
 
+.t-facts-key-end {
+  white-space: nowrap;
+}
+
 .t-facts-value {
   flex: 1 1 var(--t-measure-2xs);
   min-width: 0;
