@@ -70,7 +70,7 @@ test("pixels one or two levels off do not count, however many", () => {
   expect(
     sameImage(
       base,
-      png(100, 100, (x, y) => (y < 5 ? [121, 122, 120] : grey())),
+      png(100, 100, (_x, y) => (y < 5 ? [121, 122, 120] : grey())),
     ),
   ).toBe(true);
   expect(
