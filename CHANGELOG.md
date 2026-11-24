@@ -52,6 +52,10 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   The header of a detail page took a quarter of a phone screen.
 - REFERENCE.md and the settings entries say what a setting row sends and what the server answers: `PATCH
   <saveUrl>` with `{ "name", "value" }` as JSON; `204`, `{ "ok": true }` or `{ "ok": false, "message" }`.
+- HTML kit, side navigation: the markup holds each link once, in the column; the script builds the phone's
+  navigation drawer from the column's groups (sections shown open, no tooltips) with the brand and the
+  footer's facts and theme controls. Markup that holds a drawer (2.2.0 and before) keeps it; the bottom bar
+  form is as before. The agent scan rule `links-twice` holds for both shells.
 
 ### Fixed
 

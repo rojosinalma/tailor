@@ -93,9 +93,11 @@ const howTo = (shells: readonly string[]): string => `## How to use
 
 1. Pick one shell (${shells.map((s) => `\`${s}\``).join(", ") || "none in this release yet"}) and give it data:
    brand, links, actions. Never write the frame yourself. The shell fills the screen: never add \`contained\`
-   (\`data-contained\`), which only fits a preview of a shell into a box. HTML kit, top navigation: write each
-   link once, in the bar's list (\`<nav class="t-shell-nav" data-t="topnav"><ul class="t-shell-list">\`); the
-   script builds the phone's drawer and the "More" menu from it.
+   (\`data-contained\`), which only fits a preview of a shell into a box. HTML kit: write each link once. Top
+   navigation: in the bar's list (\`<nav class="t-shell-nav" data-t="topnav"><ul class="t-shell-list">\`); the
+   script builds the phone's drawer and the "More" menu from it. Side navigation: in the column's groups
+   (\`<div class="t-shell-sidebar" data-t="sidenav">\` … \`<nav class="t-shell-nav">\`); the script builds the
+   phone's drawer from them. Never write a \`t-nav-drawer\` yourself (only the bottom bar form has one).
 2. Each view renders one \`Page\` (title, actions, body) inside the shell, with the mode of its row in the
    table above.
 3. All spacing comes from layout parts: \`Stack\`, \`Cluster\`, \`Grid\`, \`Section\`, \`Card\`, \`Split\`. A component

@@ -47,7 +47,9 @@ test("a copied glyph and a busy button of the project's own are found", () => {
 test("a shell kept in a preview box and links written twice are found", () => {
   const html = `<div class="t-shell" data-shell="topnav" data-contained="" data-t="shell">\n<dialog class="t-drawer t-nav-drawer" id="d">`;
   const side = `<div class="t-shell" data-shell="sidenav" data-t="shell">\n<dialog class="t-drawer t-nav-drawer" id="d">`;
-  expect(markupProblems("side.html", side)).toEqual([]);
+  expect(markupProblems("side.html", side).map((p) => p.rule)).toEqual(["links-twice"]);
+  const bar = `${side}\n<nav class="t-bottom-bar">`;
+  expect(markupProblems("bar.html", bar)).toEqual([]);
   expect(markupProblems("index.html", html).map((p) => `${p.rule} ${p.where}`)).toEqual([
     "contained index.html:1",
     "links-twice index.html:2",

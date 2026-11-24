@@ -1,7 +1,8 @@
-import { chevronDown, close, menu } from "@tailor/core/glyphs.gen";
+import { chevronDown } from "@tailor/core/glyphs.gen";
 import { t } from "@tailor/core/text";
 import { THEME_EVENT } from "@tailor/core/theme";
 import { fit } from "@tailor/packs/shell-topnav/topnav/logic";
+import { buildNavDrawer, needsDrawer } from "../nav-drawer-build";
 import { glyph, h, register, uid, upgrade } from "../runtime";
 
 /** The parts of one link of the bar: a link, or a section (a menu button with its menu of sub-links). */
@@ -98,13 +99,8 @@ function drawerLink(from: Element): HTMLLIElement {
   return h("li", {}, link);
 }
 
-/**
- * The navigation drawer of a phone, from the links of the bar, the brand and the shell's footer: the menu
- * button and the <dialog> that the core scripts then take over.
- */
-function buildDrawer(shell: HTMLElement, bar: HTMLElement, items: readonly BarItem[]): void {
-  const id = uid("t-nav-drawer");
-  const brand = bar.querySelector(":scope > .t-shell-brand")?.cloneNode(true) ?? null;
+/** The drawer's navigation from the links of the bar: links as they are, a section as its sub-links. */
+function drawerNav(items: readonly BarItem[]): HTMLElement {
   const list = h(
     "ul",
     { class: "t-shell-list" },
@@ -125,68 +121,7 @@ function buildDrawer(shell: HTMLElement, bar: HTMLElement, items: readonly BarIt
       );
     }),
   );
-  const footer = shell.querySelector(":scope > .t-shell-footer");
-  const facts = footer?.querySelector(".t-shell-facts")?.cloneNode(true) ?? null;
-  const pickers = footer?.querySelector<HTMLElement>(".t-theme-pickers");
-  const theme = pickers
-    ? h(
-        "div",
-        { class: "t-shell-theme" },
-        h("div", {
-          class: "t-theme-pickers",
-          "data-t": "theme-pickers",
-          "data-parts": pickers.dataset.parts,
-          "data-layout": "compact",
-        }),
-      )
-    : null;
-  const drawer = h(
-    "dialog",
-    {
-      class: "t-drawer t-nav-drawer",
-      id,
-      "data-t": "dialog nav-drawer",
-      "data-side": "start",
-      "aria-label": t("menu"),
-    },
-    h(
-      "header",
-      { class: "t-drawer-header" },
-      brand,
-      h(
-        "button",
-        { type: "button", class: "t-drawer-close", "aria-label": t("close"), "data-t-close": "" },
-        glyph(close),
-      ),
-    ),
-    h(
-      "div",
-      { class: "t-drawer-body t-nav-drawer-body" },
-      h(
-        "nav",
-        { class: "t-shell-nav", "aria-label": t("mainNavigation") },
-        h("div", { class: "t-shell-group" }, list),
-      ),
-    ),
-    facts || theme ? h("div", { class: "t-nav-drawer-footer" }, facts, theme) : null,
-  );
-  const button = h(
-    "a",
-    {
-      class: "t-btn t-shell-menu-button",
-      "data-variant": "ghost",
-      "data-icon-only": "",
-      href: `#${id}`,
-      "data-t-open": id,
-      "aria-label": t("menu"),
-      "aria-controls": id,
-      "aria-expanded": "false",
-    },
-    glyph(menu),
-  );
-  bar.prepend(button, drawer);
-  upgrade(drawer);
-  upgrade(bar);
+  return h("nav", { class: "t-shell-nav" }, h("div", { class: "t-shell-group" }, list));
 }
 
 /**
@@ -201,8 +136,7 @@ register("topnav", (nav) => {
   const items = [...row.querySelectorAll<HTMLElement>(":scope > li:not(.t-topnav-more)")];
   const bar = nav.closest<HTMLElement>(".t-shell-bar");
   const shell = nav.closest<HTMLElement>(".t-shell");
-  if (bar && shell && !shell.querySelector(".t-nav-drawer, .t-bottom-bar"))
-    buildDrawer(shell, bar, items.map(readItem));
+  if (bar && shell && needsDrawer(shell)) buildNavDrawer(shell, bar, drawerNav(items.map(readItem)));
   const built =
     row.querySelector<HTMLElement>(":scope > .t-topnav-more") ?? buildMore(row, items.map(readItem));
   const more = built;

@@ -1,6 +1,7 @@
 import { t } from "@tailor/core/text";
 import { formOf } from "../core/shell-base";
-import { register } from "../runtime";
+import { buildNavDrawer, needsDrawer } from "../nav-drawer-build";
+import { h, register } from "../runtime";
 
 interface Stored {
   collapsed?: boolean;
@@ -23,6 +24,35 @@ function readStored(key: string | undefined): Stored {
 }
 
 /**
+ * The drawer's navigation from the column's: the same groups and links, without the column's tooltips; a
+ * section that opens and closes is its title and its sub-links, all shown, as the React kit draws it.
+ */
+function drawerNav(column: HTMLElement): HTMLElement {
+  const nav = column.cloneNode(true) as HTMLElement;
+  for (const el of nav.querySelectorAll(".t-popup, [data-t-menu]")) el.remove();
+  for (const el of nav.querySelectorAll("[data-t], [data-tip], [data-tip-side], [aria-describedby]")) {
+    for (const name of ["data-t", "data-tip", "data-tip-side", "aria-describedby", "data-t-upgraded"])
+      el.removeAttribute(name);
+  }
+  for (const button of nav.querySelectorAll<HTMLElement>("button.t-shell-link[aria-expanded]")) {
+    const title = h(
+      "span",
+      { class: "t-shell-link" },
+      ...[...button.querySelectorAll(":scope > .t-shell-icon, :scope > .t-shell-label")].map((part) =>
+        part.cloneNode(true),
+      ),
+    );
+    const sub = button.parentElement?.querySelector<HTMLElement>(":scope > .t-shell-sub");
+    if (sub) {
+      sub.hidden = false;
+      sub.removeAttribute("id");
+    }
+    button.replaceWith(title);
+  }
+  return nav;
+}
+
+/**
  * The column of the side navigation shell: `<div class="t-shell-sidebar" data-t="sidenav">`. It collapses
  * the column, opens and closes the sections, and remembers both under data-storage-key. On a tablet the column
  * starts collapsed unless the stored state says otherwise or data-tablet-collapsed="off".
@@ -30,6 +60,10 @@ function readStored(key: string | undefined): Stored {
 register("sidenav", (sidebar) => {
   const root = sidebar.closest<HTMLElement>(".t-shell");
   if (!root) return;
+  // The page writes the links once, in the column; the phone's drawer is built from them.
+  const column = sidebar.querySelector<HTMLElement>(":scope > .t-shell-nav");
+  const bar = sidebar.querySelector<HTMLElement>(":scope > .t-shell-bar");
+  if (column && bar && needsDrawer(root)) buildNavDrawer(root, bar, drawerNav(column));
   const key = sidebar.dataset.storageKey;
   const stored = readStored(key);
   const toggle = sidebar.querySelector<HTMLElement>(".t-shell-collapse");

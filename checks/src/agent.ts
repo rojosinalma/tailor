@@ -152,13 +152,13 @@ export function markupProblems(file: string, text: string): Problem[] {
       message: "a shell with contained: that is for a preview in a box; an app's shell fills the screen",
       where: `${file}:${lineAt(text, m.index ?? 0)}`,
     });
-  // The links of a top bar written again for the drawer or "More": the script builds both from the bar.
-  // (The side navigation still writes its drawer in the markup.)
-  const topnav = /data-shell="topnav"/.test(text);
-  for (const m of topnav ? text.matchAll(/class="t-drawer t-nav-drawer"|class="t-topnav-more"/g) : [])
+  // The links of a top bar or a side column written again for the drawer or "More": the scripts build both
+  // from the links the page wrote once. (The bottom bar form still writes its drawer.)
+  const shell = /data-shell="(?:topnav|sidenav)"/.test(text) && !/class="t-bottom-bar"/.test(text);
+  for (const m of shell ? text.matchAll(/class="t-drawer t-nav-drawer"|class="t-topnav-more"/g) : [])
     problems.push({
       rule: "links-twice",
-      message: `${m[0]}: write the links once, in the bar's list; the script builds the drawer and "More"`,
+      message: `${m[0]}: write the links once, in the bar's list or the side column; the script builds the drawer and "More"`,
       where: `${file}:${lineAt(text, m.index ?? 0)}`,
     });
   // A busy button of its own: the form, Tailor.busy and the React Button's loading do it.

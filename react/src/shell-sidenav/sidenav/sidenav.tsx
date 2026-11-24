@@ -262,6 +262,8 @@ export function SideNavShell({
   const state = useSidebarState(storageKey, groups, path, tabletCollapsed && narrowStart);
 
   const drawerProps = { brand, nav, footer, theme, control: drawer };
+  // The HTML kit's script builds the drawer from the column's links: the markup holds each link once.
+  const isStatic = useIsStatic();
   return (
     <ShellRoot
       shell="sidenav"
@@ -272,12 +274,12 @@ export function SideNavShell({
     >
       <div
         className="t-shell-sidebar"
-        data-t={useIsStatic() ? "sidenav" : undefined}
+        data-t={isStatic ? "sidenav" : undefined}
         data-storage-key={storageKey === false ? undefined : storageKey}
         data-tablet-collapsed={tabletCollapsed ? undefined : "off"}
       >
         <ShellBar>
-          {phoneNav === "drawer" ? <NavDrawer {...drawerProps} /> : null}
+          {phoneNav === "drawer" && !isStatic ? <NavDrawer {...drawerProps} /> : null}
           <ShellBrandLink brand={brand} />
           {search ? <ShellSearchButton control={searchControl} /> : null}
           {groups.length > 0 ? (
