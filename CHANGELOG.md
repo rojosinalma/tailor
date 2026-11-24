@@ -4,6 +4,14 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
 
 ## [Unreleased]
 
+## [2.3.1] — 2026-11-24
+
+### Fixed
+
+- `bin/build` and `bin/check` work on a fresh checkout again: the build tools load the generated glyph file
+  after they write it. At 2.3.0 they imported it at start, so CI and the release artifact failed. A test
+  fails when a build tool imports a generated file at start.
+
 ## [2.3.0] — 2026-11-24
 
 ### Added

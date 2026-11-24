@@ -108,3 +108,19 @@ describe("the React kit tree", () => {
     expect(packageOf("react")).toBe("react");
   });
 });
+
+describe("generated files", () => {
+  // A fresh checkout (CI) has no core/src/*.gen.ts until gen() runs; the build tools must not import one
+  // at import time, or bin/build and bin/check fail before they can write it (2.3.0 failed in CI so).
+  test("the build tools import no generated file at import time", async () => {
+    const offenders: string[] = [];
+    for (const pattern of ["bin/*", "bin/lib/*.ts", "checks/src/*.ts"]) {
+      for await (const file of new Bun.Glob(pattern).scan({ cwd: at("."), onlyFiles: true })) {
+        if (file.endsWith(".test.ts") || file === "bin/lib/gen.ts") continue;
+        const source = await Bun.file(at(file)).text();
+        if (/^import[^;]*from\s+["'][^"']*\.gen["']/m.test(source)) offenders.push(file);
+      }
+    }
+    expect(offenders).toEqual([]);
+  });
+});

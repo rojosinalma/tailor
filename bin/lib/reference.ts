@@ -5,7 +5,6 @@
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { Reference, ReferenceComponent } from "../../cli/src/reference-md";
-import { GLYPH_IDS } from "../../core/src/glyph-icons.gen";
 import type { PackSpec } from "../../core/src/packs";
 import type { ComponentSpec } from "../../core/src/spec";
 import { IconSprite } from "../../react/src/core/icon/icon";
@@ -83,7 +82,14 @@ export function componentExports(source: string): string[] {
   );
 }
 
+// The glyph sprite ids come from a generated file, which a fresh checkout has only after gen(): it is
+// loaded with the first examples, never at import time.
+let glyphIds: ReadonlyMap<string, string> | undefined;
+
 export async function loadExamples(spec: ComponentSpec): Promise<ExampleSet> {
+  glyphIds ??= (
+    (await import(at("core/src/glyph-icons.gen.ts"))) as { GLYPH_IDS: ReadonlyMap<string, string> }
+  ).GLYPH_IDS;
   return ((await import(at(`react/src/${spec.pack}/${spec.id}/examples.tsx`))) as { default: ExampleSet })
     .default;
 }
@@ -102,11 +108,12 @@ export function renderExample(example: Example): string {
 }
 
 function renderStatic(example: Example): string {
+  if (!glyphIds) throw new Error("renderExample: load the examples first (loadExamples)");
   const body = example.render();
   // biome-ignore lint/correctness/noChildrenProp: both components declare children as a required prop.
   const sprite = createElement(IconSprite, { href: SPRITE, children: body });
   // biome-ignore lint/correctness/noChildrenProp: as above.
-  return renderToStaticMarkup(createElement(StaticKit, { children: sprite, glyphs: GLYPH_IDS }));
+  return renderToStaticMarkup(createElement(StaticKit, { children: sprite, glyphs: glyphIds }));
 }
 
 export async function buildReference(
