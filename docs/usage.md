@@ -114,7 +114,9 @@ behaviour. A page needs no build tool.
 </head>
 <body>
   <!-- the markup of the shell, from public/tailor/reference/shell-topnav/topnav.html,
-       with the page's own links; aria-current="page" on the current link -->
+       with the page's own links, written once in the bar's list (the script builds the
+       phone's drawer and "More" from them); aria-current="page" on the current link;
+       no data-contained (that is for a preview in a box) -->
   <main class="t-shell-main" id="main" tabindex="-1">
     <div class="t-page">
       <header class="t-page-header">…<h1 class="t-page-title">Overview</h1>…</header>

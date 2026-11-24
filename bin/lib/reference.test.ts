@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { PAGE_KINDS } from "../../cli/src/reference-md";
 import { SPECS } from "../../core/src/registry.gen";
-import { componentExports, extractRender } from "./reference";
+import { componentExports, extractRender, forProjects } from "./reference";
 
 describe("the example extractor", () => {
   test("takes the JSX inside the brackets, dedented", () => {
@@ -81,4 +81,14 @@ describe("the page-kind table of the reference", () => {
       for (const id of [...shell.matchAll(/`([a-z-]+)`/g)].map((m) => m[1] ?? "")) expect(ids).toContain(id);
     }
   });
+});
+
+test("the reference leaves out the preview box of a shell example", () => {
+  expect(forProjects('<div class="t-shell" data-shell="topnav" data-contained="" data-t="shell">')).toBe(
+    '<div class="t-shell" data-shell="topnav" data-t="shell">',
+  );
+  expect(
+    forProjects("<TopNavShell brand={BRAND} nav={NAV} contained>\n<TopNavShell\n  contained\n  nav={NAV}\n>"),
+  ).toBe("<TopNavShell brand={BRAND} nav={NAV}>\n<TopNavShell\n  nav={NAV}\n>");
+  expect(forProjects("<p>It contained two</p>")).toBe("<p>It contained two</p>");
 });

@@ -100,7 +100,10 @@ export interface ShellCommon {
   footer?: FooterFact[];
   /** The theme controls that the shell shows. Default ["mode"]. `false` shows none. */
   theme?: readonly ShellThemePart[] | false;
-  /** For previews: fills its parent instead of the screen, and takes the phone form from its own width. */
+  /**
+   * Only for a preview of a shell in a box (the showcase): fills its parent instead of the screen, and takes
+   * the phone form from its own width. An app's shell fills the screen: leave it out.
+   */
   contained?: boolean;
   /** The content region: one Page. */
   children: ReactNode;

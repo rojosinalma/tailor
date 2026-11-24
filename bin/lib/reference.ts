@@ -88,8 +88,20 @@ export async function loadExamples(spec: ComponentSpec): Promise<ExampleSet> {
     .default;
 }
 
-/** The static markup of one example, as the build renders it for the HTML kit. */
+/**
+ * The code of an example as a project should copy it: a shell in an example fills its preview box
+ * (`contained`), and an app's shell fills the screen, so the reference leaves the prop and attribute out.
+ * Every agent copied `data-contained` into its real app.
+ */
+export const forProjects = (code: string): string =>
+  code.replaceAll(' data-contained=""', "").replace(/(<[A-Z]\w*\b[^<>]*?)\s+contained(?=[\s/>])/g, "$1");
+
+/** The static markup of one example, as the build renders it for the HTML kit, as a project copies it. */
 export function renderExample(example: Example): string {
+  return forProjects(renderStatic(example));
+}
+
+function renderStatic(example: Example): string {
   const body = example.render();
   // biome-ignore lint/correctness/noChildrenProp: both components declare children as a required prop.
   const sprite = createElement(IconSprite, { href: SPRITE, children: body });
@@ -107,7 +119,8 @@ export async function buildReference(
     const dir = `react/src/${spec.pack}/${spec.id}`;
     const set = await loadExamples(spec);
     const first = set.examples[0];
-    const react = extractRender(await Bun.file(at(dir, "examples.tsx")).text());
+    const source = extractRender(await Bun.file(at(dir, "examples.tsx")).text());
+    const react = source ? forProjects(source) : undefined;
     if (!first || !react) {
       problems.push(`${spec.id}: ${dir}/examples.tsx has no example to show (a first render: () => …)`);
       return undefined;
@@ -150,7 +163,8 @@ export async function showcaseReference(specs: readonly ComponentSpec[]): Promis
   const components: Record<string, { react?: string; html?: string }> = {};
   for (const spec of specs) {
     const first = (await loadExamples(spec)).examples[0];
-    const react = extractRender(await Bun.file(at(`react/src/${spec.pack}/${spec.id}/examples.tsx`)).text());
+    const source = extractRender(await Bun.file(at(`react/src/${spec.pack}/${spec.id}/examples.tsx`)).text());
+    const react = source ? forProjects(source) : undefined;
     const html = first && spec.html !== "none" ? renderExample(first) : undefined;
     components[spec.id] = { ...(react ? { react } : {}), ...(html ? { html } : {}) };
   }

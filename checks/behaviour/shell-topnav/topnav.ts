@@ -83,6 +83,46 @@ export default behaviour("topnav", {
       page.getByRole("dialog", { name: "Menu" }).getByRole("link", { name: "Settings" }),
     ).toBeVisible();
   },
+  "the markup holds each link once: the script builds the drawer and More from the bar's list": async ({
+    page,
+    kit,
+    example,
+    expect,
+  }) => {
+    if (kit !== "html") return;
+    // The markup that the page starts from (the reference a project copies) names each link once.
+    const source = await (await page.request.get(page.url())).text();
+    const narrow = source.slice(source.indexOf('data-example="narrow"'));
+    const markup = narrow.slice(0, narrow.indexOf('<section class="sc-example"'));
+    expect(markup.split('href="#hosts"').length - 1).toBe(1);
+    const body = example("narrow");
+    // The drawer and More are the script's.
+    await expect(body.locator(".t-nav-drawer")).toHaveCount(1);
+    await expect(body.locator(".t-topnav-more")).toHaveCount(1);
+    await body.getByRole("button", { name: "Menu" }).click();
+    const drawer = page.getByRole("dialog", { name: "Menu" });
+    await expect(drawer.getByRole("link", { name: /^Services/ })).toHaveAttribute("aria-current", "page");
+    await expect(drawer.getByRole("link", { name: "Backups" })).toBeVisible();
+    await expect(drawer.getByRole("link", { name: "Docs" })).toBeVisible();
+  },
+  "HTML kit: markup of 2.2.0 that holds the drawer and More keeps them": async ({ page, kit, expect }) => {
+    if (kit !== "html") return;
+    const markup = await Bun.file(`${import.meta.dir}/fixtures/narrow-2.2.0.txt`).text();
+    await page.setViewportSize({ width: 390, height: 800 });
+    await page.evaluate((html) => {
+      const box = document.createElement("div");
+      box.id = "old-markup";
+      box.style.height = "600px";
+      box.innerHTML = html;
+      document.body.prepend(box);
+      (window as unknown as { Tailor: { upgrade(node: Element): void } }).Tailor.upgrade(box);
+    }, markup);
+    const old = page.locator("#old-markup");
+    await expect(old.locator(".t-nav-drawer")).toHaveCount(1);
+    await expect(old.locator(".t-topnav-more")).toHaveCount(1);
+    await old.getByRole("button", { name: "Menu" }).click();
+    await expect(page.locator("#old_R_0H1_").getByRole("link", { name: "Hosts" })).toBeVisible();
+  },
   "the phone form: the search folds into a button that opens it under the bar": async ({ page, example }) => {
     await phoneSearchWorks(page, example("narrow"));
   },

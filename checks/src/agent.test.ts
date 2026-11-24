@@ -43,3 +43,15 @@ test("a copied glyph and a busy button of the project's own are found", () => {
     "own-busy",
   ]);
 });
+
+test("a shell kept in a preview box and links written twice are found", () => {
+  const html = `<div class="t-shell" data-shell="topnav" data-contained="" data-t="shell">\n<dialog class="t-drawer t-nav-drawer" id="d">`;
+  expect(markupProblems("index.html", html).map((p) => `${p.rule} ${p.where}`)).toEqual([
+    "contained index.html:1",
+    "links-twice index.html:2",
+  ]);
+  expect(markupProblems("app.tsx", "<TopNavShell brand={b} contained>").map((p) => p.rule)).toEqual([
+    "contained",
+  ]);
+  expect(markupProblems("app.tsx", "<p>It contained two</p>")).toEqual([]);
+});

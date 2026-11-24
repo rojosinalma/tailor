@@ -145,6 +145,20 @@ export function markupProblems(file: string, text: string): Problem[] {
         'a t-icon with its own drawing; use the sprite: <use href="/tailor/icons.svg#t-close"> for a glyph of tailor, #bi-<name> for an icon',
       where: `${file}:${lineAt(text, m.index ?? 0)}`,
     });
+  // A shell fit into a preview box: an app's shell fills the screen.
+  for (const m of text.matchAll(/data-contained|<[A-Z]\w*Shell\b[^<>]*?\scontained(?=[\s/>=])/g))
+    problems.push({
+      rule: "contained",
+      message: "a shell with contained: that is for a preview in a box; an app's shell fills the screen",
+      where: `${file}:${lineAt(text, m.index ?? 0)}`,
+    });
+  // The links of a top bar written again for the drawer or "More": the script builds both from the bar.
+  for (const m of text.matchAll(/class="t-drawer t-nav-drawer"|class="t-topnav-more"/g))
+    problems.push({
+      rule: "links-twice",
+      message: `${m[0]}: write the links once, in the bar's list; the script builds the drawer and "More"`,
+      where: `${file}:${lineAt(text, m.index ?? 0)}`,
+    });
   // A busy button of its own: the form, Tailor.busy and the React Button's loading do it.
   const scripts = /\.(m?js|jsx?|tsx?)$/.test(file)
     ? [{ body: text, at: 0 }]

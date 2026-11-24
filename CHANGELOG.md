@@ -23,6 +23,11 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   The sprite of an HTML kit project always holds the glyphs of its packs (manifest field `glyphs`), so a
   project never copies an icon's drawing. Markup with the inline drawings keeps working. The offline page
   keeps its glyphs inline.
+- HTML kit, top navigation: the markup holds each link once, in the bar's list; the script builds the "More"
+  menu and the phone's navigation drawer (brand, links, footer facts, theme controls) from it. Markup that
+  holds a drawer or "More" (2.2.0 and before) keeps them. With `phoneNav="bar"` the markup is as before.
+- The reference (REFERENCE.md, `reference/<pack>.md`, the HTML markup files, the showcase's code) leaves out
+  `contained` and `data-contained`: they only fit a preview of a shell into a box. REFERENCE.md says so.
 
 ### Fixed
 

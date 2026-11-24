@@ -109,31 +109,34 @@ function useFit(nav: readonly NavItem[], path: string | null) {
 function Row({ nav, path }: { nav: readonly NavItem[]; path: string | null }) {
   const isStatic = useIsStatic();
   const { list, hidden } = useFit(nav, path);
-  const overflow = isStatic ? nav : hidden.flatMap((i) => (nav[i] ? [nav[i]] : []));
+  const overflow = hidden.flatMap((i) => (nav[i] ? [nav[i]] : []));
   if (nav.length === 0) return null;
   return (
     <nav className="t-shell-nav" aria-label={t("mainNavigation")} data-t={isStatic ? "topnav" : undefined}>
       <ul className="t-shell-list" ref={list}>
         {nav.map((item, i) => (
-          <li key={item.id} data-index={i}>
+          <li key={item.id} data-index={isStatic ? undefined : i}>
             <RowItem item={item} path={path} />
           </li>
         ))}
-        <li className="t-topnav-more" hidden={isStatic || undefined}>
-          <Menu
-            label={t("more")}
-            align="end"
-            items={overflow.map(asMenuItem)}
-            trigger={
-              <button type="button" className="t-shell-link">
-                <span className="t-shell-label">{t("more")}</span>
-                <span className="t-shell-chevron">
-                  <Glyph body={chevronDown} />
-                </span>
-              </button>
-            }
-          />
-        </li>
+        {/* The HTML kit's script builds "More" from the links: the markup holds each link once. */}
+        {isStatic ? null : (
+          <li className="t-topnav-more">
+            <Menu
+              label={t("more")}
+              align="end"
+              items={overflow.map(asMenuItem)}
+              trigger={
+                <button type="button" className="t-shell-link">
+                  <span className="t-shell-label">{t("more")}</span>
+                  <span className="t-shell-chevron">
+                    <Glyph body={chevronDown} />
+                  </span>
+                </button>
+              }
+            />
+          </li>
+        )}
       </ul>
     </nav>
   );
@@ -156,10 +159,12 @@ export function TopNavShell({
   const searchControl = useShellSearch();
   const path = useCurrentPath();
   const drawerProps = { brand, nav, footer, theme, control: drawer };
+  // The HTML kit's script builds the drawer from the bar's links: the markup holds each link once.
+  const isStatic = useIsStatic();
   return (
     <ShellRoot shell="topnav" mainId={main} contained={contained}>
       <ShellBar>
-        {phoneNav === "drawer" ? <NavDrawer {...drawerProps} /> : null}
+        {phoneNav === "drawer" && !isStatic ? <NavDrawer {...drawerProps} /> : null}
         <ShellBrandLink brand={brand} />
         <Row nav={nav} path={path} />
         <ShellSearch control={searchControl}>{search}</ShellSearch>
