@@ -477,6 +477,37 @@ export function inspect(touch: boolean, touchSize: number): { rule: string; mess
     }
   }
 
+  // Content of a grid cell that reaches past the cell's side into the next column: a long badge in a column
+  // of facts. A box between them that clips or scrolls holds it (the clipped rule looks at those).
+  // The grids of tailor's layout parts, whose cells hold content side by side; a calendar's events span cells.
+  for (const grid of document.querySelectorAll(".t-facts, .t-grid, .t-form, .t-stat-grid")) {
+    const display = getComputedStyle(grid).display;
+    if ((display !== "grid" && display !== "inline-grid") || !visible(grid)) continue;
+    for (const cell of grid.children) {
+      if (!visible(cell)) continue;
+      const side = cell.getBoundingClientRect().right;
+      for (const node of cell.querySelectorAll("*")) {
+        if (!textBoxes.has(node) && !node.matches(interactive)) continue;
+        if (!visible(node)) continue;
+        let held = false;
+        for (
+          let up = node.parentElement;
+          up && grid.contains(up) && up !== grid && !held;
+          up = up.parentElement
+        )
+          held = getComputedStyle(up).overflowX !== "visible";
+        const past = node.getBoundingClientRect().right - side;
+        if (!held && past > 1) {
+          problems.push({
+            rule: "spill",
+            message: `${name(node).split(" ")[0]} "${(node.textContent ?? "").trim().slice(0, 20)}" reaches ${Math.round(past)}px past the side of its grid cell`,
+          });
+          break;
+        }
+      }
+    }
+  }
+
   // Text in a bar of the frame keeps the gutter from the side of the screen: an icon button at the edge has
   // room of its own, plain text has none ("Ready" 8 px from the edge of a phone).
   for (const bar of document.querySelectorAll(".t-shell-bar, .t-shell-footer")) {

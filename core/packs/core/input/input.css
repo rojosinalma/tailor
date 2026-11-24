@@ -89,6 +89,15 @@
   margin-inline-end: calc(var(--t-control-px) * -1 + var(--t-space-05));
 }
 
+/* The padding of a sized box (control.css): the button stays inside its border. */
+.t-control[data-size="sm"] .t-input-action:last-child {
+  margin-inline-end: calc(var(--t-space-2) * -1 + var(--t-space-05));
+}
+
+.t-control[data-size="lg"] .t-input-action:last-child {
+  margin-inline-end: calc(var(--t-space-4) * -1 + var(--t-space-05));
+}
+
 .t-input-action:focus-visible {
   outline-offset: calc(var(--t-focus-w) * -1);
 }

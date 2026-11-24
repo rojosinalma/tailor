@@ -125,3 +125,12 @@ test("plain text at the side of a bar of the frame is found; an icon button ther
     (await rules(bar('<button aria-label="Menu">M</button>'))).filter((f) => f.includes("Ready")),
   ).toEqual([]);
 });
+
+test("content that reaches past its grid cell into the next column is found", async () => {
+  const grid = (cell: string) =>
+    `<div class="t-grid" style="display:grid;grid-template-columns:100px 100px;width:200px"><div style="${cell}"><span style="white-space:nowrap">a long state that does not fit</span></div><div>next</div></div>`;
+  expect((await rules(grid(""))).some((f) => f.startsWith("spill:"))).toBe(true);
+  expect(
+    (await rules(grid("overflow:hidden;text-overflow:ellipsis"))).filter((f) => f.startsWith("spill:")),
+  ).toEqual([]);
+});

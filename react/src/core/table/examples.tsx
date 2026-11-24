@@ -3,6 +3,7 @@ import type { Tone } from "@tailor/core/spec";
 import { defineExamples } from "../../examples";
 import { Glyph } from "../../glyph";
 import { Button } from "../button/button";
+import { Help } from "../help/help";
 import { RelativeTime } from "../relative-time/relative-time";
 import { StateLabel } from "../state-label/state-label";
 import { Table, type TableColumn } from "./table";
@@ -141,6 +142,34 @@ export default defineExamples("table", [
           { host: "web-1", cpu: 3.25, disk: 42, note: "—" },
         ]}
         rowKey={(r) => r.host}
+      />
+    ),
+  },
+  {
+    id: "help",
+    title: "A help button in each row",
+    note: "On a touch screen a row with a help button is as tall as its touch area.",
+    render: () => (
+      <Table
+        caption="Limits"
+        rows={[
+          { name: "Daily limit", help: "The most that may be spent in one day.", value: "$120" },
+          { name: "Monthly limit", help: "The most that may be spent in one month.", value: "$3,000" },
+          { name: "Alert at", help: "A notice goes out at this share of the limit.", value: "80 %" },
+        ]}
+        rowKey={(r) => r.name}
+        columns={[
+          {
+            key: "name",
+            header: "Limit",
+            render: (r) => (
+              <>
+                {r.name} <Help label={`About the ${r.name.toLowerCase()}`}>{r.help}</Help>
+              </>
+            ),
+          },
+          { key: "value", header: "Value", kind: "num" },
+        ]}
       />
     ),
   },

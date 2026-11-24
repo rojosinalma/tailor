@@ -49,6 +49,12 @@
 
 .t-facts[data-layout="columns"] > .t-facts-row {
   flex-direction: column;
+  /*
+   * The column, not the longest value, sets the width: a long value wraps or ends with an ellipsis. A column
+   * that wraps would size its line by its widest item.
+   */
+  flex-wrap: nowrap;
+  min-width: 0;
   padding: 0;
   border: 0;
 }
@@ -60,4 +66,19 @@
 
 .t-facts[data-layout="columns"] .t-facts-value {
   flex: none;
+}
+
+/*
+ * A help button gets a touch area larger than its line. On a touch screen a row that holds one is at least
+ * that tall, so the areas of two help buttons one above the other do not cover each other.
+ */
+@media (pointer: coarse) {
+  .t-facts-row:has(.t-help) {
+    align-items: center;
+    min-height: var(--t-touch);
+  }
+
+  .t-facts[data-layout="columns"] > .t-facts-row:has(.t-help) {
+    align-items: stretch;
+  }
 }

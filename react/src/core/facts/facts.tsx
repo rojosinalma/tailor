@@ -6,6 +6,8 @@ export interface FactItem {
   value: ReactNode;
   /** Sets the value in the mono font: ids, addresses, hashes. */
   mono?: boolean;
+  /** A Help after the key that explains it. */
+  help?: ReactNode;
 }
 
 export interface FactsProps {
@@ -19,15 +21,20 @@ export interface FactProps {
   /** The key. */
   name: string;
   mono?: boolean;
+  /** A Help after the key that explains it. */
+  help?: ReactNode;
   /** The value. */
   children: ReactNode;
 }
 
 /** One key and its value, inside Facts. */
-export function Fact({ name, mono, children }: FactProps) {
+export function Fact({ name, mono, help, children }: FactProps) {
   return (
     <div className="t-facts-row">
-      <dt className="t-facts-key">{name}</dt>
+      <dt className="t-facts-key">
+        {help ? `${name} ` : name}
+        {help}
+      </dt>
       <dd className="t-facts-value" data-mono={mono ? "" : undefined}>
         {children}
       </dd>
@@ -40,7 +47,7 @@ export function Facts({ layout = "rows", items, children }: FactsProps) {
   return (
     <dl className="t-facts" data-layout={layout === "rows" ? undefined : layout}>
       {items?.map((item) => (
-        <Fact key={item.key} name={item.key} mono={item.mono}>
+        <Fact key={item.key} name={item.key} mono={item.mono} help={item.help}>
           {item.value}
         </Fact>
       ))}

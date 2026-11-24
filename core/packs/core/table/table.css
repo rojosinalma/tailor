@@ -231,3 +231,10 @@
     display: none;
   }
 }
+
+/* A row that holds a help button is as tall as its touch area on a touch screen (see facts). */
+@media (pointer: coarse) {
+  .t-table tr:has(.t-help) > :is(td, th) {
+    height: var(--t-touch);
+  }
+}

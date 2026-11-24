@@ -3,7 +3,8 @@
   display: flex;
   align-items: center;
   width: 100%;
-  min-width: var(--t-measure-2xs);
+  /* Never wider than its cell: in a narrow column of a form grid the box took its own minimum. */
+  min-width: min(var(--t-measure-2xs), 100%);
   height: auto;
   padding-block: var(--t-space-1);
   cursor: text;

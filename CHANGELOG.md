@@ -17,6 +17,10 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   its own (`own-busy`).
 - Page checks: rule `edge-text`, text in a bar of the frame closer than 12 px to its side. The sample tool has
   a status ("Ready") at the end of its bar.
+- `Facts` and `Fact` prop `help`: a Help after the key.
+- Page checks: rule `spill`, content of a cell of a tailor grid (Facts, Grid, Form) that reaches past the cell
+  into the next column. Showcase: Facts examples with a help button on each key and with a long badge in
+  columns; a table with a help button in each row.
 
 ### Changed
 
@@ -37,6 +41,12 @@ This project follows [semantic versioning](https://semver.org). Format: [Keep a 
   area is not measured where the popup covers it.
 - Phone top bar: plain text at the end of the bar (a status, a name) keeps the gutter from the edge; an icon
   button there keeps the narrow edge.
+- Help buttons one above the other (Facts rows, table rows): on a touch screen such a row is as tall as the
+  touch area, so the touch areas no longer cover each other.
+- Facts in columns: a long value (a badge) stays in its column and ends with an ellipsis; it reached into the
+  next column.
+- Multi-select: never wider than its cell, and the end button of a small or large field stays inside its
+  border.
 
 ## [2.2.0] — 2026-11-21
 
